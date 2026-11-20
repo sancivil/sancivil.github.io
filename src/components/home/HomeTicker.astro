@@ -1,0 +1,210 @@
+---
+import catalog from '../../data/catalog.json';
+import { panels, inverters } from '../../lib/designer/data.ts';
+import { home } from '../../i18n/home.ts';
+import type { Locale } from '../../i18n/config.ts';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = home[locale].ticker;
+
+type Item = { code: string; figs: string[]; kind?: string };
+
+const modules: Item[] = catalog.modules
+  .filter((m) => m.slug !== 'revamping-line')
+  .map((m) => panels.filter((p) => m.designerModels.includes(p.id)).reduce((a, b) => (b.power > a.power ? b : a)))
+  .sort((a, b) => b.power - a.power)
+  .map((p) => ({
+    code: p.model,
+    figs: p.efficiency ? [`${p.power} W`, `${(p.efficiency * 100).toFixed(2)}%`] : [`${p.power} W`],
+  }));
+
+const inverter = (model: string, kind: string): Item => {
+  const inv = inverters.find((i) => i.model === model);
+  if (!inv) throw new Error(`${model} is missing from inverters.json`);
+  return { code: inv.model, figs: [`${inv.pnomAc / 1000} kW`], kind };
+};
+
+const battery = (name: string): Item => {
+  const b = catalog.batteries.find((x) => x.name === name);
+  const cap = b?.capacity as { nominalKwh?: number[]; totalKwh?: number | number[] } | null | undefined;
+  const kwh = cap?.nominalKwh ?? cap?.totalKwh;
+  if (!b || kwh === undefined) throw new Error(`${name} has no capacity in catalog.json`);
+  return { code: b.name, figs: [`${Array.isArray(kwh) ? kwh.join('–') : kwh} kWh`], kind: t.kinds.storage };
+};
+
+const others: Item[] = [
+  inverter('PSI-X1P6000-HY', t.kinds.hybrid),
+  battery('PSI-X-HS 3.6'),
+  inverter('PSI-X3S15000-HY', t.kinds.hybrid),
+  inverter('PSI-X3P125000-TPM', t.kinds.onGrid),
+  battery('PSI-X-5.8MST-V2'),
+  inverter('PSI-X3P30000-HYM', t.kinds.hybrid),
+  inverter('PSI-X1P1000-MIC', t.kinds.micro),
+];
+
+const items = modules.flatMap((m, i) => (others[i] ? [m, others[i]] : [m])).concat(others.slice(modules.length));
+---
+
+<section class="tk theme-dark" aria-label={t.label} data-ticker>
+  <div class="tk__viewport">
+    <div class="tk__track">
+      {
+        [0, 1].map((copy) => (
+          <ul class="tk__list" role="list" aria-hidden={copy === 1 ? 'true' : undefined}>
+            {items.map((item) => (
+              <li class="tk__item">
+                <span class="tk__code mono" dir="ltr">{item.code}</span>
+                {item.figs.map((f) => (
+                  <span class="tk__fig num" dir="ltr">{f}</span>
+                ))}
+                {item.kind && <span class="tk__kind">{item.kind}</span>}
+              </li>
+            ))}
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+  <button type="button" class="tk__toggle" aria-label={t.pause} data-label-pause={t.pause} data-label-play={t.play}>
+    <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
+      <path class="tk__icon-pause" d="M3 2v8M9 2v8"></path>
+      <path class="tk__icon-play" d="M3 1.5v9l7.5-4.5z"></path>
+    </svg>
+  </button>
+</section>
+
+<style>
+  .tk {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    height: 3.25rem;
+    border-block: 1px solid var(--line-inv);
+    overflow: hidden;
+  }
+  .tk__viewport {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  }
+  .tk__track {
+    display: flex;
+    width: max-content;
+    height: 100%;
+    animation: tk-run 90s linear infinite;
+  }
+  :global([dir='rtl']) .tk__track {
+    animation-name: tk-run-rtl;
+  }
+  .tk:hover .tk__track,
+  .tk:focus-within .tk__track,
+  .tk.is-paused .tk__track,
+  .tk.is-off .tk__track {
+    animation-play-state: paused;
+  }
+  @keyframes tk-run {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes tk-run-rtl {
+    to {
+      transform: translateX(50%);
+    }
+  }
+  .tk__list {
+    display: flex;
+    align-items: center;
+    flex: none;
+  }
+  .tk__item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--s-3);
+    padding-inline: var(--s-6);
+    white-space: nowrap;
+    font-size: 0.8125rem;
+    line-height: 1;
+  }
+  .tk__item + .tk__item {
+    border-inline-start: 1px solid var(--line-inv);
+  }
+  .tk__code {
+    color: var(--paper);
+    letter-spacing: 0.02em;
+  }
+  .tk__fig {
+    color: var(--muted-inv);
+  }
+  .tk__kind {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-inv);
+  }
+  :global([dir='rtl']) .tk__kind {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .tk__toggle {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    border-inline-start: 1px solid var(--line-inv);
+    color: var(--muted-inv);
+    transition: color var(--dur-2) var(--ease);
+  }
+  .tk__toggle:hover {
+    color: var(--paper);
+  }
+  .tk__toggle:focus-visible {
+    outline-offset: -4px;
+  }
+  .tk__toggle path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+  }
+  .tk__icon-play {
+    display: none;
+  }
+  .tk.is-paused .tk__icon-play {
+    display: block;
+    fill: currentColor;
+    stroke: none;
+  }
+  .tk.is-paused .tk__icon-pause {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tk__track {
+      animation: none;
+    }
+    .tk__toggle {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const band = document.querySelector<HTMLElement>('[data-ticker]');
+  const toggle = band?.querySelector<HTMLButtonElement>('.tk__toggle');
+  if (band && toggle) {
+    toggle.addEventListener('click', () => {
+      const paused = band.classList.toggle('is-paused');
+      toggle.setAttribute('aria-label', (paused ? toggle.dataset.labelPlay : toggle.dataset.labelPause) ?? '');
+    });
+    new IntersectionObserver(([entry]) => band.classList.toggle('is-off', !entry.isIntersecting)).observe(band);
+  }
+</script>

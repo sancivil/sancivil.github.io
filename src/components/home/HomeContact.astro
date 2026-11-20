@@ -1,4 +1,5 @@
 ---
+import iraq from '../../data/iraq-solar.json';
 import ContactMethods from '../company/ContactMethods.astro';
 import { home } from '../../i18n/home.ts';
 import { company } from '../../i18n/company.ts';
@@ -10,17 +11,24 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = home[locale].contact;
+const city = iraq.cities.find((c) => c.id === 'sulaymaniyah');
+const coords = city ? `${city.lat.toFixed(4)}° N · ${city.lon.toFixed(4)}° E` : '';
 ---
 
 <section class="cb theme-dark section" aria-labelledby="cb-title">
   <div class="container cb__inner">
     <div class="cb__head">
       <p class="eyebrow eyebrow--dot">{t.eyebrow}</p>
-      <h2 id="cb-title" class="h2">{t.title}</h2>
+      <h2 id="cb-title" class="h1 cb__title" data-reveal="lines">{t.title}</h2>
     </div>
     <ContactMethods locale={locale} />
     <div class="cb__close">
-      <p class="h1 cb__tagline" data-reveal="lines">{company[locale].tagline}</p>
+      <hr class="rule cb__rule" data-reveal="rule" />
+      <p class="display cb__tagline">{company[locale].tagline}</p>
+      <p class="cb__place">
+        <span>{t.place}</span>
+        <span class="num" dir="ltr">{coords}</span>
+      </p>
     </div>
   </div>
 </section>
@@ -35,11 +43,32 @@ const t = home[locale].contact;
     justify-items: start;
     gap: var(--s-4);
   }
+  .cb__title {
+    max-width: 14ch;
+  }
+  :global([dir='rtl']) .cb__title {
+    max-width: 18ch;
+  }
   .cb__close {
-    padding-block-start: clamp(var(--s-7), 6vw, var(--s-9));
-    border-top: 1px solid var(--line-inv);
+    display: grid;
+    gap: var(--s-5);
+  }
+  .cb__rule {
+    margin-block-end: clamp(var(--s-6), 5vw, var(--s-8));
   }
   .cb__tagline {
-    max-width: 16ch;
+    max-width: 14ch;
+    color: var(--paper);
+  }
+  :global([dir='rtl']) .cb__tagline {
+    max-width: 18ch;
+  }
+  .cb__place {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s-2) var(--s-5);
+    font-size: 0.8125rem;
+    color: var(--muted-inv);
   }
 </style>

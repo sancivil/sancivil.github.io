@@ -2,7 +2,8 @@
 import { home } from '../../i18n/home.ts';
 import { common } from '../../i18n/common.ts';
 import { localizePath, type Locale } from '../../i18n/config.ts';
-import { formatPower, rangeRows } from '../company/facts.ts';
+import type { ProductNavKey } from '../../data/site.ts';
+import { formatPower, peakEfficiency, rangeRows } from '../company/facts.ts';
 
 interface Props {
   locale: Locale;
@@ -11,250 +12,481 @@ interface Props {
 const { locale } = Astro.props;
 const t = home[locale].range;
 const names = common[locale].productNav;
+const pad = (n: number) => String(n).padStart(2, '0');
+
+const images: Record<ProductNavKey, { src: string; width: number; height: number }> = {
+  hybrid: { src: '/images/products/peimar-hybrid-inverters-batteries.png', width: 1024, height: 1024 },
+  modules: { src: '/images/products/modules/or-series-or10h.webp', width: 658, height: 1400 },
+  onGrid: { src: '/images/products/inverters/psi-x3p30000-tpm.png', width: 720, height: 720 },
+  micro: { src: '/images/products/inverters/psi-x1p1000-mic.png', width: 720, height: 720 },
+  accessories: { src: '/images/products/peimar-accessories.png', width: 1600, height: 1600 },
+};
 ---
 
-<section class="range theme-light section" aria-labelledby="range-title">
-  <div class="container">
-    <div class="range__head">
-      <div class="range__heading">
-        <p class="eyebrow">{t.eyebrow}</p>
-        <h2 id="range-title" class="h2">{t.title}</h2>
+<section class="rg theme-light" aria-labelledby="rg-title" data-range>
+  <div class="rg__pin" data-range-pin>
+    <div class="rg__viewport">
+      <div class="rg__track" data-range-track>
+        <div class="rg__intro">
+          <p class="eyebrow">{t.eyebrow}</p>
+          <h2 id="rg-title" class="h2 rg__title" data-reveal="lines">{t.title}</h2>
+          <p class="rg__lede">{t.intro}</p>
+          <a class="link-arrow" href={localizePath('/products/', locale)}>{home[locale].hero.ctaRange}</a>
+        </div>
+
+        <ol class="rg__list" role="list">
+          {
+            rangeRows.map((row, i) => {
+              const power = row.power ? formatPower(row.power) : null;
+              const img = images[row.key];
+              return (
+                <li class="rg__card" data-range-card>
+                  <div class="rg__well" data-reveal="clip">
+                    <img
+                      class="rg__img"
+                      src={img.src}
+                      width={img.width}
+                      height={img.height}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  <div class="rg__body">
+                    <span class="rg__index mono" aria-hidden="true">
+                      {pad(i + 1)}
+                    </span>
+                    <h3 class="rg__name">
+                      <a class="rg__link" href={localizePath(row.href, locale)}>
+                        {names[row.key]}
+                      </a>
+                    </h3>
+                    <p class="rg__desc">{t.items[row.key]}</p>
+                    <dl class="rg__figs">
+                      <div>
+                        <dt>{power ? t.figures.lines : t.figures.products}</dt>
+                        <dd>
+                          <span class="num">{row.lines}</span>
+                        </dd>
+                      </div>
+                      {power && (
+                        <div>
+                          <dt>{t.figures.power}</dt>
+                          <dd>
+                            <span class="num">
+                              {power.value}
+                              <span class="unit">{power.unit}</span>
+                            </span>
+                          </dd>
+                        </div>
+                      )}
+                      {row.key === 'modules' && (
+                        <div>
+                          <dt>{t.figures.efficiency}</dt>
+                          <dd>
+                            <span class="num">
+                              {(peakEfficiency * 100).toFixed(2)}
+                              <span class="unit">%</span>
+                            </span>
+                          </dd>
+                        </div>
+                      )}
+                    </dl>
+                    <span class="rg__arrow" aria-hidden="true" />
+                  </div>
+                </li>
+              );
+            })
+          }
+        </ol>
       </div>
-      <p class="range__intro">{t.intro}</p>
     </div>
 
-    <ol class="range__list" role="list">
-      {
-        rangeRows.map((row, i) => {
-          const power = row.power ? formatPower(row.power) : null;
-          return (
-            <li class="range__row">
-              <div class="range__text">
-                <span class="range__index mono" aria-hidden="true">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <h3 class="h3 range__title">
-                  <a class="range__link" href={localizePath(row.href, locale)}>
-                    {names[row.key]}
-                  </a>
-                </h3>
-                <p class="range__desc">{t.items[row.key]}</p>
-              </div>
-              <dl class="range__figs">
-                <div>
-                  <dt>{power ? t.figures.lines : t.figures.products}</dt>
-                  <dd><span class="num">{row.lines}</span></dd>
-                </div>
-                {power && (
-                  <div>
-                    <dt>{t.figures.power}</dt>
-                    <dd><span class="num">{power.value}<span class="unit">{power.unit}</span></span></dd>
-                  </div>
-                )}
-              </dl>
-              <div class="range__well" data-reveal="clip">
-                <img
-                  src={row.image.src}
-                  width={row.image.width}
-                  height={row.image.height}
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              <span class="range__arrow" aria-hidden="true" />
-            </li>
-          );
-        })
-      }
-    </ol>
+    <div class="container rg__foot" aria-hidden="true">
+      <span class="rg__count mono" dir="ltr"><span data-range-index>01</span> / {pad(rangeRows.length)}</span>
+      <span class="rg__bar"><span class="rg__fill" data-range-fill></span></span>
+      <span class="rg__hint">{t.hint}</span>
+    </div>
   </div>
 </section>
 
 <style>
-  .range__head {
-    display: grid;
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    align-items: end;
-    gap: var(--s-5) var(--gap);
-    margin-block-end: clamp(var(--s-7), 6vw, var(--s-9));
+  .rg {
+    --rg-start: max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)));
+    padding-block: var(--section);
   }
-  .range__heading {
+
+  .rg__intro {
     display: grid;
+    align-content: end;
     justify-items: start;
-    gap: var(--s-4);
+    gap: var(--s-5);
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    margin-block-end: clamp(var(--s-7), 5vw, var(--s-9));
   }
-  .range__heading .h2 {
-    max-width: 18ch;
+  .rg__title {
+    max-width: 16ch;
   }
-  :global([dir='rtl']) .range__heading .h2 {
-    max-width: none;
+  :global([dir='rtl']) .rg__title {
+    max-width: 22ch;
   }
-  .range__intro {
+  .rg__lede {
     max-width: 44ch;
     color: var(--muted);
   }
 
-  .range__list {
-    border-bottom: 1px solid var(--line);
+  .rg__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-7) var(--gap);
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
   }
-  .range__row {
+  .rg__card {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 15rem) 9.5rem 2.5rem;
-    grid-template-areas: 'text figs well arrow';
-    align-items: center;
-    column-gap: var(--gap);
-    padding-block: var(--s-5);
+    grid-template-rows: minmax(0, 1fr) auto;
+    border-radius: var(--r-2);
+    background: var(--paper-2);
+    overflow: hidden;
+  }
+  .rg__well {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1 / 1;
+    padding: clamp(var(--s-5), 3vw, var(--s-7));
+    overflow: hidden;
+  }
+  .rg__img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: scale 900ms var(--ease-out-expo);
+  }
+  .rg__card:hover .rg__img {
+    scale: 1.035;
+  }
+  .rg__body {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: var(--s-2);
+    padding: var(--s-5);
     border-top: 1px solid var(--line);
   }
-  .range__text {
-    grid-area: text;
-    display: grid;
-    grid-template-columns: 3.5rem minmax(0, 1fr);
-    align-items: baseline;
-    gap: var(--s-2) var(--gap);
-  }
-  .range__index {
-    font-size: 0.8125rem;
+  .rg__index {
+    font-size: 0.75rem;
     color: var(--muted);
   }
-  .range__desc {
-    grid-column: 2;
+  .rg__name {
+    font-size: clamp(1.25rem, 1rem + 0.6vw, 1.625rem);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+    text-wrap: balance;
   }
-  .range__link::after {
+  :global([dir='rtl']) .rg__name {
+    font-weight: 550;
+    letter-spacing: 0;
+    line-height: 1.5;
+  }
+  .rg__link::after {
     content: '';
     position: absolute;
     inset: 0;
+    z-index: 1;
   }
-  .range__link:focus-visible {
+  .rg__card:has(.rg__link:focus-visible) {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+  .rg__link:focus-visible {
     outline: none;
   }
-  .range__link:focus-visible::after {
-    outline: 2px solid var(--ink);
-    outline-offset: 2px;
-  }
-  .range__desc {
-    max-width: 52ch;
+  .rg__desc {
+    max-width: 34ch;
+    font-size: 0.9375rem;
+    line-height: 1.5;
     color: var(--muted);
   }
-  .range__figs {
-    grid-area: figs;
+  .rg__figs {
     display: flex;
-    gap: var(--s-6);
+    flex-wrap: wrap;
+    gap: var(--s-3) var(--s-6);
+    margin-block-start: var(--s-3);
+    padding-block-start: var(--s-4);
+    border-top: 1px solid var(--line);
   }
-  .range__figs dt {
+  .rg__figs div {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: 2px;
+  }
+  .rg__figs dt {
     font-family: var(--font-mono);
     font-size: 0.6875rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--muted);
   }
-  :global([dir='rtl']) .range__figs dt {
+  :global([dir='rtl']) .rg__figs dt {
     font-family: var(--font-sans);
     font-size: 0.8125rem;
     letter-spacing: 0;
     text-transform: none;
   }
-  .range__figs dd {
+  .rg__figs dd {
     font-size: 1.375rem;
-    line-height: 1.3;
+    line-height: 1.25;
   }
-  .range__well {
-    grid-area: well;
-    display: grid;
-    place-items: center;
-    aspect-ratio: 4 / 3;
-    padding: var(--s-3);
-    border-radius: var(--r-2);
-    background: var(--paper-2);
-  }
-  .range__well img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-  .range__arrow {
-    grid-area: arrow;
-    justify-self: end;
+  .rg__arrow {
+    position: absolute;
+    inset-block-start: var(--s-5);
+    inset-inline-end: var(--s-5);
     font-family: var(--font-mono);
     font-size: 1.25rem;
+    line-height: 1;
     transition: transform var(--dur-2) var(--ease);
   }
-  .range__arrow::before {
+  .rg__arrow::before {
     content: '→';
   }
-  :global([dir='rtl']) .range__arrow::before {
+  :global([dir='rtl']) .rg__arrow::before {
     content: '←';
   }
-  .range__row:hover .range__arrow,
-  .range__row:focus-within .range__arrow {
+  .rg__card:hover .rg__arrow,
+  .rg__card:focus-within .rg__arrow {
     transform: translateX(6px);
   }
-  :global([dir='rtl']) .range__row:hover .range__arrow,
-  :global([dir='rtl']) .range__row:focus-within .range__arrow {
+  :global([dir='rtl']) .rg__card:hover .rg__arrow,
+  :global([dir='rtl']) .rg__card:focus-within .rg__arrow {
     transform: translateX(-6px);
   }
-  .range__title {
-    transition: color var(--dur-1) var(--ease);
+
+  .rg__foot {
+    display: none;
   }
-  .range__row:hover .range__title {
-    color: var(--muted);
+  @media (min-width: 1181px) {
+    .rg__list {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
   }
 
-  @media (max-width: 1080px) {
-    .range__row {
-      grid-template-columns: minmax(0, 1fr) 8.5rem 2rem;
-      grid-template-areas:
-        'text well arrow'
-        'figs well arrow';
-      row-gap: var(--s-4);
-    }
-    .range__text {
-      grid-template-columns: 3rem minmax(0, 1fr);
-    }
-    .range__figs {
-      padding-inline-start: calc(3rem + var(--gap));
-    }
+  /* Pinned horizontal showcase (desktop and iPad landscape, motion allowed): set by the script below. */
+  .rg.is-pinned {
+    padding-block: 0;
+  }
+  .rg.is-pinned .rg__pin {
+    display: flex;
+    flex-direction: column;
+    height: 100svh;
+    padding-block: calc(var(--header-h) + var(--s-5)) var(--s-5);
+  }
+  .rg.is-pinned .rg__viewport {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .rg.is-pinned .rg__track {
+    display: flex;
+    gap: clamp(var(--s-7), 6vw, var(--s-10));
+    width: max-content;
+    height: 100%;
+    padding-inline: var(--rg-start);
+    will-change: transform;
+  }
+  .rg.is-pinned .rg__intro {
+    width: clamp(20rem, 30vw, 28rem);
+    margin: 0;
+    padding: 0 0 var(--s-6);
+  }
+  .rg.is-pinned .rg__list {
+    display: flex;
+    gap: var(--s-5);
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    max-width: none;
+  }
+  .rg.is-pinned .rg__card {
+    width: clamp(18rem, 26vw, 25rem);
+    height: 100%;
+  }
+  .rg.is-pinned .rg__well {
+    aspect-ratio: auto;
+    min-height: 0;
+  }
+  .rg.is-pinned .rg__img {
+    max-height: 100%;
+    will-change: transform;
+  }
+  .rg.is-pinned .rg__foot {
+    display: flex;
+    align-items: center;
+    gap: var(--s-5);
+    padding-block-start: var(--s-5);
+  }
+  .rg__count {
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .rg__count [data-range-index] {
+    color: var(--ink);
+  }
+  .rg__bar {
+    position: relative;
+    flex: 1;
+    max-width: 24rem;
+    height: 1px;
+    background: var(--line);
+  }
+  .rg__fill {
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+  :global([dir='rtl']) .rg__fill {
+    transform-origin: right center;
+  }
+  .rg.is-pinned .rg__hint {
+    display: none;
   }
 
   @media (max-width: 900px) {
-    .range__head {
-      grid-template-columns: minmax(0, 1fr);
+    .rg__list {
+      display: flex;
+      gap: var(--s-4);
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter);
+      padding-block-end: var(--s-2);
+      scrollbar-width: none;
+    }
+    .rg__list::-webkit-scrollbar {
+      display: none;
+    }
+    .rg__card {
+      flex: none;
+      width: min(46vw, 22rem);
+      scroll-snap-align: start;
+    }
+    .rg__well {
+      aspect-ratio: 1 / 0.92;
+    }
+    .rg__foot {
+      display: flex;
+      align-items: center;
+      gap: var(--s-3);
+      padding-block-start: var(--s-5);
+    }
+    .rg__count,
+    .rg__bar {
+      display: none;
+    }
+    .rg__hint {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .rg__hint::after {
+      content: '  →';
+    }
+    :global([dir='rtl']) .rg__hint {
+      font-family: var(--font-sans);
+      font-size: 0.8125rem;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    :global([dir='rtl']) .rg__hint::after {
+      content: '  ←';
     }
   }
 
   @media (max-width: 720px) {
-    .range__row {
-      grid-template-columns: minmax(0, 1fr) 5.5rem;
-      grid-template-areas:
-        'text well'
-        'figs well';
-      column-gap: var(--s-4);
-      row-gap: var(--s-3);
-      align-items: start;
+    .rg__card {
+      width: 80vw;
     }
-    .range__text {
-      grid-template-columns: 1.75rem minmax(0, 1fr);
-      column-gap: var(--s-3);
+    .rg__body {
+      padding: var(--s-4);
     }
-    .range__figs {
-      padding-inline-start: calc(1.75rem + var(--s-3));
-    }
-    .range__well {
-      padding: var(--s-2);
-    }
-    .range__arrow {
-      display: none;
-    }
-    .range__desc {
-      font-size: 0.9375rem;
-    }
-    .range__figs {
-      gap: var(--s-5);
-    }
-    .range__figs dd {
-      font-size: 1.125rem;
+    .rg__figs dd {
+      font-size: 1.1875rem;
     }
   }
 </style>
+
+<script>
+  import { gsap, ScrollTrigger, reduceMotion } from '../../lib/motion/init.ts';
+
+  const section = document.querySelector<HTMLElement>('[data-range]');
+  const pin = section?.querySelector<HTMLElement>('[data-range-pin]');
+  const track = section?.querySelector<HTMLElement>('[data-range-track]');
+  const fill = section?.querySelector<HTMLElement>('[data-range-fill]');
+  const index = section?.querySelector<HTMLElement>('[data-range-index]');
+
+  if (section && pin && track && fill && index && !reduceMotion) {
+    const cards = [...section.querySelectorAll<HTMLElement>('[data-range-card]')];
+    const viewport = track.parentElement as HTMLElement;
+    const rtl = document.documentElement.dir === 'rtl';
+    const mm = gsap.matchMedia();
+
+    mm.add('(min-width: 901px) and (min-height: 600px)', () => {
+      section.classList.add('is-pinned');
+      const imgs = cards.map((c) => c.querySelector<HTMLElement>('.rg__img'));
+      const setters = imgs.map((img) => (img ? gsap.quickSetter(img, 'x', 'px') : null));
+      let centres: number[] = [];
+      let width = 0;
+      const distance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
+      const measure = () => {
+        width = viewport.clientWidth;
+        centres = cards.map((c) => c.offsetLeft + c.offsetWidth / 2);
+      };
+      const drift = () => {
+        const x = Number(gsap.getProperty(track, 'x'));
+        centres.forEach((c, i) => {
+          const offset = (c + x - width / 2) / width;
+          setters[i]?.(gsap.utils.clamp(-1, 1, offset) * -28);
+        });
+      };
+      const tween = gsap.to(track, {
+        x: () => (rtl ? distance() : -distance()),
+        ease: 'none',
+        scrollTrigger: {
+          trigger: pin,
+          pin: true,
+          start: 'top top',
+          end: () => `+=${distance()}`,
+          scrub: 0.7,
+          anticipatePin: 1,
+          refreshPriority: -1,
+          invalidateOnRefresh: true,
+          onRefresh: measure,
+          onUpdate: (self) => {
+            fill.style.transform = `scaleX(${self.progress})`;
+            index.textContent = String(1 + Math.round(self.progress * (cards.length - 1))).padStart(2, '0');
+          },
+        },
+        onUpdate: drift,
+      });
+      measure();
+      ScrollTrigger.refresh();
+
+      return () => {
+        tween.scrollTrigger?.kill();
+        tween.kill();
+        gsap.set(track, { clearProps: 'transform' });
+        imgs.forEach((img) => img && gsap.set(img, { clearProps: 'transform' }));
+        section.classList.remove('is-pinned');
+      };
+    });
+  }
+</script>

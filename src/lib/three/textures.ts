@@ -73,16 +73,17 @@ export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): C
     const bottom = spec.halfCut ? (r % 2 === 1 ? chamfer : 0) : chamfer;
     for (let k = 0; k < L.cols; k++) {
       const x = colLeft(L, k) * s;
-      const light = poly ? 30 + (rand() - 0.5) * 6 : 7 + (rand() - 0.5) * 2.2;
-      const hue = poly ? 216 : 226;
-      const sat = poly ? 56 : 34;
+      const light = poly ? 30 + (rand() - 0.5) * 6 : 6.2 + (rand() - 0.5) * 1.6;
+      const hue = poly ? 216 : 224;
+      const sat = poly ? 56 : 42;
       const grad = c.createLinearGradient(x, y, x + cw * 0.3, y + ch);
-      grad.addColorStop(0, `hsl(${hue} ${sat}% ${light + 1}%)`);
-      grad.addColorStop(1, `hsl(${hue} ${sat}% ${light - 0.6}%)`);
+      grad.addColorStop(0, `hsl(${hue} ${sat}% ${light + 1.4}%)`);
+      grad.addColorStop(0.55, `hsl(${hue + 4} ${sat - 6}% ${light}%)`);
+      grad.addColorStop(1, `hsl(${hue} ${sat}% ${light - 0.8}%)`);
       cellPath(c, x, y, cw, ch, top, bottom);
       c.fillStyle = grad;
       c.fill();
-      m.fillStyle = 'rgb(0,128,0)';
+      m.fillStyle = 'rgb(0,112,0)';
       cellPath(m, x, y, cw, ch, top, bottom);
       m.fill();
 
@@ -102,17 +103,36 @@ export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): C
           c.fill();
         }
       }
-      c.fillStyle = poly ? 'rgb(225 230 240 / 0.1)' : 'rgb(150 162 190 / 0.035)';
+      c.fillStyle = poly ? 'rgb(225 230 240 / 0.1)' : dark ? 'rgb(120 130 150 / 0.03)' : 'rgb(170 180 205 / 0.05)';
       for (let fy = y + fingerStep / 2; fy < y + ch; fy += fingerStep) c.fillRect(x, fy, cw, 0.6);
       c.restore();
     }
   }
 
-  const busbars = L.cellW >= 175 ? Math.round(L.cellW / 15) : L.cellW >= 160 ? 9 : 5;
+  // Faint crystalline grain over the silicon only (source-atop keeps the gaps clear).
+  if (!poly) {
+    const tile = canvas(128, 128);
+    const t = tile.getContext('2d')!;
+    const img = t.createImageData(128, 128);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const v = rand() < 0.5 ? 0 : 255;
+      img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+      img.data[i + 3] = Math.round(rand() * 255);
+    }
+    t.putImageData(img, 0, 0);
+    c.save();
+    c.globalCompositeOperation = 'source-atop';
+    c.globalAlpha = 0.045;
+    c.fillStyle = c.createPattern(tile, 'repeat')!;
+    c.fillRect(0, 0, w, h);
+    c.restore();
+  }
+
+  const busbars = L.cellW >= 200 ? 18 : L.cellW >= 175 ? 16 : L.cellW >= 160 ? 9 : 5;
   const thin = busbars > 6;
-  const bw = thin ? Math.max(0.7, 0.4 * s) : Math.max(1, 1.2 * s);
-  const ribbonColor = dark ? 'rgb(44 46 52)' : 'rgb(190 194 201)';
-  const ribbonSurface = dark ? 'rgb(0,110,90)' : 'rgb(0,70,255)';
+  const bw = thin ? Math.max(0.9, 0.32 * s) : Math.max(1, 1.2 * s);
+  const ribbonColor = dark ? 'rgb(34 36 41)' : 'rgb(204 208 214)';
+  const ribbonSurface = dark ? 'rgb(0,120,90)' : 'rgb(0,105,210)';
   const reach = 6 * s;
   const strip = Math.max(2, 4 * s);
   const perBlock = L.rows / L.blocks;
@@ -131,7 +151,7 @@ export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): C
     const yBottom = (rowTop(L, (b + 1) * perBlock - 1) + L.cellH) * s + reach;
     for (let k = 0; k < L.cols; k++) {
       const x = colLeft(L, k) * s;
-      for (let i = 0; i < busbars; i++) ribbon(x + ((i + 0.5) * cw) / busbars - bw / 2, yTop, bw, yBottom - yTop, thin ? 0.42 : 0.9);
+      for (let i = 0; i < busbars; i++) ribbon(x + ((i + 0.5) * cw) / busbars - bw / 2, yTop, bw, yBottom - yTop, thin ? 0.3 : 0.9);
     }
     const pairs = (from: number, y: number) => {
       for (let k = from; k + 1 < L.cols; k += 2) {
@@ -146,7 +166,7 @@ export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): C
     if (L.blocks === 2) {
       const xs = L.x0 * s + cw * 0.08;
       const xe = (colLeft(L, L.cols - 1) + L.cellW) * s - cw * 0.08;
-      ribbon(xs, b === 0 ? yBottom : yTop - strip, xe - xs, strip * 0.6, 0.85);
+      ribbon(xs, b === 0 ? yBottom : yTop - strip, xe - xs, strip * 0.6, 0.7);
     }
   }
 
@@ -167,43 +187,64 @@ export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): C
   return sheet;
 }
 
-/** Rating label on the back: model, power and size as printed on the datasheet. */
-export function drawLabel(spec: ModuleSpec): HTMLCanvasElement {
-  const cv = canvas(640, 400);
+const fmt = (n: number) => String(Math.round(n * 100) / 100);
+
+/** Rear rating label from the datasheet: model, STC ratings, system voltage, size and standards. */
+export function drawLabel(spec: ModuleSpec, standards: boolean): HTMLCanvasElement {
+  const W = 1024;
+  const H = 640;
+  const cv = canvas(W, H);
   const c = cv.getContext('2d')!;
-  c.fillStyle = '#f5f5f1';
-  c.fillRect(0, 0, 640, 400);
-  c.strokeStyle = '#1c1c1f';
-  c.lineWidth = 3;
-  c.strokeRect(12, 12, 616, 376);
-  c.fillStyle = '#121214';
-  c.font = '600 46px "DM Sans Variable", "DM Sans", sans-serif';
-  c.fillText('PEIMAR', 36, 72);
-  c.font = '500 28px "IBM Plex Mono", monospace';
+  const sans = '"DM Sans Variable", "DM Sans", sans-serif';
+  const mono = '"IBM Plex Mono", monospace';
+  c.fillStyle = '#f2f2ee';
+  c.fillRect(0, 0, W, H);
+  c.fillStyle = '#111113';
+  c.fillRect(0, 0, W, 116);
+  c.fillStyle = '#f2f2ee';
+  c.font = `700 62px ${sans}`;
+  c.fillText('PEIMAR', 44, 82);
+  c.font = `500 44px ${mono}`;
   c.textAlign = 'right';
-  c.fillText(spec.model, 604, 70);
-  c.textAlign = 'left';
-  c.fillRect(36, 94, 568, 2);
+  c.fillText(spec.model, W - 44, 78);
+  const r = spec.rating;
   const rows: [string, string][] = [
-    ['Model', spec.model],
-    ['Pmax', spec.power ? `${spec.power} W` : '—'],
-    ['Cells', String(spec.cells)],
-    ['Size', `${spec.width} × ${spec.height} × ${spec.depth} mm`],
+    ['Maximum power (Pmax)', spec.power ? `${spec.power} W` : '—'],
+    ...(r
+      ? ([
+          ['Open-circuit voltage (Voc)', `${fmt(r.voc)} V`],
+          ['Short-circuit current (Isc)', `${fmt(r.isc)} A`],
+          ['Voltage at Pmax (Vmp)', `${fmt(r.vmp)} V`],
+          ['Current at Pmax (Imp)', `${fmt(r.imp)} A`],
+          ['Maximum system voltage', `${r.vdcMax} V DC`],
+          ...(r.fuse ? ([['Maximum series fuse', `${r.fuse} A`]] as [string, string][]) : []),
+        ] as [string, string][])
+      : []),
+    ['Dimensions', `${spec.width} × ${spec.height} × ${spec.depth} mm`],
   ];
-  c.font = '400 24px "IBM Plex Mono", monospace';
+  const top = 168;
+  const step = Math.min(52, 380 / rows.length);
   rows.forEach(([k, v], i) => {
-    const y = 140 + i * 40;
-    c.fillStyle = '#6b6b70';
-    c.fillText(k, 36, y);
-    c.fillStyle = '#121214';
-    c.fillText(v, 170, y);
+    const y = top + i * step;
+    c.textAlign = 'left';
+    c.fillStyle = '#55555a';
+    c.font = `400 29px ${sans}`;
+    c.fillText(k, 44, y);
+    c.textAlign = 'right';
+    c.fillStyle = '#111113';
+    c.font = `500 31px ${mono}`;
+    c.fillText(v, W - 44, y);
+    c.fillStyle = 'rgb(17 17 19 / 0.14)';
+    c.fillRect(44, y + 15, W - 88, 2);
   });
-  const rand = seeded(spec.model);
-  c.fillStyle = '#121214';
-  for (let x = 36; x < 420; ) {
-    const bw = 2 + Math.floor(rand() * 4);
-    if (rand() > 0.35) c.fillRect(x, 314, bw, 52);
-    x += bw + 2;
+  c.textAlign = 'left';
+  c.fillStyle = '#55555a';
+  c.font = `400 24px ${mono}`;
+  c.fillText('STC: 1000 W/m², 25 °C, AM 1.5', 44, H - 40);
+  if (standards) {
+    c.textAlign = 'right';
+    c.fillStyle = '#111113';
+    c.fillText('IEC 61215 · IEC 61730', W - 44, H - 40);
   }
   return cv;
 }

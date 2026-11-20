@@ -567,3 +567,7 @@ html.motion:not(.motion-ready) [data-reveal='rule'] {
     scroll-behavior: auto !important;
   }
 }
+
+[hidden] {
+  display: none !important;
+}

@@ -5,7 +5,10 @@
   Owns its heading, layer captions (01–07, sourced Peimar facts) and layout. The pinned part is
   320svh of scroll on desktop, 220svh on iPad, 200svh on phones; the stage is sticky and sized
   with svh. Captions sit on the start side (right in RTL), under the stage on iPad portrait and
-  phones. Reduced motion and no-JS: static exploded view with every caption listed.
+  phones. As each layer separates, a hairline callout runs from a point on that layer to its numbered
+  label in a column on the stage's end side (numbers only on narrow stages); the camera dollies in
+  slightly and the back of the stack sinks into the ink. Reduced motion and no-JS: static exploded
+  view with every caption listed (and every callout once WebGL is up).
   Props: spec (ModuleSpec), id? (anchor id), class?, locale? (defaults to the URL's locale).
 */
 import type { Locale } from '../../i18n/config.ts';
@@ -39,7 +42,29 @@ const certs = facts.series === 'other' ? [] : ['IEC 61215', 'IEC 61730', `${t.pi
 
   <div class="anatomy__track" data-track>
     <div class="anatomy__sticky">
-      <div class="anatomy__stage" data-stage aria-hidden="true"><canvas></canvas></div>
+      <div class="anatomy__stage" data-stage aria-hidden="true">
+        <canvas></canvas>
+        <div class="anatomy__callouts" data-callouts>
+          <svg>
+            {
+              layers.map((_, i) => (
+                <g data-line={i}>
+                  <path pathLength="1" />
+                  <circle r="2.5" />
+                </g>
+              ))
+            }
+          </svg>
+          {
+            layers.map((layer, i) => (
+              <span class="anatomy__tag" data-tag={i}>
+                <span class="anatomy__tag-index mono">{pad(i + 1)}</span>
+                <span class="anatomy__tag-name">{layer.name}</span>
+              </span>
+            ))
+          }
+        </div>
+      </div>
       <div class="container anatomy__panel">
         <ol class="anatomy__list" role="list">
           {
@@ -121,6 +146,76 @@ const certs = facts.series === 'other' ? [] : ['IEC 61215', 'IEC 61730', `${t.pi
   }
   .anatomy__stage.is-ready canvas {
     opacity: 1;
+  }
+  .anatomy__callouts {
+    position: absolute;
+    inset: 0;
+    direction: ltr;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 700ms var(--ease);
+  }
+  .anatomy__stage.is-ready .anatomy__callouts {
+    opacity: 1;
+  }
+  .anatomy__callouts svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .anatomy__callouts g {
+    opacity: 0;
+  }
+  .anatomy__callouts path {
+    fill: none;
+    stroke: rgb(255 255 255 / 0.34);
+    stroke-width: 1;
+    stroke-dasharray: 1;
+    stroke-dashoffset: var(--draw, 1);
+    transition: stroke var(--dur-2) var(--ease);
+  }
+  .anatomy__callouts circle {
+    fill: var(--paper);
+    transition: fill var(--dur-2) var(--ease);
+  }
+  .anatomy__callouts g.is-active path {
+    stroke: rgb(255 255 255 / 0.8);
+  }
+  .anatomy__callouts g.is-active circle {
+    fill: var(--sun);
+  }
+  .anatomy__tag {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-2);
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    color: var(--muted-inv);
+    white-space: nowrap;
+    opacity: 0;
+    transition: color var(--dur-2) var(--ease);
+  }
+  :global([dir='rtl']) .anatomy__tag {
+    flex-direction: row-reverse;
+  }
+  .anatomy__tag-index {
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    transition: color var(--dur-2) var(--ease);
+  }
+  .anatomy__tag.is-active {
+    color: var(--paper);
+  }
+  .anatomy__tag.is-active .anatomy__tag-index {
+    color: var(--sun);
+  }
+  .anatomy__callouts.is-compact .anatomy__tag-name {
+    display: none;
   }
   .anatomy__stage > :global(svg) {
     position: absolute;

@@ -18,6 +18,7 @@ const en = {
     lead: 'Peimar modules, hybrid inverters and storage, supplied and installed from Sulaymaniyah.',
     ctaDesigner: 'Design your system',
     ctaRange: 'Explore the range',
+    scroll: 'Scroll',
     specsLabel: 'Key figures',
     specs: {
       efficiency: 'Peak module efficiency',
@@ -25,6 +26,12 @@ const en = {
       capacity: 'Peimar production capacity',
       cells: 'TOPCon bifacial cells',
     },
+  },
+  ticker: {
+    label: 'Peimar models in the range',
+    pause: 'Pause the model list',
+    play: 'Play the model list',
+    kinds: { hybrid: 'hybrid', onGrid: 'on-grid', micro: 'micro', storage: 'storage' },
   },
   commitment: {
     eyebrow: 'What we do',
@@ -53,7 +60,22 @@ const en = {
       micro: 'Module-level inverters for small single-phase arrays.',
       accessories: 'Meters, Wi-Fi dongles, power optimizers, EV chargers and EPS boxes.',
     },
-    figures: { lines: 'Lines', power: 'Power', products: 'Products' },
+    figures: { lines: 'Lines', power: 'Power', products: 'Products', efficiency: 'Efficiency' },
+    hint: 'Swipe to browse',
+  },
+  map: {
+    eyebrow: 'Solar across Iraq',
+    title: (min: string, max: string) => `${min} to ${max} kWh a year from every kWp.`,
+    text: (cities: number) =>
+      `PVGIS satellite data for ${cities} Iraqi cities: the yearly energy from 1 kWp of modules at the best tilt. Open a city for its monthly yield and design temperatures.`,
+    unit: 'kWh/kWp a year',
+    tilt: (deg: number) => `${deg}° optimal tilt`,
+    list: 'Cities by annual yield',
+    office: 'Faraday office',
+    low: 'Lower yield',
+    high: 'Higher yield',
+    source: 'Yield: PVGIS © European Union, 2001–2026. Boundaries: Natural Earth.',
+    all: 'All cities',
   },
   designer: {
     eyebrow: 'Designer',
@@ -69,6 +91,21 @@ const en = {
       states: { ok: 'within limits', warn: 'power ratio warning', bad: 'over the MPPT current', selected: 'selected' },
       legend: { ok: 'Within limits', warn: 'Power ratio warning', bad: 'Over MPPT current', selected: 'Selected' },
       total: (panels: number, kwp: string) => `${panels} panels · ${kwp} kWp`,
+      hint: 'Hover, tap or tab to a cell to see its checks.',
+      readout: {
+        config: 'Series × strings',
+        array: 'Whole array',
+        voc: (t: string) => `Voc at ${t} °C`,
+        current: (t: string) => `Current at ${t} °C`,
+        ratio: 'Power ratio',
+        limit: 'limit',
+        verdict: {
+          ok: 'Every check passes.',
+          warn: (max: number) => `Power ratio above ${max}%: the inverter is oversized for this array.`,
+          bad: (amps: number) => `Parallel strings exceed the ${amps} A MPPT input current.`,
+        },
+        temps: (city: string) => `Checked at the design temperatures for ${city}.`,
+      },
     },
   },
   projects: {
@@ -91,6 +128,7 @@ const en = {
   contact: {
     eyebrow: 'Contact',
     title: 'Talk to us about your system.',
+    place: 'Sulaymaniyah, Iraq',
   },
 };
 
@@ -108,6 +146,7 @@ const ar: HomeStrings = {
     lead: 'ألواح Peimar وإنفرتراتها الهجينة وبطاريات التخزين، نورّدها ونركّبها من السليمانية.',
     ctaDesigner: 'صمّم نظامك',
     ctaRange: 'تصفّح المنتجات',
+    scroll: 'مرّر للأسفل',
     specsLabel: 'أرقام أساسية',
     specs: {
       efficiency: 'أعلى كفاءة للألواح',
@@ -115,6 +154,12 @@ const ar: HomeStrings = {
       capacity: 'القدرة الإنتاجية لـ\u00a0Peimar',
       cells: 'خلايا TOPCon ثنائية الوجه',
     },
+  },
+  ticker: {
+    label: 'طرازات Peimar في المجموعة',
+    pause: 'أوقف شريط الطرازات',
+    play: 'شغّل شريط الطرازات',
+    kinds: { hybrid: 'هجين', onGrid: 'مرتبط بالشبكة', micro: 'مايكرو', storage: 'تخزين' },
   },
   commitment: {
     eyebrow: 'ماذا نقدّم',
@@ -143,7 +188,22 @@ const ar: HomeStrings = {
       micro: 'إنفرترات على مستوى اللوح للأنظمة الصغيرة أحادية الطور.',
       accessories: 'عدّادات، ووحدات Wi-Fi، ومحسّنات قدرة، وشواحن للسيارات الكهربائية، وصناديق EPS.',
     },
-    figures: { lines: 'الفئات', power: 'القدرة', products: 'المنتجات' },
+    figures: { lines: 'الفئات', power: 'القدرة', products: 'المنتجات', efficiency: 'الكفاءة' },
+    hint: 'اسحب للتصفّح',
+  },
+  map: {
+    eyebrow: 'الطاقة الشمسية في العراق',
+    title: (min: string, max: string) => `من ${ltr(min)} إلى ${ltr(`${max} kWh`)} سنويًا من كل ${ltr('kWp')}.`,
+    text: (cities: number) =>
+      `بيانات PVGIS الفضائية لـ\u00a0${cities} مدينة عراقية: الطاقة السنوية من ${ltr('1 kWp')} من الألواح بأفضل زاوية ميل. افتح صفحة المدينة لترى إنتاجها الشهري ودرجات حرارة التصميم.`,
+    unit: 'kWh/kWp سنويًا',
+    tilt: (deg: number) => `زاوية الميل المثلى ${ltr(`${deg}°`)}`,
+    list: 'المدن حسب الإنتاج السنوي',
+    office: 'مكتب Faraday',
+    low: 'إنتاج أقل',
+    high: 'إنتاج أعلى',
+    source: 'الإنتاج: PVGIS © European Union, 2001–2026. الحدود: Natural Earth.',
+    all: 'كل المدن',
   },
   designer: {
     eyebrow: 'أداة التصميم',
@@ -159,6 +219,21 @@ const ar: HomeStrings = {
       states: { ok: 'ضمن الحدود', warn: 'تنبيه نسبة القدرة', bad: 'تيار أعلى من حد MPPT', selected: 'الاختيار الحالي' },
       legend: { ok: 'ضمن الحدود', warn: 'تنبيه نسبة القدرة', bad: 'تيار أعلى من حد MPPT', selected: 'الاختيار' },
       total: (panels: number, kwp: string) => `${panels} لوحًا · ${ltr(`${kwp} kWp`)}`,
+      hint: 'مرّر المؤشر فوق خلية أو المسها أو انتقل إليها بلوحة المفاتيح لترى فحوصاتها.',
+      readout: {
+        config: 'ألواح على التوالي × السلاسل',
+        array: 'النظام كاملًا',
+        voc: (t: string) => `Voc عند ${ltr(`${t} °C`)}`,
+        current: (t: string) => `التيار عند ${ltr(`${t} °C`)}`,
+        ratio: 'نسبة القدرة الاسمية',
+        limit: 'الحد',
+        verdict: {
+          ok: 'كل الفحوصات ناجحة.',
+          warn: (max: number) => `نسبة القدرة أعلى من ${ltr(`${max}%`)}: الإنفرتر أكبر من حاجة هذه الألواح.`,
+          bad: (amps: number) => `السلاسل المتوازية تتجاوز تيار إدخال MPPT البالغ ${ltr(`${amps} A`)}.`,
+        },
+        temps: (city: string) => `محسوبة بدرجات حرارة التصميم في ${city}.`,
+      },
     },
   },
   projects: {
@@ -182,6 +257,7 @@ const ar: HomeStrings = {
   contact: {
     eyebrow: 'التواصل',
     title: 'تحدّث معنا عن نظامك.',
+    place: 'السليمانية، العراق',
   },
 };
 
@@ -197,6 +273,7 @@ const ckb: HomeStrings = {
     lead: 'پانێڵی Peimar، ئینڤێرتەری هایبرید و پاتری، لە سلێمانییەوە دابینیان دەکەین و دایاندەمەزرێنین.',
     ctaDesigner: 'سیستەمەکەت دیزاین بکە',
     ctaRange: 'بەرهەمەکان ببینە',
+    scroll: 'بڕۆ خوارەوە',
     specsLabel: 'ژمارە سەرەکییەکان',
     specs: {
       efficiency: 'بەرزترین کارایی پانێڵ',
@@ -204,6 +281,12 @@ const ckb: HomeStrings = {
       capacity: 'توانای بەرهەمهێنانی Peimar',
       cells: 'خانەی TOPCon ی دوو\u00a0ڕوو',
     },
+  },
+  ticker: {
+    label: 'مۆدێلەکانی Peimar',
+    pause: 'لیستی مۆدێلەکان ڕابگرە',
+    play: 'لیستی مۆدێلەکان لێبدە',
+    kinds: { hybrid: 'هایبرید', onGrid: 'سەر بە تۆڕ', micro: 'مایکرۆ', storage: 'هەڵگرتنی وزە' },
   },
   commitment: {
     eyebrow: 'چی دەکەین',
@@ -232,7 +315,22 @@ const ckb: HomeStrings = {
       micro: 'ئینڤێرتەر لەسەر ئاستی پانێڵ بۆ سیستەمی بچووکی تاک فاز.',
       accessories: 'میتەر، دۆنگڵی Wi-Fi، باشکەری توانا، بارگاوکەری ئۆتۆمبێلی کارەبایی و سندوقی EPS.',
     },
-    figures: { lines: 'جۆرەکان', power: 'توانا', products: 'بەرهەمەکان' },
+    figures: { lines: 'جۆرەکان', power: 'توانا', products: 'بەرهەمەکان', efficiency: 'کارایی' },
+    hint: 'ڕایبکێشە بۆ بینین',
+  },
+  map: {
+    eyebrow: 'وزەی خۆر لە سەرانسەری عێراق',
+    title: (min: string, max: string) => `لە ${ltr(min)} تا ${ltr(`${max} kWh`)} لە ساڵێکدا لە هەر ${ltr('kWp')} ێک.`,
+    text: (cities: number) =>
+      `داتای مانگی دەستکردی PVGIS بۆ ${cities} شاری عێراق: وزەی ساڵانەی ${ltr('1 kWp')} پانێڵ بە باشترین لاری. شارێک بکەرەوە بۆ بەرهەمی مانگانە و پلەکانی گەرمیی دیزاین.`,
+    unit: 'kWh/kWp لە ساڵێکدا',
+    tilt: (deg: number) => `باشترین لاری ${ltr(`${deg}°`)}`,
+    list: 'شارەکان بەپێی بەرهەمی ساڵانە',
+    office: 'نووسینگەی Faraday',
+    low: 'بەرهەمی کەمتر',
+    high: 'بەرهەمی زیاتر',
+    source: 'بەرهەم: PVGIS © European Union, 2001–2026. سنوورەکان: Natural Earth.',
+    all: 'هەموو شارەکان',
   },
   designer: {
     eyebrow: 'دیزاینەر',
@@ -248,6 +346,21 @@ const ckb: HomeStrings = {
       states: { ok: 'لە سنووردایە', warn: 'ئاگاداری ڕێژەی توانا', bad: 'تەزوو لە سنووری MPPT زیاترە', selected: 'هەڵبژێردراو' },
       legend: { ok: 'لە سنووردایە', warn: 'ئاگاداری ڕێژەی توانا', bad: 'تەزووی زیاد لە MPPT', selected: 'هەڵبژێردراو' },
       total: (panels: number, kwp: string) => `${panels} پانێڵ · ${ltr(`${kwp} kWp`)}`,
+      hint: 'نیشاندەر ببە سەر خانەیەک، دەستی لێ بدە یان بە کیبۆرد بڕۆ سەری بۆ بینینی پشکنینەکانی.',
+      readout: {
+        config: 'پانێڵ بە زنجیرە × زنجیرەکان',
+        array: 'هەموو سیستەمەکە',
+        voc: (t: string) => `Voc لە ${ltr(`${t} °C`)}`,
+        current: (t: string) => `تەزوو لە ${ltr(`${t} °C`)}`,
+        ratio: 'ڕێژەی توانای ناوەکی',
+        limit: 'سنوور',
+        verdict: {
+          ok: 'هەموو پشکنینەکان سەرکەوتوون.',
+          warn: (max: number) => `ڕێژەی توانا لە ${ltr(`${max}%`)} زیاترە: ئینڤێرتەرەکە بۆ ئەم پانێڵانە گەورەترە.`,
+          bad: (amps: number) => `زنجیرە تەریبەکان لە تەزووی ${ltr(`${amps} A`)} ی MPPT زیاترن.`,
+        },
+        temps: (city: string) => `بە پلەکانی گەرمیی دیزاینی ${city} پشکنراوە.`,
+      },
     },
   },
   projects: {
@@ -270,6 +383,7 @@ const ckb: HomeStrings = {
   contact: {
     eyebrow: 'پەیوەندی',
     title: 'دەربارەی سیستەمەکەت قسەمان لەگەڵ بکە.',
+    place: 'سلێمانی، عێراق',
   },
 };
 

@@ -18,24 +18,36 @@ const c = company[locale];
   <div class="container pj__head">
     <div class="pj__heading">
       <p class="eyebrow">{t.eyebrow}</p>
-      <h2 id="pj-title" class="h2">{t.title(projectSpan.count, projectSpan.min, projectSpan.max)}</h2>
+      <h2 id="pj-title" class="h2" data-reveal="lines">{t.title(projectSpan.count, projectSpan.min, projectSpan.max)}</h2>
     </div>
     <a class="link-arrow pj__all" href={localizePath('/projects/', locale)}>{t.link}</a>
   </div>
 
   <ul class="pj__row" role="list">
     {
-      projectList.map((p) => {
+      projectList.map((p, i) => {
         const copy = c.projects[p.slug as ProjectSlug];
         return (
-          <li class="pj__item">
+          <li class:list={['pj__item', { 'pj__item--lg': i < 2, 'pj__item--tile': !p.photo }]}>
             <a class="pj__card" href={localizePath(`/projects/#${p.slug}`, locale)}>
-              <ProjectMedia project={p} alt="" />
-              <span class="pj__meta">
-                <span class="pj__kwp num">{p.kwp}<span class="unit">kWp</span></span>
-                <span class="tag">{c.categories[p.category]}</span>
+              <span class="pj__media" data-pj-media={p.photo && i < 2 ? '' : undefined}>
+                <ProjectMedia project={p} alt="" />
+                <span class="tag pj__tag">{c.categories[p.category]}</span>
+                {!p.photo && (
+                  <span class="pj__tile-word" aria-hidden="true">
+                    {c.categories[p.category]}
+                  </span>
+                )}
               </span>
-              <span class="pj__title">{copy.title}</span>
+              <span class="pj__meta">
+                <span class="pj__kwp num">
+                  <span data-reveal="count" data-to={p.kwp} data-decimals={Number.isInteger(p.kwp) ? 0 : 1}>
+                    {p.kwp}
+                  </span>
+                  <span class="unit">kWp</span>
+                </span>
+                <span class="pj__title">{copy.title}</span>
+              </span>
             </a>
           </li>
         );
@@ -70,54 +82,116 @@ const c = company[locale];
 
   .pj__row {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: var(--s-8) var(--gap);
     width: 100%;
     max-width: var(--container);
     margin-inline: auto;
     padding-inline: var(--gutter);
   }
+  .pj__item {
+    grid-column: span 3;
+  }
+  .pj__item--lg {
+    grid-column: span 6;
+  }
   .pj__card {
     display: grid;
-    gap: var(--s-3);
+    gap: var(--s-4);
+  }
+  .pj__media {
+    position: relative;
+    display: block;
+  }
+  .pj__item--lg .pj__media :global(.pmedia) {
+    aspect-ratio: 16 / 10;
+  }
+  .pj__media :global(.pmedia img) {
+    transition: scale 1100ms var(--ease-out-expo);
+  }
+  .pj__media[data-pj-media] :global(.pmedia img) {
+    height: 112%;
+  }
+  .pj__card:hover .pj__media :global(.pmedia img) {
+    scale: 1.045;
+  }
+  .pj__tag {
+    position: absolute;
+    inset-block-start: var(--s-3);
+    inset-inline-start: var(--s-3);
+    border-color: transparent;
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .pj__item--tile .pj__tag {
+    display: none;
+  }
+  .pj__tile-word {
+    position: absolute;
+    inset-inline: var(--s-5);
+    inset-block-end: var(--s-4);
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1rem + 3vw, 4rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1;
+    color: var(--paper);
+    pointer-events: none;
+  }
+  :global([dir='rtl']) .pj__tile-word {
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.4;
+  }
+  .pj__tile-word::before {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    margin-block-end: var(--s-4);
+    background: var(--sun);
   }
   .pj__meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--s-3);
-    padding-block-start: var(--s-2);
+    display: grid;
+    gap: var(--s-2);
+    padding-block-start: var(--s-3);
+    border-top: 1px solid var(--line);
   }
   .pj__kwp {
-    font-size: clamp(2rem, 1.3rem + 1.9vw, 3rem);
+    font-size: clamp(2.25rem, 1.3rem + 2.4vw, 3.5rem);
     line-height: 1;
   }
+  .pj__item:not(.pj__item--lg) .pj__kwp {
+    font-size: clamp(1.75rem, 1.2rem + 1.4vw, 2.5rem);
+  }
   .pj__title {
-    font-size: 1.125rem;
+    font-size: 1.0625rem;
     font-weight: 600;
     letter-spacing: -0.01em;
     line-height: 1.35;
     max-width: 28ch;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size var(--dur-3) var(--ease-out-expo);
+    justify-self: start;
   }
   :global([dir='rtl']) .pj__title {
     letter-spacing: 0;
     line-height: 1.6;
-  }
-  .pj__card :global(.pmedia img) {
-    transition: opacity var(--dur-2) var(--ease);
-  }
-  .pj__card:hover :global(.pmedia img) {
-    opacity: 0.88;
+    background-position: 100% 100%;
   }
   .pj__card:hover .pj__title {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-    text-decoration-thickness: 1px;
+    background-size: 100% 1px;
   }
 
   @media (max-width: 1080px) {
     .pj__row {
       gap: var(--s-7) var(--gap);
+    }
+    .pj__item {
+      grid-column: span 6;
+    }
+    .pj__item--lg .pj__media :global(.pmedia) {
+      aspect-ratio: 4 / 3;
     }
   }
 
@@ -133,8 +207,13 @@ const c = company[locale];
       padding-block-end: var(--s-4);
       scrollbar-width: thin;
     }
-    .pj__item {
+    .pj__item,
+    .pj__item--lg {
+      grid-column: auto;
       scroll-snap-align: start;
+    }
+    .pj__media[data-pj-media] :global(.pmedia img) {
+      height: 100%;
     }
   }
 
@@ -144,3 +223,21 @@ const c = company[locale];
     }
   }
 </style>
+
+<script>
+  import { gsap, reduceMotion } from '../../lib/motion/init.ts';
+
+  if (!reduceMotion) {
+    gsap.matchMedia().add('(min-width: 901px)', () => {
+      document.querySelectorAll<HTMLElement>('[data-pj-media]').forEach((media) => {
+        const img = media.querySelector('img');
+        if (!img) return;
+        gsap.fromTo(
+          img,
+          { yPercent: -10 },
+          { yPercent: 0, ease: 'none', scrollTrigger: { trigger: media, start: 'top bottom', end: 'bottom top', scrub: true } },
+        );
+      });
+    });
+  }
+</script>

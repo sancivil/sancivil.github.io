@@ -2,8 +2,10 @@
 import Base from '../../layouts/Base.astro';
 import ModuleAnatomy from '../../components/three/ModuleAnatomy.astro';
 import HomeHero from '../../components/home/HomeHero.astro';
+import HomeTicker from '../../components/home/HomeTicker.astro';
 import HomeCommitment from '../../components/home/HomeCommitment.astro';
 import HomeRange from '../../components/home/HomeRange.astro';
+import HomeSolarMap from '../../components/home/HomeSolarMap.astro';
 import HomeDesigner from '../../components/home/HomeDesigner.astro';
 import HomeProjects from '../../components/home/HomeProjects.astro';
 import HomeWarranty from '../../components/home/HomeWarranty.astro';
@@ -24,9 +26,11 @@ const t = home[locale].meta;
 
 <Base title={t.title} description={t.description}>
   <HomeHero locale={locale} />
+  <HomeTicker locale={locale} />
   <HomeCommitment locale={locale} />
   <ModuleAnatomy spec={heroSpec} />
   <HomeRange locale={locale} />
+  <HomeSolarMap locale={locale} />
   <HomeDesigner locale={locale} />
   <HomeProjects locale={locale} />
   <HomeWarranty locale={locale} />

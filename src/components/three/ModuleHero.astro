@@ -10,7 +10,9 @@
   Framing (src/lib/three/hero.ts): the module's top edge always clears the header by about 8.5%
   of the box (28–88px) and its near top corner sits just inside the end edge; the lower part runs
   past the end edge and behind the spec strip (or the tablet/phone fade). Width is capped so it stays
-  out of the start-side text block. RTL mirrors this. Phones (≤720px): 50% opacity, behind the text.
+  out of the start-side text block. RTL mirrors this. Phones (≤720px): 90% opacity at the top, fading out where the text begins.
+  Scroll: as the hero scrolls away (ScrollTrigger, smoothed in the scene) the module turns toward
+  face-on, recedes and lifts slightly, at half strength on phones; reduced motion keeps the static pose.
 */
 import type { ModuleSpec } from '../../lib/three/types.ts';
 
@@ -43,28 +45,40 @@ const { spec, class: className } = Astro.props;
   }
   @media (max-width: 720px) {
     .module-hero__canvas {
-      mask-image: linear-gradient(to bottom, #000 50%, transparent 96%);
+      mask-image: linear-gradient(to bottom, #000 26%, rgb(0 0 0 / 0.35) 44%, transparent 62%);
     }
     .module-hero.is-ready .module-hero__canvas {
-      opacity: 0.5;
+      opacity: 0.9;
     }
   }
 </style>
 
 <script>
+  import { ScrollTrigger, reduceMotion } from '../../lib/motion/init.ts';
   import { afterLoadIdle, loadScenes, webglAvailable, whenNear } from '../../lib/three/load.ts';
   import type { ModuleSpec } from '../../lib/three/types.ts';
 
   document.querySelectorAll<HTMLElement>('[data-module-hero]').forEach((host) => {
     if (!webglAvailable()) return;
     const spec = JSON.parse(host.dataset.spec ?? '{}') as ModuleSpec;
+    let scene: { setScroll(p: number): void } | null = null;
+    // As the hero scrolls away the module turns toward face-on, recedes and lifts (smoothed in the scene).
+    const away = reduceMotion
+      ? null
+      : ScrollTrigger.create({
+          trigger: host,
+          start: 0,
+          end: 'bottom top',
+          onUpdate: (self) => scene?.setScroll(self.progress),
+        });
     afterLoadIdle(() =>
       whenNear(
         host,
         async () => {
           const { mountHero } = await loadScenes();
           await document.fonts.ready;
-          mountHero(host, spec);
+          scene = mountHero(host, spec);
+          scene.setScroll(away?.progress ?? 0);
         },
         '0px',
       ),

@@ -14,30 +14,36 @@ const t = home[locale].hero;
 const years = company[locale].years;
 ---
 
-<section class="hero theme-dark" aria-labelledby="hero-title">
+<section class="hero theme-dark" aria-labelledby="hero-title" data-hero>
   <div class="hero__stage">
     <ModuleHero spec={heroSpec} />
   </div>
 
   <div class="container hero__inner">
-    <div class="hero__copy">
-      <p class="eyebrow eyebrow--dot">{t.eyebrow}</p>
-      <h1 id="hero-title" class="display hero__title">{t.title}</h1>
-      <p class="lead hero__lead">{t.lead}</p>
-      <div class="hero__actions">
-        <a class="btn btn--sun" href={localizePath('/designer/', locale)}>{t.ctaDesigner}</a>
-        <a class="link-arrow hero__more" href={localizePath('/products/', locale)}>{t.ctaRange}</a>
+    <div class="hero__row">
+      <div class="hero__copy" data-hero-copy>
+        <p class="eyebrow eyebrow--dot hero__eyebrow">{t.eyebrow}</p>
+        <h1 id="hero-title" class="display hero__title">{t.title}</h1>
+        <p class="lead hero__lead">{t.lead}</p>
+        <div class="hero__actions">
+          <a class="btn btn--sun hero__cta" href={localizePath('/designer/', locale)} data-magnetic>{t.ctaDesigner}</a>
+          <a class="link-arrow hero__more" href={localizePath('/products/', locale)}>{t.ctaRange}</a>
+        </div>
       </div>
+      <span class="hero__cue" aria-hidden="true">
+        <span class="hero__cue-label">{t.scroll}</span>
+        <span class="hero__cue-track"><span class="hero__cue-bar"></span></span>
+      </span>
     </div>
 
-    <dl class="hero__specs">
+    <dl class="hero__specs" aria-label={t.specsLabel}>
       <div class="hero__spec">
         <dt>{t.specs.efficiency}</dt>
         <dd><span class="num">{(peakEfficiency * 100).toFixed(2)}<span class="unit">%</span></span></dd>
       </div>
       <div class="hero__spec">
         <dt>{t.specs.warranty}</dt>
-        <dd><span class="num">{warranty.linearPowerYears}</span><span class="unit">{years}</span></dd>
+        <dd><span><span class="num">{warranty.linearPowerYears}</span><span class="unit">{years}</span></span></dd>
       </div>
       <div class="hero__spec">
         <dt>{t.specs.capacity}</dt>
@@ -52,11 +58,12 @@ const years = company[locale].years;
 </section>
 
 <style>
+  /* The ticker band below (HomeTicker, 3.25rem) shares the first screen with the hero. */
   .hero {
     position: relative;
     isolation: isolate;
     display: flex;
-    height: calc(100svh - var(--header-h));
+    height: calc(100svh - var(--header-h) - 3.25rem);
     min-height: 600px;
     overflow: hidden;
   }
@@ -75,6 +82,12 @@ const years = company[locale].years;
     gap: clamp(var(--s-6), 6svh, var(--s-9));
     padding-block-start: var(--s-7);
     pointer-events: none;
+  }
+  .hero__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--gap);
   }
   .hero__copy,
   .hero__specs {
@@ -96,6 +109,7 @@ const years = company[locale].years;
   }
   .hero__lead {
     max-width: 36ch;
+    color: rgb(255 255 255 / 0.82);
   }
   .hero__actions {
     display: flex;
@@ -104,8 +118,51 @@ const years = company[locale].years;
     gap: var(--s-4) var(--s-6);
     margin-block-start: var(--s-2);
   }
+  .hero__cta {
+    will-change: transform;
+  }
   .hero__more {
     min-height: 44px;
+  }
+
+  .hero__cue {
+    display: grid;
+    justify-items: center;
+    gap: var(--s-3);
+    padding-block-end: var(--s-2);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-inv);
+  }
+  :global([dir='rtl']) .hero__cue {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .hero__cue-label {
+    writing-mode: vertical-rl;
+  }
+  :global([dir='rtl']) .hero__cue-label {
+    writing-mode: horizontal-tb;
+  }
+  .hero__cue-track {
+    position: relative;
+    width: 1px;
+    height: 56px;
+    overflow: hidden;
+    background: var(--line-inv);
+  }
+  .hero__cue-bar {
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
+    width: 1px;
+    height: 18px;
+    background: var(--sun);
+    transform: translateY(-100%);
   }
 
   .hero__specs {
@@ -124,6 +181,18 @@ const years = company[locale].years;
     background: var(--ink);
     border-top: 1px solid var(--line-inv);
     transform: translateY(-1px);
+  }
+  .hero__specs::after {
+    content: '';
+    position: absolute;
+    inset-block-start: -1px;
+    inset-inline: 0;
+    height: 1px;
+    background: var(--line-inv-strong);
+    transform-origin: left center;
+  }
+  :global([dir='rtl']) .hero__specs::after {
+    transform-origin: right center;
   }
   .hero__spec {
     display: flex;
@@ -145,8 +214,93 @@ const years = company[locale].years;
     color: var(--muted-inv);
   }
   .hero__spec dd {
+    overflow: hidden;
     font-size: clamp(1.375rem, 0.85rem + 1.1vw, 2.125rem);
     line-height: 1.1;
+  }
+  .hero__spec dd > span {
+    display: inline-block;
+  }
+
+  /* Entrance: the h1 is painted at once; the supporting elements arrive around it, each in its own way. */
+  @keyframes hero-clip {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+  }
+  @keyframes hero-clip-rtl {
+    from {
+      clip-path: inset(0 0 0 100%);
+    }
+  }
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+  @keyframes hero-mask {
+    from {
+      transform: translateY(110%);
+    }
+  }
+  @keyframes hero-draw {
+    from {
+      transform: scaleX(0);
+    }
+  }
+  @keyframes hero-fade {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes hero-cue {
+    0% {
+      transform: translateY(-100%);
+    }
+    55%,
+    100% {
+      transform: translateY(330%);
+    }
+  }
+  :global(html.motion) .hero__eyebrow {
+    animation: hero-clip 1000ms var(--ease-out-expo) 100ms backwards;
+  }
+  :global(html.motion[dir='rtl']) .hero__eyebrow {
+    animation-name: hero-clip-rtl;
+  }
+  :global(html.motion) .hero__lead {
+    animation: hero-rise 1100ms var(--ease-out-expo) 240ms backwards;
+  }
+  :global(html.motion) .hero__actions > * {
+    animation: hero-rise 1000ms var(--ease-out-expo) 380ms backwards;
+  }
+  :global(html.motion) .hero__actions > :nth-child(2) {
+    animation-delay: 470ms;
+  }
+  :global(html.motion) .hero__specs::after {
+    animation: hero-draw 1400ms var(--ease-out-expo) 420ms backwards;
+  }
+  :global(html.motion) .hero__spec dd > span {
+    animation: hero-mask 1100ms var(--ease-out-expo) 560ms backwards;
+  }
+  :global(html.motion) .hero__spec dt {
+    animation: hero-fade 900ms var(--ease) 700ms backwards;
+  }
+  :global(html.motion) .hero__spec:nth-child(2) :is(dd > span, dt) {
+    animation-delay: 640ms;
+  }
+  :global(html.motion) .hero__spec:nth-child(3) :is(dd > span, dt) {
+    animation-delay: 720ms;
+  }
+  :global(html.motion) .hero__spec:nth-child(4) :is(dd > span, dt) {
+    animation-delay: 800ms;
+  }
+  :global(html.motion) .hero__cue {
+    animation: hero-fade 1200ms var(--ease) 1100ms backwards;
+  }
+  :global(html.motion) .hero__cue-bar {
+    animation: hero-cue 2600ms cubic-bezier(0.65, 0, 0.35, 1) 1600ms infinite;
   }
 
   @media (max-width: 1080px) {
@@ -169,6 +323,9 @@ const years = company[locale].years;
     }
     .hero__copy {
       max-width: 40rem;
+    }
+    .hero__cue {
+      display: none;
     }
   }
 
@@ -212,4 +369,42 @@ const years = company[locale].years;
       font-size: 0.75rem;
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__cue-bar {
+      animation: none;
+      transform: translateY(100%);
+    }
+  }
 </style>
+
+<script>
+  import { gsap, reduceMotion } from '../../lib/motion/init.ts';
+
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  const copy = hero?.querySelector<HTMLElement>('[data-hero-copy]');
+  const cta = hero?.querySelector<HTMLElement>('[data-magnetic]');
+
+  if (hero && copy && !reduceMotion) {
+    gsap.to(copy, {
+      y: -56,
+      opacity: 0.35,
+      ease: 'none',
+      scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
+    });
+  }
+
+  if (cta && !reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const toX = gsap.quickTo(cta, 'x', { duration: 0.6, ease: 'power3.out' });
+    const toY = gsap.quickTo(cta, 'y', { duration: 0.6, ease: 'power3.out' });
+    cta.addEventListener('pointermove', (e) => {
+      const r = cta.getBoundingClientRect();
+      toX((e.clientX - r.left - r.width / 2) * 0.2);
+      toY((e.clientY - r.top - r.height / 2) * 0.3);
+    });
+    cta.addEventListener('pointerleave', () => {
+      toX(0);
+      toY(0);
+    });
+  }
+</script>

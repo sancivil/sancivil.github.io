@@ -11,6 +11,8 @@ const FRAME = 1.1;
 const PITCH = deg(-11);
 const YAW = deg(-30);
 const DRIFT = deg(8);
+/** Scroll-away pose: share of the yaw that turns toward face-on, recession (× distance) and lift (× module height). */
+const AWAY = { turn: 0.72, pitch: 0.55, recede: 0.32, lift: 0.07 };
 
 /**
  * Framing per box: module height as a share of the box height, clear space above its top edge and
@@ -32,6 +34,7 @@ export function mountHero(host: HTMLElement, spec: ModuleSpec) {
   const rtl = isRtl(host);
   const side = rtl ? -1 : 1;
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const phone = matchMedia('(max-width: 720px)');
 
   const renderer = createRenderer(canvas);
   const scene = new Scene();
@@ -43,7 +46,7 @@ export function mountHero(host: HTMLElement, spec: ModuleSpec) {
     textureMax: device.textureMax,
     anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()),
     envMap: env,
-    envIntensity: 0.8,
+    envIntensity: 1,
     envRotation: 0,
     lineColor: '#ffffff',
   });
@@ -58,13 +61,20 @@ export function mountHero(host: HTMLElement, spec: ModuleSpec) {
   let ty = 0;
   let px = 0;
   let py = 0;
+  let away = 0;
+  let awayTarget = 0;
+  let dist = 1;
 
   const render = (now: number) => {
     const t = (now - start) / 1000;
     px += (tx - px) * 0.05;
     py += (ty - py) * 0.05;
-    const drift = still ? 0 : deg(8) * Math.sin((2 * Math.PI * t) / 14);
-    pivot.rotation.set(PITCH + py * deg(2), side * (YAW + drift) + px * deg(3), 0);
+    away += (awayTarget - away) * 0.12;
+    if (Math.abs(awayTarget - away) < 1e-4) away = awayTarget;
+    const a = smooth(away) * (phone.matches ? 0.5 : 1);
+    const drift = still ? 0 : DRIFT * Math.sin((2 * Math.PI * t) / 14) * (1 - a);
+    pivot.rotation.set(PITCH * (1 - AWAY.pitch * a) + py * deg(2), side * (YAW * (1 - AWAY.turn * a) + drift) + px * deg(3), 0);
+    pivot.position.set(0, AWAY.lift * pv.size.h * a, -AWAY.recede * dist * a);
     if (!still) {
       const phase = (t % 6) / 1.8;
       pv.sweep.value = -0.3 + 1.6 * smooth(Math.min(1, phase));
@@ -94,6 +104,7 @@ export function mountHero(host: HTMLElement, spec: ModuleSpec) {
     const dist = (pv.size.h * FRAME) / (2 * k * tan);
     const unit = (FRAME * h) / 2 / tan;
     const e = { dist, top: 0, start: 0, end: 0, endTop: 0 };
+    pivot.position.set(0, 0, 0);
     for (const yaw of [-1, 0, 1]) {
       for (const pitch of [-1, 1]) {
         pivot.rotation.set(PITCH + pitch * deg(2), side * (YAW + yaw * DRIFT) + yaw * deg(3), 0);
@@ -128,6 +139,7 @@ export function mountHero(host: HTMLElement, spec: ModuleSpec) {
     camera.aspect = w / h;
     camera.setViewOffset(fullW, fullH, fullW / 2 - cx, fullH / 2 - cy, w, h);
     camera.position.set(0, 0, e.dist);
+    dist = e.dist;
     camera.updateProjectionMatrix();
     render(performance.now());
   };
@@ -144,6 +156,10 @@ export function mountHero(host: HTMLElement, spec: ModuleSpec) {
   const stopWatching = watchVisibility(host, (visible) => setRunning(visible && !still));
 
   return {
+    /** Share of the hero scrolled away (0–1): the module turns toward face-on, recedes and lifts. */
+    setScroll(p: number) {
+      awayTarget = still ? 0 : Math.min(1, Math.max(0, p));
+    },
     dispose() {
       setRunning(false);
       stopWatching();

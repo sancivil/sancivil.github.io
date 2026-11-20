@@ -1,7 +1,10 @@
 ---
+import iraq from '../../data/iraq-solar.json';
 import { home } from '../../i18n/home.ts';
 import { localizePath, type Locale } from '../../i18n/config.ts';
 import { cityCount, stringMatrix as m } from '../company/facts.ts';
+import { panels, inverters } from '../../lib/designer/data.ts';
+import { moduleAt, powerRatio, ratioTone, stringChecks } from '../../lib/designer/calc.ts';
 
 interface Props {
   locale: Locale;
@@ -9,26 +12,81 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = home[locale].designer;
+const r = t.matrix.readout;
+
+const panel = panels.find((p) => p.model === m.panel);
+const inv = inverters.find((i) => i.model === m.inverter);
+const city = iraq.cities.find((c) => c.id === 'sulaymaniyah');
+if (!panel || !inv || !city) throw new Error('Designer teaser: panel, inverter or city missing from src/data');
+const cityName = locale === 'ar' ? city.nameAr : locale === 'ckb' ? city.nameKu : city.name;
+const temps = city.design;
+const degrees = (v: number) => String(v).replace('-', '−');
+const at = moduleAt(panel, temps);
+const group = { mppts: [1], imax: inv.imaxPerMppt[0] };
+const otherW = m.selected * panel.power;
+const ratioLimits = [Math.round(inv.percPmaxCc * 100), Math.round(inv.percPminCc * 100)];
 
 type State = 'ok' | 'warn' | 'bad' | 'selected';
-const stateOf = (strings: number, series: number): State =>
-  strings > 1 ? 'bad' : series === m.selected ? 'selected' : m.firstRow[series];
+const cells = m.strings.flatMap((s) =>
+  m.series.map((n) => {
+    const checks = stringChecks(at, panel, inv, group, n, s);
+    const voc = checks.find((c) => c.id === 'vmaxDc');
+    const amps = checks.find((c) => c.id === 'imax');
+    const pvW = n * s * panel.power + otherW;
+    const ratio = powerRatio(inv, pvW);
+    const pass = checks.every((c) => c.pass);
+    const tone = ratioTone(inv, ratio);
+    const base: State = !pass ? 'bad' : tone === 'amber' ? 'warn' : 'ok';
+    const state: State = base === 'ok' && s === 1 && n === m.selected ? 'selected' : base;
+    return {
+      key: `${s}-${n}`,
+      s,
+      n,
+      state,
+      base,
+      watts: n * s * panel.power,
+      kwp: (pvW / 1000).toFixed(2),
+      voc: { value: Math.round(voc?.value ?? 0), limit: voc?.limit ?? 0, pass: voc?.pass ?? false },
+      amps: { value: (amps?.value ?? 0).toFixed(1), limit: amps?.limit ?? 0, pass: amps?.pass ?? false },
+      ratio: { value: Math.round(ratio * 100), pass: tone === 'green' },
+    };
+  }),
+);
+const byKey = new Map(cells.map((c) => [c.key, c]));
+const selectedKey = `1-${m.selected}`;
 
-const panels = m.mppts * m.selected;
-const kwp = ((panels * m.power) / 1000).toFixed(2);
+const panelsTotal = m.mppts * m.selected;
+const kwp = ((panelsTotal * m.power) / 1000).toFixed(2);
 const legend: State[] = ['ok', 'warn', 'bad', 'selected'];
+
+const verdict = (c: (typeof cells)[number]) =>
+  c.base === 'bad' ? r.verdict.bad(c.amps.limit) : c.base === 'warn' ? r.verdict.warn(ratioLimits[1]) : r.verdict.ok;
+
+const GW = 15;
+const GH = 22;
+const STEP = 21;
+const ROW = 32;
+const X0 = 26;
+const glyphs = (c: (typeof cells)[number]) =>
+  Array.from({ length: c.s }, (_, row) => {
+    const y = 6 + row * ROW;
+    const xs = Array.from({ length: c.n }, (_, i) => X0 + i * STEP);
+    const end = xs[xs.length - 1] + GW;
+    const mid = y + GH / 2;
+    return { y, xs, wire: `M4 ${mid}H${X0}M${X0 + GW} ${mid}${xs.slice(1).map((x) => `M${x - (STEP - GW)} ${mid}H${x}`).join('')}M${end} ${mid}h5V${y + GH + 4}H10V${mid}` };
+  });
 ---
 
 <section class="dz theme-dark section" aria-labelledby="dz-title">
   <div class="container dz__grid">
     <div class="dz__copy">
       <p class="eyebrow eyebrow--dot">{t.eyebrow}</p>
-      <h2 id="dz-title" class="h2 dz__title">{t.title}</h2>
+      <h2 id="dz-title" class="h2 dz__title" data-reveal="lines">{t.title}</h2>
       <p class="dz__text">{t.text(cityCount)}</p>
       <a class="btn btn--sun" href={localizePath('/designer/', locale)}>{t.cta}</a>
     </div>
 
-    <figure class="dz__figure">
+    <figure class="dz__figure" data-dz>
       <figcaption class="dz__caption">
         <span class="mono dz__models" dir="ltr">{m.panel} <span aria-hidden="true">→</span> {m.inverter}</span>
         <span class="dz__setup">{t.matrix.caption}</span>
@@ -52,11 +110,20 @@ const legend: State[] = ['ok', 'warn', 'bad', 'selected'];
                 <tr>
                   <th scope="row" class="mx__head num">{s}</th>
                   {m.series.map((n) => {
-                    const state = stateOf(s, n);
+                    const c = byKey.get(`${s}-${n}`)!;
                     return (
-                      <td class:list={['mx__cell', `mx__cell--${state}`]} data-cell={s === 1 ? 'lead' : 'rest'}>
-                        <span class="num">{m.power * n * s}</span>
-                        <span class="sr-only">{t.matrix.states[state]}</span>
+                      <td class="mx__td">
+                        <button
+                          type="button"
+                          class:list={['mx__cell', `mx__cell--${c.state}`]}
+                          data-cell={s === 1 ? 'lead' : 'rest'}
+                          data-key={c.key}
+                          aria-pressed={c.key === selectedKey ? 'true' : 'false'}
+                          aria-describedby={`dz-r-${c.key}`}
+                        >
+                          <span class="num">{c.watts}</span>
+                          <span class="sr-only">{t.matrix.states[c.state]}</span>
+                        </button>
                       </td>
                     );
                   })}
@@ -65,6 +132,83 @@ const legend: State[] = ['ok', 'warn', 'bad', 'selected'];
             }
           </tbody>
         </table>
+      </div>
+
+      <div class="dz__readouts" data-readouts>
+        {
+          cells.map((c) => (
+            <div
+              class:list={['dz__readout', `dz__readout--${c.base}`]}
+              id={`dz-r-${c.key}`}
+              data-readout={c.key}
+              hidden={c.key !== selectedKey}
+            >
+              <svg class="dz__string" viewBox={`0 0 ${X0 + 7 * STEP + 8} ${4 * ROW + 6}`} aria-hidden="true">
+                {glyphs(c).map((g) => (
+                  <g>
+                    {g.xs.map((x) => (
+                      <g class="dz__panel">
+                        <rect x={x} y={g.y} width={GW} height={GH} rx="1" />
+                        <line x1={x} x2={x + GW} y1={g.y + GH / 2} y2={g.y + GH / 2} />
+                      </g>
+                    ))}
+                    <path class="dz__wire" d={g.wire} pathLength="1" />
+                  </g>
+                ))}
+              </svg>
+              <div class="dz__ro-body">
+                <p class="dz__ro-head">
+                  <span>
+                    <span class="dz__ro-label">{r.config}</span>
+                    <span class="num dz__ro-big">
+                      {c.n} × {c.s}
+                    </span>
+                  </span>
+                  <span>
+                    <span class="dz__ro-label">MPPT 1</span>
+                    <span class="num dz__ro-big">
+                      {c.watts.toLocaleString('en-US')}
+                      <span class="unit">W</span>
+                    </span>
+                  </span>
+                  <span>
+                    <span class="dz__ro-label">{r.array}</span>
+                    <span class="num dz__ro-big">
+                      {c.kwp}
+                      <span class="unit">kWp</span>
+                    </span>
+                  </span>
+                </p>
+                <ul class="dz__checks" role="list">
+                  <li class:list={[c.voc.pass ? 'is-pass' : 'is-fail']}>
+                    <span>{r.voc(degrees(temps.tmin))}</span>
+                    <span class="num">{c.voc.value} V</span>
+                    <span class="dz__limit">
+                      {r.limit} <span class="num">{c.voc.limit} V</span>
+                    </span>
+                  </li>
+                  <li class:list={[c.amps.pass ? 'is-pass' : 'is-fail']}>
+                    <span>{r.current(degrees(temps.tmax))}</span>
+                    <span class="num">{c.amps.value} A</span>
+                    <span class="dz__limit">
+                      {r.limit} <span class="num">{c.amps.limit} A</span>
+                    </span>
+                  </li>
+                  <li class:list={[c.ratio.pass ? 'is-pass' : 'is-warn']}>
+                    <span>{r.ratio}</span>
+                    <span class="num">{c.ratio.value}%</span>
+                    <span class="dz__limit">
+                      <span class="num">
+                        {ratioLimits[0]}–{ratioLimits[1]}%
+                      </span>
+                    </span>
+                  </li>
+                </ul>
+                <p class="dz__verdict">{verdict(c)}</p>
+              </div>
+            </div>
+          ))
+        }
       </div>
 
       <div class="dz__foot">
@@ -78,8 +222,9 @@ const legend: State[] = ['ok', 'warn', 'bad', 'selected'];
             ))
           }
         </ul>
-        <p class="dz__total mono">{t.matrix.total(panels, kwp)} <span class="dz__unit">· {t.matrix.unit}</span></p>
+        <p class="dz__total mono">{t.matrix.total(panelsTotal, kwp)} <span class="dz__unit">· {t.matrix.unit}</span></p>
       </div>
+      <p class="dz__hint">{t.matrix.hint} {r.temps(cityName)}</p>
     </figure>
   </div>
 </section>
@@ -175,16 +320,22 @@ const legend: State[] = ['ok', 'warn', 'bad', 'selected'];
     text-align: start;
     padding-inline-start: var(--s-1);
   }
+  .mx__td {
+    padding: 0;
+  }
   .mx__cell {
+    display: grid;
+    place-items: center;
+    width: 100%;
     height: 3.25rem;
     border: 1px solid;
     border-radius: var(--r-1);
-    text-align: center;
     font-size: 0.875rem;
     transition:
       background-color 420ms var(--ease),
       border-color 420ms var(--ease),
-      color 420ms var(--ease);
+      color 420ms var(--ease),
+      box-shadow var(--dur-2) var(--ease);
   }
   .mx__cell--ok {
     background: rgb(46 158 106 / 0.16);
@@ -207,6 +358,14 @@ const legend: State[] = ['ok', 'warn', 'bad', 'selected'];
     color: var(--sun-ink);
     font-weight: 500;
   }
+  .mx__cell[aria-pressed='true'] {
+    box-shadow:
+      0 0 0 2px var(--ink-2),
+      0 0 0 3px var(--paper);
+  }
+  .mx__cell:hover {
+    border-color: var(--paper);
+  }
   .mx.is-armed .mx__cell:not(.is-lit) {
     background: transparent;
     border-color: rgb(255 255 255 / 0.08);
@@ -215,6 +374,120 @@ const legend: State[] = ['ok', 'warn', 'bad', 'selected'];
   .mx.is-armed .mx__cell--selected.is-lit:not(.is-picked) {
     background: rgb(46 158 106 / 0.16);
     border-color: rgb(46 158 106 / 0.8);
+    color: var(--paper);
+  }
+
+  .dz__readouts {
+    display: grid;
+    padding-block: var(--s-4) 0;
+    border-top: 1px solid var(--line-inv);
+  }
+  .dz__readout {
+    display: grid;
+    grid-template-columns: minmax(8rem, 13rem) minmax(0, 1fr);
+    align-items: start;
+    gap: var(--s-5);
+  }
+  .dz__readout[hidden] {
+    display: none;
+  }
+  .dz__string {
+    width: 100%;
+    height: auto;
+  }
+  .dz__panel rect {
+    fill: #2a2a30;
+    stroke: rgb(255 255 255 / 0.45);
+    stroke-width: 1;
+  }
+  .dz__panel line {
+    stroke: var(--line-inv);
+    stroke-width: 1;
+  }
+  .dz__wire {
+    fill: none;
+    stroke: var(--sun);
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    animation: dz-wire 1100ms var(--ease-out-expo) both;
+  }
+  .dz__readout--warn .dz__wire {
+    stroke: var(--warn);
+  }
+  .dz__readout--bad .dz__wire {
+    stroke: var(--bad);
+  }
+  @keyframes dz-wire {
+    from {
+      stroke-dashoffset: 1;
+    }
+  }
+  .dz__ro-body {
+    display: grid;
+    gap: var(--s-3);
+    min-width: 0;
+  }
+  .dz__ro-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-6);
+  }
+  .dz__ro-head > span {
+    display: grid;
+    gap: 2px;
+  }
+  .dz__ro-label {
+    font-size: 0.75rem;
+    color: var(--muted-inv);
+  }
+  .dz__ro-big {
+    font-size: 1.25rem;
+    line-height: 1.2;
+  }
+  .dz__checks {
+    display: grid;
+    border-top: 1px solid var(--line-inv);
+  }
+  .dz__checks li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(5.5rem, auto);
+    align-items: baseline;
+    gap: var(--s-3);
+    padding-block: var(--s-2);
+    border-bottom: 1px solid var(--line-inv);
+    font-size: 0.8125rem;
+    color: var(--muted-inv);
+  }
+  .dz__checks li > .num {
+    font-size: 0.875rem;
+    color: var(--paper);
+    padding-inline-start: var(--s-4);
+    position: relative;
+  }
+  .dz__checks li > .num::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    translate: 0 -50%;
+    background: var(--ok);
+  }
+  .dz__checks li.is-warn > .num::before {
+    background: var(--warn);
+  }
+  .dz__checks li.is-fail > .num::before {
+    background: var(--bad);
+  }
+  .dz__limit {
+    text-align: end;
+  }
+  .dz__verdict {
+    font-size: 0.875rem;
     color: var(--paper);
   }
 
@@ -265,6 +538,10 @@ const legend: State[] = ['ok', 'warn', 'bad', 'selected'];
   .dz__unit {
     color: var(--muted-inv);
   }
+  .dz__hint {
+    font-size: 0.75rem;
+    color: var(--muted-inv);
+  }
 
   @media (max-width: 900px) {
     .dz__grid {
@@ -289,23 +566,80 @@ const legend: State[] = ['ok', 'warn', 'bad', 'selected'];
     .mx__head {
       font-size: 0.75rem;
     }
+    .dz__readout {
+      grid-template-columns: 6.5rem minmax(0, 1fr);
+      gap: var(--s-3) var(--s-4);
+    }
+    .dz__ro-body {
+      display: contents;
+    }
+    .dz__string {
+      grid-row: 1;
+    }
+    .dz__ro-head {
+      grid-column: 2;
+      grid-row: 1;
+      gap: var(--s-2) var(--s-4);
+    }
+    .dz__ro-big {
+      font-size: 1.0625rem;
+    }
+    .dz__checks,
+    .dz__verdict {
+      grid-column: 1 / -1;
+    }
+    .dz__checks li {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .dz__limit {
+      grid-column: 1 / -1;
+      text-align: start;
+      margin-block-start: -4px;
+    }
   }
 </style>
 
 <script>
   import { gsap, ScrollTrigger, reduceMotion } from '../../lib/motion/init.ts';
 
-  const table = document.querySelector<HTMLElement>('[data-matrix]');
-  if (table && !reduceMotion) {
-    const lead = [...table.querySelectorAll<HTMLElement>('[data-cell="lead"]')];
-    const rest = [...table.querySelectorAll<HTMLElement>('[data-cell="rest"]')];
-    const selected = table.querySelector<HTMLElement>('.mx__cell--selected');
-    const light = (el: HTMLElement) => el.classList.add('is-lit');
-    const tl = gsap.timeline({ paused: true });
-    lead.forEach((el, i) => tl.call(light, [el], 0.1 + i * 0.16));
-    rest.forEach((el, i) => tl.call(light, [el], 0.1 + lead.length * 0.16 + Math.floor(i / 5) * 0.1 + (i % 5) * 0.03));
-    if (selected) tl.call(() => selected.classList.add('is-picked'), [], '+=0.35');
-    ScrollTrigger.create({ trigger: table, start: 'top bottom', once: true, onEnter: () => table.classList.add('is-armed') });
-    ScrollTrigger.create({ trigger: table, start: 'top 80%', once: true, onEnter: () => tl.play() });
+  const figure = document.querySelector<HTMLElement>('[data-dz]');
+  const table = figure?.querySelector<HTMLElement>('[data-matrix]');
+
+  if (figure && table) {
+    const buttons = [...table.querySelectorAll<HTMLButtonElement>('[data-key]')];
+    const readouts = new Map(
+      [...figure.querySelectorAll<HTMLElement>('[data-readout]')].map((el) => [el.dataset.readout ?? '', el]),
+    );
+    let current = buttons.find((b) => b.getAttribute('aria-pressed') === 'true')?.dataset.key ?? '';
+
+    const activate = (key: string) => {
+      if (key === current) return;
+      readouts.get(current)?.setAttribute('hidden', '');
+      readouts.get(key)?.removeAttribute('hidden');
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.key === key)));
+      current = key;
+    };
+
+    buttons.forEach((b) => {
+      const key = b.dataset.key ?? '';
+      b.addEventListener('pointerenter', (e) => {
+        if (e.pointerType === 'mouse') activate(key);
+      });
+      b.addEventListener('focus', () => activate(key));
+      b.addEventListener('click', () => activate(key));
+    });
+
+    if (!reduceMotion) {
+      const lead = [...table.querySelectorAll<HTMLElement>('[data-cell="lead"]')];
+      const rest = [...table.querySelectorAll<HTMLElement>('[data-cell="rest"]')];
+      const selected = table.querySelector<HTMLElement>('.mx__cell--selected');
+      const light = (el: HTMLElement) => el.classList.add('is-lit');
+      const tl = gsap.timeline({ paused: true });
+      lead.forEach((el, i) => tl.call(light, [el], 0.1 + i * 0.16));
+      rest.forEach((el, i) => tl.call(light, [el], 0.1 + lead.length * 0.16 + Math.floor(i / 5) * 0.1 + (i % 5) * 0.03));
+      if (selected) tl.call(() => selected.classList.add('is-picked'), [], '+=0.35');
+      ScrollTrigger.create({ trigger: table, start: 'top bottom', once: true, onEnter: () => table.classList.add('is-armed') });
+      ScrollTrigger.create({ trigger: table, start: 'top 80%', once: true, onEnter: () => tl.play() });
+    }
   }
 </script>

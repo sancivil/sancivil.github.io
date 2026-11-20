@@ -22,6 +22,17 @@ export interface ModuleSpec {
   cellType?: 'mono' | 'poly';
   /** Junction box protection class from the datasheet, e.g. IP68. */
   protection?: string;
+  /** Electrical ratings at STC from the datasheet, printed on the rear label. */
+  rating?: Rating;
+}
+
+export interface Rating {
+  vmp: number;
+  imp: number;
+  voc: number;
+  isc: number;
+  vdcMax: number;
+  fuse: number | null;
 }
 
 /** Shape of an entry in src/data/designer/panels.json (fields used here). */
@@ -38,6 +49,12 @@ export interface PanelRecord {
   finish: { code: string; label: string | null } | null;
   cellType?: string;
   protectionClass?: string;
+  vmp?: number | null;
+  imp?: number | null;
+  voc?: number | null;
+  isc?: number | null;
+  vdcMax?: number | null;
+  imaxFuse?: number | null;
 }
 
 /*
@@ -66,5 +83,9 @@ export function specFromPanel(p: PanelRecord): ModuleSpec {
     power: p.power,
     cellType: p.cellType === 'poly' ? 'poly' : 'mono',
     protection: p.protectionClass,
+    rating:
+      p.vmp && p.imp && p.voc && p.isc && p.vdcMax
+        ? { vmp: p.vmp, imp: p.imp, voc: p.voc, isc: p.isc, vdcMax: p.vdcMax, fuse: p.imaxFuse ?? null }
+        : undefined,
   };
 }
