@@ -94,6 +94,29 @@ const en = {
     zoomOut: 'Zoom out',
     hint: 'Drag sideways to turn',
     noWebgl: 'The 3D view needs WebGL, which this browser does not provide.',
+    details: 'Details',
+    spots: 'Details on the model',
+    spot: (n: number, name: string) => `${n}. ${name}`,
+    close: 'Close',
+    plate: { name: 'Rating label', body: 'Electrical ratings at standard test conditions, as printed on the datasheet.' },
+    rows: {
+      power: 'Power',
+      protection: 'Protection class',
+      vdcMax: 'Max system voltage',
+      voc: 'Open-circuit voltage',
+      isc: 'Short-circuit current',
+      fuse: 'Max series fuse',
+    },
+  },
+  sun: {
+    title: 'Sun over Sulaymaniyah',
+    group: 'Sunlight on the module',
+    scrub: 'Time of day',
+    night: 'Night',
+    hint: 'Drag to see the day',
+    live: 'Live',
+    value: (time: string, elevation: number | null) =>
+      elevation === null ? `${time}, sun below the horizon` : `${time}, sun ${elevation}° above the horizon`,
   },
 };
 
@@ -186,6 +209,29 @@ const ar: ThreeStrings = {
     zoomOut: 'تصغير',
     hint: 'اسحب أفقيًا للتدوير',
     noWebgl: 'يحتاج العرض ثلاثي الأبعاد إلى WebGL، وهو غير متاح في هذا المتصفح.',
+    details: 'التفاصيل',
+    spots: 'تفاصيل على النموذج',
+    spot: (n, name) => `${ltr(n)}. ${name}`,
+    close: 'إغلاق',
+    plate: { name: 'ملصق البيانات', body: 'القيم الكهربائية في ظروف الاختبار القياسية، كما في ورقة البيانات الفنية.' },
+    rows: {
+      power: 'القدرة',
+      protection: 'درجة الحماية',
+      vdcMax: 'أقصى جهد للنظام',
+      voc: 'جهد الدائرة المفتوحة',
+      isc: 'تيار الدائرة القصيرة',
+      fuse: 'أقصى منصهر للسلسلة',
+    },
+  },
+  sun: {
+    title: 'الشمس فوق السليمانية',
+    group: 'ضوء الشمس على اللوح',
+    scrub: 'وقت اليوم',
+    night: 'ليل',
+    hint: 'اسحب لرؤية النهار',
+    live: 'مباشر',
+    value: (time, elevation) =>
+      elevation === null ? `${ltr(time)}، الشمس تحت الأفق` : `${ltr(time)}، ارتفاع الشمس ${ltr(`${elevation}°`)} فوق الأفق`,
   },
 };
 
@@ -275,6 +321,29 @@ const ckb: ThreeStrings = {
     zoomOut: 'دوورخستنەوە',
     hint: 'بە ئاسۆیی ڕایبکێشە بۆ سووڕاندن',
     noWebgl: 'پیشاندانی سێ ڕەهەندی پێویستی بە WebGL هەیە، کە ئەم وێبگەڕە نییەتی.',
+    details: 'وردەکاری',
+    spots: 'وردەکاری لەسەر مۆدێلەکە',
+    spot: (n, name) => `${ltr(n)}. ${name}`,
+    close: 'داخستن',
+    plate: { name: 'لەیبڵی زانیاری', body: 'نرخە کارەباییەکان لە بارودۆخی تاقیکردنەوەی ستاندارد، وەک لە داتاشیتدا هاتووە.' },
+    rows: {
+      power: 'توانا',
+      protection: 'پلەی پاراستن',
+      vdcMax: 'زۆرترین ڤۆڵتی سیستەم',
+      voc: 'ڤۆڵتی بازنەی کراوە',
+      isc: 'تەوژمی بازنەی کورت',
+      fuse: 'زۆرترین فیوزی زنجیرە',
+    },
+  },
+  sun: {
+    title: 'خۆر لە ئاسمانی سلێمانی',
+    group: 'تیشکی خۆر لەسەر پانێڵەکە',
+    scrub: 'کاتی ڕۆژ',
+    night: 'شەو',
+    hint: 'ڕایبکێشە بۆ بینینی ڕۆژ',
+    live: 'ڕاستەوخۆ',
+    value: (time, elevation) =>
+      elevation === null ? `${ltr(time)}، خۆر لە ژێر ئاسۆیە` : `${ltr(time)}، خۆر ${ltr(`${elevation}°`)} لە سەرووی ئاسۆیە`,
   },
 };
 

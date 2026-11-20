@@ -2438,3 +2438,612 @@
     display: none;
   }
 }
+
+/* ---------- string diagram ---------- */
+
+.dz-diagram {
+  margin-top: var(--s-5);
+  padding: var(--s-4) var(--s-5);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-2);
+}
+.dz-diagram__scroll {
+  overflow-x: auto;
+  margin-top: var(--s-2);
+}
+.dz-diagram__svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+  direction: ltr;
+}
+.dz-c0 { --c: #2f62c8; }
+.dz-c1 { --c: #0f8b8d; }
+.dz-c2 { --c: #8a4fc7; }
+.dz-c3 { --c: #b8467f; }
+.dz-c4 { --c: #4f5d75; }
+.dz-c5 { --c: #8c5a3c; }
+.dz-c6 { --c: #1e7fae; }
+.dz-c7 { --c: #4b4fc4; }
+.dz-c8 { --c: #6b7a1f; }
+.dz-c9 { --c: #c2415d; }
+.dz-c10 { --c: #3d7a66; }
+.dz-c11 { --c: #7d3c98; }
+.dz-diagram__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  fill: var(--c);
+}
+.dz-diagram__mod rect {
+  fill: #18202e;
+  stroke: #3a4559;
+  stroke-width: 1;
+  transition:
+    fill var(--dur-2) var(--ease),
+    stroke var(--dur-2) var(--ease);
+}
+.dz-diagram__mod path {
+  stroke: rgb(255 255 255 / 0.22);
+  stroke-width: 0.75;
+}
+.dz-diagram__link,
+.dz-diagram__wire,
+.dz-diagram__stub {
+  fill: none;
+  stroke-width: 1.5;
+}
+.dz-diagram__link,
+.dz-diagram__wire {
+  stroke: var(--c);
+}
+.dz-diagram__wire.is-minus {
+  stroke-dasharray: 3 2;
+}
+.dz-diagram__stub {
+  stroke: var(--line-strong);
+  stroke-dasharray: 2 3;
+}
+.dz-diagram__more {
+  font-size: 13px;
+  font-weight: 600;
+  fill: var(--ink);
+}
+.dz-diagram__empty {
+  font-size: 12px;
+  fill: var(--muted);
+}
+.dz-diagram__box {
+  fill: var(--ink);
+}
+.dz-diagram__model {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  fill: var(--paper);
+}
+.dz-diagram__count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--sun);
+}
+.dz-diagram__port {
+  fill: var(--c);
+}
+.dz-diagram__group.is-empty .dz-diagram__port {
+  fill: var(--ink);
+  stroke: var(--muted-inv);
+}
+.dz-diagram__pole {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  fill: var(--muted-inv);
+}
+.dz-diagram__input {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--paper);
+}
+.dz-diagram__group.is-empty .dz-diagram__input {
+  fill: var(--muted-inv);
+}
+.dz-diagram__group.is-bad .dz-diagram__label {
+  fill: var(--bad);
+}
+.dz-diagram__group.is-lit .dz-diagram__mod rect {
+  fill: #263652;
+  stroke: var(--sun);
+}
+.dz-diagram__group.is-lit .dz-diagram__wire.is-plus {
+  stroke-width: 2;
+  stroke-dasharray: 5 4;
+  animation: dz-flow 0.9s linear infinite;
+}
+.dz-diagram__group.is-lit .dz-diagram__port {
+  fill: var(--sun);
+}
+@keyframes dz-flow {
+  from {
+    stroke-dashoffset: 9;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.dz-diagram__key {
+  margin-top: var(--s-2);
+  color: var(--muted);
+}
+
+/* ---------- voltage ruler ---------- */
+
+.dz-ruler {
+  margin-block: var(--s-4) var(--s-5);
+  padding: var(--s-4) var(--s-5);
+  background: var(--paper-2);
+  border-radius: var(--r-1);
+}
+.dz-ruler .dz-subtitle {
+  margin-bottom: var(--s-3);
+}
+.dz-ruler__lanes {
+  display: grid;
+  gap: var(--s-2);
+}
+.dz-ruler__lane {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: end;
+  column-gap: var(--s-3);
+}
+.dz-ruler__name {
+  font-size: 0.75rem;
+  line-height: 12px;
+  color: var(--muted);
+}
+.dz-ruler__plot {
+  position: relative;
+  padding-top: calc(var(--rows, 1) * 14px + 4px);
+}
+.dz-ruler__tick {
+  position: absolute;
+  top: calc(var(--row, 0) * 14px);
+  transform: translateX(-50%);
+  font-size: 0.6875rem;
+  line-height: 14px;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.dz-ruler__tick.is-start {
+  transform: none;
+}
+.dz-ruler__tick.is-end {
+  transform: translateX(-100%);
+}
+.dz-ruler__track {
+  position: relative;
+  height: 12px;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  border-radius: 1px;
+}
+.dz-ruler__band {
+  position: absolute;
+  inset-block: 0;
+  background: rgb(46 158 106 / 0.16);
+  box-shadow:
+    inset 1px 0 0 rgb(46 158 106 / 0.7),
+    inset -1px 0 0 rgb(46 158 106 / 0.7);
+}
+.dz-ruler__limit {
+  position: absolute;
+  top: -4px;
+  bottom: -2px;
+  width: 1px;
+  margin-inline-start: -0.5px;
+  background: var(--ink);
+}
+.dz-ruler__bar {
+  position: absolute;
+  top: 3px;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--ok);
+  transition:
+    inset-inline-start var(--dur-3) var(--ease-out-expo),
+    width var(--dur-3) var(--ease-out-expo),
+    background-color var(--dur-2) var(--ease);
+}
+.dz-ruler__lane.is-fail .dz-ruler__bar {
+  background: var(--bad);
+}
+.dz-ruler__axis {
+  display: flex;
+  justify-content: space-between;
+  margin-inline-start: calc(34px + var(--s-3));
+  font-size: 0.6875rem;
+  color: var(--muted);
+}
+.dz-ruler__read {
+  display: grid;
+  gap: 6px;
+  margin: var(--s-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.dz-ruler__read li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px var(--s-3);
+  font-size: 0.875rem;
+}
+.dz-ruler__read .mono {
+  min-width: 2.4em;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.dz-ruler__read .num {
+  font-weight: 500;
+}
+.dz-ruler__verdict {
+  color: var(--muted);
+}
+.dz-ruler__read li.is-fail .dz-ruler__verdict {
+  color: var(--dz-bad-text);
+}
+.dz-ruler__meter {
+  position: relative;
+  display: inline-block;
+  width: 72px;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 1px;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.dz-ruler__meter span {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  background: var(--ok);
+  transition: width var(--dur-3) var(--ease-out-expo);
+}
+.dz-ruler__read li.is-fail .dz-ruler__meter span {
+  background: var(--bad);
+}
+.dz-ruler__note {
+  margin-top: var(--s-3);
+  color: var(--muted);
+}
+
+/* ---------- summary dashboard ---------- */
+
+.dz-dash {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  background: var(--line-strong);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-2);
+}
+.dz-dash__tile {
+  display: grid;
+  align-content: space-between;
+  gap: var(--s-4);
+  min-height: 156px;
+  padding: var(--s-5);
+  background: var(--paper);
+}
+.dz-dash__tile--peak {
+  background: var(--ink);
+  color: var(--paper);
+}
+.dz-dash__label {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+.dz-dash__tile--peak .dz-dash__label {
+  color: var(--muted-inv);
+}
+.dz-dash__fig {
+  font-size: clamp(1.75rem, 1.1rem + 2vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1;
+}
+.dz-dash__fig .unit {
+  margin-inline-start: 0.2em;
+  font-size: 0.5em;
+  opacity: 0.72;
+}
+.dz-dash__tile--peak .dz-dash__fig {
+  color: var(--sun);
+}
+.dz-dash__gauge {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--s-2) var(--s-4);
+}
+.dz-dash__note {
+  margin-top: calc(-1 * var(--s-2));
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+.dz-dash__counts {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  background: var(--line-strong);
+}
+.dz-dash__counts .dz-kpi {
+  display: grid;
+  gap: 2px;
+  padding: var(--s-4) var(--s-5);
+  background: var(--paper);
+}
+.dz-dash__counts dt {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+.dz-dash__counts dd {
+  font-size: 1.375rem;
+  font-weight: 500;
+}
+.dz-gauge {
+  flex: none;
+  width: 104px;
+  height: auto;
+  overflow: visible;
+}
+.dz-gauge__track,
+.dz-gauge__band {
+  fill: none;
+  stroke-width: 8;
+}
+.dz-gauge__track {
+  stroke: var(--paper-3);
+}
+.dz-gauge__band {
+  stroke: rgb(46 158 106 / 0.6);
+}
+.dz-gauge__mark {
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+.dz-gauge__needle {
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.dz-gauge.is-amber .dz-gauge__needle {
+  stroke: var(--warn);
+}
+.dz-gauge__hub {
+  fill: var(--ink);
+}
+.dz-dash > * {
+  animation: dz-wipe 0.8s var(--ease-out-expo) both;
+}
+.dz-dash > :nth-child(2) {
+  animation-delay: 90ms;
+}
+.dz-dash > :nth-child(3) {
+  animation-delay: 180ms;
+}
+.dz-dash > :nth-child(4) {
+  animation-delay: 270ms;
+}
+@keyframes dz-wipe {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+@container (max-width: 760px) {
+  .dz-dash {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .dz-dash__tile--peak {
+    grid-column: 1 / -1;
+    min-height: 0;
+  }
+}
+@container (max-width: 440px) {
+  .dz-dash {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dz-dash__tile {
+    min-height: 0;
+  }
+  .dz-dash__counts .dz-kpi {
+    padding: var(--s-3) var(--s-4);
+  }
+  .dz-dash__counts dd {
+    font-size: 1.125rem;
+  }
+}
+
+/* ---------- product card and picker thumbnails ---------- */
+
+.dz-modcard {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: var(--s-5);
+  align-items: center;
+  margin-top: var(--s-5);
+  padding: var(--s-4) var(--s-5);
+  background: var(--paper-2);
+  border-radius: var(--r-2);
+}
+.dz-modcard.is-plain {
+  grid-template-columns: minmax(0, 1fr);
+}
+.dz-modcard__well img {
+  display: block;
+  width: 100%;
+  height: 208px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  animation: dz-wipe 0.7s var(--ease-out-expo) both;
+}
+.dz-modcard__model {
+  margin-bottom: var(--s-3);
+  font-size: 1rem;
+  font-weight: 600;
+}
+.dz-modcard .dz-specs {
+  margin-top: 0;
+  padding: 0;
+  background: none;
+}
+.dz-pick__thumb {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+}
+.dz-pick__thumb img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+.dz-pick.has-thumbs .dz-pick__value {
+  flex: 1;
+}
+.dz-pick.has-thumbs .dz-pick__opt {
+  grid-template-columns: 32px auto minmax(0, 1fr) 16px;
+  align-items: center;
+  padding-block: 6px;
+}
+@media (max-width: 520px) {
+  .dz-modcard {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: var(--s-4);
+    padding: var(--s-4);
+  }
+  .dz-modcard__well img {
+    height: 156px;
+  }
+  .dz-diagram,
+  .dz-ruler {
+    padding-inline: var(--s-4);
+  }
+  .dz-pick.has-thumbs .dz-pick__opt {
+    grid-template-columns: 32px minmax(0, 1fr) 16px;
+  }
+  .dz-pick.has-thumbs .dz-pick__opt .dz-pick__meta {
+    grid-column: 2;
+    text-align: start;
+  }
+}
+
+/* ---------- step and matrix motion ---------- */
+
+.dz-work {
+  overflow-x: clip;
+}
+.dz-step-view {
+  --dz-from: 28px;
+  animation: dz-step 0.55s var(--ease-out-expo) both;
+}
+.dz-work[data-dir='back'] .dz-step-view {
+  --dz-from: -28px;
+}
+[dir='rtl'] .dz-step-view {
+  --dz-from: -28px;
+}
+[dir='rtl'] .dz-work[data-dir='back'] .dz-step-view {
+  --dz-from: 28px;
+}
+@keyframes dz-step {
+  from {
+    opacity: 0;
+    transform: translateX(var(--dz-from));
+  }
+}
+.dz-cell {
+  transition:
+    background-color var(--dur-1) var(--ease),
+    border-color var(--dur-1) var(--ease),
+    color var(--dur-1) var(--ease),
+    transform var(--dur-1) var(--ease);
+}
+.dz-cell:not(.is-invalid):active {
+  transform: scale(0.94);
+}
+.dz-cell.is-selected {
+  animation: dz-seat 0.45s var(--ease-out-expo);
+}
+@keyframes dz-seat {
+  from {
+    transform: scale(0.88);
+  }
+}
+
+@media print {
+  .dz-step-view,
+  .dz-dash > *,
+  .dz-modcard__well img {
+    animation: none !important;
+  }
+  .dz-diagram,
+  .dz-ruler,
+  .dz-dash {
+    break-inside: avoid;
+  }
+  .dz-diagram {
+    padding: 3mm 4mm;
+  }
+  .dz-diagram__svg {
+    max-height: 120mm;
+    width: auto;
+  }
+  .dz-diagram__group.is-lit .dz-diagram__wire.is-plus {
+    animation: none;
+    stroke-dasharray: none;
+  }
+  .dz-ruler {
+    padding: 3mm 4mm;
+  }
+  .dz-dash {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .dz-dash__tile {
+    min-height: 0;
+    padding: 4mm;
+  }
+  .dz-dash__fig {
+    font-size: 18pt;
+  }
+  .dz-dash__counts .dz-kpi {
+    padding: 3mm 4mm;
+  }
+  .dz-dash__counts dd {
+    font-size: 12pt;
+  }
+  .dz-dash,
+  .dz-dash__tile--peak,
+  .dz-diagram__svg,
+  .dz-ruler,
+  .dz-ruler__track,
+  .dz-ruler__band,
+  .dz-ruler__bar,
+  .dz-ruler__meter span,
+  .dz-gauge {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

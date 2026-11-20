@@ -12,6 +12,7 @@ import { Wordmark } from './Wordmark.tsx';
 import { configLabel, groupName, panelLabel } from './labels.ts';
 import { cityName, project, summary, useI18n } from './store.ts';
 import { Dot, Icon, Num } from './ui.tsx';
+import { RatioGauge, StringDiagram, VoltageRuler, useTween } from './Visuals.tsx';
 
 export const today = () => new Date().toISOString().slice(0, 10);
 
@@ -104,14 +105,60 @@ export function QuoteBox({ link }: { link: () => string }) {
   );
 }
 
-function Kpi({ label, v, u, tone }: { label: string; v: string; u?: string; tone?: 'green' | 'amber' | null }) {
+function Kpi({ label, v, u }: { label: string; v: string; u?: string }) {
   return (
     <div class="dz-kpi">
       <dt>{label}</dt>
       <dd>
-        {tone && <Dot tone={tone} />}
         <Num v={v} u={u} />
       </dd>
+    </div>
+  );
+}
+
+/** Key figures of the design; they count to their values on screen and print as final values. */
+function Dashboard({ s, est, still }: { s: ProjectSummary; est: ReturnType<typeof estimateFor>; still: boolean }) {
+  const { t } = useI18n();
+  const connected = s.connectedW > 0;
+  const kwp = useTween(s.installedW / 1000, 900, still);
+  const kwh = useTween(est ? est.annual : NaN, 1100, still);
+  const ratio = useTween(connected ? s.ratio : NaN, 1100, still);
+  const fed = s.blocks.filter((b) => b.inv && b.pvW > 0).map((b) => b.inv!);
+  const same = fed.length > 0 && fed.every((i) => i.percPmaxCc === fed[0].percPmaxCc && i.percPminCc === fed[0].percPminCc);
+  const range: [number, number] | null = same ? [fed[0].percPmaxCc, fed[0].percPminCc] : null;
+  const tone = connected ? (s.blocks.every((b) => b.tone !== 'amber') ? 'green' : 'amber') : null;
+  return (
+    <div class="dz-dash">
+      <div class="dz-dash__tile dz-dash__tile--peak">
+        <p class="dz-dash__label">{t.summary.peak}</p>
+        <p class="dz-dash__fig">
+          <Num v={fmt(kwp, 2)} u="kWp" />
+        </p>
+      </div>
+      <div class="dz-dash__tile">
+        <p class="dz-dash__label">{t.dash.yearly}</p>
+        <p class="dz-dash__fig">
+          <Num v={est ? fmt(kwh) : '–'} u="kWh" />
+        </p>
+      </div>
+      <div class="dz-dash__tile dz-dash__tile--ratio">
+        <p class="dz-dash__label">
+          {tone && <Dot tone={tone} />}
+          {t.summary.ratio}
+        </p>
+        <div class="dz-dash__gauge">
+          <RatioGauge ratio={connected ? s.ratio : NaN} range={range} tone={tone} still={still} />
+          <p class="dz-dash__fig">
+            <Num v={connected ? fmt(ratio * 100, 2) : '–'} u="%" />
+          </p>
+        </div>
+        {range && <p class="dz-dash__note">{t.dash.range(unit(`${pct(range[0], 0)}–${pct(range[1], 0)}`, '%'))}</p>}
+      </div>
+      <dl class="dz-dash__counts">
+        <Kpi label={t.summary.panels} v={fmt(s.panelsTotal)} />
+        <Kpi label={t.summary.inverters} v={fmt(s.invertersTotal)} />
+        <Kpi label={t.summary.ac} v={kw(s.acW)} u="kW" />
+      </dl>
     </div>
   );
 }
@@ -185,18 +232,7 @@ export function Report({ printOnly }: { printOnly?: boolean }) {
 
       <section class="dz-rsec">
         <h4 class="dz-rsec__title">{t.summary.system}</h4>
-        <dl class="dz-kpis dz-kpis--report">
-          <Kpi label={t.summary.panels} v={fmt(s.panelsTotal)} />
-          <Kpi label={t.summary.inverters} v={fmt(s.invertersTotal)} />
-          <Kpi label={t.summary.peak} v={kw(s.installedW)} u="kWp" />
-          <Kpi label={t.summary.ac} v={kw(s.acW)} u="kW" />
-          <Kpi
-            label={t.summary.ratio}
-            v={s.connectedW > 0 ? pct(s.ratio) : '–'}
-            u="%"
-            tone={s.blocks.every((b) => b.tone !== 'amber') ? 'green' : 'amber'}
-          />
-        </dl>
+        <Dashboard s={s} est={est} still={!!printOnly} />
       </section>
 
       <section class="dz-rsec">
@@ -388,6 +424,7 @@ export function Report({ printOnly }: { printOnly?: boolean }) {
                   </span>
                 )}
               </p>
+              <StringDiagram b={b} />
               {b.groups
                 .filter((g) => g.cell)
                 .map((g) => {
@@ -402,6 +439,7 @@ export function Report({ printOnly }: { printOnly?: boolean }) {
                           {g.sel.strings} × {g.sel.series} · {fmt(g.cell!.power)} W
                         </span>
                       </p>
+                      {temps && <VoltageRuler cell={g.cell!} temps={temps} />}
                       {temps && <CheckTable cell={g.cell!} temps={temps} />}
                     </div>
                   );

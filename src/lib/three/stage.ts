@@ -38,9 +38,11 @@ export function createRenderer(canvas: HTMLCanvasElement) {
 /**
  * Reflections from a product studio: a dark cyclorama with a large overhead softbox, two tall strip
  * boxes in front at the sides, a low strip under the camera and a warm strip behind. Glass and frame
- * edges pick up their long highlights.
+ * edges pick up their long highlights. `rtl` mirrors the room so mirrored scenes reflect the same
+ * strips (otherwise a turned module picks up the warm strip instead of the cool one).
  */
-export function environment(renderer: WebGLRenderer): Texture {
+export function environment(renderer: WebGLRenderer, rtl = false): Texture {
+  const side = rtl ? -1 : 1;
   const scene = new Scene();
   const owned: { dispose(): void }[] = [];
   const add = (geometry: BufferGeometry, color: number, intensity: number, place: (m: Mesh) => void, side: Side = DoubleSide) => {
@@ -52,7 +54,7 @@ export function environment(renderer: WebGLRenderer): Texture {
     owned.push(geometry, material);
   };
   const face = (x: number, y: number, z: number) => (m: Mesh) => {
-    m.position.set(x, y, z);
+    m.position.set(side * x, y, z);
     m.lookAt(0, 0.4, 0);
   };
   add(new BoxGeometry(16, 10, 16), 0x17181b, 0.5, (m) => m.position.set(0, 3, 0), BackSide);
@@ -81,6 +83,7 @@ export function addLights(scene: Scene, rtl: boolean, key = 2.6, rim = 1.5) {
   const rimLight = new DirectionalLight(0xfff0d8, rim);
   rimLight.position.set(4 * side, 2.5, -3);
   scene.add(keyLight, rimLight);
+  return { key: keyLight, rim: rimLight };
 }
 
 /** Distance along +Z (camera looking at the origin) that keeps every point inside the frame. */

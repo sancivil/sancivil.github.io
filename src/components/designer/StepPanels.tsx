@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'preact/hooks';
 import { findPanel } from '../../lib/designer/calc.ts';
-import { catalog, panels, seriesRank } from '../../lib/designer/data.ts';
+import { catalog, panelRender, panels, seriesRank } from '../../lib/designer/data.ts';
 import { fmt, kw, ltr } from '../../lib/designer/format.ts';
 import { MAX_COUNT, addCustomPanel, addSubArray, removeSubArray, updateSubArray } from '../../lib/designer/project.ts';
 import type { Panel, SubArray } from '../../lib/designer/types.ts';
@@ -34,6 +34,27 @@ function PanelSpecs({ panel }: { panel: Panel }) {
         </div>
       ))}
     </dl>
+  );
+}
+
+/** The chosen model: its series' studio render (when there is one) beside the datasheet figures. */
+function PanelCard({ panel }: { panel: Panel }) {
+  const { t } = useI18n();
+  const src = panelRender(panel);
+  return (
+    <div class={`dz-modcard${src ? '' : ' is-plain'}`} key={panel.id}>
+      {src && (
+        <div class="dz-modcard__well">
+          <img src={src} width="188" height="400" alt={t.dash.renderAlt(ltr(panel.series))} loading="lazy" decoding="async" />
+        </div>
+      )}
+      <div class="dz-modcard__body">
+        <p class="dz-modcard__model mono" dir="ltr">
+          {panelLabel(panel)}
+        </p>
+        <PanelSpecs panel={panel} />
+      </div>
+    </div>
   );
 }
 
@@ -173,6 +194,7 @@ function SubArrayBlock({ subArray, index, canRemove }: { subArray: SubArray; ind
         label: c.model,
         meta: panelMeta(c),
         search: searchKey(c.model, c.power, 'custom'),
+        thumb: null,
       })),
       ...sortedPanels.map((m) => ({
         id: m.id,
@@ -180,6 +202,7 @@ function SubArrayBlock({ subArray, index, canRemove }: { subArray: SubArray; ind
         label: panelLabel(m),
         meta: panelMeta(m),
         search: searchKey(panelLabel(m), m.power, `${m.power}w`, m.efficiency ? (m.efficiency * 100).toFixed(2) : null, m.bifacial ? 'bifacial' : null),
+        thumb: panelRender(m),
       })),
     ],
     [p.customPanels, t],
@@ -256,7 +279,7 @@ function SubArrayBlock({ subArray, index, canRemove }: { subArray: SubArray; ind
         </div>
       </div>
 
-      {panel && <PanelSpecs panel={panel} />}
+      {panel && <PanelCard panel={panel} />}
 
       {customOpen ? (
         <CustomPanelForm subArray={subArray} onDone={() => setCustomOpen(false)} />

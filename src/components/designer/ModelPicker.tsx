@@ -3,7 +3,11 @@ import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { useI18n } from './store.ts';
 import { Icon } from './ui.tsx';
 
-export type PickerOption = { id: string; group: string; label: string; meta: string; search: string };
+export type PickerOption = { id: string; group: string; label: string; meta: string; search: string; thumb?: string | null };
+
+function Thumb({ src }: { src: string | null | undefined }) {
+  return <span class="dz-pick__thumb">{src && <img src={src} width="40" height="40" alt="" loading="lazy" decoding="async" />}</span>;
+}
 
 type Props = {
   id: string;
@@ -38,6 +42,7 @@ export function ModelPicker({ id, value, options, placeholder, searchLabel, noRe
   }, [query, options]);
 
   const selected = options.find((o) => o.id === value);
+  const thumbs = options.some((o) => o.thumb !== undefined);
 
   const close = (focusTrigger: boolean) => {
     setOpen(false);
@@ -89,7 +94,7 @@ export function ModelPicker({ id, value, options, placeholder, searchLabel, noRe
 
   let lastGroup = '';
   return (
-    <div class={`dz-pick${open ? ' is-open' : ''}`} ref={root}>
+    <div class={`dz-pick${open ? ' is-open' : ''}${thumbs ? ' has-thumbs' : ''}`} ref={root}>
       <button
         type="button"
         id={id}
@@ -101,6 +106,7 @@ export function ModelPicker({ id, value, options, placeholder, searchLabel, noRe
         aria-describedby={describedBy}
         onClick={() => (open ? close(false) : setOpen(true))}
       >
+        {thumbs && selected && <Thumb src={selected.thumb} />}
         {selected ? (
           <span class="dz-pick__value">
             <span class="dz-pick__label mono" dir="ltr">
@@ -169,6 +175,7 @@ export function ModelPicker({ id, value, options, placeholder, searchLabel, noRe
                   onPointerMove={() => setActive(i)}
                   onClick={() => pick(o)}
                 >
+                  {thumbs && <Thumb src={o.thumb} />}
                   <span class="dz-pick__label mono" dir="ltr">
                     {o.label}
                   </span>

@@ -5,6 +5,7 @@ import type { GroupSel, Temps } from '../../lib/designer/types.ts';
 import { checkLimit, checkQty, checkSentence, checkValue } from './labels.ts';
 import { useI18n } from './store.ts';
 import { Icon } from './ui.tsx';
+import { VoltageRuler } from './Visuals.tsx';
 
 type Props = {
   id: string;
@@ -202,6 +203,7 @@ export function Matrix({ id, name, ctx, sel, temps, onSelect }: Props) {
           </>
         )}
       </p>
+      {probed && probed.state === 'invalid' && <VoltageRuler cell={probed} temps={temps} />}
 
       <ul class="dz-legend" role="list">
         <li class="dz-legend__key">

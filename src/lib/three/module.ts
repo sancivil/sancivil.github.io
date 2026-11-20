@@ -8,6 +8,7 @@ import {
   DoubleSide,
   BufferGeometry,
   CircleGeometry,
+  Color,
   ExtrudeGeometry,
   Group,
   LatheGeometry,
@@ -45,6 +46,17 @@ export const LAYERS = ['glass', 'encapsulant', 'cells', 'rearEncapsulant', 'back
 
 type Uniform = { value: number };
 
+/** Hotspot anchors for the viewer, keyed by the part they point at. */
+export type MarkKey = 'glass' | 'cells' | 'frame' | 'junction' | 'label';
+export interface Mark {
+  /** Layer the point rides on while the stack separates. */
+  layer: number;
+  /** Point in layer space (mirror x for RTL). */
+  at: Vector3;
+  /** 1 = on the front face (+z), -1 = on the rear. */
+  face: 1 | -1;
+}
+
 export interface PvModule {
   root: Group;
   layers: Group[];
@@ -53,6 +65,9 @@ export interface PvModule {
   sweep: Uniform;
   sweepStrength: Uniform;
   sweepFlip: Uniform;
+  /** Colour of the light band (linear RGB). */
+  sweepTint: { value: Color };
+  marks: Record<MarkKey, Mark>;
   setExplode(t: number | readonly number[]): void;
   /** Corner points of every layer in module space for an explode state, for camera framing. */
   points(t: number | readonly number[]): Vector3[];
@@ -116,8 +131,9 @@ function tintedGlass(color: string) {
 }
 
 /** Light band across the glass; `slope` weights uv.y so the band runs diagonally on the real module shape. */
-function addSweep(m: MeshPhysicalMaterial, band: Uniform, strength: Uniform, flip: Uniform, slope: Uniform) {
+function addSweep(m: MeshPhysicalMaterial, band: Uniform, strength: Uniform, flip: Uniform, slope: Uniform, tint: { value: Color }) {
   m.onBeforeCompile = (shader) => {
+    shader.uniforms.uSweepTint = tint;
     shader.uniforms.uSweep = band;
     shader.uniforms.uSweepStrength = strength;
     shader.uniforms.uSweepFlip = flip;
@@ -128,14 +144,14 @@ function addSweep(m: MeshPhysicalMaterial, band: Uniform, strength: Uniform, fli
     shader.fragmentShader = shader.fragmentShader
       .replace(
         '#include <common>',
-        '#include <common>\nvarying vec2 vSweepUv;\nuniform float uSweep;\nuniform float uSweepStrength;\nuniform float uSweepFlip;\nuniform float uSweepSlope;',
+        '#include <common>\nvarying vec2 vSweepUv;\nuniform float uSweep;\nuniform float uSweepStrength;\nuniform float uSweepFlip;\nuniform float uSweepSlope;\nuniform vec3 uSweepTint;',
       )
       .replace(
         '#include <opaque_fragment>',
         'float sweepX = mix(vSweepUv.x, 1.0 - vSweepUv.x, uSweepFlip);\n' +
           'float sweepD = (sweepX + vSweepUv.y * uSweepSlope) / (1.0 + uSweepSlope) - uSweep;\n' +
           'float sweepBand = exp(-sweepD * sweepD * 520.0) + 0.14 * exp(-sweepD * sweepD * 60.0);\n' +
-          'outgoingLight += vec3(1.0, 0.96, 0.88) * uSweepStrength * sweepBand;\n' +
+          'outgoingLight += uSweepTint * uSweepStrength * sweepBand;\n' +
           '#include <opaque_fragment>',
       );
   };
@@ -261,8 +277,9 @@ export function buildModule(spec: ModuleSpec, opts: BuildOptions): PvModule {
   const sweep = { value: -1 };
   const sweepStrength = { value: 0 };
   const sweepFlip = { value: 0 };
+  const sweepTint = { value: new Color(1, 0.96, 0.88) };
   const glassFace = mat(spec.tint === 'standard' ? clearGlass() : tintedGlass(GLASS_TINTS[spec.tint]), 0.26);
-  addSweep(glassFace, sweep, sweepStrength, sweepFlip, { value: (H / W) * 0.55 });
+  addSweep(glassFace, sweep, sweepStrength, sweepFlip, { value: (H / W) * 0.55 }, sweepTint);
   const glassEdge = mat(
     new MeshPhysicalMaterial({ color: '#cfe3dc', roughness: 0.2, transparent: true, opacity: 0.55, depthWrite: false }),
     0.6,
@@ -575,6 +592,14 @@ export function buildModule(spec: ModuleSpec, opts: BuildOptions): PvModule {
     sweep,
     sweepStrength,
     sweepFlip,
+    sweepTint,
+    marks: {
+      glass: { layer: 0, at: new Vector3(-0.2 * W, 0.3 * H, zTop + 0.2 * MM), face: 1 },
+      cells: { layer: 2, at: new Vector3(0.17 * W, -0.14 * H, zCells + 0.1 * MM), face: 1 },
+      frame: { layer: 5, at: new Vector3(W / 2 - 0.006, H / 2 - 0.006, D / 2), face: 1 },
+      junction: { layer: 6, at: boxes[Math.floor(boxes.length / 2)].clone(), face: -1 },
+      label: { layer: 4, at: new Vector3(0, label.position.y, zBack - 0.6 * MM), face: -1 },
+    },
     setExplode(t) {
       layers.forEach((layer, i) => {
         layer.position.z = offsets[i] * at(t, i);

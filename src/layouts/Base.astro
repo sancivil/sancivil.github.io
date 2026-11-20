@@ -161,10 +161,26 @@ const organization = {
         var d = document.documentElement;
         d.classList.remove('no-js');
         d.classList.add('js');
-        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('motion');
+        var motion = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (motion) d.classList.add('motion');
         setTimeout(function () {
           d.classList.add('motion-ready');
         }, 2500);
+        try {
+          if (motion && !sessionStorage.getItem('faraday-intro')) {
+            sessionStorage.setItem('faraday-intro', '1');
+            d.classList.add('logo-intro');
+            setTimeout(function () {
+              d.classList.remove('logo-intro');
+            }, 1400);
+          }
+        } catch (e) {}
+        window.addEventListener('pagereveal', function (e) {
+          var vt = e.viewTransition;
+          var nav = window.navigation && window.navigation.activation;
+          if (!vt || !vt.types || !nav || nav.navigationType !== 'traverse' || !nav.from || !nav.entry) return;
+          if (nav.entry.index < nav.from.index) vt.types.add('back');
+        });
       })();
     </script>
     <slot name="head" />

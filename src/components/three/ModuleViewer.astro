@@ -7,13 +7,18 @@
   attribute at runtime rebuilds the module (used by model pickers on product pages).
   Fills its parent width. The stage is 4/3 (1/1 under 720px, where the toolbar moves below it)
   on --paper-2 with a soft contact shadow, and draws its own controls (front / back / explode /
-  dimensions / zoom / reset). Touch: vertical swipes scroll the page, horizontal drags turn the
+  dimensions / details / zoom / reset). Touch: vertical swipes scroll the page, horizontal drags turn the
   module, no pinch capture. Without JS or WebGL it shows a front elevation with model and size.
+  Details: five numbered hotspots ride on 3D points (front glass, cells, frame corner, junction box,
+  rear label) and fade out when their face turns away. Click, tap or keyboard focus opens a card with
+  the sourced anatomy caption and the model's data (power, protection class, label ratings); focusing
+  a hotspot on the far side turns the module round. Esc closes. On by default, off on phones (≤720px).
 */
 import type { Locale } from '../../i18n/config.ts';
 import { localeFromPath } from '../../i18n/config.ts';
 import { three } from '../../i18n/three.ts';
 import { moduleSvg } from '../../lib/three/drawing.ts';
+import { moduleFacts } from '../../lib/three/facts.ts';
 import type { ModuleSpec } from '../../lib/three/types.ts';
 
 interface Props {
@@ -25,9 +30,18 @@ interface Props {
 const { spec, class: className, locale = localeFromPath(Astro.url.pathname) } = Astro.props;
 const t = three[locale].viewer;
 const label = Astro.props.label ?? t.label(spec.model);
+const layers = three[locale].anatomy.layers(moduleFacts(spec));
+const spots = [
+  ['glass', layers[0].name],
+  ['cells', layers[2].name],
+  ['frame', layers[5].name],
+  ['junction', layers[6].name],
+  ['label', t.plate.name],
+] as const;
+const uid = `mv-${spec.model.replace(/[^a-z0-9]/gi, '').toLowerCase()}`;
 ---
 
-<pv-module-viewer class:list={['module-viewer', className]} data-spec={JSON.stringify(spec)} role="group" aria-label={label}>
+<pv-module-viewer class:list={['module-viewer', className]} data-spec={JSON.stringify(spec)} data-locale={locale} role="group" aria-label={label}>
   <div class="module-viewer__stage" data-stage>
     <div class="module-viewer__fallback" data-fallback set:html={moduleSvg(spec)} />
     <div class="module-viewer__dims" data-dims hidden aria-hidden="true">
@@ -41,6 +55,21 @@ const label = Astro.props.label ?? t.label(spec.model);
       <span class="num" data-size>{spec.width} × {spec.height} × {spec.depth} mm</span>
     </p>
     <p class="module-viewer__hint small" data-hint hidden>{t.hint}</p>
+    <div class="module-viewer__spots" data-spots role="group" aria-label={t.spots} hidden>
+      {
+        spots.map(([key, name], i) => (
+          <button type="button" class="module-viewer__spot" data-spot={key} aria-expanded="false" aria-controls={`${uid}-card`} aria-label={t.spot(i + 1, name)}>
+            <span aria-hidden="true">{i + 1}</span>
+          </button>
+        ))
+      }
+      <div class="module-viewer__card" id={`${uid}-card`} data-card hidden>
+        <p class="module-viewer__card-title"><span class="mono" data-card-index></span><span data-card-title></span></p>
+        <p class="module-viewer__card-body" data-card-body aria-live="polite"></p>
+        <dl class="module-viewer__card-rows" data-card-rows></dl>
+        <button type="button" class="module-viewer__card-close" data-card-close aria-label={t.close}><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
   </div>
   <div class="module-viewer__bar" role="group" aria-label={t.controls} data-bar hidden>
     <span class="module-viewer__seg">
@@ -50,6 +79,7 @@ const label = Astro.props.label ?? t.label(spec.model);
     <span class="module-viewer__seg">
       <button type="button" data-act="explode" aria-pressed="false">{t.explode}</button>
       <button type="button" data-act="dims" aria-pressed="false">{t.dimensions}</button>
+      <button type="button" data-act="details" aria-pressed="false">{t.details}</button>
     </span>
     <span class="module-viewer__seg">
       <button type="button" data-act="out" aria-label={t.zoomOut}><span aria-hidden="true">−</span></button>
@@ -161,6 +191,161 @@ const label = Astro.props.label ?? t.label(spec.model);
     white-space: nowrap;
   }
 
+  .module-viewer__spots {
+    position: absolute;
+    inset: 0;
+    direction: ltr;
+    pointer-events: none;
+  }
+  .module-viewer__spot {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-block-start: -22px;
+    margin-inline-start: -22px;
+    padding: 0;
+    border: 0;
+    background: none;
+    pointer-events: auto;
+    transition: opacity var(--dur-2) var(--ease);
+  }
+  .module-viewer__spot > span {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--ink);
+    border-radius: 50%;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1;
+    transition:
+      background-color var(--dur-1) var(--ease),
+      color var(--dur-1) var(--ease),
+      transform var(--dur-1) var(--ease);
+  }
+  .module-viewer__spot::after {
+    content: '';
+    position: absolute;
+    inset: 9px;
+    border: 1px solid var(--ink);
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+  }
+  :global(html.motion) .module-viewer__spots:not(.is-touched) .module-viewer__spot::after {
+    animation: spot-ping 2800ms var(--ease) infinite;
+    animation-delay: calc(var(--i, 0) * 300ms);
+  }
+  @keyframes spot-ping {
+    0% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    70%,
+    100% {
+      opacity: 0;
+      transform: scale(1.9);
+    }
+  }
+  .module-viewer__spot:hover > span {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .module-viewer__spot[aria-expanded='true'] > span {
+    background: var(--sun);
+    border-color: var(--sun-ink);
+    color: var(--sun-ink);
+    transform: scale(1.08);
+  }
+  .module-viewer__spot.is-away {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .module-viewer__spot.is-away:focus-visible {
+    opacity: 1;
+  }
+  .module-viewer__card {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    display: grid;
+    gap: var(--s-2);
+    width: min(18rem, calc(100% - 16px));
+    padding: 14px 16px 16px;
+    border-radius: var(--r-2);
+    background: var(--ink);
+    color: var(--paper);
+    pointer-events: auto;
+    transition: opacity var(--dur-2) var(--ease);
+  }
+  .module-viewer__card.is-away {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .module-viewer__card-title {
+    display: flex;
+    gap: var(--s-2);
+    align-items: baseline;
+    padding-inline-end: 32px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .module-viewer__card-title .mono {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--sun);
+  }
+  .module-viewer__card-body {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: rgb(255 255 255 / 0.8);
+  }
+  .module-viewer__card-rows {
+    display: grid;
+  }
+  .module-viewer__card-rows:empty {
+    display: none;
+  }
+  .module-viewer__card-rows :global(div) {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-3);
+    padding-block: 6px;
+    border-block-start: 1px solid var(--line-inv);
+    font-size: 0.75rem;
+  }
+  .module-viewer__card-rows :global(dt) {
+    color: var(--muted-inv);
+  }
+  .module-viewer__card-close {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--muted-inv);
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+  .module-viewer__card-close:hover {
+    color: var(--paper);
+  }
+  :global([dir='rtl']) .module-viewer__card-title {
+    line-height: 1.5;
+  }
+
   .module-viewer__bar {
     position: absolute;
     inset-block-end: var(--s-4);
@@ -257,14 +442,48 @@ const label = Astro.props.label ?? t.label(spec.model);
 </style>
 
 <script>
+  import type { Locale } from '../../i18n/config.ts';
+  import type { ThreeStrings } from '../../i18n/three.ts';
   import { moduleSvg } from '../../lib/three/drawing.ts';
+  import { moduleFacts } from '../../lib/three/facts.ts';
   import { loadScenes, webglAvailable, whenNear } from '../../lib/three/load.ts';
+  import type { MarkKey } from '../../lib/three/module.ts';
   import type { ModuleSpec } from '../../lib/three/types.ts';
   import type { ModuleViewerScene } from '../../lib/three/viewer.ts';
+
+  /** Card text for a hotspot: the sourced anatomy caption plus the model's own figures. */
+  function spotContent(t: ThreeStrings, spec: ModuleSpec, key: MarkKey): { name: string; body: string; rows: [string, string][] } {
+    const layers = t.anatomy.layers(moduleFacts(spec));
+    const rows = t.viewer.rows;
+    const r = spec.rating;
+    switch (key) {
+      case 'glass':
+        return { ...layers[0], rows: [] };
+      case 'cells':
+        return { ...layers[2], rows: spec.power ? [[rows.power, `${spec.power} W`]] : [] };
+      case 'frame':
+        return { ...layers[5], rows: [] };
+      case 'junction':
+        return { ...layers[6], rows: spec.protection ? [[rows.protection, spec.protection]] : [] };
+      case 'label': {
+        const list: [string, string][] = r
+          ? [
+              [rows.vdcMax, `${r.vdcMax} V`],
+              [rows.voc, `${r.voc} V`],
+              [rows.isc, `${r.isc} A`],
+            ]
+          : [];
+        if (r?.fuse) list.push([rows.fuse, `${r.fuse} A`]);
+        return { ...t.viewer.plate, rows: list };
+      }
+    }
+  }
 
   class PvModuleViewer extends HTMLElement {
     static observedAttributes = ['data-spec'];
     scene: ModuleViewerScene | null = null;
+    strings: ThreeStrings | null = null;
+    openedAt = 0;
 
     get spec() {
       return JSON.parse(this.dataset.spec ?? '{}') as ModuleSpec;
@@ -290,10 +509,65 @@ const label = Astro.props.label ?? t.label(spec.model);
       this.querySelector('[data-size]')!.textContent = `${spec.width} × ${spec.height} × ${spec.depth} mm`;
       this.querySelector('[data-fallback]')!.innerHTML = moduleSvg(spec);
       this.scene?.setSpec(spec);
+      this.closeSpot(false);
+      this.nameSpots();
+    }
+
+    spotButtons() {
+      return [...this.querySelectorAll<HTMLButtonElement>('[data-spot]')];
+    }
+
+    nameSpots() {
+      const t = this.strings;
+      if (!t) return;
+      this.spotButtons().forEach((b, i) => {
+        b.style.setProperty('--i', String(i));
+        b.setAttribute('aria-label', t.viewer.spot(i + 1, spotContent(t, this.spec, b.dataset.spot as MarkKey).name));
+      });
+    }
+
+    openSpot(button: HTMLButtonElement) {
+      const t = this.strings;
+      const card = this.querySelector<HTMLElement>('[data-card]');
+      if (!t || !card || !this.scene) return;
+      const key = button.dataset.spot as MarkKey;
+      const c = spotContent(t, this.spec, key);
+      const index = this.spotButtons().indexOf(button) + 1;
+      this.spotButtons().forEach((b) => b.setAttribute('aria-expanded', String(b === button)));
+      card.dir = document.documentElement.dir || 'ltr';
+      card.querySelector('[data-card-index]')!.textContent = String(index).padStart(2, '0');
+      card.querySelector('[data-card-title]')!.textContent = c.name;
+      card.querySelector('[data-card-body]')!.textContent = c.body;
+      card.querySelector('[data-card-rows]')!.replaceChildren(
+        ...c.rows.map(([label, value]) => {
+          const row = document.createElement('div');
+          const dt = document.createElement('dt');
+          const dd = document.createElement('dd');
+          dt.textContent = label;
+          dd.className = 'num';
+          dd.textContent = value;
+          row.append(dt, dd);
+          return row;
+        }),
+      );
+      card.hidden = false;
+      this.openedAt = performance.now();
+      this.querySelector('[data-spots]')!.classList.add('is-touched');
+      this.scene.reveal(key);
+    }
+
+    closeSpot(refocus: boolean) {
+      const open = this.spotButtons().find((b) => b.getAttribute('aria-expanded') === 'true');
+      const card = this.querySelector<HTMLElement>('[data-card]');
+      this.spotButtons().forEach((b) => b.setAttribute('aria-expanded', 'false'));
+      if (card) card.hidden = true;
+      if (refocus) open?.focus();
+      this.scene?.reveal();
     }
 
     async mount() {
-      const { mountViewer } = await loadScenes();
+      const [{ mountViewer }, { three }] = await Promise.all([loadScenes(), import('../../i18n/three.ts')]);
+      this.strings = three[(this.dataset.locale as Locale) ?? 'en'];
       await document.fonts.ready;
       if (!this.isConnected || this.scene) return;
       const stage = this.querySelector<HTMLElement>('[data-stage]')!;
@@ -313,6 +587,7 @@ const label = Astro.props.label ?? t.label(spec.model);
           canvas,
           dims: this.querySelector<HTMLElement>('[data-dims]')!,
           insets: () => ({ top: meta.offsetHeight + 24, bottom: overlaid() ? bar.offsetHeight + 28 : 16 }),
+          spots: this.querySelector<HTMLElement>('[data-spots]')!,
         },
         this.spec,
       );
@@ -320,6 +595,30 @@ const label = Astro.props.label ?? t.label(spec.model);
         const button = (e.target as Element).closest<HTMLButtonElement>('button[data-act]');
         if (button) this.act(button);
       });
+
+      const spots = this.querySelector<HTMLElement>('[data-spots]')!;
+      const details = this.querySelector<HTMLButtonElement>('[data-act="details"]')!;
+      const on = !matchMedia('(max-width: 720px)').matches;
+      details.setAttribute('aria-pressed', String(on));
+      this.scene.setSpots(on);
+      this.nameSpots();
+      spots.addEventListener('click', (e) => {
+        const target = e.target as Element;
+        if (target.closest('[data-card-close]')) return this.closeSpot(true);
+        const button = target.closest<HTMLButtonElement>('[data-spot]');
+        if (!button) return;
+        const open = button.getAttribute('aria-expanded') === 'true';
+        if (open && performance.now() - this.openedAt > 350) this.closeSpot(false);
+        else if (!open) this.openSpot(button);
+      });
+      spots.addEventListener('focusin', (e) => {
+        const button = (e.target as Element).closest<HTMLButtonElement>('[data-spot]');
+        if (button && button.matches(':focus-visible') && button.getAttribute('aria-expanded') !== 'true') this.openSpot(button);
+      });
+      spots.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') this.closeSpot(true);
+      });
+      canvas.addEventListener('pointerdown', () => this.closeSpot(false));
     }
 
     act(button: HTMLButtonElement) {
@@ -343,6 +642,12 @@ const label = Astro.props.label ?? t.label(spec.model);
         case 'dims':
           scene.setDims(toggle());
           break;
+        case 'details': {
+          const on = toggle();
+          if (!on) this.closeSpot(false);
+          scene.setSpots(on);
+          break;
+        }
         case 'in':
           scene.zoom(0.8);
           break;
@@ -350,7 +655,8 @@ const label = Astro.props.label ?? t.label(spec.model);
           scene.zoom(1.25);
           break;
         case 'reset':
-          this.querySelectorAll('[aria-pressed]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+          this.querySelectorAll('[aria-pressed]:not([data-act="details"])').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+          this.closeSpot(false);
           scene.setDims(false);
           scene.reset();
           break;

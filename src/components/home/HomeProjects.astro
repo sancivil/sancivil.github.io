@@ -30,7 +30,7 @@ const c = company[locale];
         return (
           <li class:list={['pj__item', { 'pj__item--lg': i < 2, 'pj__item--tile': !p.photo }]}>
             <a class="pj__card" href={localizePath(`/projects/#${p.slug}`, locale)}>
-              <span class="pj__media" data-pj-media={p.photo && i < 2 ? '' : undefined}>
+              <span class="pj__media" data-pj-media={p.photo && i < 2 ? '' : undefined} data-reveal="clip">
                 <ProjectMedia project={p} alt="" />
                 <span class="tag pj__tag">{c.categories[p.category]}</span>
                 {!p.photo && (

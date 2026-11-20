@@ -1,3 +1,4 @@
+import { signal } from '@preact/signals';
 import { useMemo, useState } from 'preact/hooks';
 import { evaluateCell, findInverter, groupContext, mpptGroups, tempsValid, type BlockSummary, type GroupSummary } from '../../lib/designer/calc.ts';
 import { catalog, inverters } from '../../lib/designer/data.ts';
@@ -9,6 +10,10 @@ import { ModelPicker, searchKey, type PickerOption } from './ModelPicker.tsx';
 import { configLabel, groupName, inverterMeta, inverterRole } from './labels.ts';
 import { errors, project, summary, update, useI18n } from './store.ts';
 import { Dot, Field, Icon, Num, Section, StepHead, Stepper, describedBy, useTouched } from './ui.tsx';
+import { StringDiagram, VoltageRuler } from './Visuals.tsx';
+
+/** The MPPT group last pointed at, focused or changed; its strings light up in the diagram. */
+const lit = signal<{ block: string; index: number } | null>(null);
 
 const TYPE_ORDER = { hybrid: 0, 'on-grid': 1, micro: 2 } as const;
 const sortedInverters = [...inverters].sort(
@@ -111,8 +116,12 @@ function GroupPanel({ block, g, defaultOpen }: { block: InverterBlock; g: GroupS
     );
   };
 
+  const light = () => {
+    if (lit.value?.block !== block.id || lit.value.index !== g.index) lit.value = { block: block.id, index: g.index };
+  };
+
   return (
-    <div class={`dz-mppt${open ? ' is-open' : ''}`}>
+    <div class={`dz-mppt${open ? ' is-open' : ''}`} onPointerEnter={light} onFocusIn={light}>
       <h4 class="dz-mppt__h">
         <button type="button" class="dz-mppt__toggle" aria-expanded={open} aria-controls={`${id}-body`} onClick={() => setOpen(!open)}>
           <span class="dz-mppt__name mono">{name}</span>
@@ -172,6 +181,7 @@ function GroupPanel({ block, g, defaultOpen }: { block: InverterBlock; g: GroupS
               temps={p.temps}
               onSelect={(series, strings) => {
                 setNote(null);
+                light();
                 update((x) =>
                   setGroup(x, block.id, g.index, g.sel.series === series && g.sel.strings === strings ? { series: 0, strings: 0 } : { series, strings }),
                 );
@@ -193,6 +203,7 @@ function GroupPanel({ block, g, defaultOpen }: { block: InverterBlock; g: GroupS
             </p>
             {g.cell && (
               <div class="dz-mppt__checks">
+                <VoltageRuler cell={g.cell} temps={p.temps} />
                 <p class="dz-subtitle">{t.inverter.checksTitle}</p>
                 <CheckTable cell={g.cell} temps={p.temps} />
               </div>
@@ -225,6 +236,7 @@ function InverterBlockView({ block, index, canRemove }: { block: InverterBlock; 
         label: i.model,
         meta: inverterMeta(i, t),
         search: searchKey(i.model, `${i.pnomAc / 1000}kw`, i.pnomAc, t.inverter.phases[i.phase], t.inverter.groups[i.type], i.phase === 'three_phase' ? '3' : '1'),
+        thumb: i.image,
       })),
     [t],
   );
@@ -295,6 +307,7 @@ function InverterBlockView({ block, index, canRemove }: { block: InverterBlock; 
       {inv ? (
         <>
           <InverterCard inv={inv} />
+          {b && b.groups.length > 0 && <StringDiagram b={b} lit={lit.value?.block === block.id ? lit.value.index : null} />}
           <div class="dz-mppts">
             {b?.groups.map((g) => (
               <GroupPanel key={`${block.configKey}-${g.index}`} block={block} g={g} defaultOpen={g.index < 2 || mpptGroups(inv, block.configKey).length <= 3} />

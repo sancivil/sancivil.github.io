@@ -12,7 +12,7 @@ import {
 } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { buildModule } from './module.ts';
-import type { PvModule } from './module.ts';
+import type { MarkKey, PvModule } from './module.ts';
 import { createRenderer, deg, device, environment, fitDistance, isRtl, watchVisibility } from './stage.ts';
 import { drawShadow } from './textures.ts';
 import type { ModuleSpec } from './types.ts';
@@ -30,6 +30,8 @@ export interface ViewerElements {
   dims: HTMLElement;
   /** Space covered by overlaid UI at the top and bottom of the stage, in CSS px. */
   insets: () => { top: number; bottom: number };
+  /** Hotspot layer: buttons [data-spot="glass|cells|frame|junction|label"] (aria-expanded marks the open one) and one [data-card]. */
+  spots?: HTMLElement;
 }
 
 export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
@@ -38,7 +40,7 @@ export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
 
   const renderer = createRenderer(canvas);
   const scene = new Scene();
-  const env = environment(renderer);
+  const env = environment(renderer, side < 0);
   const camera = new PerspectiveCamera(FOV, 1, 0.05, 60);
   // Key light rides with the camera so front, back and exploded views are all lit; warm rim stays put.
   const key = new DirectionalLight(0xffffff, 2.1);
@@ -65,6 +67,21 @@ export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
   const shadow = new Mesh(shadowGeometry, shadowMaterial);
   shadow.rotation.x = -Math.PI / 2;
   scene.add(shadow);
+
+  const spotEls = el.spots ? [...el.spots.querySelectorAll<HTMLElement>('[data-spot]')] : [];
+  const card = el.spots?.querySelector<HTMLElement>('[data-card]') ?? null;
+  const spotPoint = new Vector3();
+  const spotNormal = new Vector3();
+  const toCamera = new Vector3();
+  /** World position of a hotspot (left in spotPoint) and how squarely its face looks at the camera (−1…1). */
+  const facing = (key: MarkKey) => {
+    const m = pv.marks[key];
+    spotPoint.copy(m.at);
+    spotPoint.x *= side;
+    spotPoint.applyMatrix4(pv.layers[m.layer].matrixWorld);
+    spotNormal.set(0, 0, m.face).transformDirection(pv.root.matrixWorld);
+    return spotNormal.dot(toCamera.copy(camera.position).sub(spotPoint).normalize());
+  };
 
   const svg = el.dims.querySelector('svg')!;
   const path = svg.querySelector('path')!;
@@ -160,6 +177,38 @@ export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
     path.setAttribute('d', d);
   };
 
+  const drawSpots = () => {
+    if (!el.spots || el.spots.hidden) return;
+    const w = stage.clientWidth;
+    const h = stage.clientHeight;
+    let open: [number, number] | null = null;
+    let openAway = false;
+    for (const spot of spotEls) {
+      const d = facing(spot.dataset.spot as MarkKey);
+      const v = spotPoint.project(camera);
+      const x = ((v.x + 1) / 2) * w;
+      const y = ((1 - v.y) / 2) * h;
+      spot.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
+      spot.classList.toggle('is-away', d < 0.15);
+      if (spot.getAttribute('aria-expanded') === 'true') {
+        open = [x, y];
+        openAway = d < 0.15;
+      }
+    }
+    if (!card || card.hidden || !open) return;
+    card.classList.toggle('is-away', openAway);
+    const { top, bottom } = el.insets();
+    const cw = card.offsetWidth;
+    const ch = card.offsetHeight;
+    const gap = 26;
+    const fits = (cx: number) => cx >= 8 && cx + cw <= w - 8;
+    const after = side > 0 ? open[0] + gap : open[0] - gap - cw;
+    const before = side > 0 ? open[0] - gap - cw : open[0] + gap;
+    const cx = fits(after) ? after : fits(before) ? before : Math.min(w - cw - 8, Math.max(8, open[0] - cw / 2));
+    const cy = Math.min(h - bottom - ch, Math.max(Math.min(top, 16), open[1] - ch / 2));
+    card.style.transform = `translate(${cx.toFixed(1)}px, ${Math.max(8, cy).toFixed(1)}px)`;
+  };
+
   function frame(now: number) {
     raf = 0;
     let busy = false;
@@ -185,6 +234,7 @@ export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
     const moved = controls.update();
     renderer.render(scene, camera);
     if (dimsOn) drawDims();
+    drawSpots();
     if (!stage.classList.contains('is-ready')) stage.classList.add('is-ready');
     if (busy || moved) request();
   }
@@ -285,6 +335,19 @@ export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
       const v = current();
       if (on && Math.abs(Math.sin(v.theta)) < 0.45) {
         goTo({ theta: Math.cos(v.theta) > 0 ? side * deg(-42) : Math.PI + side * deg(42) }, 900);
+      }
+      request();
+    },
+    /** Shows or hides the hotspot layer. */
+    setSpots(on: boolean) {
+      if (el.spots) el.spots.hidden = !on;
+      request();
+    },
+    /** Redraws hotspots and the open card; turns the module first when the hotspot faces away. */
+    reveal(key?: MarkKey) {
+      if (key && facing(key) < 0.15) {
+        if (pv.marks[key].face > 0) this.front();
+        else this.back();
       }
       request();
     },

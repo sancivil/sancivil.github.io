@@ -1,12 +1,14 @@
 import panelsData from '../../data/designer/panels.json';
 import invertersData from '../../data/designer/inverters.json';
 import solar from '../../data/iraq-solar.json';
-import { batteries as batteryData } from '../../data/catalog.json';
+import { batteries as batteryData, modules as moduleData } from '../../data/catalog.json';
 import type { Battery, Catalog, City, Inverter, Panel } from './types.ts';
+import { seriesRenders } from './visual.ts';
 
 export const panels = panelsData as Panel[];
 export const inverters = invertersData as Inverter[];
 export const catalog: Catalog = { panels, inverters };
+export const panelRender = seriesRenders(moduleData, panels);
 
 /** North to south, as people in Iraq read the map. */
 export const cities = [...(solar.cities as City[])].sort((a, b) => b.lat - a.lat);

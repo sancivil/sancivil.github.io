@@ -68,6 +68,7 @@ export default function DesignerApp({ locale }: { locale: Locale }) {
   const [sumOpen, setSumOpen] = useState(false);
   const [inView, setInView] = useState(false);
   const [ready, setReady] = useState(false);
+  const shown = useRef({ step: step.value, back: false });
   const scrollToApp = (focus: boolean, instant = false) => {
     const el = root.current;
     if (!el) return;
@@ -229,12 +230,13 @@ export default function DesignerApp({ locale }: { locale: Locale }) {
 
   const design = mode.value === 'design';
   const s = step.value;
+  if (s !== shown.current.step) shown.current = { step: s, back: s < shown.current.step };
 
   return (
     <I18n.Provider value={i18n}>
       <div class={`dz dz--${mode.value}${inView ? ' is-in-view' : ''}`} ref={root} role="region" aria-label={t.app.label}>
         <StepRail onNavigate={onMove} />
-        <div class="dz-work">
+        <div class="dz-work" data-dir={shown.current.back ? 'back' : 'next'}>
           {notice.value && (
             <div class="dz-notice dz-screen-only" role="status">
               <p>{notice.value}</p>

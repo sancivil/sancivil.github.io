@@ -24,7 +24,7 @@ export function mountAnatomy(stage: HTMLElement, spec: ModuleSpec) {
 
   const renderer = createRenderer(canvas);
   const scene = new Scene();
-  const env = environment(renderer);
+  const env = environment(renderer, side < 0);
   addLights(scene, side < 0, 1.7, 1.8);
   const fog = new Fog(0x0b0b0c, 1, 10);
   scene.fog = fog;

@@ -2,6 +2,7 @@
 import { home } from '../../i18n/home.ts';
 import { company } from '../../i18n/company.ts';
 import type { Locale } from '../../i18n/config.ts';
+import catalog from '../../data/catalog.json';
 import { warranty } from '../company/facts.ts';
 
 interface Props {
@@ -15,13 +16,69 @@ const series = [
   { name: t.sSeries, note: t.sSeriesNote, terms: warranty.sSeries },
   { name: t.orDrSeries, note: t.orDrNote, terms: warranty.orDrSeries },
 ];
+
+/** Peimar's linear power warranty: a first-year step, then a fixed yearly decline to the end value. */
+function curve(text: string) {
+  const m = text.match(/([\d,.]+)% in the first year, thereafter [\d,.]+% per year, ending with ([\d,.]+)% in the (\d+)th year/);
+  if (!m) return null;
+  const n = (v: string) => Number(v.replace(',', '.'));
+  return { first: n(m[1]), end: n(m[2]), years: Number(m[3]) };
+}
+const W = 480;
+const H = 220;
+const curves = (['topcon', 'perc'] as const).flatMap((key) => {
+  const data = curve(catalog.warranty.powerOutput[key === 'topcon' ? 'monoTopcon' : 'monoPerc']);
+  return data ? [{ key, ...data }] : [];
+});
+const span = Math.max(...curves.map((c) => c.years));
+const px = (year: number) => Math.round((44 + (year / span) * (W - 88)) * 10) / 10;
+const py = (pct: number) => Math.round((16 + ((100 - pct) / 20) * (H - 56)) * 10) / 10;
+const pathOf = (c: (typeof curves)[number]) => `M${px(0)} ${py(100)}L${px(1)} ${py(100 - c.first)}L${px(c.years)} ${py(c.end)}`;
 ---
 
 <section class="wy theme-paper section" aria-labelledby="wy-title">
   <div class="container">
     <div class="wy__head">
-      <p class="eyebrow">{t.eyebrow}</p>
-      <h2 id="wy-title" class="h2 wy__title" data-reveal="lines">{t.title(warranty.linearPowerYears)}</h2>
+      <div class="wy__heading">
+        <p class="eyebrow">{t.eyebrow}</p>
+        <h2 id="wy-title" class="h2 wy__title" data-reveal="lines">{t.title(warranty.linearPowerYears)}</h2>
+      </div>
+      {
+        curves.length > 0 && (
+          <figure class="wy__chart" data-wy-chart>
+            <figcaption class="wy__chart-head">
+              <span class="wy__chart-title">{t.chart}</span>
+              <span class="wy__chart-note">{t.chartNote}</span>
+            </figcaption>
+            <svg class="wy__svg" viewBox={`0 0 ${W} ${H}`} width={W} height={H} aria-hidden="true" focusable="false">
+              {[100, 90, 80].map((v) => (
+                <g>
+                  <line class="wy__gridline" x1={px(0)} x2={px(span)} y1={py(v)} y2={py(v)} />
+                  <text class="wy__tick" x={px(0) - 8} y={py(v) + 4} text-anchor="end">{`${v}%`}</text>
+                </g>
+              ))}
+              {[0, 10, 20, 30].filter((y) => y <= span).map((y) => (
+                <text class="wy__tick" x={px(y)} y={H - 18} text-anchor="middle">{y}</text>
+              ))}
+              {curves.map((c) => <path class:list={['wy__line', `wy__line--${c.key}`]} d={pathOf(c)} pathLength="1" />)}
+              {curves.map((c) => <circle class:list={['wy__end', `wy__end--${c.key}`]} cx={px(c.years)} cy={py(c.end)} r="4.5" />)}
+            </svg>
+            <ul class="wy__legend" role="list">
+              {curves.map((c) => (
+                <li>
+                  <span class:list={['wy__key', `wy__key--${c.key}`]} aria-hidden="true" />
+                  <span class="wy__series">{t.series[c.key]}</span>
+                  <span class="num wy__value">
+                    {c.end.toFixed(2)}
+                    <span class="unit">%</span>
+                  </span>
+                  <span class="wy__after">{t.after(c.years)}</span>
+                </li>
+              ))}
+            </ul>
+          </figure>
+        )
+      }
     </div>
 
     <ul class="wy__grid" role="list">
@@ -35,11 +92,11 @@ const series = [
             <dl class="wy__figs">
               <div>
                 <dt>{t.power}</dt>
-                <dd><span class="num">{s.terms.power}</span><span class="unit">{years}</span></dd>
+                <dd><span class="num" data-reveal="count" data-to={s.terms.power}>{s.terms.power}</span><span class="unit">{years}</span></dd>
               </div>
               <div>
                 <dt>{t.product}</dt>
-                <dd><span class="num">{s.terms.product}</span><span class="unit">{years}</span></dd>
+                <dd><span class="num" data-reveal="count" data-to={s.terms.product}>{s.terms.product}</span><span class="unit">{years}</span></dd>
               </div>
             </dl>
           </li>
@@ -59,9 +116,115 @@ const series = [
 <style>
   .wy__head {
     display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    align-items: end;
+    gap: var(--s-7) var(--gap);
+    margin-block-end: clamp(var(--s-7), 5vw, var(--s-9));
+  }
+  .wy__heading {
+    display: grid;
     justify-items: start;
     gap: var(--s-4);
-    margin-block-end: clamp(var(--s-7), 5vw, var(--s-9));
+  }
+  .wy__chart {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .wy__chart-head {
+    display: grid;
+    gap: var(--s-1);
+  }
+  .wy__chart-title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+  }
+  .wy__chart-note {
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+  .wy__svg {
+    direction: ltr;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .wy__gridline {
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+  .wy__tick {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    fill: var(--muted);
+  }
+  .wy__line {
+    fill: none;
+    stroke-linejoin: round;
+  }
+  .wy__line--topcon {
+    stroke: var(--ink);
+    stroke-width: 2.5;
+  }
+  .wy__line--perc {
+    stroke: var(--muted);
+    stroke-width: 1.5;
+  }
+  .wy__end {
+    stroke: var(--ink);
+    stroke-width: 1.5;
+  }
+  .wy__end--topcon {
+    fill: var(--sun);
+  }
+  .wy__end--perc {
+    fill: var(--paper-2);
+    stroke: var(--muted);
+  }
+  .wy__chart.is-armed .wy__line {
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 1.001;
+    transition: stroke-dashoffset 1.8s var(--ease-out-expo);
+  }
+  .wy__chart.is-armed .wy__end {
+    opacity: 0;
+    transition: opacity var(--dur-3) var(--ease) 0.9s;
+  }
+  .wy__chart.is-drawn .wy__line {
+    stroke-dashoffset: 0;
+  }
+  .wy__chart.is-drawn .wy__end {
+    opacity: 1;
+  }
+  .wy__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3) var(--s-6);
+    font-size: 0.875rem;
+  }
+  .wy__legend li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s-1) var(--s-2);
+  }
+  .wy__key {
+    width: 14px;
+    height: 2.5px;
+    align-self: center;
+    background: var(--ink);
+  }
+  .wy__key--perc {
+    height: 1.5px;
+    background: var(--muted);
+  }
+  .wy__series {
+    font-weight: 600;
+  }
+  .wy__value {
+    font-size: 1rem;
+  }
+  .wy__after {
+    color: var(--muted);
   }
   .wy__title {
     max-width: 20ch;
@@ -124,6 +287,12 @@ const series = [
   }
 
   @media (max-width: 900px) {
+    .wy__head {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .wy__tick {
+      font-size: 15px;
+    }
     .wy__grid {
       grid-template-columns: minmax(0, 1fr);
     }
@@ -148,3 +317,19 @@ const series = [
     }
   }
 </style>
+
+<script>
+  const chart = document.querySelector<HTMLElement>('[data-wy-chart]');
+  if (chart && document.documentElement.classList.contains('motion')) {
+    chart.classList.add('is-armed');
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        chart.classList.add('is-drawn');
+        io.disconnect();
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(chart);
+  }
+</script>
