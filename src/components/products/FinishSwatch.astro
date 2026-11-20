@@ -1,0 +1,77 @@
+---
+/*
+  A finish code drawn as the module front: frame colour around the glass. Colours follow Peimar's
+  wording: black, silver, Red Line RAL 8015 with red glass, Green Line RAL 6007 with coloured glass.
+*/
+interface Props {
+  code: string;
+  label?: string;
+}
+const { code, label } = Astro.props;
+const look: Record<string, { frame: string; glass: string }> = {
+  FB: { frame: '#141416', glass: '#1B2230' },
+  BF: { frame: '#141416', glass: '#1B2230' },
+  B: { frame: '#C3C6CB', glass: '#1B2230' },
+  SF: { frame: '#C3C6CB', glass: '#1B2230' },
+  std: { frame: '#C3C6CB', glass: '#1B2230' },
+  FR: { frame: '#5E2A24', glass: '#6E2F2A' },
+  FG: { frame: '#2E3A2C', glass: '#34463A' },
+};
+const style = look[code];
+---
+
+<span class="swatch">
+  {
+    style ? (
+      <span class="swatch__chip" style={`--frame:${style.frame};--glass:${style.glass}`} aria-hidden="true" />
+    ) : (
+      <span class="swatch__chip swatch__chip--unknown" aria-hidden="true" />
+    )
+  }
+  <bdi class="swatch__code mono">{code === 'std' ? '—' : code}</bdi>
+  {label && <span class="swatch__label">{label}</span>}
+</span>
+
+<style>
+  .swatch {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-width: 0;
+  }
+  .swatch__chip {
+    flex: none;
+    inline-size: 18px;
+    block-size: 26px;
+    border: 3px solid var(--frame);
+    border-radius: 2px;
+    background:
+      linear-gradient(var(--glass), var(--glass)) padding-box,
+      var(--frame);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+  }
+  .swatch__chip::after {
+    content: '';
+    display: block;
+    block-size: 100%;
+    background-image:
+      linear-gradient(90deg, transparent 47%, rgb(255 255 255 / 0.18) 47% 53%, transparent 53%),
+      linear-gradient(transparent 31%, rgb(255 255 255 / 0.18) 31% 35%, transparent 35% 64%, rgb(255 255 255 / 0.18) 64% 68%, transparent 68%);
+  }
+  .swatch__chip--unknown {
+    border-color: var(--line-c-strong, var(--line-c));
+    background: none;
+  }
+  .swatch__chip--unknown::after {
+    display: none;
+  }
+  .swatch__code {
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  .swatch__label {
+    font-size: 0.875rem;
+    line-height: 1.35;
+    color: var(--muted-c);
+  }
+</style>

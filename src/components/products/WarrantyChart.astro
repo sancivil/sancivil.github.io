@@ -1,0 +1,213 @@
+---
+/*
+  Peimar's linear power warranty as a line chart: guaranteed output (% of rated power) per year,
+  from the loss limits in the 2026 PV module warranty. The time axis always runs left to right.
+*/
+import { outputTerms, type OutputKey } from './data.ts';
+import type { Locale } from '../../i18n/config.ts';
+import { products } from '../../i18n/products.ts';
+
+interface Props {
+  locale: Locale;
+  curves: OutputKey[];
+  /** Curves drawn but not highlighted (for comparison). */
+  muted?: OutputKey[];
+  years?: number;
+  class?: string;
+}
+const { locale, curves, muted = [], years = 30, class: className } = Astro.props;
+const t = products[locale];
+const d = t.detail;
+
+const W = 720;
+const H = 340;
+const plot = { x0: 52, x1: 600, y0: 18, y1: 292 };
+const yMin = 80;
+const x = (year: number) => plot.x0 + ((plot.x1 - plot.x0) * year) / years;
+const y = (value: number) => plot.y1 - ((plot.y1 - plot.y0) * (value - yMin)) / (100 - yMin);
+
+const lines = [...curves.map((key) => ({ key, strong: true })), ...muted.map((key) => ({ key, strong: false }))].map(
+  ({ key, strong }, i) => {
+    const terms = outputTerms(key);
+    const first = 100 - Number(terms.first);
+    const end = Number(terms.end);
+    return {
+      key,
+      strong,
+      primary: strong && i === 0,
+      terms,
+      path: `M${x(0)} ${y(100)} L${x(1)} ${y(first)} L${x(years)} ${y(end)}`,
+      endY: y(end),
+      label: `${terms.end}%`,
+    };
+  },
+);
+
+/* Keep the end labels at least 18 units apart. */
+const placed = [...lines].sort((a, b) => a.endY - b.endY);
+for (let i = 1; i < placed.length; i++) {
+  placed[i].endY = Math.max(placed[i].endY, placed[i - 1].endY + 18);
+}
+
+const gridValues = [80, 85, 90, 95, 100];
+const ticks = [0, 5, 10, 15, 20, 25, 30].filter((n) => n <= years);
+---
+
+<figure class:list={['wchart', className]}>
+  <div class="wchart__frame">
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="wchart-desc" class="wchart__svg">
+      <desc id="wchart-desc">{lines.map((l) => d.chartCurve(t.warranty.tech[l.key], l.terms.first, l.terms.yearly, l.terms.end)).join('. ')}</desc>
+      {
+        gridValues.map((v) => (
+          <g class="wchart__grid">
+            <line x1={plot.x0} x2={plot.x1} y1={y(v)} y2={y(v)} />
+            <text x={plot.x0 - 10} y={y(v) + 4} text-anchor="end">{v}%</text>
+          </g>
+        ))
+      }
+      {
+        ticks.map((n) => (
+          <text class="wchart__tick" x={x(n)} y={plot.y1 + 24} text-anchor="middle">
+            {n}
+          </text>
+        ))
+      }
+      {
+        lines.map((l) => (
+          <g class:list={['wchart__line', { 'is-strong': l.strong, 'is-primary': l.primary }]}>
+            <path d={l.path} />
+            <circle cx={x(years)} cy={y(Number(l.terms.end))} r="4.5" />
+            <text x={x(years) + 14} y={l.endY + 5}>{l.label}</text>
+          </g>
+        ))
+      }
+    </svg>
+  </div>
+  <figcaption class="wchart__legend">
+    <span class="wchart__axis">{d.chartYear} 0–{years}</span>
+    <ul role="list">
+      {
+        lines.map((l) => (
+          <li class:list={['wchart__key', { 'is-strong': l.strong, 'is-primary': l.primary }]}>
+            <span class="wchart__swatch" aria-hidden="true" />
+            <span>{t.warranty.tech[l.key]}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </figcaption>
+</figure>
+
+<style>
+  .wchart {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .wchart__frame {
+    overflow-x: auto;
+  }
+  .wchart__svg {
+    direction: ltr;
+    display: block;
+    width: 100%;
+    min-width: 520px;
+    height: auto;
+    font-family: var(--font-mono);
+    overflow: visible;
+  }
+  .wchart__grid line {
+    stroke: var(--line-c);
+    stroke-width: 1;
+  }
+  .wchart__grid text,
+  .wchart__tick {
+    fill: var(--muted-c);
+    font-size: 12px;
+  }
+  .wchart__line path {
+    fill: none;
+    stroke: var(--muted-c);
+    stroke-width: 1.5;
+    stroke-dasharray: 5 5;
+    stroke-linejoin: round;
+  }
+  .wchart__line circle {
+    fill: var(--muted-c);
+  }
+  .wchart__line text {
+    fill: var(--muted-c);
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .wchart__line.is-strong path {
+    stroke: currentColor;
+    stroke-width: 2.25;
+    stroke-dasharray: none;
+  }
+  .wchart__line.is-strong circle,
+  .wchart__line.is-strong text {
+    fill: currentColor;
+  }
+  .wchart__line.is-strong:not(.is-primary) path {
+    stroke-dasharray: 8 5;
+  }
+  .wchart__line.is-strong text {
+    font-size: 17px;
+  }
+  :global(.theme-dark) .wchart__line.is-primary path {
+    stroke: var(--sun);
+  }
+  :global(.theme-dark) .wchart__line.is-primary circle {
+    fill: var(--sun);
+  }
+  .wchart__legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3) var(--s-6);
+    font-size: 0.875rem;
+  }
+  .wchart__axis {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--muted-c);
+  }
+  .wchart__legend ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-6);
+  }
+  .wchart__key {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    color: var(--muted-c);
+  }
+  .wchart__key.is-strong {
+    color: inherit;
+    font-weight: 500;
+  }
+  .wchart__swatch {
+    inline-size: 22px;
+    block-size: 0;
+    border-block-start: 2px dashed currentColor;
+  }
+  .wchart__key.is-primary .wchart__swatch {
+    border-block-start-style: solid;
+  }
+  :global(.theme-dark) .wchart__key.is-primary .wchart__swatch {
+    border-color: var(--sun);
+  }
+  @media (max-width: 520px) {
+    .wchart__svg {
+      min-width: 0;
+    }
+    .wchart__legend {
+      flex-direction: column;
+    }
+    .wchart__legend ul {
+      flex-direction: column;
+    }
+  }
+</style>

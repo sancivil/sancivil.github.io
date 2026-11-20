@@ -168,7 +168,16 @@ export type Sizing = {
 
 export type SizingData = { panels: Panel[]; inverters: Inverter[]; cities: City[]; batteries: Battery[] };
 
-export type SizingOutcome = { ok: true; sizing: Sizing } | { ok: false; reason: 'input' | 'noFit'; targetKwp?: number };
+/**
+ * Why nothing fits (reason 'noFit'): 'backup' = the energy need fits, but no inverter set that carries the backup load
+ * stays green; 'small' = below the smallest green hybrid of this phase (minKwp); 'large' = above six of the largest
+ * (maxKwp).
+ */
+export type NoFitLimit = 'backup' | 'small' | 'large';
+
+export type SizingOutcome =
+  | { ok: true; sizing: Sizing }
+  | { ok: false; reason: 'input' | 'noFit'; targetKwp?: number; limit?: NoFitLimit; minKwp?: number; maxKwp?: number };
 
 export function needsValid(n: Needs): boolean {
   const hours = (v: number) => Number.isNaN(v) || (v >= 0 && v <= 24);
@@ -192,12 +201,13 @@ export function sizeFromNeeds(needs: Needs, data: SizingData): SizingOutcome {
   const paired = hybrids.filter((i) => batteryFamily(i));
   const pools = wantsBattery ? [paired, hybrids] : [hybrids];
 
-  for (const pool of pools) {
-    let best: { inv: Inverter; n: number; layout: Layout; score: number } | null = null;
+  type Best = { inv: Inverter; n: number; layout: Layout; score: number };
+  const search = (pool: Inverter[], load: number): Best | null => {
+    let best: Best | null = null;
     for (let n = 1; n <= MAX_INVERTERS; n++) {
       const perInverter = Math.ceil(targetPanels / n);
       for (const inv of pool) {
-        if (inv.pnomAc * n < loadW) continue;
+        if (inv.pnomAc * n < load) continue;
         const layout = autoLayout(panel, inv, city.design, perInverter);
         if (!layout) continue;
         const score = (2 * (layout.panels * n - targetPanels)) / targetPanels + Math.abs(layout.ratio - 1) + 0.1 * (n - 1);
@@ -206,6 +216,11 @@ export function sizeFromNeeds(needs: Needs, data: SizingData): SizingOutcome {
         }
       }
     }
+    return best;
+  };
+
+  for (const pool of pools) {
+    const best = search(pool, loadW);
     if (best) {
       const panelCount = best.layout.panels * best.n;
       const kwp = (panelCount * panel.power) / 1000;
@@ -232,7 +247,13 @@ export function sizeFromNeeds(needs: Needs, data: SizingData): SizingOutcome {
       };
     }
   }
-  return { ok: false, reason: 'noFit', targetKwp };
+  if (loadW > 0 && search(hybrids, 0)) return { ok: false, reason: 'noFit', targetKwp, limit: 'backup' };
+  const greenW = (inv: Inverter, ratio: number) => inv.pnomDc / ratio;
+  const minKwp = hybrids.length ? Math.min(...hybrids.map((i) => greenW(i, i.percPminCc))) / 1000 : undefined;
+  const maxKwp = hybrids.length ? (MAX_INVERTERS * Math.max(...hybrids.map((i) => greenW(i, i.percPmaxCc)))) / 1000 : undefined;
+  const limit: NoFitLimit | undefined =
+    minKwp !== undefined && targetKwp < minKwp ? 'small' : maxKwp !== undefined && targetKwp > maxKwp ? 'large' : undefined;
+  return { ok: false, reason: 'noFit', targetKwp, limit, minKwp, maxKwp };
 }
 
 /** Designer project pre-filled from a sizing: site, one sub-array, one inverter block with the chosen strings. */

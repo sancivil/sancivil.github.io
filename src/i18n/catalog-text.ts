@@ -338,7 +338,7 @@ const ar: CatalogText = {
     ],
   },
   batteryWarranty: (years: number) =>
-    `${years} سنوات وفق أوراق البيانات الفنية لـ PSI-X-BT و PSI-X-HS و PSI-A-BT3.8S. أما PSI-A فيسري ضمانها فقط بعد تسجيل المنتج وتفعيل خدمة المراقبة.`,
+    `${years} سنوات وفق أوراق البيانات الفنية لـ\u00a0PSI-X-BT و PSI-X-HS و PSI-A-BT3.8S. أما PSI-A فيسري ضمانها فقط بعد تسجيل المنتج وتفعيل خدمة المراقبة.`,
   documents: {
     installationManual: 'دليل التركيب',
     installationManualAR: 'دليل التركيب',

@@ -1,8 +1,11 @@
 ---
 import Logo from './Logo.astro';
-import { nav, productNav, contact } from '../data/site.ts';
+import MegaMenu from './header/MegaMenu.astro';
+import LangMenu from './header/LangMenu.astro';
+import MobileMenu from './header/MobileMenu.astro';
+import { nav } from '../data/site.ts';
 import { common } from '../i18n/common.ts';
-import { locales, localeMeta, localeFromPath, localizePath, stripLocale } from '../i18n/config.ts';
+import { localeFromPath, localizePath, stripLocale } from '../i18n/config.ts';
 
 interface Props {
   localized?: boolean;
@@ -27,38 +30,41 @@ const href = (p: string) => localizePath(p, locale);
     <nav class="site-nav" aria-label={t.primaryNav}>
       <ul role="list">
         {
-          nav.map((item) => (
-            <li>
-              <a
-                href={href(item.href)}
-                class:list={['site-nav__link', { 'is-accent': item.accent }]}
-                aria-current={isCurrent(item.href) ? 'page' : undefined}
-              >
-                {t.nav[item.key]}
-              </a>
-            </li>
-          ))
+          nav.map((item) =>
+            item.key === 'products' ? (
+              <li data-mega>
+                <button
+                  type="button"
+                  class:list={['site-nav__link', { 'is-current': isCurrent(item.href) }]}
+                  aria-expanded="false"
+                  aria-controls="mega-products"
+                  data-mega-trigger
+                >
+                  {t.nav[item.key]}
+                  <svg class="site-nav__chevron" viewBox="0 0 10 6" width="10" height="6" aria-hidden="true">
+                    <path d="M1 1l4 4 4-4" />
+                  </svg>
+                </button>
+                <MegaMenu locale={locale} basePath={basePath} />
+              </li>
+            ) : (
+              <li>
+                <a
+                  href={href(item.href)}
+                  class:list={['site-nav__link', { 'is-accent': item.accent }]}
+                  aria-current={isCurrent(item.href) ? 'page' : undefined}
+                >
+                  {t.nav[item.key]}
+                </a>
+              </li>
+            ),
+          )
         }
       </ul>
     </nav>
 
     <div class="site-header__actions">
-      <ul class="lang-switch" role="list" aria-label={t.language}>
-        {
-          locales.map((l) => (
-            <li>
-              <a
-                href={localizePath(switchPath, l)}
-                lang={localeMeta[l].lang}
-                hreflang={localeMeta[l].hreflang}
-                aria-current={l === locale ? 'true' : undefined}
-              >
-                {l === 'en' ? 'EN' : localeMeta[l].label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+      <LangMenu locale={locale} switchPath={switchPath} />
       <a class="btn btn--sun site-header__cta" href={href('/contact/')}>{t.getQuote}</a>
       <button
         class="site-header__toggle"
@@ -75,53 +81,8 @@ const href = (p: string) => localizePath(p, locale);
     </div>
   </div>
 
-  <div id="mobile-menu" class="mobile-menu theme-dark" data-menu hidden>
-    <nav class="container mobile-menu__inner" aria-label={t.mobileNav}>
-      <ul role="list" class="mobile-menu__list">
-        {
-          nav.map((item, i) => (
-            <li>
-              <a href={href(item.href)} class="mobile-menu__link" aria-current={isCurrent(item.href) ? 'page' : undefined}>
-                <span class="mono mobile-menu__index">{String(i + 1).padStart(2, '0')}</span>
-                {t.nav[item.key]}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-      <ul role="list" class="mobile-menu__sub">
-        {
-          productNav.map((item) => (
-            <li>
-              <a href={href(item.href)} class="link-arrow">
-                {t.productNav[item.key]}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-      <ul class="mobile-menu__langs" role="list" aria-label={t.language}>
-        {
-          locales.map((l) => (
-            <li>
-              <a
-                href={localizePath(switchPath, l)}
-                lang={localeMeta[l].lang}
-                hreflang={localeMeta[l].hreflang}
-                aria-current={l === locale ? 'true' : undefined}
-              >
-                {localeMeta[l].label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-      <div class="mobile-menu__contact" dir="ltr">
-        <a class="mono" href={contact.phoneHref}>{contact.phoneDisplay}</a>
-        <a class="mono" href={`mailto:${contact.email}`}>{contact.email}</a>
-      </div>
-    </nav>
-  </div>
+  <div class="site-header__scrim" aria-hidden="true"></div>
+  <MobileMenu locale={locale} basePath={basePath} switchPath={switchPath} />
 </header>
 
 <style>
@@ -130,8 +91,27 @@ const href = (p: string) => localizePath(p, locale);
     top: 0;
     z-index: 100;
     height: var(--header-h);
-    border-bottom: 1px solid var(--line-inv);
+    background: transparent;
     transition: transform var(--dur-3) var(--ease-out-expo);
+  }
+  .site-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--ink);
+    border-bottom: 1px solid var(--line-inv);
+    transition:
+      opacity var(--dur-2) var(--ease),
+      background-color var(--dur-2) var(--ease);
+  }
+  .site-header.is-scrolled::before {
+    background-color: rgb(11 11 12 / 0.92);
+    -webkit-backdrop-filter: saturate(1.4) blur(18px);
+    backdrop-filter: saturate(1.4) blur(18px);
+  }
+  .site-header.is-open::before {
+    background-color: var(--ink);
   }
   .site-header.is-hidden {
     transform: translateY(-100%);
@@ -156,7 +136,7 @@ const href = (p: string) => localizePath(p, locale);
   .site-nav {
     margin-inline-start: auto;
   }
-  .site-nav ul {
+  .site-nav > ul {
     display: flex;
     gap: clamp(var(--s-4), 2.2vw, var(--s-6));
   }
@@ -173,10 +153,14 @@ const href = (p: string) => localizePath(p, locale);
     transition: color var(--dur-1) var(--ease);
   }
   .site-nav__link:hover,
-  .site-nav__link[aria-current='page'] {
+  .site-nav__link[aria-current='page'],
+  .site-nav__link.is-current,
+  .site-nav__link[aria-expanded='true'] {
     color: var(--paper);
   }
-  .site-nav__link[aria-current='page']::after {
+  .site-nav__link[aria-current='page']::after,
+  .site-nav__link.is-current::after,
+  .site-nav__link[aria-expanded='true']::after {
     content: '';
     position: absolute;
     inset-inline: 0;
@@ -184,57 +168,31 @@ const href = (p: string) => localizePath(p, locale);
     height: 1px;
     background: var(--paper);
   }
+  .site-nav__link[aria-expanded='true']::after {
+    background: var(--sun);
+  }
+  .site-nav__link:focus-visible {
+    outline-offset: -2px;
+  }
   .site-nav__link.is-accent::before {
     content: '';
     width: 6px;
     height: 6px;
     background: var(--sun);
   }
+  .site-nav__chevron {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+    transition: transform var(--dur-2) var(--ease);
+  }
+  [aria-expanded='true'] > .site-nav__chevron {
+    transform: rotate(180deg);
+  }
   .site-header__actions {
     display: flex;
     align-items: center;
-    gap: var(--s-5);
-  }
-  .lang-switch {
-    display: flex;
-    align-items: center;
-    gap: var(--s-1);
-  }
-  .lang-switch a {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 44px;
-    min-height: 44px;
-    padding: 0 var(--s-2);
-    font-size: 0.8125rem;
-    color: var(--muted-inv);
-    transition: color var(--dur-1) var(--ease);
-  }
-  .lang-switch a::before {
-    content: '';
-    position: absolute;
-    inset: 6px 0;
-    border: 1px solid transparent;
-    border-radius: var(--r-1);
-    transition: border-color var(--dur-1) var(--ease);
-  }
-  .lang-switch a:hover {
-    color: var(--paper);
-  }
-  .lang-switch a[aria-current='true'] {
-    color: var(--paper);
-  }
-  .lang-switch a[aria-current='true']::before {
-    border-color: var(--line-inv-strong);
-  }
-  .lang-switch a:focus-visible {
-    outline: none;
-  }
-  .lang-switch a:focus-visible::before {
-    outline: 2px solid var(--sun);
-    outline-offset: 2px;
+    gap: var(--s-4);
   }
   .site-header__cta {
     min-height: 44px;
@@ -267,87 +225,32 @@ const href = (p: string) => localizePath(p, locale);
     transform: translateY(-4.25px) rotate(-45deg);
   }
 
-  .mobile-menu {
+  .site-header__scrim {
     position: fixed;
     inset: var(--header-h) 0 0 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    padding-block: var(--s-6) var(--s-8);
+    z-index: -2;
+    background: rgb(11 11 12 / 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--dur-2) var(--ease),
+      visibility 0s linear var(--dur-2);
   }
-  .mobile-menu__inner {
-    display: grid;
-    gap: var(--s-7);
+  .site-header.is-mega .site-header__scrim {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity var(--dur-2) var(--ease),
+      visibility 0s;
   }
-  .mobile-menu__list li {
-    border-bottom: 1px solid var(--line-inv);
-  }
-  .mobile-menu__link {
-    display: flex;
-    align-items: baseline;
-    gap: var(--s-4);
-    padding-block: var(--s-4);
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 9vw, 3rem);
-    font-weight: 600;
-    letter-spacing: -0.035em;
-    line-height: 1.15;
-  }
-  :global([dir='rtl']) .mobile-menu__link {
-    letter-spacing: 0;
-    line-height: 1.4;
-  }
-  .mobile-menu__index {
-    font-size: 0.75rem;
-    color: var(--muted-inv);
-    letter-spacing: 0;
-  }
-  .mobile-menu__sub {
-    display: grid;
-    gap: var(--s-3);
-    color: var(--muted-inv);
-  }
-  .mobile-menu__sub a {
-    min-height: 44px;
-  }
-  .mobile-menu__langs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--s-2);
-  }
-  .mobile-menu__langs a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    padding: 0 var(--s-4);
-    border: 1px solid var(--line-inv);
-    border-radius: var(--r-1);
-    color: var(--muted-inv);
-  }
-  .mobile-menu__langs a[aria-current='true'] {
-    color: var(--ink);
-    background: var(--paper);
-    border-color: var(--paper);
-  }
-  .mobile-menu__contact {
-    display: grid;
-    justify-items: start;
-    font-size: 0.875rem;
-  }
-  .mobile-menu__contact a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-  }
-  :global([dir='rtl']) .mobile-menu__contact {
-    justify-items: end;
+
+  :global([dir='rtl']) .site-nav__link {
+    font-size: 1rem;
   }
 
   @media (max-width: 1180px) {
     .site-header__inner {
       gap: var(--s-5);
-    }
-    .lang-switch a {
-      padding: 0 6px;
     }
   }
   @media (max-width: 1080px) {
@@ -357,7 +260,7 @@ const href = (p: string) => localizePath(p, locale);
   }
   @media (max-width: 900px) {
     .site-nav,
-    .lang-switch {
+    .site-header__actions > :global(.lang) {
       display: none;
     }
     .site-header__actions {
@@ -375,41 +278,220 @@ const href = (p: string) => localizePath(p, locale);
 
 <script>
   const header = document.querySelector<HTMLElement>('[data-header]');
-  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
-  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  const KEY = 'faraday-lang';
+  const store = (value: string) => {
+    try {
+      localStorage.setItem(KEY, value);
+    } catch {}
+  };
 
-  if (header && toggle && menu) {
-    const label = toggle.querySelector('.sr-only')!;
-    const behind = [document.querySelector('main'), document.querySelector('.site-footer')];
-    const setOpen = (open: boolean) => {
-      toggle.setAttribute('aria-expanded', String(open));
-      label.textContent = (open ? toggle.dataset.labelClose : toggle.dataset.labelOpen) ?? '';
-      menu.hidden = !open;
-      behind.forEach((el) => el?.toggleAttribute('inert', open));
-      document.documentElement.style.overflow = open ? 'hidden' : '';
-      header.classList.remove('is-hidden');
-      window.dispatchEvent(new CustomEvent(open ? 'faraday:lock-scroll' : 'faraday:unlock-scroll'));
-      if (open) menu.querySelector<HTMLAnchorElement>('a')?.focus();
-    };
-    toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !menu.hidden) {
-        setOpen(false);
-        toggle.focus();
-      }
-    });
-    matchMedia('(min-width: 901px)').addEventListener('change', (e) => e.matches && setOpen(false));
+  /** Language links anywhere on the page: remember the choice and keep the reader's place. */
+  document.addEventListener('click', (e) => {
+    const link = (e.target as Element).closest<HTMLAnchorElement>('a[data-lang-link]');
+    if (!link) return;
+    store(link.dataset.langLink ?? '');
+    if (location.hash) link.hash = location.hash;
+  });
 
+  if (header) {
+    const anyOpen = () => header.querySelector('[aria-expanded="true"]') !== null;
+    const syncOpen = () => header.classList.toggle('is-open', anyOpen());
+    const announceOpen = (source: string) => document.dispatchEvent(new CustomEvent('faraday:menu', { detail: source }));
+    const focusables = (root: Element) =>
+      [...root.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')].filter((el) => el.getClientRects().length > 0);
+
+    // ---------- scroll: fill after 24px, hide on the way down, show on the way up ----------
     let lastY = window.scrollY;
-    window.addEventListener(
-      'scroll',
-      () => {
-        const y = window.scrollY;
-        const hide = y > lastY && y > 240 && menu.hidden && !header.contains(document.activeElement);
-        header.classList.toggle('is-hidden', hide);
-        lastY = y;
-      },
-      { passive: true },
-    );
+    const onScroll = () => {
+      const y = window.scrollY;
+      header.classList.toggle('is-scrolled', y > 24);
+      const hide = y > lastY && y > 240 && !anyOpen() && !header.contains(document.activeElement);
+      header.classList.toggle('is-hidden', hide);
+      lastY = y;
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // ---------- products mega menu (desktop) ----------
+    const megaItem = header.querySelector<HTMLElement>('[data-mega]');
+    const megaTrigger = header.querySelector<HTMLButtonElement>('[data-mega-trigger]');
+    const megaPanel = header.querySelector<HTMLElement>('[data-mega-panel]');
+    if (megaItem && megaTrigger && megaPanel) {
+      let openY = 0;
+      let hoverOpenedAt = 0;
+      let timer = 0;
+      const prime = () => {
+        if (!megaPanel.hidden) return;
+        megaPanel.hidden = false;
+        void megaPanel.offsetWidth;
+      };
+      const setMega = (open: boolean) => {
+        clearTimeout(timer);
+        if (open === (megaTrigger.getAttribute('aria-expanded') === 'true')) return;
+        if (open) {
+          prime();
+          announceOpen('mega');
+          openY = window.scrollY;
+        }
+        megaTrigger.setAttribute('aria-expanded', String(open));
+        megaPanel.classList.toggle('is-open', open);
+        header.classList.toggle('is-mega', open);
+        syncOpen();
+      };
+      const isOpen = () => megaTrigger.getAttribute('aria-expanded') === 'true';
+
+      megaTrigger.addEventListener('click', () => {
+        if (isOpen() && performance.now() - hoverOpenedAt < 600) return;
+        setMega(!isOpen());
+      });
+      megaTrigger.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowDown') return;
+        e.preventDefault();
+        setMega(true);
+        focusables(megaPanel)[0]?.focus();
+      });
+      megaTrigger.addEventListener('focus', prime);
+
+      const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
+      megaItem.addEventListener('pointerenter', (e) => {
+        if (e.pointerType !== 'mouse' || !finePointer.matches) return;
+        prime();
+        clearTimeout(timer);
+        if (isOpen()) return;
+        timer = window.setTimeout(() => {
+          setMega(true);
+          hoverOpenedAt = performance.now();
+        }, 140);
+      });
+      megaItem.addEventListener('pointerleave', (e) => {
+        if (e.pointerType !== 'mouse' || !finePointer.matches) return;
+        clearTimeout(timer);
+        if (isOpen()) timer = window.setTimeout(() => setMega(false), 280);
+      });
+      megaItem.addEventListener('focusout', (e) => {
+        const next = e.relatedTarget as Node | null;
+        if (next && !megaItem.contains(next)) setMega(false);
+      });
+      document.addEventListener('pointerdown', (e) => {
+        if (isOpen() && !megaItem.contains(e.target as Node)) setMega(false);
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape' || !isOpen()) return;
+        const inside = megaItem.contains(document.activeElement);
+        setMega(false);
+        if (inside) megaTrigger.focus();
+      });
+      document.addEventListener('faraday:menu', (e) => {
+        if ((e as CustomEvent<string>).detail !== 'mega') setMega(false);
+      });
+      window.addEventListener('scroll', () => {
+        if (isOpen() && window.scrollY > openY + 48) setMega(false);
+      }, { passive: true });
+    }
+
+    // ---------- language menu (desktop) ----------
+    const lang = header.querySelector<HTMLElement>('[data-lang]');
+    const langTrigger = header.querySelector<HTMLButtonElement>('[data-lang-trigger]');
+    const langPanel = header.querySelector<HTMLElement>('[data-lang-panel]');
+    if (lang && langTrigger && langPanel) {
+      const links = [...langPanel.querySelectorAll<HTMLAnchorElement>('a')];
+      const isOpen = () => langTrigger.getAttribute('aria-expanded') === 'true';
+      const setLang = (open: boolean) => {
+        if (open === isOpen()) return;
+        if (open) announceOpen('lang');
+        langTrigger.setAttribute('aria-expanded', String(open));
+        lang.classList.toggle('is-open', open);
+        syncOpen();
+      };
+      langTrigger.addEventListener('click', () => setLang(!isOpen()));
+      langTrigger.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+        e.preventDefault();
+        setLang(true);
+        (e.key === 'ArrowDown' ? links[0] : links[links.length - 1])?.focus();
+      });
+      langPanel.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+        e.preventDefault();
+        const i = links.indexOf(document.activeElement as HTMLAnchorElement);
+        const step = e.key === 'ArrowDown' ? 1 : -1;
+        links[(i + step + links.length) % links.length]?.focus();
+      });
+      lang.addEventListener('focusout', (e) => {
+        const next = e.relatedTarget as Node | null;
+        if (next && !lang.contains(next)) setLang(false);
+      });
+      document.addEventListener('pointerdown', (e) => {
+        if (isOpen() && !lang.contains(e.target as Node)) setLang(false);
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape' || !isOpen()) return;
+        setLang(false);
+        langTrigger.focus();
+      });
+      document.addEventListener('faraday:menu', (e) => {
+        if ((e as CustomEvent<string>).detail !== 'lang') setLang(false);
+      });
+    }
+
+    // ---------- mobile menu ----------
+    const toggle = header.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+    const menu = header.querySelector<HTMLElement>('[data-menu]');
+    if (toggle && menu) {
+      const label = toggle.querySelector('.sr-only')!;
+      const behind = [document.querySelector('main'), document.querySelector('.site-footer'), document.querySelector('[data-lang-hint]')];
+      const sub = menu.querySelector<HTMLButtonElement>('[data-sub-toggle]');
+      const subPanel = sub && document.getElementById(sub.getAttribute('aria-controls') ?? '');
+      const setSub = (open: boolean) => {
+        if (!sub || !subPanel) return;
+        sub.setAttribute('aria-expanded', String(open));
+        subPanel.hidden = !open;
+      };
+      sub?.addEventListener('click', () => setSub(sub.getAttribute('aria-expanded') !== 'true'));
+
+      const setMenu = (open: boolean) => {
+        if (open) announceOpen('mobile');
+        toggle.setAttribute('aria-expanded', String(open));
+        label.textContent = (open ? toggle.dataset.labelClose : toggle.dataset.labelOpen) ?? '';
+        menu.hidden = !open;
+        behind.forEach((el) => el?.toggleAttribute('inert', open));
+        document.documentElement.style.overflow = open ? 'hidden' : '';
+        header.classList.remove('is-hidden');
+        syncOpen();
+        window.dispatchEvent(new CustomEvent(open ? 'faraday:lock-scroll' : 'faraday:unlock-scroll'));
+        if (open) {
+          menu.scrollTop = 0;
+          void menu.offsetWidth;
+          menu.classList.add('is-revealed');
+          focusables(menu)[0]?.focus({ preventScroll: true });
+        } else {
+          menu.classList.remove('is-revealed');
+          setSub(false);
+        }
+      };
+      toggle.addEventListener('click', () => setMenu(menu.hidden));
+      document.addEventListener('keydown', (e) => {
+        if (menu.hidden) return;
+        if (e.key === 'Escape') {
+          setMenu(false);
+          toggle.focus();
+          return;
+        }
+        if (e.key !== 'Tab') return;
+        const items = [toggle, ...focusables(menu)];
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      });
+      matchMedia('(min-width: 901px)').addEventListener('change', (e) => {
+        if (e.matches && !menu.hidden) setMenu(false);
+      });
+    }
   }
 </script>

@@ -294,3 +294,92 @@ export function capacityValue(key: CapacityKey, v: number | number[]): { value: 
   const unit = key === 'modules' ? undefined : key === 'depthOfDischarge' ? '%' : 'kWh';
   return { value: [pair[0], pair[1]], unit };
 }
+
+/* ---------- studio renders: public/images/products/modules, made with the 3D viewer at its home view ---------- */
+
+const RENDERS: Record<string, { front: [number, number]; back?: [number, number] }> = {
+  's-series-sa': { front: [666, 1400], back: [756, 1400] },
+  's-series-sf': { front: [670, 1400] },
+  'revamping-line': { front: [670, 1400] },
+  'or-series-or10e': { front: [810, 1400], back: [932, 1400] },
+  'or-series-or10h': { front: [658, 1400], back: [750, 1400] },
+  'or-series-or12h': { front: [708, 1400], back: [812, 1400] },
+  'dr-series-dr10h': { front: [658, 1400] },
+};
+
+export interface Render {
+  src: string;
+  size: [number, number];
+  /** The model the render shows: the series' most powerful panel, which the viewer opens on. */
+  model: string;
+}
+
+/** Front three-quarter render of a series, or its rear view where the rear is glass or transparent. */
+export function seriesRender(series: Series, view: 'front' | 'back' = 'front'): Render | null {
+  const entry = RENDERS[series.slug];
+  const size = entry?.[view];
+  if (!size) return null;
+  const suffix = view === 'back' ? '-back' : '';
+  return { src: `/images/products/modules/${series.slug}${suffix}.webp`, size, model: panelName(seriesPanels(series).at(-1)!) };
+}
+
+/* ---------- warranty curves (Peimar PV module warranty 2026) ---------- */
+
+export type OutputKey = 'monoTopcon' | 'monoPerc' | 'polycrystalline';
+export const OUTPUT_KEYS: OutputKey[] = ['monoTopcon', 'monoPerc', 'polycrystalline'];
+
+/** Loss in year one, loss per year after that and the guaranteed output in year 30, in %. */
+export function outputTerms(key: OutputKey) {
+  const [first, yearly, end] = [...warranty.powerOutput[key].matchAll(/([\d,]+)%/g)].map((m) => m[1].replace(',', '.'));
+  return { first, yearly, end };
+}
+
+/** The warranty curves that match the cell technologies Peimar names for a series. */
+export function seriesOutputs(series: Series): OutputKey[] {
+  const tech = series.technology.join(' ');
+  const test: Record<OutputKey, RegExp> = { monoTopcon: /TOPCon/, monoPerc: /PERC/, polycrystalline: /Polycrystalline/ };
+  return OUTPUT_KEYS.filter((key) => test[key].test(tech));
+}
+
+/* ---------- construction ---------- */
+
+/** S Series: 3.2 mm anti-reflective front glass. OR double glass: 2.0 mm rear glass (all models, or the MNDB ones). */
+export function seriesGlass(series: Series): 'front' | 'double' | 'doubleSome' | null {
+  const tech = series.technology.join(' ');
+  if (series.series === 'S Series') return 'front';
+  if (/Double glass \(MNDB\)/.test(tech)) return 'doubleSome';
+  if (/Double glass/.test(tech)) return 'double';
+  return null;
+}
+export const GLASS_MM = { front: '3.2', rear: '2.0' };
+
+/** Finish codes present in a series, with "std" for models sold without a suffix (silver frame). */
+export function seriesFinishes(series: Series): string[] {
+  const codes = series.finishes.map((f) => f.code);
+  if (seriesPanels(series).some((p) => !p.finish)) codes.push('std');
+  return codes;
+}
+
+export type CertKey = 'iec' | 'pid' | 'ammonia' | 'salt' | 'dust' | 'ul' | 'adqcc' | 'iso9001' | 'iso14001' | 'iso45001';
+export const CERTS: { key: CertKey; code: string }[] = [
+  { key: 'iec', code: 'IEC 61215 · IEC 61730' },
+  { key: 'pid', code: 'IEC TS 62804-1' },
+  { key: 'ammonia', code: 'IEC 62716' },
+  { key: 'salt', code: 'IEC 61701' },
+  { key: 'dust', code: 'IEC 60068-2-68' },
+  { key: 'ul', code: 'UL 61730' },
+  { key: 'adqcc', code: 'ADQCC' },
+  { key: 'iso9001', code: 'ISO 9001:2015' },
+  { key: 'iso14001', code: 'ISO 14001:2015' },
+  { key: 'iso45001', code: 'ISO 45001:2018' },
+];
+
+/** Certificates that apply to a series: dust and sand only on double glass, the ISO site certificates only on Made in Italy series. */
+export function seriesCerts(series: Series): { key: CertKey; code: string; by?: string }[] {
+  const italy = seriesTraits(series).includes('italy');
+  const glass = seriesGlass(series);
+  const by = series.series === 'S Series' ? 'Kiwa' : series.series === 'OR Series' ? 'TÜV' : undefined;
+  return CERTS.filter(
+    (c) => (c.key !== 'dust' || glass === 'double' || glass === 'doubleSome') && (!c.key.startsWith('iso') || italy),
+  ).map((c) => (c.key === 'iec' && by ? { ...c, by } : c));
+}

@@ -38,7 +38,7 @@ function components(s: ProjectSummary, t: DesignerStrings) {
     if (!b.inv) continue;
     const key = `i:${b.inv.id}`;
     const row = rows.get(key) ?? { brand: 'Peimar', model: b.inv.model, qty: 0 };
-    row.qty += Math.max(1, b.block.count);
+    row.qty += b.count;
     rows.set(key, row);
   }
   return [...rows.values()];
@@ -51,7 +51,7 @@ export function quoteText(p: Project, s: ProjectSummary, t: DesignerStrings, loc
     project: p.name || t.rail.untitled,
     city: city ? cityName(city, locale) : '–',
     panels: s.subArrays.filter((x) => x.panel && x.subArray.count > 0).map((x) => ltr(`${x.subArray.count} × Peimar ${panelLabel(x.panel!)} (${kw(x.installedW)} kWp)`)),
-    inverters: s.blocks.filter((b) => b.inv).map((b) => ltr(`${Math.max(1, b.block.count)} × Peimar ${b.inv!.model}, ${stringing(b)}`)),
+    inverters: s.blocks.filter((b) => b.inv).map((b) => ltr(`${b.count} × Peimar ${b.inv!.model}, ${stringing(b)}`)),
     yearly: est ? unit(fmt(est.annual), 'kWh') : null,
     link,
   });
@@ -370,7 +370,7 @@ export function Report({ printOnly }: { printOnly?: boolean }) {
         <h4 class="dz-rsec__title">{t.summary.inverterDetail}</h4>
         {s.blocks.map((b, i) => {
           if (!b.inv) return null;
-          const n = Math.max(1, b.block.count);
+          const n = b.count;
           return (
             <div class="dz-rgroup" key={b.block.id}>
               <p class="dz-rgroup__head">

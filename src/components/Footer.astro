@@ -2,9 +2,15 @@
 import Logo from './Logo.astro';
 import { contact, nav, productNav } from '../data/site.ts';
 import { common } from '../i18n/common.ts';
-import { localeFromPath, localizePath } from '../i18n/config.ts';
+import { locales, localeMeta, localeFromPath, localizePath, stripLocale } from '../i18n/config.ts';
 
+interface Props {
+  localized?: boolean;
+}
+
+const { localized = true } = Astro.props;
 const locale = localeFromPath(Astro.url.pathname);
+const switchPath = localized ? stripLocale(Astro.url.pathname) : '/';
 const t = common[locale];
 const href = (p: string) => localizePath(p, locale);
 const year = new Date().getFullYear();
@@ -57,7 +63,24 @@ const year = new Date().getFullYear();
 
     <div class="site-footer__legal small">
       <p>© <span class="num">{year}</span> <bdi>{contact.company}</bdi> {t.footer.rights}</p>
-      <p>{t.footer.trademark}</p>
+      <ul class="site-footer__langs" role="list" aria-label={t.language}>
+        {
+          locales.map((l) => (
+            <li>
+              <a
+                href={localizePath(switchPath, l)}
+                lang={localeMeta[l].lang}
+                hreflang={localeMeta[l].hreflang}
+                aria-current={l === locale ? 'true' : undefined}
+                data-lang-link={l}
+              >
+                {localeMeta[l].label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="site-footer__tm">{t.footer.trademark}</p>
     </div>
   </div>
 </footer>
@@ -125,9 +148,38 @@ const year = new Date().getFullYear();
   .site-footer__legal {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     justify-content: space-between;
-    gap: var(--s-3);
+    gap: var(--s-3) var(--s-6);
     color: var(--muted-inv);
+  }
+  .site-footer__tm {
+    flex-basis: 100%;
+    max-width: 72ch;
+  }
+  .site-footer__langs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-1) var(--s-5);
+  }
+  .site-footer__langs a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 44px;
+    font-size: 0.875rem;
+    transition: color var(--dur-1) var(--ease);
+  }
+  .site-footer__langs a:hover,
+  .site-footer__langs a[aria-current='true'] {
+    color: var(--paper);
+  }
+  .site-footer__langs a[aria-current='true']::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--sun);
   }
   @media (max-width: 960px) {
     .site-footer__top {

@@ -6,6 +6,7 @@ import Figure from '../../../../components/products/Figure.astro';
 import SpecList, { type SpecRow } from '../../../../components/products/SpecList.astro';
 import DocList from '../../../../components/products/DocList.astro';
 import InverterTable from '../../../../components/products/InverterTable.astro';
+import SystemDiagram from '../../../../components/products/SystemDiagram.astro';
 import FamilyList from '../../../../components/products/FamilyList.astro';
 import JsonLd from '../../../../components/seo/JsonLd.astro';
 import { absolute, breadcrumbList, product } from '../../../../lib/seo/schema.ts';
@@ -231,6 +232,21 @@ const schema = [
   </section>
 
   {
+    group === 'hybrid' && (
+      <section class="section section--tight system" aria-labelledby="system-title">
+        <div class="container system__grid">
+          <div class="system__head">
+            <p class="eyebrow">{t.detail.systemEyebrow}</p>
+            <h2 id="system-title" class="h3">{t.detail.systemTitle}</h2>
+            <p class="system__lead">{t.detail.systemLead}</p>
+          </div>
+          <SystemDiagram locale={locale} />
+        </div>
+      </section>
+    )
+  }
+
+  {
     docs.length > 0 && (
       <section class="section section--tight theme-paper" aria-labelledby="docs-title">
         <div class="container docs__grid">
@@ -263,6 +279,26 @@ const schema = [
 </Base>
 
 <style>
+  .system__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: var(--s-6) clamp(32px, 5vw, 96px);
+    align-items: start;
+  }
+  .system__head {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-3);
+  }
+  .system__lead {
+    max-width: 44ch;
+    color: var(--muted);
+  }
+  @media (max-width: 1080px) {
+    .system__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
   .product {
     padding-block: var(--s-4) clamp(56px, 7vw, 112px);
   }

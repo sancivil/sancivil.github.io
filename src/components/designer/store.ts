@@ -45,7 +45,7 @@ export function restore(): boolean {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return false;
     const data = JSON.parse(raw);
-    const p = fromCompact(data.p);
+    const p = fromCompact(data.p, catalog);
     if (!p) return false;
     project.value = p;
     mode.value = data.m === 'needs' ? 'needs' : 'design';

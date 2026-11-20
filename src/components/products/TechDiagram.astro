@@ -1,0 +1,171 @@
+---
+/* Small schematic drawings for the technology notes. Labels are material symbols only, so they need no translation. */
+interface Props {
+  kind: 'topcon' | 'halfcut' | 'bifacial' | 'arc' | 'pid';
+}
+const { kind } = Astro.props;
+---
+
+<svg class="tech-dia" viewBox="0 0 240 140" aria-hidden="true" focusable="false">
+  {
+    kind === 'topcon' && (
+      <g>
+        {[30, 62, 94, 126].map((x) => (
+          <rect x={x} y="22" width="6" height="7" class="ink" />
+        ))}
+        <rect x="16" y="29" width="140" height="6" class="tint" />
+        <rect x="16" y="35" width="140" height="50" class="soft" />
+        <line x1="16" x2="156" y1="88" y2="88" class="accent" />
+        <rect x="16" y="90" width="140" height="14" class="hatch" fill={`url(#td-h-${kind})`} />
+        <rect x="16" y="104" width="140" height="9" class="ink" />
+        <line x1="160" x2="174" y1="60" y2="60" class="hair" />
+        <text x="178" y="64">n-Si</text>
+        <line x1="160" x2="174" y1="88" y2="88" class="hair" />
+        <text x="178" y="92">SiOx</text>
+        <line x1="160" x2="174" y1="97" y2="104" class="hair" />
+        <text x="178" y="110">poly-Si n+</text>
+      </g>
+    )
+  }
+  {
+    kind === 'halfcut' && (
+      <g>
+        <rect x="18" y="30" width="72" height="72" class="soft stroke" />
+        <line x1="30" x2="78" y1="66" y2="66" class="arrow" marker-end={`url(#td-a-${kind})`} />
+        <text x="54" y="122" text-anchor="middle">I</text>
+        <line x1="104" x2="124" y1="66" y2="66" class="hair" marker-end={`url(#td-a-${kind})`} />
+        <rect x="138" y="30" width="72" height="34" class="soft stroke" />
+        <rect x="138" y="68" width="72" height="34" class="soft stroke" />
+        <line x1="138" x2="210" y1="66" y2="66" class="accent" />
+        <line x1="150" x2="198" y1="47" y2="47" class="arrow thin" marker-end={`url(#td-a-${kind})`} />
+        <line x1="150" x2="198" y1="85" y2="85" class="arrow thin" marker-end={`url(#td-a-${kind})`} />
+        <text x="174" y="122" text-anchor="middle">I/2 + I/2</text>
+      </g>
+    )
+  }
+  {
+    kind === 'bifacial' && (
+      <g>
+        <line x1="10" x2="230" y1="122" y2="122" class="hair" />
+        {[22, 40, 58, 76, 94, 112, 130, 148, 166, 184, 202, 220].map((x) => (
+          <line x1={x} x2={x - 8} y1="122" y2="130" class="hair" />
+        ))}
+        <g transform="rotate(-22 120 70)">
+          <rect x="70" y="64" width="100" height="3" class="tint" />
+          <rect x="70" y="67" width="100" height="5" class="ink" />
+          <rect x="70" y="72" width="100" height="3" class="tint" />
+        </g>
+        <line x1="40" x2="96" y1="14" y2="58" class="arrow" marker-end={`url(#td-a-${kind})`} />
+        <line x1="70" x2="122" y1="8" y2="48" class="arrow" marker-end={`url(#td-a-${kind})`} />
+        <line x1="150" x2="134" y1="120" y2="86" class="arrow accent-arrow" marker-end={`url(#td-s-${kind})`} />
+        <line x1="186" x2="160" y1="120" y2="76" class="arrow accent-arrow" marker-end={`url(#td-s-${kind})`} />
+      </g>
+    )
+  }
+  {
+    kind === 'arc' && (
+      <g>
+        <rect x="20" y="66" width="200" height="30" class="tint stroke" />
+        <line x1="20" x2="220" y1="66" y2="66" class="accent" />
+        <rect x="20" y="100" width="200" height="10" class="ink" />
+        <line x1="54" x2="112" y1="10" y2="64" class="arrow" />
+        <line x1="112" x2="126" y1="66" y2="98" class="arrow" marker-end={`url(#td-a-${kind})`} />
+        <line x1="112" x2="146" y1="64" y2="40" class="arrow thin dashed" marker-end={`url(#td-a-${kind})`} />
+      </g>
+    )
+  }
+  {
+    kind === 'pid' && (
+      <g>
+        <rect x="20" y="26" width="200" height="76" rx="2" class="stroke frame" />
+        {[34, 78, 122, 166].map((x) => (
+          <rect x={x} y="40" width="40" height="48" class="soft stroke" />
+        ))}
+        <line x1="120" x2="120" y1="102" y2="118" class="hair" />
+        <line x1="108" x2="132" y1="118" y2="118" class="hair" />
+        <line x1="112" x2="128" y1="123" y2="123" class="hair" />
+        <line x1="116" x2="124" y1="128" y2="128" class="hair" />
+        <line x1="54" x2="54" y1="88" y2="100" class="arrow thin dashed" />
+        <line x1="44" x2="64" y1="94" y2="94" class="accent" />
+        <text x="196" y="18" text-anchor="middle">V</text>
+        <line x1="196" x2="196" y1="22" y2="40" class="hair" />
+      </g>
+    )
+  }
+  <defs>
+    <marker id={`td-a-${kind}`} viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L8 4 L0 8 z" class="ink" />
+    </marker>
+    <marker id={`td-s-${kind}`} viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L8 4 L0 8 z" class="sun" />
+    </marker>
+    <pattern id={`td-h-${kind}`} width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="5" class="hair" />
+    </pattern>
+  </defs>
+</svg>
+
+<style>
+  .tech-dia {
+    direction: ltr;
+    display: block;
+    width: 100%;
+    height: auto;
+    color: inherit;
+    font-family: var(--font-mono);
+  }
+  .tech-dia text {
+    fill: currentColor;
+    font-size: 10px;
+    letter-spacing: 0.02em;
+  }
+  .ink {
+    fill: currentColor;
+  }
+  .sun {
+    fill: var(--sun);
+  }
+  .soft {
+    fill: currentColor;
+    fill-opacity: 0.06;
+  }
+  .tint {
+    fill: currentColor;
+    fill-opacity: 0.16;
+  }
+  .hatch {
+    stroke: currentColor;
+    stroke-width: 0.75;
+  }
+  .stroke {
+    stroke: currentColor;
+    stroke-width: 1;
+  }
+  .frame {
+    fill: none;
+    stroke-width: 2.5;
+  }
+  .hair {
+    stroke: currentColor;
+    stroke-width: 1;
+    fill: none;
+  }
+  .accent {
+    stroke: var(--sun);
+    stroke-width: 3;
+  }
+  .arrow {
+    stroke: currentColor;
+    stroke-width: 1.5;
+  }
+  .arrow.thin {
+    stroke-width: 1;
+  }
+  .dashed {
+    stroke-dasharray: 3 3;
+  }
+  .accent-arrow {
+    stroke: var(--sun);
+    stroke-dasharray: 4 3;
+  }
+</style>

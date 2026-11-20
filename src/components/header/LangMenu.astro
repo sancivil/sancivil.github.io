@@ -1,0 +1,162 @@
+---
+import { common, languageNames } from '../../i18n/common.ts';
+import { locales, localeMeta, localizePath, type Locale } from '../../i18n/config.ts';
+
+interface Props {
+  locale: Locale;
+  /** Site-root path of this page; each language link points at it. */
+  switchPath: string;
+}
+
+const { locale, switchPath } = Astro.props;
+const t = common[locale];
+const current = localeMeta[locale];
+---
+
+<div class="lang" data-lang>
+  <button
+    type="button"
+    class="lang__btn"
+    aria-expanded="false"
+    aria-controls="lang-menu"
+    aria-label={`${t.language}: ${current.label}`}
+    data-lang-trigger
+  >
+    <svg class="lang__globe" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <circle cx="8" cy="8" r="6.6"></circle>
+      <path d="M1.4 8h13.2M8 1.4c1.8 1.8 2.8 4 2.8 6.6S9.8 12.8 8 14.6C6.2 12.8 5.2 10.6 5.2 8S6.2 3.2 8 1.4Z"></path>
+    </svg>
+    <span lang={current.lang}>{current.label}</span>
+    <svg class="lang__chevron" viewBox="0 0 10 6" width="10" height="6" aria-hidden="true">
+      <path d="M1 1l4 4 4-4"></path>
+    </svg>
+  </button>
+  <ul id="lang-menu" class="lang__menu theme-dark" role="list" data-lang-panel>
+    {
+      locales.map((l) => (
+        <li>
+          <a
+            href={localizePath(switchPath, l)}
+            lang={localeMeta[l].lang}
+            hreflang={localeMeta[l].hreflang}
+            aria-current={l === locale ? 'true' : undefined}
+            data-lang-link={l}
+          >
+            <span class="lang__native">{localeMeta[l].label}</span>
+            <span class="lang__en" lang="en">{languageNames[l]}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .lang {
+    position: relative;
+  }
+  .lang__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 44px;
+    padding-inline: var(--s-3);
+    border: 1px solid var(--line-inv);
+    border-radius: var(--r-1);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--paper);
+    white-space: nowrap;
+    transition: border-color var(--dur-1) var(--ease);
+  }
+  .lang__btn:hover,
+  .lang__btn[aria-expanded='true'] {
+    border-color: var(--line-inv-strong);
+  }
+  .lang__btn svg {
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+  }
+  .lang__globe {
+    stroke-width: 1.1;
+    color: var(--muted-inv);
+  }
+  .lang__chevron {
+    stroke-width: 1.4;
+    color: var(--muted-inv);
+    transition: transform var(--dur-2) var(--ease);
+  }
+  .lang__btn[aria-expanded='true'] .lang__chevron {
+    transform: rotate(180deg);
+  }
+
+  .lang__menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    inset-inline-end: 0;
+    z-index: 2;
+    display: grid;
+    min-width: 232px;
+    padding: var(--s-2);
+    background: var(--ink-2);
+    border: 1px solid var(--line-inv-strong);
+    border-radius: var(--r-2);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition:
+      opacity 180ms var(--ease),
+      transform var(--dur-2) var(--ease-out-expo),
+      visibility 0s linear var(--dur-2);
+  }
+  .lang.is-open .lang__menu {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 180ms var(--ease),
+      transform var(--dur-2) var(--ease-out-expo),
+      visibility 0s;
+  }
+  .lang__menu a {
+    position: relative;
+    display: grid;
+    gap: 2px;
+    min-height: 52px;
+    padding: var(--s-2) var(--s-3);
+    padding-inline-end: var(--s-6);
+    border-radius: var(--r-1);
+    text-align: start;
+    transition: background-color var(--dur-1) var(--ease);
+  }
+  .lang__menu a:hover,
+  .lang__menu a:focus-visible {
+    background: var(--ink-3);
+  }
+  .lang__menu a:focus-visible {
+    outline-offset: -2px;
+  }
+  .lang__native {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  .lang__en {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted-inv);
+  }
+  .lang__menu a[aria-current='true']::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    inset-inline-end: var(--s-3);
+    width: 6px;
+    height: 6px;
+    margin-top: -3px;
+    background: var(--sun);
+  }
+</style>

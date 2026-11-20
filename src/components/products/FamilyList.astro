@@ -29,6 +29,11 @@ const { locale, group, families, start = 0, headingLevel = 'h3' } = Astro.props;
 const t = products[locale];
 const Heading = headingLevel;
 
+/* One logarithmic scale for every power bar in the list, so 1 kW and 100 kW families both read. */
+const powers = families.flatMap((family) => familyPower(family) ?? []);
+const [lo, hi] = powers.length ? extent(powers) : [1, 1];
+const scale = (w: number) => (hi > lo ? Math.log(w / lo) / Math.log(hi / lo) : 0);
+
 const rows = families.map((family) => {
   const models = familyInverters(family);
   const power = familyPower(family);
@@ -40,6 +45,7 @@ const rows = families.map((family) => {
     note: familyNote(locale, family.slug),
     image: familyImage(family),
     power: power && powerParts(power),
+    bar: power && [scale(power[0]), scale(power[1])].map((n) => n.toFixed(3)),
     mppt: mppt && ([String(mppt[0]), String(mppt[1])] as [string, string]),
     href: localizePath(`/products/inverters/${family.slug}/`, locale),
   };
@@ -69,6 +75,7 @@ const rows = families.map((family) => {
             {row.kind}
             {row.note && <span class="muted"> · {row.note}</span>}
           </p>
+          {group === 'hybrid' && <p class="family__ready">{t.inverterPage.col.battery}</p>}
         </div>
         <dl class="family__facts">
           {row.power && (
@@ -77,6 +84,11 @@ const rows = families.map((family) => {
               <dd>
                 <Figure value={row.power.value} unit={row.power.unit} />
               </dd>
+              {row.bar && (
+                <dd class="family__bar" aria-hidden="true">
+                  <span style={`--a:${row.bar[0]};--b:${row.bar[1]}`} />
+                </dd>
+              )}
             </div>
           )}
           {row.mppt && (
@@ -101,6 +113,44 @@ const rows = families.map((family) => {
 </ol>
 
 <style>
+  .family__bar {
+    position: relative;
+    block-size: 3px;
+    margin-top: var(--s-2);
+    background: var(--line-c);
+    border-radius: 2px;
+  }
+  .family__bar span {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc(var(--a) * 100%);
+    inline-size: max(6px, calc((var(--b) - var(--a)) * 100%));
+    background: currentColor;
+    border-radius: 2px;
+  }
+  .family__ready {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted-c);
+  }
+  .family__ready::before {
+    content: '';
+    inline-size: 6px;
+    block-size: 6px;
+    border-radius: 50%;
+    background: var(--sun);
+  }
+  :global([dir='rtl']) .family__ready {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
   .families {
     border-top: 1px solid var(--line-c);
   }

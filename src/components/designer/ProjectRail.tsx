@@ -35,7 +35,7 @@ export function ProjectRail({ open, onToggle, onShare, onNew }: Props) {
             {kw(s.installedW)} kWp
           </span>
           <span>
-            <span class="num">{fmt(s.panelsTotal)}</span> {c.units.panels}
+            <span class="num">{fmt(s.panelsTotal)}</span> {c.units.panelsCount(s.panelsTotal)}
           </span>
           {s.connectedW > 0 && (
             <span class="num" dir="ltr">
@@ -124,7 +124,7 @@ export function ProjectRail({ open, onToggle, onShare, onNew }: Props) {
                   <span class="dz-sum__item-name">{t.inverter.block(i + 1)}</span>
                   {b.inv ? (
                     <span class="mono dz-sum__item-val" dir="ltr">
-                      {Math.max(1, b.block.count)} × {b.inv.model}
+                      {b.count} × {b.inv.model}
                     </span>
                   ) : (
                     <span class="dz-sum__item-val muted">{t.rail.noInverter}</span>

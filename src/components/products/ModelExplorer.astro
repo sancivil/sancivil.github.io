@@ -357,6 +357,9 @@ const json = JSON.stringify(models).replace(/</g, '\\u003c');
       if (designer) designer.href = model.designer;
       if (quote) quote.href = model.quote;
       viewer?.setAttribute('data-spec', JSON.stringify(model.spec));
+      /* The studio poster shows the opening model only. */
+      document.querySelectorAll<HTMLElement>('[data-poster]').forEach((el) => (el.hidden = true));
+      document.querySelectorAll<HTMLElement>('tr[data-row]').forEach((row) => row.classList.toggle('is-selected', row.dataset.row === id));
       if (announce && status) status.textContent = template.replace('{model}', model.k.name);
       const url = new URL(location.href);
       url.searchParams.set('model', id);

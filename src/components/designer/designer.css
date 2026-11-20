@@ -2330,3 +2330,111 @@
     font-size: 8pt;
   }
 }
+
+/* ---------- matrix readout, apply-to-empty, picker clear, replace confirm ---------- */
+
+.dz-cell__w .unit {
+  font-size: 0.7em;
+  margin-inline-start: 0.12em;
+  opacity: 0.78;
+}
+.dz-cell.is-invalid.is-probe {
+  border-color: var(--bad);
+  color: var(--ink);
+}
+.dz-matrix__probe {
+  max-width: 68ch;
+  margin-top: var(--s-3);
+  padding-inline-start: var(--s-3);
+  border-inline-start: 2px solid var(--bad);
+  color: var(--ink);
+}
+.dz-matrix__probe:empty {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.dz-matrix__probe strong {
+  font-weight: 600;
+}
+.dz-legend {
+  gap: var(--s-2) var(--s-3);
+}
+.dz-legend__sample {
+  padding: 1px 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  font-size: 0.75rem;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.dz-apply {
+  margin-top: var(--s-4);
+  min-height: 44px;
+}
+.dz-apply .dz-ico {
+  flex: none;
+}
+.dz-apply__note {
+  max-width: 68ch;
+  margin-top: var(--s-2);
+  color: var(--ink);
+}
+.dz-apply__note:empty {
+  margin: 0;
+}
+.dz-pick__search::-webkit-search-cancel-button,
+.dz-pick__search::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+.dz .dz-pick__search {
+  padding-inline-end: 48px;
+}
+.dz-pick__clear {
+  position: absolute;
+  top: 0;
+  inset-inline-end: 0;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color var(--dur-1) var(--ease);
+}
+.dz-pick__clear:hover {
+  color: var(--ink);
+}
+.dz-pick__clear:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -8px;
+}
+.dz-sizing__actions[hidden] {
+  display: none;
+}
+.dz-confirm--replace {
+  gap: var(--s-3);
+  margin-top: var(--s-5);
+  padding: var(--s-4);
+  border: 1px solid var(--sun);
+  border-radius: var(--r-1);
+}
+.dz-confirm--replace .dz-confirm__btns {
+  flex-wrap: wrap;
+  gap: var(--s-3);
+}
+@media (max-width: 520px) {
+  .dz-confirm--replace .btn {
+    width: 100%;
+  }
+}
+@media (max-width: 520px) {
+  .dz-cell__w .unit {
+    display: none;
+  }
+}

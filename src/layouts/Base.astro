@@ -6,10 +6,12 @@ import '@fontsource-variable/noto-sans-arabic';
 import '@fontsource-variable/noto-kufi-arabic';
 import '../styles/global.css';
 import dmSansLatin from '@fontsource-variable/dm-sans/files/dm-sans-latin-wght-normal.woff2?url';
+import notoSansArabic from '@fontsource-variable/noto-sans-arabic/files/noto-sans-arabic-arabic-wght-normal.woff2?url';
+import notoKufiArabic from '@fontsource-variable/noto-kufi-arabic/files/noto-kufi-arabic-arabic-wght-normal.woff2?url';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { contact } from '../data/site.ts';
-import { common } from '../i18n/common.ts';
+import { common, langHint } from '../i18n/common.ts';
 import { locales, localeMeta, localeFromPath, localizePath, stripLocale } from '../i18n/config.ts';
 import { website } from '../lib/seo/schema.ts';
 
@@ -28,6 +30,24 @@ const basePath = stripLocale(Astro.url.pathname);
 const fullTitle = title.includes('Faraday') ? title : `${title} · Faraday`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image, Astro.site);
+const rtl = meta.dir === 'rtl';
+const showLangHint = locale === 'en' && !noindex;
+const hintLocales = ['ar', 'ckb'] as const;
+
+/* Arabic script reads smaller than DM Sans at the same size. These aliases of the Noto faces carry
+   size-adjust for Arabic code points only, so Latin brand names, codes and digits keep their size. */
+const arabicRange =
+  'U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC';
+const arabicFaces = [
+  ['Faraday Arabic', notoSansArabic, '107%'],
+  ['Faraday Kufi', notoKufiArabic, '103%'],
+]
+  .map(
+    ([family, src, size]) =>
+      `@font-face{font-family:'${family}';font-style:normal;font-display:swap;font-weight:100 900;src:url(${src}) format('woff2-variations');unicode-range:${arabicRange};size-adjust:${size}}`,
+  )
+  .join('');
+
 const alternates = locales.map((l) => ({
   hreflang: localeMeta[l].hreflang,
   href: new URL(localizePath(basePath, l), Astro.site).toString(),
@@ -117,6 +137,8 @@ const organization = {
       )
     }
     <link rel="preload" href={dmSansLatin} as="font" type="font/woff2" crossorigin />
+    {rtl && <link rel="preload" href={notoSansArabic} as="font" type="font/woff2" crossorigin />}
+    {rtl && <style is:inline set:html={arabicFaces} />}
     <meta name="theme-color" content="#0b0b0c" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -150,12 +172,123 @@ const organization = {
   <body>
     <a class="skip-link" href="#main">{common[locale].skip}</a>
     <Header localized={!noindex} />
+    {
+      showLangHint && (
+        <>
+          <div class="lang-hint theme-dark" data-lang-hint hidden>
+            {hintLocales.map((l) => (
+              <div class="container lang-hint__row" data-hint={l} lang={localeMeta[l].lang} dir="rtl" hidden>
+                <p class="lang-hint__text">{langHint[l].text}</p>
+                <a class="lang-hint__go" href={localizePath(basePath, l)} hreflang={localeMeta[l].hreflang} data-lang-link={l}>
+                  {langHint[l].action}
+                </a>
+                <button type="button" class="lang-hint__close" aria-label={langHint[l].dismiss} data-hint-dismiss>
+                  <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
+                    <path d="M1 1l10 10M11 1 1 11" />
+                  </svg>
+                </button>
+              </div>
+            ))}
+          </div>
+          <script is:inline>
+            (function () {
+              var bar = document.currentScript.previousElementSibling;
+              try {
+                if (localStorage.getItem('faraday-lang')) return;
+                var langs = navigator.languages || [navigator.language || ''];
+                var pick = null;
+                for (var i = 0; i < langs.length && !pick; i++) {
+                  var tag = String(langs[i]).toLowerCase();
+                  if (/^ar(-|$)/.test(tag)) pick = 'ar';
+                  else if (/^(ckb|ku)(-|$)/.test(tag)) pick = 'ckb';
+                }
+                if (!pick) return;
+                bar.querySelector('[data-hint="' + pick + '"]').hidden = false;
+                bar.hidden = false;
+                bar.addEventListener('click', function (e) {
+                  if (!e.target.closest('[data-hint-dismiss]')) return;
+                  localStorage.setItem('faraday-lang', 'en');
+                  bar.hidden = true;
+                });
+              } catch (e) {}
+            })();
+          </script>
+        </>
+      )
+    }
     <main id="main">
       <slot />
     </main>
-    <Footer />
+    <Footer localized={!noindex} />
     <script>
       import '../lib/motion/init.ts';
     </script>
   </body>
 </html>
+
+<style>
+  .lang-hint {
+    border-bottom: 1px solid var(--line-inv);
+    background: var(--ink-2);
+  }
+  .lang-hint__row[hidden] {
+    display: none;
+  }
+  .lang-hint__row {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2) var(--s-5);
+    min-height: 48px;
+  }
+  .lang-hint__text {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-3);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .lang-hint__text::before {
+    content: '';
+    flex: none;
+    width: 6px;
+    height: 6px;
+    background: var(--sun);
+  }
+  .lang-hint__go {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-inline-start: auto;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 5px;
+    white-space: nowrap;
+  }
+  .lang-hint__close {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 44px;
+    height: 44px;
+    margin-inline-end: -12px;
+    color: var(--muted-inv);
+  }
+  .lang-hint__close svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+  }
+  .lang-hint__close:hover {
+    color: var(--paper);
+  }
+  @media (max-width: 520px) {
+    .lang-hint__text {
+      font-size: 0.875rem;
+    }
+    .lang-hint__go {
+      font-size: 0.875rem;
+    }
+  }
+</style>

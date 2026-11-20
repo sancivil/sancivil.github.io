@@ -69,7 +69,7 @@ function revealCount(el: HTMLElement) {
     v: to,
     duration: 1.6,
     ease: 'power3.out',
-    scrollTrigger: once(el, 'top 90%'),
+    scrollTrigger: once(el, 'top bottom'),
     onUpdate: () => {
       el.textContent = fmt(state.v);
     },

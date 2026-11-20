@@ -12,9 +12,10 @@ export function Num({ v, u, class: className }: { v: string; u?: string; class?:
   );
 }
 
-type IconName = 'arrow' | 'chevron' | 'check' | 'plus' | 'minus' | 'close' | 'link' | 'print' | 'reset';
+type IconName = 'arrow' | 'chevron' | 'check' | 'plus' | 'minus' | 'close' | 'link' | 'print' | 'reset' | 'copy';
 
 const paths: Record<IconName, string> = {
+  copy: 'M5.5 5.5h7.5v7.5H5.5zM3 10.5V3h7.5',
   arrow: 'M3 8h10M9 4l4 4-4 4',
   chevron: 'M4 6l4 4 4-4',
   check: 'M3 8.5l3.2 3L13 4.5',

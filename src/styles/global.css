@@ -11,6 +11,8 @@ html {
   text-size-adjust: 100%;
   color-scheme: light;
   scroll-padding-top: calc(var(--header-h) + 16px);
+  /* Overscroll above the header and below the footer shows ink, not white. */
+  background: var(--ink);
 }
 
 html.lenis,
@@ -51,6 +53,10 @@ canvas {
 }
 img {
   height: auto;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 h1,
@@ -130,6 +136,17 @@ button {
 }
 .skip-link:focus {
   transform: none;
+}
+
+/* ---------- header over an ink hero ----------
+   When a page opens on a .theme-dark section, the header starts transparent over an ink band
+   (it stays in flow, so nothing below it moves) and fills in once .is-scrolled is set. */
+
+body:has(> main > :nth-child(1 of :not(script, style, link, template)).theme-dark) {
+  background: linear-gradient(var(--ink) 0 0) 0 0 / 100% var(--header-h) no-repeat, var(--paper);
+}
+.site-header:has(~ main > :nth-child(1 of :not(script, style, link, template)).theme-dark):not(.is-scrolled, .is-open)::before {
+  opacity: 0;
 }
 
 /* ---------- themes ---------- */
@@ -482,6 +499,13 @@ button {
 }
 [dir='rtl'] :is(.display, .h1, .h2, .h3, .lead, .eyebrow, .field__label, .tag, .btn, .link-arrow) {
   letter-spacing: 0;
+}
+/* Kufi at 600 reads heavier than DM Sans at 600; these weights match the Latin pages' colour. */
+[dir='rtl'] :is(.display, .h1, .h2) {
+  font-weight: 500;
+}
+[dir='rtl'] .h3 {
+  font-weight: 550;
 }
 [dir='rtl'] .display {
   line-height: 1.3;

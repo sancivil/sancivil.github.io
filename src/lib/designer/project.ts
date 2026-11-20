@@ -92,11 +92,43 @@ export function setInverterCount(p: Project, id: string, count: number): Project
   return patchBlock(p, id, (b) => ({ ...b, count }));
 }
 
+/** Patch one MPPT group; a groups list shorter than the index (old or damaged link) is padded instead of ignored. */
 export function setGroup(p: Project, id: string, index: number, patch: Partial<GroupSel>): Project {
-  return patchBlock(p, id, (b) => ({
-    ...b,
-    groups: b.groups.map((g, i) => (i === index ? { ...g, ...patch } : g)),
-  }));
+  if (!Number.isInteger(index) || index < 0 || index >= MAX_GROUPS) return p;
+  return patchBlock(p, id, (b) => {
+    const groups = [...b.groups];
+    while (groups.length <= index) groups.push(emptyGroup(defaultSubArray(p)));
+    groups[index] = { ...groups[index], ...patch };
+    return { ...b, groups };
+  });
+}
+
+const MAX_GROUPS = 64;
+const selection = (n: number) => (Number.isInteger(n) && n >= 0 && n <= MAX_COUNT ? n : 0);
+
+/**
+ * Make a decoded or restored project consistent with the catalogue: unknown inverters are cleared, a configuration
+ * the inverter does not offer falls back to its first one, the groups list matches the configuration, selections
+ * point at existing sub-arrays and use whole numbers. A consistent project is returned unchanged (same values).
+ */
+export function normalizeProject(p: Project, catalog: Catalog): Project {
+  const ids = new Set(p.subArrays.map((s) => s.id));
+  const inverters = p.inverters.map((b): InverterBlock => {
+    const inv = findInverter(catalog, b.inverterId);
+    if (!inv) return { ...b, inverterId: '', configKey: '', groups: [] };
+    const known = inv.mpptConfigs.some((c) => c.key === b.configKey);
+    const configKey = known ? b.configKey : (inv.mpptConfigs[0]?.key ?? '');
+    const groups = mpptGroups(inv, configKey).map((_, i): GroupSel => {
+      const g = known ? b.groups[i] : undefined;
+      if (!g) return emptyGroup(defaultSubArray(p));
+      const subArrayId = ids.has(g.subArrayId) ? g.subArrayId : '';
+      const series = selection(g.series);
+      const strings = selection(g.strings);
+      return subArrayId && series > 0 && strings > 0 ? { subArrayId, series, strings } : { subArrayId, series: 0, strings: 0 };
+    });
+    return { ...b, configKey, groups };
+  });
+  return { ...p, inverters };
 }
 
 export function setTemps(p: Project, temps: Partial<Temps>): Project {

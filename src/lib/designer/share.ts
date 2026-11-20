@@ -1,10 +1,12 @@
-import { createProject } from './project.ts';
-import type { GroupSel, InverterBlock, Panel, Project, SubArray } from './types.ts';
+import { MAX_COUNT, createProject, normalizeProject } from './project.ts';
+import type { Catalog, GroupSel, InverterBlock, Panel, Project, SubArray } from './types.ts';
 
 const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : NaN);
 const str = (v: unknown, max = 2000): string => (typeof v === 'string' ? v.slice(0, max) : '');
 const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
 const nullableNum = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) ? v : null);
+/** Series and strings are whole numbers from 0 to MAX_COUNT; anything else (fractions, 1e9, text) means "not selected". */
+const whole = (v: unknown): number => (typeof v === 'number' && Number.isInteger(v) && v >= 0 && v <= MAX_COUNT ? v : 0);
 
 const CUSTOM_FIELDS = ['power', 'vmp', 'imp', 'voc', 'isc', 'ctPmax', 'ctVoc', 'ctIsc', 'vdcMax'] as const;
 
@@ -24,7 +26,8 @@ export function toCompact(p: Project): unknown[] {
   ];
 }
 
-export function fromCompact(raw: unknown): Project | null {
+/** Rebuild a project from its compact form; pass the catalogue to also repair it against the inverter data (normalizeProject). */
+export function fromCompact(raw: unknown, catalog?: Catalog): Project | null {
   if (!Array.isArray(raw) || raw.length < 10) return null;
   const [name, number, client, address, notes, cityId, temps, subs, customs, invs] = raw;
   const t = arr(temps);
@@ -53,13 +56,15 @@ export function fromCompact(raw: unknown): Project | null {
     const a = arr(b);
     const groups: GroupSel[] = arr(a[4]).map((g) => {
       const x = arr(g);
-      return { subArrayId: str(x[0], 20), series: Math.max(0, num(x[1]) || 0), strings: Math.max(0, num(x[2]) || 0) };
+      const series = whole(x[1]);
+      const strings = whole(x[2]);
+      return series > 0 && strings > 0 ? { subArrayId: str(x[0], 20), series, strings } : { subArrayId: str(x[0], 20), series: 0, strings: 0 };
     });
     return { id: str(a[0], 20), inverterId: str(a[1], 60), count: num(a[2]), configKey: str(a[3], 60), groups };
   });
   if (!subArrays.length || !inverters.length) return null;
   const base = createProject();
-  return {
+  const project: Project = {
     ...base,
     name: str(name, 200),
     number: str(number, 80),
@@ -72,6 +77,7 @@ export function fromCompact(raw: unknown): Project | null {
     customPanels,
     inverters,
   };
+  return catalog ? normalizeProject(project, catalog) : project;
 }
 
 function toBase64Url(text: string): string {
@@ -91,9 +97,10 @@ export function encodeProject(p: Project): string {
   return toBase64Url(JSON.stringify(toCompact(p)));
 }
 
-export function decodeProject(code: string): Project | null {
+/** Never throws: a truncated, corrupted or foreign code gives null so the caller falls back to a fresh project. */
+export function decodeProject(code: string, catalog?: Catalog): Project | null {
   try {
-    return fromCompact(JSON.parse(fromBase64Url(code)));
+    return fromCompact(JSON.parse(fromBase64Url(code)), catalog);
   } catch {
     return null;
   }

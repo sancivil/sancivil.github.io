@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'preact/hooks';
-import { findInverter, groupContext, mpptGroups, tempsValid, type BlockSummary, type GroupSummary } from '../../lib/designer/calc.ts';
+import { evaluateCell, findInverter, groupContext, mpptGroups, tempsValid, type BlockSummary, type GroupSummary } from '../../lib/designer/calc.ts';
 import { catalog, inverters } from '../../lib/designer/data.ts';
-import { fmt, kw, kwRating, pct } from '../../lib/designer/format.ts';
+import { fmt, kw, kwRating, ltr, pct } from '../../lib/designer/format.ts';
 import { MAX_COUNT, addInverter, removeInverter, setGroup, setInverterConfig, setInverterCount, setInverterModel } from '../../lib/designer/project.ts';
-import type { Inverter, InverterBlock } from '../../lib/designer/types.ts';
+import type { Inverter, InverterBlock, Project } from '../../lib/designer/types.ts';
 import { CheckTable, Matrix } from './Matrix.tsx';
 import { ModelPicker, searchKey, type PickerOption } from './ModelPicker.tsx';
 import { configLabel, groupName, inverterMeta, inverterRole } from './labels.ts';
@@ -20,6 +20,33 @@ export const stringing = (b: BlockSummary) =>
     .filter((g) => g.sel.series > 0)
     .map((g) => `${g.sel.strings}x${g.sel.series} (${g.mppts.join('+')})`)
     .join(' ');
+
+type Applied = { project: Project; applied: number[]; noPanels: number[]; other: number[] };
+
+/** Copy one group's layout to the block's empty groups, in order, wherever the copy passes every check. */
+export function applyToEmpty(p: Project, blockId: string, from: number): Applied {
+  const out: Applied = { project: p, applied: [], noPanels: [], other: [] };
+  const block = p.inverters.find((b) => b.id === blockId);
+  const src = block?.groups[from];
+  if (!block || !src || !(src.series > 0 && src.strings > 0)) return out;
+  block.groups.forEach((g, j) => {
+    if (j === from || g.series > 0) return;
+    if (g.subArrayId && g.subArrayId !== src.subArrayId) {
+      out.other.push(j);
+      return;
+    }
+    const staged = setGroup(out.project, blockId, j, { subArrayId: src.subArrayId, series: 0, strings: 0 });
+    const stagedBlock = staged.inverters.find((b) => b.id === blockId)!;
+    const ctx = groupContext(staged, catalog, stagedBlock, j);
+    const cell = ctx ? evaluateCell(ctx, src.series, src.strings) : null;
+    if (cell && cell.state !== 'invalid') {
+      out.project = setGroup(staged, blockId, j, { series: src.series, strings: src.strings });
+      out.applied.push(j);
+    } else if (cell && cell.failed.every((f) => f.id === 'panels')) out.noPanels.push(j);
+    else out.other.push(j);
+  });
+  return out;
+}
 
 function InverterCard({ inv }: { inv: Inverter }) {
   const { t } = useI18n();
@@ -64,6 +91,25 @@ function GroupPanel({ block, g, defaultOpen }: { block: InverterBlock; g: GroupS
   const hasSel = g.sel.series > 0;
   const tone = g.cell ? g.cell.state : 'none';
   const subOptions = p.subArrays.map((s, i) => ({ id: s.id, label: s.name || t.panels.subArray(i + 1) }));
+  const [note, setNote] = useState<string | null>(null);
+  const emptyOthers = block.groups.some((x, j) => j !== g.index && !(x.series > 0));
+
+  const applyRest = () => {
+    const r = applyToEmpty(project.value, block.id, g.index);
+    const inv = findInverter(catalog, block.inverterId);
+    const groups = inv ? mpptGroups(inv, block.configKey) : [];
+    const list = (idx: number[]) => ltr(`MPPT ${idx.map((j) => groups[j]?.mppts.join('+') ?? j + 1).join(', ')}`);
+    project.value = r.project;
+    setNote(
+      [
+        r.applied.length > 0 && t.inverter.appliedTo(list(r.applied)),
+        r.noPanels.length > 0 && t.inverter.skippedPanels(list(r.noPanels)),
+        r.other.length > 0 && t.inverter.skippedOther(list(r.other)),
+      ]
+        .filter(Boolean)
+        .join(' '),
+    );
+  };
 
   return (
     <div class={`dz-mppt${open ? ' is-open' : ''}`}>
@@ -103,7 +149,14 @@ function GroupPanel({ block, g, defaultOpen }: { block: InverterBlock; g: GroupS
             </select>
           </Field>
           {hasSel && (
-            <button type="button" class="dz-textbtn" onClick={() => update((x) => setGroup(x, block.id, g.index, { series: 0, strings: 0 }))}>
+            <button
+              type="button"
+              class="dz-textbtn"
+              onClick={() => {
+                setNote(null);
+                update((x) => setGroup(x, block.id, g.index, { series: 0, strings: 0 }));
+              }}
+            >
               <Icon name="close" />
               {t.inverter.clear}
             </button>
@@ -117,17 +170,27 @@ function GroupPanel({ block, g, defaultOpen }: { block: InverterBlock; g: GroupS
               ctx={ctx}
               sel={g.sel}
               temps={p.temps}
-              onSelect={(series, strings) =>
+              onSelect={(series, strings) => {
+                setNote(null);
                 update((x) =>
                   setGroup(x, block.id, g.index, g.sel.series === series && g.sel.strings === strings ? { series: 0, strings: 0 } : { series, strings }),
-                )
-              }
+                );
+              }}
             />
             {g.cell && g.cell.state === 'invalid' && (
               <p class="dz-error" role="alert">
                 {t.inverter.broken}
               </p>
             )}
+            {g.cell && g.cell.state !== 'invalid' && emptyOthers && (
+              <button type="button" class="btn btn--line dz-apply" onClick={applyRest}>
+                <Icon name="copy" />
+                {t.inverter.applyRest(ltr(`${g.sel.strings} × ${g.sel.series}`))}
+              </button>
+            )}
+            <p class="dz-apply__note small" role="status">
+              {note}
+            </p>
             {g.cell && (
               <div class="dz-mppt__checks">
                 <p class="dz-subtitle">{t.inverter.checksTitle}</p>
@@ -302,7 +365,7 @@ export function StringTable() {
                 <tr key={b.block.id}>
                   <th scope="row">
                     <span class="mono" dir="ltr">
-                      {Math.max(1, b.block.count)} × {b.inv!.model}
+                      {b.count} × {b.inv!.model}
                     </span>
                   </th>
                   <td>

@@ -5,25 +5,38 @@ import Figure from '../../../../components/products/Figure.astro';
 import ModelExplorer from '../../../../components/products/ModelExplorer.astro';
 import DocList from '../../../../components/products/DocList.astro';
 import SeriesList from '../../../../components/products/SeriesList.astro';
+import WarrantyChart from '../../../../components/products/WarrantyChart.astro';
+import CertStrip from '../../../../components/products/CertStrip.astro';
+import FinishSwatch from '../../../../components/products/FinishSwatch.astro';
 import ModuleViewer from '../../../../components/three/ModuleViewer.astro';
 import JsonLd from '../../../../components/seo/JsonLd.astro';
 import { absolute, breadcrumbList, product } from '../../../../lib/seo/schema.ts';
 import {
+  GLASS_MM,
+  OUTPUT_KEYS,
   bestEfficiencyPanel,
   datasheetOnly,
+  docInfo,
   docItem,
+  documents,
   modules,
   panelName,
   pct,
   seriesBySlug,
+  seriesCerts,
+  seriesFinishes,
+  seriesGlass,
+  seriesOutputs,
   seriesPanels,
+  seriesRender,
   seriesTraits,
+  warranty,
 } from '../../../../components/products/data.ts';
 import { specFromPanel } from '../../../../lib/three/types.ts';
 import { localeFromParam, localizePath, withLocales } from '../../../../i18n/config.ts';
 import { common } from '../../../../i18n/common.ts';
 import { products } from '../../../../i18n/products.ts';
-import { seriesText } from '../../../../i18n/catalog-text.ts';
+import { catalogText, seriesText, warrantyDocLabel } from '../../../../i18n/catalog-text.ts';
 
 export const getStaticPaths = () => withLocales(modules.map((s) => ({ params: { slug: s.slug } })));
 
@@ -40,6 +53,21 @@ const best = bestEfficiencyPanel(series);
 const cuts = new Set(panels.map((p) => p.cellFullness));
 const cut = cuts.size === 1 ? (cuts.has('half') ? s.cellsCaption.half : s.cellsCaption.full) : null;
 const extra = datasheetOnly(series);
+const d = t.detail;
+const ct = catalogText[locale];
+const render = seriesRender(series)!;
+const back = seriesRender(series, 'back');
+const glass = seriesGlass(series);
+const finishes = seriesFinishes(series);
+const outputs = seriesOutputs(series);
+const cellTypes = [...new Set(panels.map((p) => (p.cellType === 'poly' ? s.cellType.poly : s.cellType.mono)))];
+const moduleWarranty = warranty.documents[0];
+const downloads = [
+  docItem(moduleWarranty, warrantyDocLabel(locale, docInfo(moduleWarranty).label)),
+  docItem({ label: ct.documents.installationManual, url: documents.installationManual }),
+  docItem({ label: ct.documents.installationManualAR, url: documents.installationManualAR }),
+  docItem({ label: ct.documents.productsFlyer, url: documents.productsFlyer }),
+];
 
 /* Series of the same Peimar line first, then the ones that share the most traits. */
 const traits = new Set(seriesTraits(series));
@@ -58,7 +86,7 @@ const schema = [
     name: `Peimar ${series.name}`,
     model: series.series,
     description: text?.description ?? series.description ?? series.name,
-    image: '/images/products/peimar-modules.png',
+    image: render.src,
     url: pageUrl,
     category: nav.productNav.modules,
     additionalProperty: [
@@ -93,6 +121,9 @@ const schema = [
       <div class="product__grid">
         <div class="product__stage">
           <ModuleViewer spec={specFromPanel(initial)} label={s.viewer(initial.model)} locale={locale} />
+          <div class="poster" data-poster aria-hidden="true">
+            <img src={render.src} width={render.size[0]} height={render.size[1]} alt="" fetchpriority="high" decoding="async" />
+          </div>
         </div>
 
         <div class="product__info">
@@ -163,6 +194,179 @@ const schema = [
     </div>
   </section>
 
+  <section class="section theme-paper inside" aria-labelledby="inside-title">
+    <div class="container inside__grid">
+      <div class="inside__visual">
+        <div class="inside__well" data-reveal="clip">
+          {
+            back ? (
+              <img src={back.src} width={back.size[0]} height={back.size[1]} alt={d.backAlt(back.model)} loading="lazy" decoding="async" />
+            ) : (
+              <img src={render.src} width={render.size[0]} height={render.size[1]} alt={d.renderAlt(render.model)} loading="lazy" decoding="async" />
+            )
+          }
+        </div>
+        <p class="inside__caption mono"><bdi>{render.model}</bdi></p>
+      </div>
+      <div class="inside__body">
+        <div class="inside__head">
+          <p class="eyebrow">{d.insideEyebrow}</p>
+          <h2 id="inside-title" class="h2">{d.insideTitle}</h2>
+        </div>
+        <div class="inside__cols">
+          <section class="inside__col" aria-labelledby="inside-cells">
+            <h3 id="inside-cells" class="inside__title">{d.cellsTitle}</h3>
+            <p class="inside__big num">{series.cells.join(' / ')}</p>
+            <p class="inside__text">{[cut, cellTypes.join(' · ')].filter(Boolean).join(' · ')}</p>
+            {
+              text && text.technology.length > 0 && (
+                <ul role="list" class="inside__tags">
+                  {text.technology.map((tech) => (
+                    <li class="tag">{tech}</li>
+                  ))}
+                </ul>
+              )
+            }
+          </section>
+          <section class="inside__col" aria-labelledby="inside-glass">
+            <h3 id="inside-glass" class="inside__title">{d.glassTitle}</h3>
+            {
+              glass === 'front' && (
+                <dl class="inside__dl">
+                  <div>
+                    <dt>{d.front}</dt>
+                    <dd>
+                      <span class="inside__big"><Figure value={GLASS_MM.front} unit="mm" /></span>
+                      <span class="inside__text">{d.glassS}</span>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>{d.rear}</dt>
+                    <dd class="inside__text">{d.glassRearSheet}</dd>
+                  </div>
+                </dl>
+              )
+            }
+            {
+              (glass === 'double' || glass === 'doubleSome') && (
+                <dl class="inside__dl">
+                  <div>
+                    <dt>{d.rear}</dt>
+                    <dd>
+                      <span class="inside__big"><Figure value={GLASS_MM.rear} unit="mm" /></span>
+                      <span class="inside__text">{d.glassRearDouble}</span>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>{d.front}</dt>
+                    <dd class="inside__text">{d.glass.ar}</dd>
+                  </div>
+                </dl>
+              )
+            }
+            {glass === null && <p class="inside__text">{d.glassDatasheet}</p>}
+          </section>
+          <section class="inside__col" aria-labelledby="inside-frame">
+            <h3 id="inside-frame" class="inside__title">{d.frameTitle}</h3>
+            <ul role="list" class="inside__finishes">
+              {
+                finishes.map((code) => (
+                  <li>
+                    <FinishSwatch code={code} label={d.finish[code]} />
+                  </li>
+                ))
+              }
+            </ul>
+            {(glass === 'double' || glass === 'doubleSome') && <p class="inside__note small">{d.doubleGlassNote}</p>}
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section models" aria-labelledby="models-title">
+    <div class="container">
+      <div class="models__head">
+        <h2 id="models-title" class="h2">{d.compareModels}</h2>
+        <p class="models__swipe small">{t.inverterPage.swipe}</p>
+      </div>
+      <div class="models__scroll" tabindex="0" role="region" aria-labelledby="models-title">
+        <table class="models__table">
+          <caption class="sr-only">{d.compareModelsCaption(series.name)}</caption>
+          <thead>
+            <tr>
+              <th scope="col">{t.inverterPage.col.model}</th>
+              <th scope="col">Pmax</th>
+              <th scope="col">{s.row.efficiency}</th>
+              <th scope="col">Voc</th>
+              <th scope="col">Isc</th>
+              <th scope="col">{s.row.dimensions}</th>
+              <th scope="col">{s.row.weight}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              panels.map((p) => (
+                <tr data-row={p.id} class:list={{ 'is-selected': p.id === initial.id }}>
+                  <th scope="row">
+                    <bdi class="mono">{panelName(p)}</bdi>
+                    <span class="models__flag">{d.selected}</span>
+                  </th>
+                  <td><Figure value={String(p.power)} unit="W" /></td>
+                  <td>{p.efficiency === null ? '—' : <Figure value={pct(p.efficiency)} unit="%" />}</td>
+                  <td><Figure value={p.voc.toFixed(2)} unit="V" /></td>
+                  <td><Figure value={p.isc.toFixed(2)} unit="A" /></td>
+                  <td><Figure value={`${p.height} × ${p.width} × ${p.depth}`} unit="mm" /></td>
+                  <td><Figure value={String(p.weight)} unit="kg" /></td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section theme-dark assurance" aria-labelledby="assurance-title">
+    <div class="container">
+      <div class="assurance__grid">
+        <div class="assurance__head">
+          <p class="eyebrow eyebrow--dot">{t.warranty.eyebrow}</p>
+          <h2 id="assurance-title" class="h2">{d.warrantyTitle}</h2>
+          <p class="assurance__lead">{outputs.length ? d.warrantyLead(series.warranty.power) : d.warrantyOpen}</p>
+          <dl class="assurance__terms">
+            <div>
+              <dt>{t.label.productWarranty}</dt>
+              <dd><Figure value={String(series.warranty.product)} word={t.years(series.warranty.product)} /></dd>
+            </div>
+            <div>
+              <dt>{t.label.powerWarranty}</dt>
+              <dd><Figure value={String(series.warranty.power)} word={t.years(series.warranty.power)} /></dd>
+            </div>
+          </dl>
+        </div>
+        <WarrantyChart
+          locale={locale}
+          curves={outputs}
+          muted={outputs.length ? [] : OUTPUT_KEYS}
+          years={series.warranty.power}
+          class="assurance__chart"
+        />
+      </div>
+      <div class="assurance__certs">
+        <h3 class="assurance__sub">{d.certEyebrow}</h3>
+        <CertStrip locale={locale} items={seriesCerts(series)} />
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight downloads" aria-labelledby="downloads-title">
+    <div class="container downloads__grid">
+      <h2 id="downloads-title" class="h3">{d.downloadsTitle}</h2>
+      <DocList locale={locale} items={downloads} />
+    </div>
+  </section>
+
   {
     extra.length > 0 && (
       <section class="section section--tight theme-paper more" aria-labelledby="more-title">
@@ -217,6 +421,334 @@ const schema = [
   .product__stage {
     position: sticky;
     top: calc(var(--header-h) + var(--s-5));
+  }
+  /* Desktop: the stage fills the viewport height beside the long spec column. */
+  @media (min-width: 901px) {
+    .product__stage :global(.module-viewer .module-viewer__stage) {
+      aspect-ratio: auto;
+      block-size: clamp(480px, calc(100svh - var(--header-h) - 2 * var(--s-5)), 940px);
+      max-height: none;
+    }
+  }
+  .poster {
+    position: absolute;
+    inset: 0 0 auto;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    padding-block: 56px 84px;
+    pointer-events: none;
+    transition: opacity 600ms var(--ease);
+  }
+  .poster[hidden] {
+    display: none;
+  }
+  .poster img {
+    block-size: 100%;
+    inline-size: auto;
+    max-inline-size: 86%;
+    object-fit: contain;
+  }
+  :global([dir='rtl']) .poster img {
+    transform: scaleX(-1);
+  }
+  .product__stage:has(:global(.is-ready)) .poster {
+    opacity: 0;
+  }
+  .product__stage:has(.poster:not([hidden])) :global(.module-viewer__fallback) {
+    visibility: hidden;
+  }
+  @media (min-width: 901px) {
+    .poster {
+      aspect-ratio: auto;
+      block-size: clamp(480px, calc(100svh - var(--header-h) - 2 * var(--s-5)), 940px);
+    }
+  }
+  @media (max-width: 720px) {
+    .poster {
+      aspect-ratio: 1;
+      padding-block: 48px 24px;
+    }
+  }
+
+  /* ---------- inside this series ---------- */
+  .inside__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: var(--s-7) clamp(32px, 5vw, 96px);
+    align-items: start;
+  }
+  .inside__visual {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .inside__well {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--paper);
+    border-radius: var(--r-2);
+  }
+  .inside__well img {
+    position: absolute;
+    inset: 7%;
+    inline-size: 86%;
+    block-size: 86%;
+    object-fit: contain;
+  }
+  .inside__caption {
+    font-size: 0.6875rem;
+    color: var(--muted);
+  }
+  .inside__body {
+    display: grid;
+    gap: var(--s-7);
+  }
+  .inside__head {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+  }
+  .inside__cols {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid var(--line-strong);
+  }
+  .inside__col {
+    display: grid;
+    align-content: start;
+    gap: var(--s-3);
+    padding: var(--s-5) var(--s-5) var(--s-2);
+    border-inline-start: 1px solid var(--line);
+  }
+  .inside__col:first-child {
+    padding-inline-start: 0;
+    border-inline-start: 0;
+  }
+  .inside__col:last-child {
+    padding-inline-end: 0;
+  }
+  .inside__title {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  :global([dir='rtl']) .inside__title {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .inside__big {
+    display: block;
+    font-size: clamp(1.5rem, 1rem + 1.2vw, 2.25rem);
+    font-weight: 500;
+    line-height: 1.15;
+  }
+  .inside__text {
+    display: block;
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+  .inside__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    margin-top: var(--s-2);
+  }
+  .inside__tags .tag {
+    height: auto;
+    min-height: 26px;
+    padding-block: 3px;
+    white-space: normal;
+  }
+  :global([dir='rtl']) .inside__tags .tag {
+    font-family: var(--font-sans);
+  }
+  .inside__dl {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .inside__dl dt {
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+  .inside__dl dd {
+    display: grid;
+    gap: var(--s-1);
+    margin-top: var(--s-1);
+  }
+  .inside__finishes {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .inside__note {
+    color: var(--muted);
+  }
+
+  /* ---------- compare the models ---------- */
+  .models__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3);
+    margin-bottom: var(--s-6);
+  }
+  .models__swipe {
+    display: none;
+    color: var(--muted);
+  }
+  .models__scroll {
+    overflow-x: auto;
+    border-top: 1px solid var(--line-strong);
+    overscroll-behavior-x: contain;
+  }
+  .models__scroll:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+  }
+  .models__table {
+    width: 100%;
+    min-width: 860px;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  .models__table th,
+  .models__table td {
+    padding-block: var(--s-3);
+    padding-inline: 0 var(--s-5);
+    border-bottom: 1px solid var(--line);
+    text-align: start;
+    font-weight: 400;
+    font-size: 0.9375rem;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .models__table thead th {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  :global([dir='rtl']) .models__table thead th {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .models__table tbody th,
+  .models__table thead th:first-child {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 1;
+    background: var(--paper);
+  }
+  .models__table tbody th {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    min-height: 52px;
+    font-size: 0.875rem;
+  }
+  .models__flag {
+    display: none;
+    padding: 2px 6px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    background: var(--sun);
+    color: var(--sun-ink);
+    border-radius: var(--r-1);
+  }
+  .models__table tr.is-selected th,
+  .models__table tr.is-selected td {
+    background: var(--paper-2);
+    font-weight: 500;
+  }
+  .models__table tr.is-selected .models__flag {
+    display: inline-block;
+  }
+
+  /* ---------- warranty and certificates ---------- */
+  .assurance__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: var(--s-7) clamp(32px, 5vw, 96px);
+    align-items: start;
+  }
+  .assurance__head {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+  }
+  .assurance__lead {
+    max-width: 44ch;
+    color: var(--muted-inv);
+  }
+  .assurance__terms {
+    display: grid;
+    gap: var(--s-4);
+    width: 100%;
+    margin-top: var(--s-3);
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--line-inv);
+  }
+  .assurance__terms dt {
+    font-size: 0.8125rem;
+    color: var(--muted-inv);
+  }
+  .assurance__terms dd {
+    font-size: 2rem;
+    font-weight: 500;
+  }
+  .assurance__certs {
+    display: grid;
+    gap: var(--s-5);
+    margin-top: var(--s-9, 96px);
+  }
+  .assurance__sub {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  .downloads__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--s-5) var(--gap);
+  }
+  @media (max-width: 1080px) {
+    .inside__grid,
+    .assurance__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .inside__visual {
+      max-width: 360px;
+    }
+  }
+  @media (max-width: 900px) {
+    .models__swipe {
+      display: block;
+    }
+    .downloads__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 720px) {
+    .inside__cols {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .inside__col,
+    .inside__col:first-child {
+      padding-inline: 0;
+      border-inline-start: 0;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: var(--s-5);
+    }
+    .inside__visual {
+      max-width: 240px;
+    }
   }
   .product__stage :global(.module-viewer) {
     border-radius: var(--r-2);

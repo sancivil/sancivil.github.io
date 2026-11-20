@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
-import { MATRIX_COLS, MATRIX_ROWS, checkOp, evaluateCell, lastValidSeries, matrixStart, type Cell, type GroupContext } from '../../lib/designer/calc.ts';
-import { fmt } from '../../lib/designer/format.ts';
+import { MATRIX_COLS, MATRIX_ROWS, checkOp, evaluateCell, lastValidSeries, matrixBlockers, matrixStart, type Cell, type GroupContext } from '../../lib/designer/calc.ts';
+import { fmt, ltr, pct, unit } from '../../lib/designer/format.ts';
 import type { GroupSel, Temps } from '../../lib/designer/types.ts';
 import { checkLimit, checkQty, checkSentence, checkValue } from './labels.ts';
 import { useI18n } from './store.ts';
@@ -15,6 +15,16 @@ type Props = {
   onSelect: (series: number, strings: number) => void;
 };
 
+type Scale = { unit: 'W' | 'kW'; decimals: number };
+
+/** One unit and precision per matrix, so cells scan as a table and fit 44px on phones: 560 W, 6.72 kW, 122.0 kW. */
+function powerScale(maxW: number): Scale {
+  if (maxW < 1000) return { unit: 'W', decimals: 0 };
+  return { unit: 'kW', decimals: maxW < 100000 ? 2 : 1 };
+}
+
+const scaled = (w: number, s: Scale) => (s.unit === 'W' ? fmt(w) : fmt(w / 1000, s.decimals));
+
 function windowFor(first: number, series: number): number {
   if (series <= 0) return first;
   if (series < first) return series;
@@ -27,13 +37,17 @@ export function Matrix({ id, name, ctx, sel, temps, onSelect }: Props) {
   const first = matrixStart(ctx);
   const last = lastValidSeries(ctx.mod, ctx.panel, ctx.inv) ?? first;
   const [start, setStart] = useState(() => windowFor(first, sel.series));
-  const [focus, setFocus] = useState<[number, number]>([0, 0]);
+  const [focus, setFocus] = useState<[number, number] | null>(null);
+  const [probe, setProbe] = useState<[number, number] | null>(null);
   const grid = useRef<HTMLDivElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
   const keyboard = useRef(false);
 
   const identity = `${ctx.panel.id}|${ctx.inv.id}|${temps.tmin}|${temps.tmax}`;
-  useEffect(() => setStart(windowFor(first, sel.series)), [identity]);
+  useEffect(() => {
+    setStart(windowFor(first, sel.series));
+    setProbe(null);
+  }, [identity]);
 
   useLayoutEffect(() => {
     const box = scroller.current;
@@ -45,7 +59,7 @@ export function Matrix({ id, name, ctx, sel, temps, onSelect }: Props) {
   }, []);
 
   useLayoutEffect(() => {
-    if (!keyboard.current) return;
+    if (!keyboard.current || !focus) return;
     keyboard.current = false;
     grid.current?.querySelector<HTMLButtonElement>(`[data-r="${focus[0]}"][data-c="${focus[1]}"]`)?.focus();
   }, [focus, start]);
@@ -55,6 +69,12 @@ export function Matrix({ id, name, ctx, sel, temps, onSelect }: Props) {
   const page = (dir: 1 | -1) => setStart((s) => Math.max(1, s + dir * MATRIX_COLS));
   const canPrev = start > 1;
   const canNext = start + MATRIX_COLS <= last;
+  const selInView = sel.series >= start && sel.series < start + MATRIX_COLS && sel.strings >= 1 && sel.strings <= MATRIX_ROWS;
+  const tab = focus ?? (selInView ? [sel.strings - 1, sel.series - start] : [0, 0]);
+  const probed = probe ? evaluateCell(ctx, probe[0], probe[1]) : null;
+  const scale = powerScale(rows[MATRIX_ROWS - 1][MATRIX_COLS - 1].power);
+  const power = (w: number) => `${scaled(w, scale)} ${scale.unit}`;
+  const sep = rtl ? '، ' : ', ';
 
   const move = (e: KeyboardEvent, r: number, c: number) => {
     const forward = rtl ? 'ArrowLeft' : 'ArrowRight';
@@ -72,7 +92,7 @@ export function Matrix({ id, name, ctx, sel, temps, onSelect }: Props) {
     keyboard.current = true;
     nr = Math.min(MATRIX_ROWS - 1, Math.max(0, nr));
     if (nc >= MATRIX_COLS) {
-      setStart((s) => s + 1);
+      if (canNext) setStart((s) => s + 1);
       nc = MATRIX_COLS - 1;
     } else if (nc < 0) {
       if (start > 1) setStart((s) => s - 1);
@@ -81,7 +101,13 @@ export function Matrix({ id, name, ctx, sel, temps, onSelect }: Props) {
     setFocus([nr, nc]);
   };
 
-  const label = (cell: Cell) => `${t.inverter.cell(cell.strings, cell.series, String(cell.power), cell.modules)}${rtl ? '، ' : ', '}${t.inverter.state[cell.state]}`;
+  const reasons = (cell: Cell) => cell.failed.map((f) => checkSentence(f, temps, t)).join(' ');
+  const blockers = matrixBlockers(ctx);
+  const label = (cell: Cell) => {
+    const text = `${t.inverter.cell(cell.strings, cell.series, power(cell.power), cell.modules)}${sep}${t.inverter.state[cell.state]}`;
+    return cell.failed.length ? `${text}. ${reasons(cell)}` : text;
+  };
+  const sample = rows[0][0];
 
   return (
     <div class="dz-matrix">
@@ -123,27 +149,37 @@ export function Matrix({ id, name, ctx, sel, temps, onSelect }: Props) {
               </div>
               {row.map((cell, c) => {
                 const isSel = sel.series === cell.series && sel.strings === cell.strings;
-                const reasons = cell.failed.map((f) => checkSentence(f, temps, t)).join(' ');
-                const tabbable = focus[0] === r && focus[1] === c;
+                const isProbe = !!probe && probe[0] === cell.series && probe[1] === cell.strings;
                 return (
                   <div role="gridcell" key={cell.series} class="dz-matrix__cellwrap">
                     <button
                       type="button"
-                      class={`dz-cell is-${cell.state}${isSel ? ' is-selected' : ''}`}
+                      class={`dz-cell is-${cell.state}${isSel ? ' is-selected' : ''}${isProbe ? ' is-probe' : ''}`}
                       data-r={r}
                       data-c={c}
-                      tabIndex={tabbable ? 0 : -1}
+                      tabIndex={tab[0] === r && tab[1] === c ? 0 : -1}
                       aria-pressed={isSel}
                       aria-disabled={cell.state === 'invalid' || undefined}
                       aria-label={label(cell)}
-                      aria-description={reasons || undefined}
-                      title={reasons || undefined}
+                      title={reasons(cell) || undefined}
                       onFocus={() => setFocus([r, c])}
                       onKeyDown={(e) => move(e, r, c)}
-                      onClick={() => cell.state !== 'invalid' && onSelect(cell.series, cell.strings)}
+                      onClick={() => {
+                        if (cell.state === 'invalid') {
+                          setProbe(isProbe ? null : [cell.series, cell.strings]);
+                          return;
+                        }
+                        setProbe(null);
+                        onSelect(cell.series, cell.strings);
+                      }}
                     >
-                      <span class="dz-cell__w num">{cell.power}</span>
-                      <span class="dz-cell__n num">({cell.modules})</span>
+                      <span class="dz-cell__w num" dir="ltr">
+                        {scaled(cell.power, scale)}
+                        <span class="unit">{scale.unit}</span>
+                      </span>
+                      <span class="dz-cell__n num" dir="ltr">
+                        ({cell.modules})
+                      </span>
                     </button>
                   </div>
                 );
@@ -153,14 +189,35 @@ export function Matrix({ id, name, ctx, sel, temps, onSelect }: Props) {
         </div>
       </div>
 
+      {blockers.length > 0 && (
+        <p class="dz-matrix__probe small">
+          <strong>{t.inverter.blocked}</strong> {blockers.map((f) => checkSentence(f, temps, t)).join(' ')}
+        </p>
+      )}
+
+      <p class="dz-matrix__probe small" role="status">
+        {probed && probed.state === 'invalid' && (
+          <>
+            <strong>{t.inverter.whyNot(ltr(`${probed.strings} × ${probed.series}`))}</strong> {reasons(probed)}
+          </>
+        )}
+      </p>
+
       <ul class="dz-legend" role="list">
+        <li class="dz-legend__key">
+          <span class="dz-legend__sample num" dir="ltr">
+            {scaled(sample.power, scale)}
+            <span class="unit">{scale.unit}</span> ({sample.modules})
+          </span>
+          {t.inverter.legendCell}
+        </li>
         <li>
           <span class="dz-swatch is-green" aria-hidden="true" />
           {t.inverter.legendGreen}
         </li>
         <li>
           <span class="dz-swatch is-amber" aria-hidden="true" />
-          {t.inverter.legendAmber}
+          {t.inverter.legendAmber(unit(`${pct(ctx.inv.percPmaxCc, 0)}–${pct(ctx.inv.percPminCc, 0)}`, '%'))}
         </li>
         <li>
           <span class="dz-swatch is-invalid" aria-hidden="true" />
@@ -221,4 +278,3 @@ export function CheckTable({ cell, temps }: { cell: Cell; temps: Temps }) {
   );
 }
 
-export const cellSummary = (sel: GroupSel, power: number) => `${sel.strings} × ${sel.series} · ${fmt(power)} W`;

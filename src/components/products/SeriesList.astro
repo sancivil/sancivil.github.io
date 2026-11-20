@@ -1,8 +1,6 @@
 ---
-import ModuleDrawing from './ModuleDrawing.astro';
 import Figure from './Figure.astro';
-import { drawingBox, largestPanel, pad2, panelName, pct, seriesTraits, type Series } from './data.ts';
-import { specFromPanel } from '../../lib/three/types.ts';
+import { pad2, panelName, pct, seriesPanels, seriesRender, seriesTraits, type Series } from './data.ts';
 import { localizePath } from '../../i18n/config.ts';
 import type { Locale } from '../../i18n/config.ts';
 import { products } from '../../i18n/products.ts';
@@ -21,13 +19,13 @@ const Heading = headingLevel;
 
 const rows = series.map((s) => {
   const text = seriesText(locale, s.slug);
-  const big = largestPanel(s);
+  const shown = seriesPanels(s).at(-1)!;
   return {
     s,
     text,
     traits: seriesTraits(s).join(' '),
-    big,
-    spec: specFromPanel(big),
+    shown,
+    render: seriesRender(s)!,
     href: localizePath(`/products/modules/${s.slug}/`, locale),
   };
 });
@@ -39,12 +37,19 @@ const rows = series.map((s) => {
       <li class="row" data-traits={row.traits}>
         <figure class="row__figure">
           <div class="row__well" data-reveal="clip">
-            <ModuleDrawing spec={row.spec} box={drawingBox} />
+            <img
+              src={row.render.src}
+              width={row.render.size[0]}
+              height={row.render.size[1]}
+              alt={t.detail.renderAlt(row.render.model)}
+              loading={i < 2 && !compact ? 'eager' : 'lazy'}
+              decoding="async"
+            />
           </div>
           {!compact && (
             <figcaption class="row__caption">
               <bdi>
-                {panelName(row.big)} · {row.big.height} × {row.big.width} mm
+                {panelName(row.shown)} · {row.shown.height} × {row.shown.width} mm
               </bdi>
             </figcaption>
           )}
@@ -139,11 +144,22 @@ const rows = series.map((s) => {
     gap: var(--s-3);
   }
   .row__well {
+    display: grid;
+    place-items: center;
     aspect-ratio: 1;
-    padding: 10% 12%;
+    padding: 6% 10%;
     background: var(--paper-2);
     border-radius: var(--r-2);
     transition: background-color var(--dur-2) var(--ease);
+  }
+  .row__well img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+    transition: transform var(--dur-3, 400ms) var(--ease);
+  }
+  .row:hover .row__well img {
+    transform: translateY(-4px);
   }
   .row:hover .row__well {
     background: var(--paper-3);

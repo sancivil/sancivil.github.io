@@ -1,5 +1,6 @@
 import type { ComponentChildren } from 'preact';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import { useI18n } from './store.ts';
 import { Icon } from './ui.tsx';
 
 export type PickerOption = { id: string; group: string; label: string; meta: string; search: string };
@@ -22,6 +23,7 @@ const norm = (s: string) => s.toLowerCase().replace(/[\s()\-_.]/g, '');
 
 /** Searchable listbox grouped by series or type; arrow keys, Enter and Escape work from the search field. */
 export function ModelPicker({ id, value, options, placeholder, searchLabel, noResults, invalid, describedBy, onChange, onClose, footer }: Props) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
@@ -132,6 +134,20 @@ export function ModelPicker({ id, value, options, placeholder, searchLabel, noRe
             }}
             onKeyDown={onKey}
           />
+          {query && (
+            <button
+              type="button"
+              class="dz-pick__clear"
+              aria-label={t.form.clearSearch}
+              onClick={() => {
+                setQuery('');
+                setActive(0);
+                search.current?.focus();
+              }}
+            >
+              <Icon name="close" />
+            </button>
+          )}
           <ul class="dz-pick__list" id={`${id}-list`} role="listbox" ref={list} data-lenis-prevent>
             {filtered.length === 0 && <li class="dz-pick__empty">{noResults}</li>}
             {filtered.map((o, i) => {

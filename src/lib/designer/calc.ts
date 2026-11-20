@@ -135,12 +135,21 @@ export function tempsValid(t: Temps): boolean {
 
 const selected = (g: GroupSel) => g.series > 0 && g.strings > 0 && !!g.subArrayId;
 
+/**
+ * Identical inverters in a block. A count that is empty, zero, negative or fractional (the field while it is
+ * being typed, or a damaged link) counts as one inverter everywhere, so usage, matrix and totals stay consistent;
+ * step 3 still flags the field.
+ */
+export function blockCount(block: InverterBlock): number {
+  return Number.isInteger(block.count) && block.count >= 1 ? block.count : 1;
+}
+
 /** Panels of a sub-array used by every inverter block (identical inverters repeat their strings). */
 export function panelsUsed(project: Project, subArrayId: string): number {
   let used = 0;
   for (const block of project.inverters) {
     for (const g of block.groups) {
-      if (selected(g) && g.subArrayId === subArrayId) used += block.count * g.series * g.strings;
+      if (selected(g) && g.subArrayId === subArrayId) used += blockCount(block) * g.series * g.strings;
     }
   }
   return used;
@@ -187,10 +196,11 @@ export function groupContext(project: Project, catalog: Catalog, block: Inverter
   const subArray = project.subArrays.find((s) => s.id === sel.subArrayId);
   const panel = subArray ? findPanel(project, catalog, subArray.panelId) : null;
   if (!group || !subArray || !panel || !(subArray.count > 0)) return null;
-  const own = selected(sel) && sel.subArrayId === subArray.id ? block.count * sel.series * sel.strings : 0;
+  const count = blockCount(block);
+  const own = selected(sel) && sel.subArrayId === subArray.id ? count * sel.series * sel.strings : 0;
   const free = subArray.count - (panelsUsed(project, subArray.id) - own);
   const otherW = block.groups.reduce((sum, g, i) => (i === index ? sum : sum + groupPowerW(project, catalog, g)), 0);
-  return { inv, group, count: Math.max(1, block.count), subArray, panel, mod: moduleAt(panel, project.temps), free, otherW };
+  return { inv, group, count, subArray, panel, mod: moduleAt(panel, project.temps), free, otherW };
 }
 
 export function evaluateCell(ctx: GroupContext, series: number, strings: number): Cell {
@@ -203,6 +213,22 @@ export function evaluateCell(ctx: GroupContext, series: number, strings: number)
   const failed = checks.filter((c) => !c.pass);
   const ratio = powerRatio(ctx.inv, power + ctx.otherW);
   return { series, strings, modules, power, ratio, checks, failed, state: failed.length ? 'invalid' : ratioTone(ctx.inv, ratio) };
+}
+
+/**
+ * Why no cell of the group's matrix can pass, or [] when at least one can. Voltages only rise with modules in
+ * series and current with strings, so the shortest valid string (1 × first valid series) decides it; with no valid
+ * series at all, the failed limits of the closest series count are returned (e.g. one module already above 60 V).
+ */
+export function matrixBlockers(ctx: GroupContext): Check[] {
+  const first = firstValidSeries(ctx.mod, ctx.panel, ctx.inv);
+  if (first !== null) return evaluateCell(ctx, first, 1).failed;
+  let best: Check[] = [];
+  for (let s = 1; s <= 200; s++) {
+    const failed = voltageChecks(ctx.mod, ctx.panel, ctx.inv, s).filter((c) => !c.pass);
+    if (s === 1 || failed.length < best.length) best = failed;
+  }
+  return best;
 }
 
 export const MATRIX_ROWS = 5;
@@ -223,6 +249,8 @@ export type GroupSummary = { index: number; mppts: number[]; sel: GroupSel; ctx:
 
 export type BlockSummary = {
   block: InverterBlock;
+  /** Effective number of identical inverters (see blockCount). */
+  count: number;
   inv: Inverter | null;
   groups: GroupSummary[];
   /** PV W connected to one inverter of the block. */
@@ -263,7 +291,7 @@ export function summarize(project: Project, catalog: Catalog): ProjectSummary {
           const sel = block.groups[index] ?? { subArrayId: '', series: 0, strings: 0 };
           const ctx = groupContext(project, catalog, block, index);
           const cell = ctx && selected(sel) ? evaluateCell(ctx, sel.series, sel.strings) : null;
-          if (cell) stringsSelected += sel.strings * Math.max(1, block.count);
+          if (cell) stringsSelected += sel.strings * blockCount(block);
           return { index, mppts: g.mppts, sel, ctx, cell };
         })
       : [];
@@ -271,11 +299,11 @@ export function summarize(project: Project, catalog: Catalog): ProjectSummary {
     const ratio = inv ? powerRatio(inv, pvW) : Infinity;
     const hasSel = groups.some((g) => selected(g.sel));
     const valid = groups.every((g) => !selected(g.sel) || (g.cell !== null && g.cell.state !== 'invalid'));
-    return { block, inv, groups, pvW, ratio, tone: inv && pvW > 0 ? ratioTone(inv, ratio) : null, valid: valid && hasSel };
+    return { block, count: blockCount(block), inv, groups, pvW, ratio, tone: inv && pvW > 0 ? ratioTone(inv, ratio) : null, valid: valid && hasSel };
   });
 
   const withInv = blocks.filter((b) => b.inv);
-  const count = (b: BlockSummary) => Math.max(1, b.block.count);
+  const count = (b: BlockSummary) => b.count;
   const connectedW = withInv.reduce((sum, b) => sum + count(b) * b.pvW, 0);
   const dcNomW = withInv.reduce((sum, b) => sum + (b.pvW > 0 ? count(b) * b.inv!.pnomDc : 0), 0);
   const overAssigned = subArrays.some((s) => s.used > s.subArray.count);

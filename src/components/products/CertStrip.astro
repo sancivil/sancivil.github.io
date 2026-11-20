@@ -1,0 +1,66 @@
+---
+import type { CertKey } from './data.ts';
+import type { Locale } from '../../i18n/config.ts';
+import { products } from '../../i18n/products.ts';
+
+interface Props {
+  locale: Locale;
+  items: { key: CertKey; code: string; by?: string }[];
+}
+const { locale, items } = Astro.props;
+const cert = products[locale].detail.cert;
+---
+
+<ul role="list" class="certs">
+  {
+    items.map((c) => (
+      <li class="cert">
+        <span class="cert__code mono" dir="ltr">
+          {c.code}
+        </span>
+        <span class="cert__name">{cert[c.key]}</span>
+        {c.by && (
+          <span class="cert__by mono" dir="ltr">
+            {c.by}
+          </span>
+        )}
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .certs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
+    border-block-start: 1px solid var(--line-c);
+    border-inline-start: 1px solid var(--line-c);
+  }
+  .cert {
+    display: grid;
+    align-content: start;
+    gap: var(--s-2);
+    padding: var(--s-5) var(--s-4);
+    border-block-end: 1px solid var(--line-c);
+    border-inline-end: 1px solid var(--line-c);
+  }
+  .cert__code {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    text-align: start;
+  }
+  .cert__name {
+    font-size: 0.9375rem;
+    line-height: 1.4;
+  }
+  .cert__by {
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted-c);
+  }
+  :global([dir='rtl']) .cert__code {
+    text-align: end;
+  }
+</style>

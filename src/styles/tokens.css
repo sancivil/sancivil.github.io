@@ -51,8 +51,11 @@
   --dur-3: 480ms;
 }
 
-/* Arabic and Kurdish (Sorani): Latin glyphs and digits stay in DM Sans, Arabic script falls back to Noto. */
+/* Arabic and Kurdish (Sorani): Latin glyphs and digits stay in DM Sans, Arabic script falls back to Noto.
+   'Faraday Arabic' and 'Faraday Kufi' are size-adjusted aliases of the Noto faces, declared in Base.astro. */
 html:lang(ar),
 html:lang(ckb) {
-  --font-display: 'DM Sans Variable', 'Noto Kufi Arabic Variable', ui-sans-serif, sans-serif;
+  --font-sans: 'DM Sans Variable', 'Faraday Arabic', 'Noto Sans Arabic Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'DM Sans Variable', 'Faraday Kufi', 'Noto Kufi Arabic Variable', ui-sans-serif, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Faraday Arabic', 'Noto Sans Arabic Variable', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 }

@@ -108,8 +108,9 @@ const ar: ThreeStrings = {
     certs: 'الشهادات',
     pidFree: 'خالٍ من PID',
     layers: (f) => {
+      const topcon = `بتقنية ${ltr('TOPCon')} من النوع ${ltr('N')}`;
       const tech = {
-        topcon: f.bifacial ? `من نوع ${ltr('N-type TOPCon')}، ثنائية الوجه` : `من نوع ${ltr('N-type TOPCon')}`,
+        topcon: f.bifacial ? `${topcon}، ثنائية الوجه` : topcon,
         perc: f.bifacial ? `بتقنية ${ltr('PERC')}، ثنائية الوجه` : `بتقنية ${ltr('PERC')}`,
         poly: 'متعددة البلورات',
         mono: 'أحادية البلورة',
@@ -121,6 +122,8 @@ const ar: ThreeStrings = {
         green: `الأخضر (${ltr('RAL 6007')})`,
       }[f.frame];
       const ip = f.protection ? ` بتصنيف حماية ${ltr(f.protection)}` : '';
+      const few = f.cells % 100 >= 3 && f.cells % 100 <= 10;
+      const cellWord = few ? (f.halfCut ? 'خلايا نصفية' : 'خلايا') : f.halfCut ? 'خلية نصفية' : 'خلية';
       return [
         {
           name: 'الزجاج الأمامي',
@@ -138,7 +141,7 @@ const ar: ThreeStrings = {
         { name: 'طبقة التغليف', body: 'غشاء شفاف يثبّت الخلايا بالزجاج الأمامي.' },
         {
           name: 'الخلايا وأشرطة التوصيل',
-          body: `${ltr(f.cells)} ${f.halfCut ? 'خلية نصفية' : 'خلية'}${f.format ? ` (${ltr(f.format)})` : ''} ${tech}. أشرطة رفيعة تربطها في سلاسل.`,
+          body: `${ltr(f.cells)} ${cellWord}${f.format ? ` (${ltr(f.format)})` : ''} ${tech}. وتربطها أشرطة رفيعة في سلاسل.`,
         },
         { name: 'طبقة التغليف الخلفية', body: 'غشاء ثانٍ يغلّف الخلايا من الخلف.' },
         f.doubleGlass
@@ -196,8 +199,9 @@ const ckb: ThreeStrings = {
     certs: 'بڕوانامەکان',
     pidFree: 'بێ PID',
     layers: (f) => {
+      const topcon = `${ltr('TOPCon')} ی جۆری ${ltr('N')}`;
       const tech = {
-        topcon: f.bifacial ? `جۆری ${ltr('N-type TOPCon')}، دوو ڕوو` : `جۆری ${ltr('N-type TOPCon')}`,
+        topcon: f.bifacial ? `${topcon}، دوو ڕوو` : topcon,
         perc: f.bifacial ? `تەکنەلۆژیای ${ltr('PERC')}، دوو ڕوو` : `تەکنەلۆژیای ${ltr('PERC')}`,
         poly: 'فرە کریستاڵی',
         mono: 'تاک کریستاڵی',
@@ -220,13 +224,13 @@ const ckb: ThreeStrings = {
                 : f.series === 'S'
                   ? `شووشەی بەهێزکراوی کەم ئاسن بە ئەستووریی ${ltr('3.2 mm')}، ڕووەکەی دژە ڕەنگدانەوەیە.`
                   : f.doubleGlass
-                    ? 'شووشەی بەهێزکراوی دژە ڕەنگدانەوە؛ پانێڵەکە لە هەردوو ڕووەوە شووشەیە.'
+                    ? 'شووشەی بەهێزکراوی دژە ڕەنگدانەوە؛ هەردوو ڕووی پانێڵەکە شووشەن.'
                     : 'شووشەی بەهێزکراو خانەکان دادەپۆشێت و دەیانپارێزێت.',
         },
         { name: 'چینی داپۆشەر', body: 'فیلمێکی ڕوون خانەکان بە شووشەی پێشەوە دەلکێنێت.' },
         {
           name: 'خانەکان و شریتەکان',
-          body: `${ltr(f.cells)} ${f.halfCut ? 'خانەی نیوەبڕاو' : 'خانە'}${f.format ? ` (${ltr(f.format)})` : ''}، ${tech}. شریتی باریک دەیانبەستێتەوە بە زنجیرە.`,
+          body: `${ltr(f.cells)} ${f.halfCut ? 'خانەی نیوەبڕاو' : 'خانە'}${f.format ? ` (${ltr(f.format)})` : ''}، ${tech}. شریتی باریک دەیانکەنە زنجیرە.`,
         },
         { name: 'چینی داپۆشەری پشتەوە', body: 'فیلمێکی دووەم خانەکان لە پشتەوە دادەپۆشێت.' },
         f.doubleGlass

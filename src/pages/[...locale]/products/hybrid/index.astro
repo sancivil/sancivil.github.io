@@ -5,6 +5,7 @@ import Stats from '../../../../components/products/Stats.astro';
 import SectionHead from '../../../../components/products/SectionHead.astro';
 import PhaseGroups from '../../../../components/products/PhaseGroups.astro';
 import BatteryList from '../../../../components/products/BatteryList.astro';
+import SystemDiagram from '../../../../components/products/SystemDiagram.astro';
 import {
   batteries,
   categoryImage,
@@ -58,6 +59,17 @@ const models = groupModels('hybrid');
     </div>
   </section>
 
+  <section class="section section--tight system" aria-labelledby="system-title">
+    <div class="container system__grid">
+      <div class="system__head">
+        <p class="eyebrow">{t.detail.systemEyebrow}</p>
+        <h2 id="system-title" class="h2">{t.detail.systemTitle}</h2>
+        <p class="system__lead">{t.detail.systemLead}</p>
+      </div>
+      <SystemDiagram locale={locale} />
+    </div>
+  </section>
+
   <section class="section theme-paper" id="storage" aria-labelledby="storage-title">
     <div class="container">
       <SectionHead id="storage-title" title={p.storageTitle} lead={p.storageLead} meta={t.count.storage(batteries.length)} />
@@ -65,3 +77,31 @@ const models = groupModels('hybrid');
     </div>
   </section>
 </Base>
+
+<style>
+  .system {
+    padding-block-start: 0;
+  }
+  .system__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: var(--s-6) clamp(32px, 5vw, 96px);
+    align-items: start;
+    padding-top: var(--s-7);
+    border-top: 1px solid var(--line);
+  }
+  .system__head {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+  }
+  .system__lead {
+    max-width: 44ch;
+    color: var(--muted);
+  }
+  @media (max-width: 1080px) {
+    .system__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

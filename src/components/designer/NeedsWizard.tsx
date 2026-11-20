@@ -1,4 +1,5 @@
-import { useMemo } from 'preact/hooks';
+import type { CommonStrings } from '../../i18n/common.ts';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { whatsappLink } from '../../data/site.ts';
 import { batteries, cities, inverters, panels } from '../../lib/designer/data.ts';
 import { fmt, fmtMax, kwRating, ltr, pct, unit } from '../../lib/designer/format.ts';
@@ -56,8 +57,19 @@ export function NeedsWizard({ onContinue }: { onContinue: () => void }) {
     return `${location.origin}${location.pathname}#p=${encodeProject(p)}`;
   };
 
-  const go = (s: Sizing) => {
-    project.value = projectFromSizing(s, t.needs.projectName(cityName(s.city, locale)));
+  const [confirming, setConfirming] = useState(false);
+  useEffect(() => setConfirming(false), [n]);
+
+  const go = (s: Sizing, replace = false) => {
+    const next = projectFromSizing(s, t.needs.projectName(cityName(s.city, locale)));
+    const current = project.value;
+    const hasDesign = current.subArrays.some((x) => x.panelId) || current.inverters.some((b) => b.inverterId);
+    if (!replace && hasDesign && encodeProject(current) !== encodeProject(next)) {
+      setConfirming(true);
+      return;
+    }
+    setConfirming(false);
+    project.value = next;
     mode.value = 'design';
     step.value = 3;
     onContinue();
@@ -138,13 +150,22 @@ export function NeedsWizard({ onContinue }: { onContinue: () => void }) {
           </p>
           {!outcome.ok && outcome.reason === 'input' && <p class="dz-needs__empty">{t.needs.empty}</p>}
           {!outcome.ok && outcome.reason === 'noFit' && (
-            <p class="dz-needs__empty">{t.needs.noFit(unit(fmt(outcome.targetKwp ?? 0, 2), 'kWp'))}</p>
+            <p class="dz-needs__empty">
+              {outcome.limit === 'backup'
+                ? t.needs.noFitBackup(unit(fmt(outcome.targetKwp ?? 0, 2), 'kWp'))
+                : outcome.limit === 'small' && outcome.minKwp !== undefined
+                  ? t.needs.noFitSmall(unit(fmt(outcome.minKwp, 2), 'kWp'))
+                  : outcome.limit === 'large' && outcome.maxKwp !== undefined
+                    ? t.needs.noFitLarge(unit(fmt(outcome.maxKwp, 0), 'kWp'))
+                    : t.needs.noFit(unit(fmt(outcome.targetKwp ?? 0, 2), 'kWp'))}
+            </p>
           )}
           {outcome.ok && (
             <SizingView
               s={outcome.sizing}
               n={n}
               onContinue={() => go(outcome.sizing)}
+              confirm={confirming ? { name: `⁨${project.value.name || t.rail.untitled}⁩`, onReplace: () => go(outcome.sizing, true), onKeep: () => setConfirming(false) } : null}
               quoteHref={() => quote(outcome.sizing)}
               units={c.units}
             />
@@ -156,8 +177,18 @@ export function NeedsWizard({ onContinue }: { onContinue: () => void }) {
   );
 }
 
-function SizingView({ s, n, onContinue, quoteHref, units }: { s: Sizing; n: Needs; onContinue: () => void; quoteHref: () => string; units: { panels: string; inverters: string } }) {
+type Confirm = { name: string; onReplace: () => void; onKeep: () => void };
+
+function SizingView({ s, n, onContinue, confirm, quoteHref, units }: { s: Sizing; n: Needs; onContinue: () => void; confirm: Confirm | null; quoteHref: () => string; units: CommonStrings['units'] }) {
   const { t, locale } = useI18n();
+  const replaceBtn = useRef<HTMLButtonElement>(null);
+  const continueBtn = useRef<HTMLButtonElement>(null);
+  const wasConfirming = useRef(false);
+  useEffect(() => {
+    if (confirm) replaceBtn.current?.focus();
+    else if (wasConfirming.current) continueBtn.current?.focus();
+    wasConfirming.current = !!confirm;
+  }, [!!confirm]);
   const city = cityName(s.city, locale);
   const coverage = s.productionKwh / s.annualKwh;
   const bat = batteryText(s);
@@ -259,7 +290,7 @@ function SizingView({ s, n, onContinue, quoteHref, units }: { s: Sizing; n: Need
                 <Num v={fmt(s.areaM2)} u="m²" />
               </span>
               <span class="dz-sizing__note">
-                <span class="num">{s.panelCount}</span> {units.panels}
+                <span class="num">{s.panelCount}</span> {units.panelsCount(s.panelCount)}
               </span>
             </dd>
           </div>
@@ -273,8 +304,24 @@ function SizingView({ s, n, onContinue, quoteHref, units }: { s: Sizing; n: Need
 
       <p class="dz-sizing__disclaimer small">{t.needs.disclaimer}</p>
 
-      <div class="dz-sizing__actions">
-        <button type="button" class="btn btn--sun" onClick={onContinue}>
+      {confirm && (
+        <div class="dz-confirm dz-confirm--replace" role="group" aria-labelledby="dz-replace-text">
+          <p class="small" id="dz-replace-text">
+            {t.needs.replaceText(confirm.name)}
+          </p>
+          <div class="dz-confirm__btns">
+            <button type="button" class="btn btn--sun" ref={replaceBtn} onClick={confirm.onReplace}>
+              {t.needs.replace}
+            </button>
+            <button type="button" class="btn btn--ghost-inv" onClick={confirm.onKeep}>
+              {t.needs.keepCurrent}
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div class="dz-sizing__actions" hidden={!!confirm}>
+        <button type="button" class="btn btn--sun" ref={continueBtn} onClick={onContinue}>
           {t.needs.continue}
           <Icon name="arrow" dir />
         </button>

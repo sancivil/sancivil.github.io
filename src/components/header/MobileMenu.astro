@@ -1,0 +1,369 @@
+---
+import { nav, contact } from '../../data/site.ts';
+import { common } from '../../i18n/common.ts';
+import { locales, localeMeta, localizePath, type Locale } from '../../i18n/config.ts';
+import { menuCategories } from './menu.ts';
+
+interface Props {
+  locale: Locale;
+  basePath: string;
+  switchPath: string;
+}
+
+const { locale, basePath, switchPath } = Astro.props;
+const t = common[locale];
+const href = (p: string) => localizePath(p, locale);
+const isCurrent = (p: string) => basePath.startsWith(p);
+const index = (i: number) => String(i + 1).padStart(2, '0');
+---
+
+<div id="mobile-menu" class="mobile-menu theme-dark" data-menu data-lenis-prevent hidden>
+  <div class="container mobile-menu__inner">
+    <nav aria-label={t.mobileNav}>
+      <ul role="list" class="mobile-menu__list">
+        {
+          nav.map((item, i) =>
+            item.key === 'products' ? (
+              <li style={`--i: ${i}`}>
+                <button
+                  type="button"
+                  class:list={['mobile-menu__link', { 'is-current': isCurrent(item.href) }]}
+                  aria-expanded="false"
+                  aria-controls="mobile-products"
+                  data-sub-toggle
+                >
+                  <span class="mono mobile-menu__index">{index(i)}</span>
+                  <span class="mobile-menu__label">{t.nav[item.key]}</span>
+                  <svg class="mobile-menu__chevron" viewBox="0 0 14 8" width="14" height="8" aria-hidden="true">
+                    <path d="M1 1l6 6 6-6" />
+                  </svg>
+                </button>
+                <div id="mobile-products" class="mobile-menu__sub" hidden>
+                  <ul role="list">
+                    {menuCategories.map((c) => (
+                      <li>
+                        <a href={href(c.href)} aria-current={isCurrent(c.href) ? 'page' : undefined}>
+                          <span class="mobile-menu__thumb">
+                            <img src={c.image.src} width={c.image.width} height={c.image.height} alt="" loading="lazy" decoding="async" />
+                          </span>
+                          <span class="mobile-menu__cat">
+                            <span>{t.productNav[c.key]}</span>
+                            <span class="mobile-menu__meta">
+                              {t.menu.count[c.count.key](c.count.n)}
+                              {c.range && (
+                                <>
+                                  {' · '}
+                                  <span class="num">{c.range}</span>
+                                </>
+                              )}
+                            </span>
+                          </span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                  <a class="link-arrow" href={href(item.href)}>{t.menu.allProducts}</a>
+                </div>
+              </li>
+            ) : (
+              <li style={`--i: ${i}`}>
+                <a
+                  href={href(item.href)}
+                  class:list={['mobile-menu__link', { 'is-accent': item.accent }]}
+                  aria-current={isCurrent(item.href) ? 'page' : undefined}
+                >
+                  <span class="mono mobile-menu__index">{index(i)}</span>
+                  <span class="mobile-menu__label">{t.nav[item.key]}</span>
+                </a>
+              </li>
+            ),
+          )
+        }
+      </ul>
+    </nav>
+
+    <div class="mobile-menu__after">
+      <ul class="mobile-menu__langs" role="list" aria-label={t.language}>
+        {
+          locales.map((l) => (
+            <li>
+              <a
+                href={localizePath(switchPath, l)}
+                lang={localeMeta[l].lang}
+                hreflang={localeMeta[l].hreflang}
+                aria-current={l === locale ? 'true' : undefined}
+                data-lang-link={l}
+              >
+                {localeMeta[l].label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <ul class="mobile-menu__actions" role="list">
+        <li>
+          <a class="mobile-menu__action" href={contact.phoneHref}>
+            <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+              <path d="M6.2 2.8H3.6a1 1 0 0 0-1 1.1 14.6 14.6 0 0 0 13.3 13.3 1 1 0 0 0 1.1-1v-2.6l-3.4-1.4-1.7 1.7a11.3 11.3 0 0 1-4.8-4.8l1.7-1.7Z" />
+            </svg>
+            {t.menu.call}
+          </a>
+        </li>
+        <li>
+          <a class="mobile-menu__action" href={contact.whatsappHref} rel="noopener" target="_blank">
+            <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+              <path d="M10 2.6a7.4 7.4 0 0 0-6.4 11.1l-1 3.7 3.8-1A7.4 7.4 0 1 0 10 2.6Z" />
+            </svg>
+            {t.footer.whatsapp}
+          </a>
+        </li>
+        <li>
+          <a class="mobile-menu__action" href={`mailto:${contact.email}`}>
+            <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+              <rect x="2.6" y="4.4" width="14.8" height="11.2" rx="1" />
+              <path d="m3 5 7 5.6L17 5" />
+            </svg>
+            {t.menu.email}
+          </a>
+        </li>
+      </ul>
+
+      <dl class="mobile-menu__info">
+        <div>
+          <dt class="eyebrow">{t.menu.office}</dt>
+          <dd>{t.address.street}, {t.address.place}</dd>
+        </div>
+        <div>
+          <dt class="eyebrow">{t.menu.hours}</dt>
+          <dd>{t.hours}</dd>
+        </div>
+        <div>
+          <dt class="eyebrow">{t.footer.contact}</dt>
+          <dd><span class="mono" dir="ltr">{contact.phoneDisplay}</span> · <span class="mono" dir="ltr">{contact.email}</span></dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</div>
+
+<style>
+  .mobile-menu {
+    position: fixed;
+    inset: var(--header-h) 0 0 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-block: var(--s-3) calc(var(--s-7) + env(safe-area-inset-bottom, 0px));
+  }
+  .mobile-menu__inner {
+    display: grid;
+    gap: var(--s-6);
+  }
+  .mobile-menu__list > li {
+    border-bottom: 1px solid var(--line-inv);
+  }
+  .mobile-menu__link {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-4);
+    width: 100%;
+    min-height: 44px;
+    padding-block: var(--s-3);
+    font-family: var(--font-display);
+    font-size: clamp(1.875rem, 8vw, 2.75rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.15;
+    text-align: start;
+    color: var(--paper);
+  }
+  .mobile-menu__link[aria-current='page'] .mobile-menu__label,
+  .mobile-menu__link.is-current .mobile-menu__label {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.18em;
+  }
+  .mobile-menu__index {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--muted-inv);
+    letter-spacing: 0;
+  }
+  .mobile-menu__link.is-accent .mobile-menu__label::after {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-inline-start: var(--s-3);
+    vertical-align: 0.5em;
+    background: var(--sun);
+  }
+  .mobile-menu__chevron {
+    flex: none;
+    align-self: center;
+    margin-inline-start: auto;
+    fill: none;
+    stroke: var(--muted-inv);
+    stroke-width: 1.5;
+    transition: transform var(--dur-2) var(--ease);
+  }
+  [aria-expanded='true'] > .mobile-menu__chevron {
+    transform: rotate(180deg);
+  }
+
+  .mobile-menu__sub {
+    display: grid;
+    gap: var(--s-2);
+    padding-block: var(--s-1) var(--s-4);
+  }
+  .mobile-menu__sub[hidden] {
+    display: none;
+  }
+  .mobile-menu__sub ul {
+    display: grid;
+  }
+  .mobile-menu__sub li a {
+    display: flex;
+    align-items: center;
+    gap: var(--s-4);
+    min-height: 64px;
+    padding-block: var(--s-2);
+  }
+  .mobile-menu__thumb {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 56px;
+    height: 56px;
+    padding: 6px;
+    background: var(--paper-2);
+    border-radius: var(--r-1);
+  }
+  .mobile-menu__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .mobile-menu__cat {
+    display: grid;
+    gap: 2px;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  .mobile-menu__sub a[aria-current='page'] .mobile-menu__cat > :first-child {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .mobile-menu__meta {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--muted-inv);
+  }
+  .mobile-menu__sub .link-arrow {
+    justify-self: start;
+    color: var(--muted-inv);
+  }
+
+  .mobile-menu__after {
+    display: grid;
+    gap: var(--s-5);
+  }
+  .mobile-menu__langs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 3px;
+    border: 1px solid var(--line-inv-strong);
+    border-radius: var(--r-1);
+  }
+  .mobile-menu__langs a {
+    display: grid;
+    place-items: center;
+    min-height: 44px;
+    padding-inline: var(--s-2);
+    border-radius: 1px;
+    font-size: 0.9375rem;
+    color: var(--muted-inv);
+    transition:
+      color var(--dur-1) var(--ease),
+      background-color var(--dur-1) var(--ease);
+  }
+  .mobile-menu__langs a[aria-current='true'] {
+    color: var(--ink);
+    background: var(--paper);
+  }
+  .mobile-menu__actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-2);
+  }
+  .mobile-menu__action {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 6px;
+    min-height: 72px;
+    padding: var(--s-2);
+    border: 1px solid var(--line-inv);
+    border-radius: var(--r-1);
+    background: var(--ink-2);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.2;
+    text-align: center;
+    transition: border-color var(--dur-1) var(--ease);
+  }
+  .mobile-menu__action:hover {
+    border-color: var(--line-inv-strong);
+  }
+  .mobile-menu__action svg {
+    fill: none;
+    stroke: var(--sun);
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+  }
+  .mobile-menu__info {
+    display: grid;
+    gap: var(--s-4);
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--muted-inv);
+  }
+  .mobile-menu__info dd {
+    margin: 2px 0 0;
+    line-height: 1.5;
+  }
+  .mobile-menu__info .mono {
+    font-size: 0.8125rem;
+  }
+
+  :global(html.motion) .mobile-menu__list > li,
+  :global(html.motion) .mobile-menu__after {
+    opacity: 0;
+    transform: translateY(14px);
+    transition:
+      opacity 280ms var(--ease),
+      transform var(--dur-3) var(--ease-out-expo);
+  }
+  :global(html.motion) .mobile-menu.is-revealed .mobile-menu__list > li {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(var(--i) * 45ms);
+  }
+  :global(html.motion) .mobile-menu.is-revealed .mobile-menu__after {
+    opacity: 1;
+    transform: none;
+    transition-delay: 240ms;
+  }
+
+  :global([dir='rtl']) .mobile-menu__link {
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.45;
+    font-size: clamp(1.75rem, 7.4vw, 2.5rem);
+  }
+  :global([dir='rtl']) .mobile-menu__meta {
+    font-family: var(--font-sans);
+  }
+</style>

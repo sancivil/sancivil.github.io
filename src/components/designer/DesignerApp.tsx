@@ -90,7 +90,7 @@ export default function DesignerApp({ locale }: { locale: Locale }) {
     const inverterId = url.searchParams.get('inverter');
     const city = cities.find((c) => c.id === url.searchParams.get('city'));
     let jump = false;
-    const shared = code ? decodeProject(code) : null;
+    const shared = code ? decodeProject(code, catalog) : null;
     if (shared) {
       project.value = shared;
       mode.value = 'design';
@@ -104,6 +104,7 @@ export default function DesignerApp({ locale }: { locale: Locale }) {
       const before = project.value;
       project.value = applyDeepLinks(project.value, catalog, moduleId, inverterId);
       if (project.value !== before) {
+        if (!project.value.name.trim()) project.value = { ...project.value, name: t.project.defaultName };
         const panel = catalog.panels.find((m) => m.id === moduleId);
         const inv = findInverter(catalog, inverterId ?? '');
         notice.value = [panel && t.notice.module(panelLabel(panel)), inv && t.notice.inverter(inv.model)].filter(Boolean).join(' ');
@@ -122,7 +123,21 @@ export default function DesignerApp({ locale }: { locale: Locale }) {
     if (code || moduleId || inverterId || city) history.replaceState(null, '', url.pathname);
     setReady(true);
     if (jump) {
-      const arrive = () => requestAnimationFrame(() => scrollToApp(false, true));
+      // After an instant jump the header or the tablet project bar can still cover the notice; nudge it into view.
+      const uncover = () => {
+        const target = root.current?.querySelector('.dz-notice') ?? document.getElementById('dz-step-title');
+        if (!target) return;
+        const header = document.querySelector<HTMLElement>('[data-header]');
+        const bar = root.current?.querySelector<HTMLElement>('.dz-sum__toggle')?.getBoundingClientRect();
+        const barH = bar && bar.height > 0 && bar.top < window.innerHeight / 3 ? bar.height : 0;
+        const gap = target.getBoundingClientRect().top - (header?.offsetHeight ?? 0) - barH - 16;
+        if (gap < 0) window.scrollBy({ top: gap, behavior: 'auto' });
+      };
+      const arrive = () =>
+        requestAnimationFrame(() => {
+          scrollToApp(false, true);
+          setTimeout(uncover, 350);
+        });
       if (document.readyState === 'complete') arrive();
       else window.addEventListener('load', arrive, { once: true });
     }
