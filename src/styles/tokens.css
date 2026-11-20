@@ -1,0 +1,58 @@
+:root {
+  --ink: #0b0b0c;
+  --ink-2: #151517;
+  --ink-3: #202024;
+  --paper: #ffffff;
+  --paper-2: #f3f3ef;
+  --paper-3: #e7e7e1;
+  --muted: #6e6e73;
+  --muted-inv: #9a9aa0;
+  --line: rgb(11 11 12 / 0.12);
+  --line-strong: rgb(11 11 12 / 0.28);
+  --line-inv: rgb(255 255 255 / 0.14);
+  --line-inv-strong: rgb(255 255 255 / 0.32);
+  --sun: #ffcc00;
+  --sun-ink: #1a1500;
+  --ok: #2e9e6a;
+  --warn: #e39b2d;
+  --bad: #d4493f;
+  --bad-text: #b3372e;
+
+  --font-sans: 'DM Sans Variable', 'DM Sans', 'Noto Sans Arabic Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-sans);
+  --font-mono: 'IBM Plex Mono', 'Noto Sans Arabic Variable', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+  --s-10: 128px;
+  --s-11: 160px;
+  --s-12: 200px;
+
+  --section: clamp(72px, 10vw, 160px);
+  --gutter: clamp(20px, 4vw, 56px);
+  --gap: clamp(16px, 2vw, 32px);
+  --container: 1440px;
+  --header-h: 72px;
+
+  --r-1: 2px;
+  --r-2: 6px;
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-1: 160ms;
+  --dur-2: 240ms;
+  --dur-3: 480ms;
+}
+
+/* Arabic and Kurdish (Sorani): Latin glyphs and digits stay in DM Sans, Arabic script falls back to Noto. */
+html:lang(ar),
+html:lang(ckb) {
+  --font-display: 'DM Sans Variable', 'Noto Kufi Arabic Variable', ui-sans-serif, sans-serif;
+}

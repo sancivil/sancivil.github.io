@@ -1,0 +1,98 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageIntro from '../../components/products/PageIntro.astro';
+import CtaBand from '../../components/company/CtaBand.astro';
+import JsonLd from '../../components/seo/JsonLd.astro';
+import Faq from '../../components/seo/Faq.astro';
+import { siteFaq } from '../../lib/seo/facts.ts';
+import { absolute, breadcrumbList, webPage } from '../../lib/seo/schema.ts';
+import { contact, whatsappLink } from '../../data/site.ts';
+import { common } from '../../i18n/common.ts';
+import { faq } from '../../i18n/faq.ts';
+import { localeFromParam, localeParams, localizePath } from '../../i18n/config.ts';
+
+export const getStaticPaths = () => localeParams();
+
+const locale = localeFromParam(Astro.params.locale);
+const t = faq[locale];
+const c = common[locale];
+const href = (path: string) => localizePath(path, locale);
+const qas = siteFaq(locale);
+
+const url = absolute(href('/faq/'));
+const crumbs = breadcrumbList([
+  { name: 'Faraday', url: absolute(href('/')) },
+  { name: t.crumb, url },
+]);
+const graph = [
+  webPage({ url, name: t.meta.title, description: t.meta.description, locale, breadcrumb: crumbs }),
+  crumbs,
+];
+---
+
+<Base title={t.meta.title} description={t.meta.description}>
+  <JsonLd slot="head" data={graph} />
+
+  <PageIntro locale={locale} crumbs={[{ label: t.crumb }]} eyebrow={t.eyebrow} title={t.title} lead={t.lead}>
+    <div class="ask">
+      <p class="eyebrow">{t.aside.title}</p>
+      <dl class="ask__list">
+        <div>
+          <dt>{t.aside.phone}</dt>
+          <dd><a class="mono" dir="ltr" href={contact.phoneHref}>{contact.phoneDisplay}</a></dd>
+        </div>
+        <div>
+          <dt>{t.aside.email}</dt>
+          <dd><a class="mono" dir="ltr" href={`mailto:${contact.email}`}>{contact.email}</a></dd>
+        </div>
+        <div>
+          <dt>{t.aside.hours}</dt>
+          <dd>{c.hours}</dd>
+        </div>
+      </dl>
+    </div>
+  </PageIntro>
+
+  <Faq qas={qas} heading={t.heading} intro={t.intro} id="questions">
+    <a class="btn btn--line" href={whatsappLink(t.whatsappText)} rel="noopener" target="_blank">{t.whatsapp}</a>
+  </Faq>
+
+  <CtaBand
+    title={t.cta.title}
+    primary={{ label: t.cta.designer, href: href('/designer/') }}
+    secondary={{ label: t.cta.contact, href: href('/contact/') }}
+  />
+</Base>
+
+<style>
+  .ask {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .ask__list {
+    display: grid;
+    border-top: 1px solid var(--line-inv);
+  }
+  .ask__list > div {
+    display: grid;
+    gap: var(--s-1);
+    padding-block: var(--s-3);
+    border-bottom: 1px solid var(--line-inv);
+  }
+  .ask__list dt {
+    font-size: 0.8125rem;
+    color: var(--muted-inv);
+  }
+  .ask__list dd {
+    font-size: 0.9375rem;
+  }
+  .ask__list a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    transition: color var(--dur-1) var(--ease);
+  }
+  .ask__list a:hover {
+    color: var(--sun);
+  }
+</style>

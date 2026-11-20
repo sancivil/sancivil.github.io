@@ -1,0 +1,60 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/company/PageHead.astro';
+import ContactMethods from '../../components/company/ContactMethods.astro';
+import EnquiryForm from '../../components/company/EnquiryForm.astro';
+import { localeFromParam, localeParams } from '../../i18n/config.ts';
+import { company } from '../../i18n/company.ts';
+
+export const getStaticPaths = () => localeParams();
+
+const locale = localeFromParam(Astro.params.locale);
+const t = company[locale].contactPage;
+---
+
+<Base title={t.meta.title} description={t.meta.description}>
+  <PageHead eyebrow={t.eyebrow} title={t.title} lead={t.lead}>
+    <ContactMethods locale={locale} />
+  </PageHead>
+
+  <section class="enquiry theme-light section" aria-labelledby="enquiry-title">
+    <div class="container enquiry__grid">
+      <div class="enquiry__head">
+        <p class="eyebrow">{t.form.eyebrow}</p>
+        <h2 id="enquiry-title" class="h2">{t.form.title}</h2>
+        <p class="enquiry__intro">{t.form.intro}</p>
+      </div>
+      <EnquiryForm locale={locale} />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .enquiry__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    gap: var(--s-7) clamp(var(--s-7), 7vw, var(--s-11));
+  }
+  .enquiry__head {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: var(--s-4);
+  }
+  .enquiry__head .h2 {
+    max-width: 12ch;
+  }
+  :global([dir='rtl']) .enquiry__head .h2 {
+    max-width: none;
+  }
+  .enquiry__intro {
+    max-width: 36ch;
+    color: var(--muted);
+  }
+
+  @media (max-width: 900px) {
+    .enquiry__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

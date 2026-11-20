@@ -1,0 +1,59 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import PageIntro from '../../../../components/products/PageIntro.astro';
+import Stats from '../../../../components/products/Stats.astro';
+import SectionHead from '../../../../components/products/SectionHead.astro';
+import PhaseGroups from '../../../../components/products/PhaseGroups.astro';
+import {
+  categoryImage,
+  groupInverters,
+  groupModels,
+  groupPower,
+  pct,
+  powerParts,
+} from '../../../../components/products/data.ts';
+import { localeFromParam, localeParams } from '../../../../i18n/config.ts';
+import { common } from '../../../../i18n/common.ts';
+import { products } from '../../../../i18n/products.ts';
+import { catalogText } from '../../../../i18n/catalog-text.ts';
+
+export const getStaticPaths = () => localeParams();
+const locale = localeFromParam(Astro.params.locale);
+const t = products[locale];
+const p = t.onGridPage;
+const nav = common[locale];
+const power = powerParts(groupPower('onGrid'));
+const efficiency = Math.max(...groupInverters('onGrid').map((m) => m.efficiencyMax ?? 0));
+const models = groupModels('onGrid');
+---
+
+<Base title={p.title} description={p.description}>
+  <PageIntro
+    locale={locale}
+    crumbs={[{ label: nav.nav.products, href: '/products/' }, { label: nav.productNav.onGrid }]}
+    eyebrow={p.eyebrow}
+    title={nav.productNav.onGrid}
+    lead={catalogText[locale].categories.onGrid}
+    display
+  >
+    <Stats
+      items={[
+        { label: p.stat.power, value: power.value, unit: power.unit },
+        { label: p.stat.efficiency, value: pct(efficiency, 1), unit: '%', count: true },
+        { label: p.stat.models, value: String(models) },
+      ]}
+    />
+  </PageIntro>
+
+  <section class="section" aria-labelledby="families-title">
+    <div class="container">
+      <SectionHead
+        id="families-title"
+        title={p.listTitle}
+        meta={t.count.models(models)}
+        image={{ ...categoryImage.onGrid, alt: t.categoryAlt.onGrid }}
+      />
+      <PhaseGroups locale={locale} group="onGrid" />
+    </div>
+  </section>
+</Base>

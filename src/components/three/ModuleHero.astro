@@ -1,0 +1,73 @@
+---
+/*
+  CONTRACT (implemented by the 3D work package; pages may rely on it):
+  Decorative 3D module scene for the home hero. Absolutely fills its positioned parent
+  (position: absolute; inset: 0) and sits behind hero text: pointer-events none, the ≤3° pointer
+  parallax listens on the window (mouse only). Transparent canvas over --ink.
+  Props: spec (ModuleSpec), class?.
+  aria-hidden; never blocks LCP: three.js loads after the load event when the browser is idle,
+  then the canvas fades in over 800 ms. Reduced motion: static pose.
+  Framing (src/lib/three/hero.ts): the module's top edge always clears the header by about 8.5%
+  of the box (28–88px) and its near top corner sits just inside the end edge; the lower part runs
+  past the end edge and behind the spec strip (or the tablet/phone fade). Width is capped so it stays
+  out of the start-side text block. RTL mirrors this. Phones (≤720px): 50% opacity, behind the text.
+*/
+import type { ModuleSpec } from '../../lib/three/types.ts';
+
+interface Props {
+  spec: ModuleSpec;
+  class?: string;
+}
+const { spec, class: className } = Astro.props;
+---
+
+<div class:list={['module-hero', className]} data-module-hero data-spec={JSON.stringify(spec)} aria-hidden="true">
+  <canvas class="module-hero__canvas"></canvas>
+</div>
+
+<style>
+  .module-hero {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .module-hero__canvas {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 800ms var(--ease);
+  }
+  .module-hero.is-ready .module-hero__canvas {
+    opacity: 1;
+  }
+  @media (max-width: 720px) {
+    .module-hero__canvas {
+      mask-image: linear-gradient(to bottom, #000 50%, transparent 96%);
+    }
+    .module-hero.is-ready .module-hero__canvas {
+      opacity: 0.5;
+    }
+  }
+</style>
+
+<script>
+  import { afterLoadIdle, loadScenes, webglAvailable, whenNear } from '../../lib/three/load.ts';
+  import type { ModuleSpec } from '../../lib/three/types.ts';
+
+  document.querySelectorAll<HTMLElement>('[data-module-hero]').forEach((host) => {
+    if (!webglAvailable()) return;
+    const spec = JSON.parse(host.dataset.spec ?? '{}') as ModuleSpec;
+    afterLoadIdle(() =>
+      whenNear(
+        host,
+        async () => {
+          const { mountHero } = await loadScenes();
+          await document.fonts.ready;
+          mountHero(host, spec);
+        },
+        '0px',
+      ),
+    );
+  });
+</script>

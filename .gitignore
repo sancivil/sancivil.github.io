@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+qa/
+
+.playwright-cli/
+.tmp/
+deploy/
+
+# Stock photos recovered from the old site: unknown licences, kept locally only
+research/legacy-images-unused/

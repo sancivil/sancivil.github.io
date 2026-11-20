@@ -1,0 +1,98 @@
+---
+import Base from '../layouts/Base.astro';
+import { company } from '../i18n/company.ts';
+import { common } from '../i18n/common.ts';
+import { locales, localeMeta, localizePath } from '../i18n/config.ts';
+
+const rows = locales.map((locale) => ({
+  locale,
+  t: company[locale].notFound,
+  nav: common[locale].nav,
+}));
+const title = rows.map((r) => r.t.title).join(' · ');
+---
+
+<Base title={title} description={company.en.notFound.line} noindex>
+  <section class="nf theme-dark">
+    <div class="container nf__inner">
+      <h1 class="nf__code"><span class="num">404</span><span class="sr-only"> {company.en.notFound.title}</span></h1>
+      <ul class="nf__rows" role="list">
+        {
+          rows.map(({ locale, t, nav }) => (
+            <li class="nf__row" lang={localeMeta[locale].lang} dir={localeMeta[locale].dir}>
+              <p class="nf__line">{t.line}</p>
+              <p class="nf__links">
+                <a class="link-arrow" href={localizePath('/', locale)}>
+                  {t.home}
+                </a>
+                <a class="link-arrow" href={localizePath('/products/', locale)}>
+                  {nav.products}
+                </a>
+                <a class="link-arrow" href={localizePath('/designer/', locale)}>
+                  {nav.designer}
+                </a>
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    min-height: calc(100svh - var(--header-h));
+    display: flex;
+    align-items: flex-end;
+    padding-block: var(--s-9) var(--s-8);
+  }
+  .nf__inner {
+    display: grid;
+    gap: var(--s-7);
+  }
+  .nf__code {
+    font-weight: 400;
+    font-size: clamp(7rem, 3rem + 22vw, 22rem);
+    line-height: 0.8;
+    letter-spacing: -0.06em;
+  }
+  .nf__code .num {
+    letter-spacing: -0.06em;
+  }
+  .nf__rows {
+    border-bottom: 1px solid var(--line-inv);
+  }
+  .nf__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--s-3) var(--gap);
+    padding-block: var(--s-5);
+    border-top: 1px solid var(--line-inv);
+  }
+  .nf__line {
+    font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+  }
+  .nf__row[dir='rtl'] {
+    line-height: 1.85;
+  }
+  .nf__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--s-6);
+    font-size: 0.9375rem;
+  }
+  .nf__links a {
+    min-height: 44px;
+  }
+
+  @media (max-width: 720px) {
+    .nf__row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .nf__links {
+      gap: 0 var(--s-5);
+    }
+  }
+</style>

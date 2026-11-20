@@ -1,0 +1,150 @@
+---
+import { home } from '../../i18n/home.ts';
+import { company } from '../../i18n/company.ts';
+import type { Locale } from '../../i18n/config.ts';
+import { warranty } from '../company/facts.ts';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = home[locale].warranty;
+const years = company[locale].years;
+const series = [
+  { name: t.sSeries, note: t.sSeriesNote, terms: warranty.sSeries },
+  { name: t.orDrSeries, note: t.orDrNote, terms: warranty.orDrSeries },
+];
+---
+
+<section class="wy theme-paper section" aria-labelledby="wy-title">
+  <div class="container">
+    <div class="wy__head">
+      <p class="eyebrow">{t.eyebrow}</p>
+      <h2 id="wy-title" class="h2 wy__title">{t.title(warranty.linearPowerYears)}</h2>
+    </div>
+
+    <ul class="wy__grid" role="list">
+      {
+        series.map((s) => (
+          <li class="wy__item">
+            <h3 class="wy__name">
+              <span>{s.name}</span>
+              <span class="wy__note">{s.note}</span>
+            </h3>
+            <dl class="wy__figs">
+              <div>
+                <dt>{t.power}</dt>
+                <dd><span class="num">{s.terms.power}</span><span class="unit">{years}</span></dd>
+              </div>
+              <div>
+                <dt>{t.product}</dt>
+                <dd><span class="num">{s.terms.product}</span><span class="unit">{years}</span></dd>
+              </div>
+            </dl>
+          </li>
+        ))
+      }
+      <li class="wy__item">
+        <h3 class="wy__name">
+          <span>QBE</span>
+          <span class="wy__note">{t.qbeTitle}</span>
+        </h3>
+        <p class="wy__text">{t.qbeText}</p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .wy__head {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+    margin-block-end: clamp(var(--s-7), 5vw, var(--s-9));
+  }
+  .wy__title {
+    max-width: 20ch;
+  }
+  :global([dir='rtl']) .wy__title {
+    max-width: 26ch;
+  }
+  .wy__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid var(--line);
+  }
+  .wy__item {
+    display: grid;
+    align-content: start;
+    gap: var(--s-6);
+    padding-block: var(--s-6) var(--s-2);
+    padding-inline: var(--gap);
+  }
+  .wy__item:first-child {
+    padding-inline-start: 0;
+  }
+  .wy__item + .wy__item {
+    border-inline-start: 1px solid var(--line);
+  }
+  .wy__name {
+    display: grid;
+    gap: var(--s-1);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .wy__note {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--muted);
+  }
+  .wy__figs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-5) var(--s-7);
+  }
+  .wy__figs div {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: var(--s-2);
+  }
+  .wy__figs dt {
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .wy__figs dd {
+    font-size: clamp(2.5rem, 1.6rem + 2.4vw, 4rem);
+    line-height: 1;
+  }
+  .wy__text {
+    max-width: 36ch;
+    color: var(--muted);
+  }
+
+  @media (max-width: 900px) {
+    .wy__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .wy__item,
+    .wy__item:first-child {
+      padding-inline: 0;
+      padding-block: var(--s-6);
+    }
+    .wy__item + .wy__item {
+      border-inline-start: 0;
+      border-top: 1px solid var(--line);
+    }
+    .wy__item {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--s-5) var(--gap);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .wy__item {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

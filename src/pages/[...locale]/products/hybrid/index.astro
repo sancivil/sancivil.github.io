@@ -1,0 +1,67 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import PageIntro from '../../../../components/products/PageIntro.astro';
+import Stats from '../../../../components/products/Stats.astro';
+import SectionHead from '../../../../components/products/SectionHead.astro';
+import PhaseGroups from '../../../../components/products/PhaseGroups.astro';
+import BatteryList from '../../../../components/products/BatteryList.astro';
+import {
+  batteries,
+  categoryImage,
+  groupModels,
+  groupPower,
+  powerParts,
+  warranty,
+} from '../../../../components/products/data.ts';
+import { localeFromParam, localeParams } from '../../../../i18n/config.ts';
+import { common } from '../../../../i18n/common.ts';
+import { products } from '../../../../i18n/products.ts';
+import { catalogText } from '../../../../i18n/catalog-text.ts';
+
+export const getStaticPaths = () => localeParams();
+const locale = localeFromParam(Astro.params.locale);
+const t = products[locale];
+const p = t.hybridPage;
+const nav = common[locale];
+const power = powerParts(groupPower('hybrid'));
+const years = warranty.batteries.years;
+const models = groupModels('hybrid');
+---
+
+<Base title={p.title} description={p.description}>
+  <PageIntro
+    locale={locale}
+    crumbs={[{ label: nav.nav.products, href: '/products/' }, { label: nav.productNav.hybrid }]}
+    eyebrow={p.eyebrow}
+    title={nav.productNav.hybrid}
+    lead={catalogText[locale].categories.hybrid}
+    display
+  >
+    <Stats
+      items={[
+        { label: p.stat.power, value: power.value, unit: power.unit },
+        { label: p.stat.warranty, value: String(years), word: t.years(years), count: true },
+        { label: p.stat.models, value: String(models) },
+      ]}
+    />
+  </PageIntro>
+
+  <section class="section" aria-labelledby="inverters-title">
+    <div class="container">
+      <SectionHead
+        id="inverters-title"
+        title={p.invertersTitle}
+        meta={t.count.models(models)}
+        image={{ ...categoryImage.hybrid, alt: t.categoryAlt.hybrid }}
+      />
+      <PhaseGroups locale={locale} group="hybrid" />
+    </div>
+  </section>
+
+  <section class="section theme-paper" id="storage" aria-labelledby="storage-title">
+    <div class="container">
+      <SectionHead id="storage-title" title={p.storageTitle} lead={p.storageLead} meta={t.count.storage(batteries.length)} />
+      <BatteryList locale={locale} batteries={batteries} />
+    </div>
+  </section>
+</Base>

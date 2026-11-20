@@ -1,0 +1,3966 @@
+[
+  {
+    "id": "psi-a1p3600-hy",
+    "model": "PSI-A1P3600-HY",
+    "version": "IT_2025_09_02",
+    "phase": "single_phase",
+    "type": "hybrid",
+    "pnomAc": 3680,
+    "pmaxAc": 7360,
+    "pnomDc": 3680,
+    "vmaxDc": 580,
+    "vminDc": 80,
+    "vnomDc": 360,
+    "vstart": 100,
+    "vminMppt": 100,
+    "vmaxMppt": 550,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      15,
+      15
+    ],
+    "imaxInput": 15,
+    "percPminCc": 1.5,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": null,
+    "efficiencyEu": 0.962,
+    "protectionClass": "IP65",
+    "width": 610,
+    "height": 366,
+    "depth": 212,
+    "weight": 19.5,
+    "communication": "Wi-Fi",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-a1p3600-hy.png",
+    "imageSource": "https://www.peimar.com/images/PSI-A1P3600-HY.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-a1p6000-hy",
+    "model": "PSI-A1P6000-HY",
+    "version": "IT_2025_09_02",
+    "phase": "single_phase",
+    "type": "hybrid",
+    "pnomAc": 6000,
+    "pmaxAc": 11500,
+    "pnomDc": 6000,
+    "vmaxDc": 580,
+    "vminDc": 80,
+    "vnomDc": 360,
+    "vstart": 100,
+    "vminMppt": 100,
+    "vmaxMppt": 550,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      15,
+      15
+    ],
+    "imaxInput": 15,
+    "percPminCc": 1.5,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": null,
+    "efficiencyEu": 0.962,
+    "protectionClass": "IP65",
+    "width": 610,
+    "height": 366,
+    "depth": 212,
+    "weight": 20.5,
+    "communication": "Wi-Fi",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-a1p6000-hy.png",
+    "imageSource": "https://www.peimar.com/images/PSI-A1P6000-HY.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j3000-hy",
+    "model": "PSI-J3000-HY",
+    "version": "2020_09_00",
+    "phase": "single_phase",
+    "type": "hybrid",
+    "pnomAc": 3000,
+    "pmaxAc": 3000,
+    "pnomDc": 4500,
+    "vmaxDc": 600,
+    "vminDc": 80,
+    "vnomDc": 360,
+    "vstart": 120,
+    "vminMppt": 90,
+    "vmaxMppt": 550,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      12.5,
+      12.5
+    ],
+    "imaxInput": 12.5,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.976,
+    "efficiencyEu": null,
+    "protectionClass": "IP65",
+    "width": 470,
+    "height": 470,
+    "depth": 190,
+    "weight": 23,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j3000-hy.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J3000-HY.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j4000-hy",
+    "model": "PSI-J4000-HY",
+    "version": "2020_09_00",
+    "phase": "single_phase",
+    "type": "hybrid",
+    "pnomAc": 4000,
+    "pmaxAc": 4000,
+    "pnomDc": 6000,
+    "vmaxDc": 600,
+    "vminDc": 80,
+    "vnomDc": 360,
+    "vstart": 120,
+    "vminMppt": 90,
+    "vmaxMppt": 550,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      12.5,
+      12.5
+    ],
+    "imaxInput": 12.5,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.976,
+    "efficiencyEu": null,
+    "protectionClass": "IP65",
+    "width": 470,
+    "height": 470,
+    "depth": 190,
+    "weight": 23,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j4000-hy.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J4000-HY.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j5000-hy",
+    "model": "PSI-J5000-HY",
+    "version": "2020_09_00",
+    "phase": "single_phase",
+    "type": "hybrid",
+    "pnomAc": 5000,
+    "pmaxAc": 5000,
+    "pnomDc": 7500,
+    "vmaxDc": 600,
+    "vminDc": 80,
+    "vnomDc": 360,
+    "vstart": 120,
+    "vminMppt": 90,
+    "vmaxMppt": 550,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      12.5,
+      12.5
+    ],
+    "imaxInput": 12.5,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.976,
+    "efficiencyEu": null,
+    "protectionClass": "IP65",
+    "width": 470,
+    "height": 470,
+    "depth": 190,
+    "weight": 23,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j5000-hy.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J5000-HY.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j6000-hy",
+    "model": "PSI-J6000-HY",
+    "version": "2020_09_00",
+    "phase": "single_phase",
+    "type": "hybrid",
+    "pnomAc": 6000,
+    "pmaxAc": 6000,
+    "pnomDc": 9000,
+    "vmaxDc": 600,
+    "vminDc": 80,
+    "vnomDc": 360,
+    "vstart": 120,
+    "vminMppt": 90,
+    "vmaxMppt": 550,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      12.5,
+      12.5
+    ],
+    "imaxInput": 12.5,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.976,
+    "efficiencyEu": null,
+    "protectionClass": "IP65",
+    "width": 470,
+    "height": 470,
+    "depth": 190,
+    "weight": 23,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j6000-hy.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J6000-HY.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1p3000-hy",
+    "model": "PSI-X1P3000-HY",
+    "version": "IT_2021_06_00",
+    "phase": "single_phase",
+    "type": "hybrid",
+    "pnomAc": 3000,
+    "pmaxAc": 3300,
+    "pnomDc": 3600,
+    "vmaxDc": 600,
+    "vminDc": 70,
+    "vnomDc": 360,
+    "vstart": 90,
+    "vminMppt": 70,
+    "vmaxMppt": 550,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      16,
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.5,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": 0.976,
+    "efficiencyEu": null,
+    "protectionClass": "IP65",
+    "width": 417,
+    "height": 482,
+    "depth": 181,
+    "weight": 22,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1p3000-hy.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1P3000-HY.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1p5000-hy",
+    "model": "PSI-X1P5000-HY",
+    "version": "IT_2021_06_00",
+    "phase": "single_phase",
+    "type": "hybrid",
+    "pnomAc": 5000,
+    "pmaxAc": 5500,
+    "pnomDc": 6000,
+    "vmaxDc": 600,
+    "vminDc": 70,
+    "vnomDc": 360,
+    "vstart": 90,
+    "vminMppt": 70,
+    "vmaxMppt": 550,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      16,
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.5,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": 0.976,
+    "efficiencyEu": null,
+    "protectionClass": "IP65",
+    "width": 417,
+    "height": 482,
+    "depth": 181,
+    "weight": 22,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1p5000-hy.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1P5000-HY.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1p6000-hy",
+    "model": "PSI-X1P6000-HY",
+    "version": "IT_2025_08_00",
+    "phase": "single_phase",
+    "type": "hybrid",
+    "pnomAc": 6000,
+    "pmaxAc": 6600,
+    "pnomDc": 7200,
+    "vmaxDc": 600,
+    "vminDc": 70,
+    "vnomDc": 360,
+    "vstart": 90,
+    "vminMppt": 70,
+    "vmaxMppt": 550,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      16,
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": 0.976,
+    "efficiencyEu": null,
+    "protectionClass": "IP65",
+    "width": 417,
+    "height": 482,
+    "depth": 181,
+    "weight": 22,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1p6000-hy.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1P6000-HY.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3p6000-hy",
+    "model": "PSI-X3P6000-HY",
+    "version": "2021_03_00",
+    "phase": "three_phase",
+    "type": "hybrid",
+    "pnomAc": 6000,
+    "pmaxAc": 6600,
+    "pnomDc": 7200,
+    "vmaxDc": 1000,
+    "vminDc": 180,
+    "vnomDc": 720,
+    "vstart": 180,
+    "vminMppt": 180,
+    "vmaxMppt": 950,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      12,
+      12
+    ],
+    "imaxInput": 12,
+    "percPminCc": 1.5,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": 0.978,
+    "efficiencyEu": null,
+    "protectionClass": "IP65",
+    "width": 457,
+    "height": 654,
+    "depth": 228,
+    "weight": 45,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x3p6000-hy.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3P6000-HY.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3p8000-hy",
+    "model": "PSI-X3P8000-HY",
+    "version": "2021_03_00",
+    "phase": "three_phase",
+    "type": "hybrid",
+    "pnomAc": 8000,
+    "pmaxAc": 8800,
+    "pnomDc": 9600,
+    "vmaxDc": 1000,
+    "vminDc": 180,
+    "vnomDc": 720,
+    "vstart": 180,
+    "vminMppt": 180,
+    "vmaxMppt": 950,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      2,
+      1
+    ],
+    "imaxPerMppt": [
+      24,
+      12
+    ],
+    "imaxInput": 12,
+    "percPminCc": 1.5,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": 0.978,
+    "efficiencyEu": null,
+    "protectionClass": "IP65",
+    "width": 457,
+    "height": 654,
+    "depth": 228,
+    "weight": 45,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x3p8000-hy.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3P8000-HY.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3p10000-hy",
+    "model": "PSI-X3P10000-HY",
+    "version": "2021_03_00",
+    "phase": "three_phase",
+    "type": "hybrid",
+    "pnomAc": 10000,
+    "pmaxAc": 11000,
+    "pnomDc": 12000,
+    "vmaxDc": 1000,
+    "vminDc": 180,
+    "vnomDc": 720,
+    "vstart": 180,
+    "vminMppt": 180,
+    "vmaxMppt": 950,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      2,
+      1
+    ],
+    "imaxPerMppt": [
+      24,
+      12
+    ],
+    "imaxInput": 12,
+    "percPminCc": 1.5,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": 0.978,
+    "efficiencyEu": null,
+    "protectionClass": "IP65",
+    "width": 457,
+    "height": 654,
+    "depth": 228,
+    "weight": 45,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x3p10000-hy.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3P10000-HY.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3p20000-hym",
+    "model": "PSI-X3P20000-HYM",
+    "version": "IT_2025_08_00",
+    "phase": "three_phase",
+    "type": "hybrid",
+    "pnomAc": 20000,
+    "pmaxAc": 22000,
+    "pnomDc": 24000,
+    "vmaxDc": 1000,
+    "vminDc": 120,
+    "vnomDc": 600,
+    "vstart": 200,
+    "vminMppt": 160,
+    "vmaxMppt": 950,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      2,
+      2
+    ],
+    "imaxPerMppt": [
+      36,
+      36
+    ],
+    "imaxInput": 36,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": null,
+    "efficiencyEu": 0.977,
+    "protectionClass": "IP66",
+    "width": 526,
+    "height": 696,
+    "depth": 240,
+    "weight": 47,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-x3p20000-hym.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3P20000-HYM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3p30000-hym",
+    "model": "PSI-X3P30000-HYM",
+    "version": "IT_2025_08_00",
+    "phase": "three_phase",
+    "type": "hybrid",
+    "pnomAc": 30000,
+    "pmaxAc": 30000,
+    "pnomDc": 36000,
+    "vmaxDc": 1000,
+    "vminDc": 120,
+    "vnomDc": 600,
+    "vstart": 200,
+    "vminMppt": 160,
+    "vmaxMppt": 950,
+    "numMppt": 3,
+    "inputsPerMppt": [
+      2,
+      2,
+      2
+    ],
+    "imaxPerMppt": [
+      36,
+      36,
+      36
+    ],
+    "imaxInput": 36,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": null,
+    "efficiencyEu": 0.977,
+    "protectionClass": "IP66",
+    "width": 526,
+    "height": 696,
+    "depth": 240,
+    "weight": 47,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-x3p30000-hym.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3P30000-HYM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2,3",
+        "name": "three_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2",
+          "mppt_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3s6000-hy",
+    "model": "PSI-X3S6000-HY",
+    "version": "IT_2025_08_00",
+    "phase": "three_phase",
+    "type": "hybrid",
+    "pnomAc": 6000,
+    "pmaxAc": 6600,
+    "pnomDc": 7200,
+    "vmaxDc": 1000,
+    "vminDc": 180,
+    "vnomDc": 640,
+    "vstart": 200,
+    "vminMppt": 180,
+    "vmaxMppt": 950,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      16,
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": null,
+    "efficiencyEu": 0.977,
+    "protectionClass": "IP65",
+    "width": 503,
+    "height": 503,
+    "depth": 199,
+    "weight": 30,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x3s6000-hy.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3S6000-HY.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3s8000-hy",
+    "model": "PSI-X3S8000-HY",
+    "version": "IT_2025_08_00",
+    "phase": "three_phase",
+    "type": "hybrid",
+    "pnomAc": 8000,
+    "pmaxAc": 8800,
+    "pnomDc": 9600,
+    "vmaxDc": 1000,
+    "vminDc": 180,
+    "vnomDc": 640,
+    "vstart": 200,
+    "vminMppt": 180,
+    "vmaxMppt": 950,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      2,
+      1
+    ],
+    "imaxPerMppt": [
+      28,
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": null,
+    "efficiencyEu": 0.977,
+    "protectionClass": "IP65",
+    "width": 503,
+    "height": 503,
+    "depth": 199,
+    "weight": 30,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x3s8000-hy.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3S8000-HY.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3s10000-hy",
+    "model": "PSI-X3S10000-HY",
+    "version": "IT_2025_08_00",
+    "phase": "three_phase",
+    "type": "hybrid",
+    "pnomAc": 10000,
+    "pmaxAc": 11000,
+    "pnomDc": 12000,
+    "vmaxDc": 1000,
+    "vminDc": 180,
+    "vnomDc": 640,
+    "vstart": 200,
+    "vminMppt": 180,
+    "vmaxMppt": 950,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      2,
+      1
+    ],
+    "imaxPerMppt": [
+      28,
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": null,
+    "efficiencyEu": 0.977,
+    "protectionClass": "IP65",
+    "width": 503,
+    "height": 503,
+    "depth": 199,
+    "weight": 30,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x3s10000-hy.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3S10000-HY.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3s15000-hy",
+    "model": "PSI-X3S15000-HY",
+    "version": "IT_2025_08_00",
+    "phase": "three_phase",
+    "type": "hybrid",
+    "pnomAc": 15000,
+    "pmaxAc": 15000,
+    "pnomDc": 18000,
+    "vmaxDc": 1000,
+    "vminDc": 180,
+    "vnomDc": 640,
+    "vstart": 200,
+    "vminMppt": 180,
+    "vmaxMppt": 950,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      2,
+      1
+    ],
+    "imaxPerMppt": [
+      28,
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": null,
+    "efficiencyEu": 0.977,
+    "protectionClass": "IP65",
+    "width": 503,
+    "height": 503,
+    "depth": 199,
+    "weight": 30,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x3s15000-hy.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3S15000-HY.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1p800-mic",
+    "model": "PSI-X1P800-MIC",
+    "version": "IT_2025_06_00",
+    "phase": "single_phase",
+    "type": "micro",
+    "pnomAc": 800,
+    "pmaxAc": 800,
+    "pnomDc": 960,
+    "vmaxDc": 60,
+    "vminDc": 22,
+    "vnomDc": 60,
+    "vstart": 22,
+    "vminMppt": 22,
+    "vmaxMppt": 60,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      15,
+      15
+    ],
+    "imaxInput": 15,
+    "percPminCc": 1.5,
+    "percPmaxCc": 0.9,
+    "efficiencyMax": 0.965,
+    "efficiencyEu": 0.999,
+    "protectionClass": "IP67",
+    "width": 212,
+    "height": 260,
+    "depth": 40,
+    "weight": 4.1,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1p800-mic.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1P800-MIC.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1p1000-mic",
+    "model": "PSI-X1P1000-MIC",
+    "version": "IT_2025_06_00",
+    "phase": "single_phase",
+    "type": "micro",
+    "pnomAc": 1000,
+    "pmaxAc": 1000,
+    "pnomDc": 1080,
+    "vmaxDc": 60,
+    "vminDc": 22,
+    "vnomDc": 60,
+    "vstart": 22,
+    "vminMppt": 22,
+    "vmaxMppt": 60,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      20,
+      20
+    ],
+    "imaxInput": 20,
+    "percPminCc": 1.5,
+    "percPmaxCc": 0.9,
+    "efficiencyMax": 0.965,
+    "efficiencyEu": 0.999,
+    "protectionClass": "IP67",
+    "width": 212,
+    "height": 260,
+    "depth": 40,
+    "weight": 4.1,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1p1000-mic.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1P1000-MIC.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j1000-tl",
+    "model": "PSI-J1000-TL",
+    "version": "2020_09_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 1000,
+    "pmaxAc": 1100,
+    "pnomDc": 1200,
+    "vmaxDc": 450,
+    "vminDc": 50,
+    "vnomDc": 360,
+    "vstart": 70,
+    "vminMppt": 60,
+    "vmaxMppt": 425,
+    "numMppt": 1,
+    "inputsPerMppt": [
+      1
+    ],
+    "imaxPerMppt": [
+      11
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.971,
+    "efficiencyEu": 0.966,
+    "protectionClass": "IP65",
+    "width": 260,
+    "height": 315,
+    "depth": 120,
+    "weight": 5.6,
+    "communication": "no",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j1000-tl.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J1000-TL.png",
+    "mpptConfigs": [
+      {
+        "key": "1",
+        "name": "unique_mppt",
+        "labels": [
+          "mppt_1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j1500-tl",
+    "model": "PSI-J1500-TL",
+    "version": "2020_09_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 1500,
+    "pmaxAc": 1650,
+    "pnomDc": 1800,
+    "vmaxDc": 450,
+    "vminDc": 50,
+    "vnomDc": 360,
+    "vstart": 70,
+    "vminMppt": 60,
+    "vmaxMppt": 425,
+    "numMppt": 1,
+    "inputsPerMppt": [
+      1
+    ],
+    "imaxPerMppt": [
+      11
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.972,
+    "efficiencyEu": 0.967,
+    "protectionClass": "IP65",
+    "width": 260,
+    "height": 315,
+    "depth": 120,
+    "weight": 5.6,
+    "communication": "no",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j1500-tl.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J1500-TL.png",
+    "mpptConfigs": [
+      {
+        "key": "1",
+        "name": "unique_mppt",
+        "labels": [
+          "mppt_1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j2000-tl",
+    "model": "PSI-J2000-TL",
+    "version": "2020_09_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 2000,
+    "pmaxAc": 2200,
+    "pnomDc": 2400,
+    "vmaxDc": 500,
+    "vminDc": 50,
+    "vnomDc": 360,
+    "vstart": 70,
+    "vminMppt": 60,
+    "vmaxMppt": 450,
+    "numMppt": 1,
+    "inputsPerMppt": [
+      1
+    ],
+    "imaxPerMppt": [
+      11
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.974,
+    "efficiencyEu": 0.969,
+    "protectionClass": "IP65",
+    "width": 305,
+    "height": 354,
+    "depth": 120,
+    "weight": 7.8,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j2000-tl.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J2000-TL.png",
+    "mpptConfigs": [
+      {
+        "key": "1",
+        "name": "unique_mppt",
+        "labels": [
+          "mppt_1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j2500-tl",
+    "model": "PSI-J2500-TL",
+    "version": "2020_09_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 2500,
+    "pmaxAc": 2750,
+    "pnomDc": 3000,
+    "vmaxDc": 500,
+    "vminDc": 50,
+    "vnomDc": 360,
+    "vstart": 70,
+    "vminMppt": 60,
+    "vmaxMppt": 450,
+    "numMppt": 1,
+    "inputsPerMppt": [
+      1
+    ],
+    "imaxPerMppt": [
+      11
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.975,
+    "efficiencyEu": null,
+    "protectionClass": "IP65",
+    "width": 305,
+    "height": 354,
+    "depth": 120,
+    "weight": 8.3,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j2500-tl.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J2500-TL.png",
+    "mpptConfigs": [
+      {
+        "key": "1",
+        "name": "unique_mppt",
+        "labels": [
+          "mppt_1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j3000-tl",
+    "model": "PSI-J3000-TL",
+    "version": "2020_09_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 3000,
+    "pmaxAc": 3000,
+    "pnomDc": 3630,
+    "vmaxDc": 550,
+    "vminDc": 50,
+    "vnomDc": 360,
+    "vstart": 70,
+    "vminMppt": 60,
+    "vmaxMppt": 500,
+    "numMppt": 1,
+    "inputsPerMppt": [
+      1
+    ],
+    "imaxPerMppt": [
+      11
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.976,
+    "efficiencyEu": 0.971,
+    "protectionClass": "IP65",
+    "width": 305,
+    "height": 354,
+    "depth": 120,
+    "weight": 8.4,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j3000-tl.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J3000-TL.png",
+    "mpptConfigs": [
+      {
+        "key": "1",
+        "name": "unique_mppt",
+        "labels": [
+          "mppt_1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j3000-tlm",
+    "model": "PSI-J3000-TLM",
+    "version": "2020_09_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 3000,
+    "pmaxAc": 3300,
+    "pnomDc": 3630,
+    "vmaxDc": 600,
+    "vminDc": 80,
+    "vnomDc": 360,
+    "vstart": 100,
+    "vminMppt": 90,
+    "vmaxMppt": 550,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      11,
+      11
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.976,
+    "efficiencyEu": 0.971,
+    "protectionClass": "IP65",
+    "width": 355,
+    "height": 454,
+    "depth": 150,
+    "weight": 14.8,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j3000-tlm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J3000-TLM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j4000-tlm",
+    "model": "PSI-J4000-TLM",
+    "version": "2020_09_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 4000,
+    "pmaxAc": 4400,
+    "pnomDc": 4840,
+    "vmaxDc": 600,
+    "vminDc": 80,
+    "vnomDc": 360,
+    "vstart": 100,
+    "vminMppt": 90,
+    "vmaxMppt": 550,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      11,
+      11
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.978,
+    "efficiencyEu": 0.974,
+    "protectionClass": "IP65",
+    "width": 355,
+    "height": 454,
+    "depth": 150,
+    "weight": 14.8,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j4000-tlm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J4000-TLM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j5000-tlm",
+    "model": "PSI-J5000-TLM",
+    "version": "2020_09_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 5000,
+    "pmaxAc": 5000,
+    "pnomDc": 6050,
+    "vmaxDc": 600,
+    "vminDc": 80,
+    "vnomDc": 360,
+    "vstart": 100,
+    "vminMppt": 90,
+    "vmaxMppt": 550,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      11,
+      11
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.979,
+    "efficiencyEu": 0.975,
+    "protectionClass": "IP65",
+    "width": 355,
+    "height": 454,
+    "depth": 150,
+    "weight": 14.8,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j5000-tlm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J5000-TLM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j6000-tlm",
+    "model": "PSI-J6000-TLM",
+    "version": "2020_09_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 6000,
+    "pmaxAc": 6000,
+    "pnomDc": 7200,
+    "vmaxDc": 600,
+    "vminDc": 80,
+    "vnomDc": 360,
+    "vstart": 100,
+    "vminMppt": 90,
+    "vmaxMppt": 550,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      11,
+      11
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.979,
+    "efficiencyEu": 0.975,
+    "protectionClass": "IP65",
+    "width": 355,
+    "height": 454,
+    "depth": 162,
+    "weight": 15.8,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j6000-tlm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J6000-TLM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1p1100-tl",
+    "model": "PSI-X1P1100-TL",
+    "version": "IT_2022_04_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 1100,
+    "pmaxAc": 1210,
+    "pnomDc": 1320,
+    "vmaxDc": 450,
+    "vminDc": 45,
+    "vnomDc": 450,
+    "vstart": 50,
+    "vminMppt": 45,
+    "vmaxMppt": 430,
+    "numMppt": 1,
+    "inputsPerMppt": [
+      1
+    ],
+    "imaxPerMppt": [
+      14
+    ],
+    "imaxInput": 11,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": null,
+    "efficiencyEu": 0.955,
+    "protectionClass": "IP66",
+    "width": 328,
+    "height": 267,
+    "depth": 116,
+    "weight": 6,
+    "communication": "no",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1p1100-tl.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1P1100-TL.png",
+    "mpptConfigs": [
+      {
+        "key": "1",
+        "name": "unique_mppt",
+        "labels": [
+          "mppt_1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1p1500-tl",
+    "model": "PSI-X1P1500-TL",
+    "version": "IT_2022_04_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 1500,
+    "pmaxAc": 1650,
+    "pnomDc": 1800,
+    "vmaxDc": 450,
+    "vminDc": 50,
+    "vnomDc": 450,
+    "vstart": 50,
+    "vminMppt": 50,
+    "vmaxMppt": 430,
+    "numMppt": 1,
+    "inputsPerMppt": [
+      1
+    ],
+    "imaxPerMppt": [
+      14
+    ],
+    "imaxInput": 11,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": null,
+    "efficiencyEu": null,
+    "protectionClass": "IP66",
+    "width": 328,
+    "height": 267,
+    "depth": 116,
+    "weight": 6,
+    "communication": "no",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1p1500-tl.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1P1500-TL.png",
+    "mpptConfigs": [
+      {
+        "key": "1",
+        "name": "unique_mppt",
+        "labels": [
+          "mppt_1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1p2000-tl",
+    "model": "PSI-X1P2000-TL",
+    "version": "IT_2022_04_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 2000,
+    "pmaxAc": 2200,
+    "pnomDc": 2400,
+    "vmaxDc": 450,
+    "vminDc": 50,
+    "vnomDc": 450,
+    "vstart": 50,
+    "vminMppt": 50,
+    "vmaxMppt": 430,
+    "numMppt": 1,
+    "inputsPerMppt": [
+      1
+    ],
+    "imaxPerMppt": [
+      14
+    ],
+    "imaxInput": 11,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": null,
+    "efficiencyEu": 0.965,
+    "protectionClass": "IP66",
+    "width": 328,
+    "height": 267,
+    "depth": 116,
+    "weight": 6,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1p2000-tl.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1P2000-TL.png",
+    "mpptConfigs": [
+      {
+        "key": "1",
+        "name": "unique_mppt",
+        "labels": [
+          "mppt_1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1p2500-tl",
+    "model": "PSI-X1P2500-TL",
+    "version": "IT_2022_04_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 2500,
+    "pmaxAc": 2750,
+    "pnomDc": 3000,
+    "vmaxDc": 550,
+    "vminDc": 55,
+    "vnomDc": 550,
+    "vstart": 70,
+    "vminMppt": 55,
+    "vmaxMppt": 530,
+    "numMppt": 1,
+    "inputsPerMppt": [
+      1
+    ],
+    "imaxPerMppt": [
+      14
+    ],
+    "imaxInput": 11,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": null,
+    "efficiencyEu": 0.965,
+    "protectionClass": "IP66",
+    "width": 328,
+    "height": 267,
+    "depth": 116,
+    "weight": 6,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1p2500-tl.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1P2500-TL.png",
+    "mpptConfigs": [
+      {
+        "key": "1",
+        "name": "unique_mppt",
+        "labels": [
+          "mppt_1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1p3000-tl",
+    "model": "PSI-X1P3000-TL",
+    "version": "IT_2022_04_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 3000,
+    "pmaxAc": 3300,
+    "pnomDc": 3600,
+    "vmaxDc": 550,
+    "vminDc": 55,
+    "vnomDc": 550,
+    "vstart": 70,
+    "vminMppt": 55,
+    "vmaxMppt": 530,
+    "numMppt": 1,
+    "inputsPerMppt": [
+      1
+    ],
+    "imaxPerMppt": [
+      14
+    ],
+    "imaxInput": 11,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": null,
+    "efficiencyEu": 0.965,
+    "protectionClass": "IP66",
+    "width": 328,
+    "height": 267,
+    "depth": 116,
+    "weight": 6,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1p3000-tl.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1P3000-TL.png",
+    "mpptConfigs": [
+      {
+        "key": "1",
+        "name": "unique_mppt",
+        "labels": [
+          "mppt_1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1p3000-tlm",
+    "model": "PSI-X1P3000-TLM",
+    "version": "IT_2022_04_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 3000,
+    "pmaxAc": 3300,
+    "pnomDc": 3600,
+    "vmaxDc": 600,
+    "vminDc": 70,
+    "vnomDc": 360,
+    "vstart": 100,
+    "vminMppt": 70,
+    "vmaxMppt": 580,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      14,
+      14
+    ],
+    "imaxInput": 14,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": null,
+    "efficiencyEu": null,
+    "protectionClass": "IP66",
+    "width": 341,
+    "height": 430,
+    "depth": 143,
+    "weight": 13.6,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1p3000-tlm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1P3000-TLM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1p4200-tlm",
+    "model": "PSI-X1P4200-TLM",
+    "version": "IT_2022_04_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 4200,
+    "pmaxAc": 4620,
+    "pnomDc": 5040,
+    "vmaxDc": 600,
+    "vminDc": 70,
+    "vnomDc": 360,
+    "vstart": 100,
+    "vminMppt": 70,
+    "vmaxMppt": 580,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      14,
+      14
+    ],
+    "imaxInput": 14,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": null,
+    "efficiencyEu": null,
+    "protectionClass": "IP66",
+    "width": 341,
+    "height": 430,
+    "depth": 143,
+    "weight": 15,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1p4200-tlm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1P4200-TLM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1p5000-tlm",
+    "model": "PSI-X1P5000-TLM",
+    "version": "IT_2022_04_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 5000,
+    "pmaxAc": 5500,
+    "pnomDc": 6000,
+    "vmaxDc": 600,
+    "vminDc": 70,
+    "vnomDc": 360,
+    "vstart": 100,
+    "vminMppt": 70,
+    "vmaxMppt": 580,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      14,
+      14
+    ],
+    "imaxInput": 14,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": null,
+    "efficiencyEu": null,
+    "protectionClass": "IP66",
+    "width": 341,
+    "height": 430,
+    "depth": 143,
+    "weight": 15,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1p5000-tlm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1P5000-TLM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1p6000-tlm",
+    "model": "PSI-X1P6000-TLM",
+    "version": "IT_2022_04_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 6000,
+    "pmaxAc": 6600,
+    "pnomDc": 7200,
+    "vmaxDc": 600,
+    "vminDc": 70,
+    "vnomDc": 360,
+    "vstart": 100,
+    "vminMppt": 70,
+    "vmaxMppt": 580,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      14,
+      14
+    ],
+    "imaxInput": 14,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": null,
+    "efficiencyEu": null,
+    "protectionClass": "IP66",
+    "width": 341,
+    "height": 430,
+    "depth": 143,
+    "weight": 15,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1p6000-tlm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1P6000-TLM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1s1100-tl",
+    "model": "PSI-X1S1100-TL",
+    "version": "IT_2025_06_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 1100,
+    "pmaxAc": 1210,
+    "pnomDc": 1320,
+    "vmaxDc": 450,
+    "vminDc": 50,
+    "vnomDc": 360,
+    "vstart": 50,
+    "vminMppt": 40,
+    "vmaxMppt": 450,
+    "numMppt": 1,
+    "inputsPerMppt": [
+      1
+    ],
+    "imaxPerMppt": [
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": null,
+    "efficiencyEu": null,
+    "protectionClass": "IP66",
+    "width": 206,
+    "height": 290,
+    "depth": 120,
+    "weight": 5.2,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1s1100-tl.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1S1100-TL.png",
+    "mpptConfigs": [
+      {
+        "key": "1",
+        "name": "unique_mppt",
+        "labels": [
+          "mppt_1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1s1500-tl",
+    "model": "PSI-X1S1500-TL",
+    "version": "IT_2025_06_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 1500,
+    "pmaxAc": 1650,
+    "pnomDc": 1800,
+    "vmaxDc": 450,
+    "vminDc": 50,
+    "vnomDc": 360,
+    "vstart": 50,
+    "vminMppt": 40,
+    "vmaxMppt": 450,
+    "numMppt": 1,
+    "inputsPerMppt": [
+      1
+    ],
+    "imaxPerMppt": [
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": null,
+    "efficiencyEu": null,
+    "protectionClass": "IP66",
+    "width": 206,
+    "height": 290,
+    "depth": 120,
+    "weight": 5.2,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1s1500-tl.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1S1500-TL.png",
+    "mpptConfigs": [
+      {
+        "key": "1",
+        "name": "unique_mppt",
+        "labels": [
+          "mppt_1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1s2000-tl",
+    "model": "PSI-X1S2000-TL",
+    "version": "IT_2025_06_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 2000,
+    "pmaxAc": 2200,
+    "pnomDc": 2400,
+    "vmaxDc": 450,
+    "vminDc": 50,
+    "vnomDc": 360,
+    "vstart": 50,
+    "vminMppt": 40,
+    "vmaxMppt": 450,
+    "numMppt": 1,
+    "inputsPerMppt": [
+      1
+    ],
+    "imaxPerMppt": [
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": null,
+    "efficiencyEu": null,
+    "protectionClass": "IP66",
+    "width": 206,
+    "height": 290,
+    "depth": 120,
+    "weight": 5.2,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1s2000-tl.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1S2000-TL.png",
+    "mpptConfigs": [
+      {
+        "key": "1",
+        "name": "unique_mppt",
+        "labels": [
+          "mppt_1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1s2500-tl",
+    "model": "PSI-X1S2500-TL",
+    "version": "IT_2025_06_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 2500,
+    "pmaxAc": 2750,
+    "pnomDc": 3000,
+    "vmaxDc": 550,
+    "vminDc": 50,
+    "vnomDc": 360,
+    "vstart": 50,
+    "vminMppt": 40,
+    "vmaxMppt": 550,
+    "numMppt": 1,
+    "inputsPerMppt": [
+      1
+    ],
+    "imaxPerMppt": [
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": null,
+    "efficiencyEu": null,
+    "protectionClass": "IP66",
+    "width": 206,
+    "height": 290,
+    "depth": 120,
+    "weight": 5.5,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1s2500-tl.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1S2500-TL.png",
+    "mpptConfigs": [
+      {
+        "key": "1",
+        "name": "unique_mppt",
+        "labels": [
+          "mppt_1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1s3000-tlm",
+    "model": "PSI-X1S3000-TLM",
+    "version": "IT_2025_07_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 3000,
+    "pmaxAc": 3300,
+    "pnomDc": 3600,
+    "vmaxDc": 600,
+    "vminDc": 50,
+    "vnomDc": 360,
+    "vstart": 50,
+    "vminMppt": 40,
+    "vmaxMppt": 560,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      16,
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": null,
+    "efficiencyEu": null,
+    "protectionClass": "IP66",
+    "width": 274,
+    "height": 404,
+    "depth": 146,
+    "weight": 11,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1s3000-tlm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1S3000-TLM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1s4200-tlm",
+    "model": "PSI-X1S4200-TLM",
+    "version": "IT_2025_07_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 4200,
+    "pmaxAc": 4620,
+    "pnomDc": 5040,
+    "vmaxDc": 600,
+    "vminDc": 50,
+    "vnomDc": 360,
+    "vstart": 50,
+    "vminMppt": 40,
+    "vmaxMppt": 560,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      16,
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": null,
+    "efficiencyEu": null,
+    "protectionClass": "IP66",
+    "width": 274,
+    "height": 404,
+    "depth": 146,
+    "weight": 11,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1s4200-tlm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1S4200-TLM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1s5000-tlm",
+    "model": "PSI-X1S5000-TLM",
+    "version": "IT_2025_07_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 5000,
+    "pmaxAc": 5000,
+    "pnomDc": 6000,
+    "vmaxDc": 600,
+    "vminDc": 50,
+    "vnomDc": 360,
+    "vstart": 50,
+    "vminMppt": 40,
+    "vmaxMppt": 560,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      16,
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": null,
+    "efficiencyEu": null,
+    "protectionClass": "IP66",
+    "width": 274,
+    "height": 404,
+    "depth": 146,
+    "weight": 11,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1s5000-tlm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1S5000-TLM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x1s6000-tlm",
+    "model": "PSI-X1S6000-TLM",
+    "version": "IT_2025_07_00",
+    "phase": "single_phase",
+    "type": "on-grid",
+    "pnomAc": 6000,
+    "pmaxAc": 6000,
+    "pnomDc": 7200,
+    "vmaxDc": 600,
+    "vminDc": 50,
+    "vnomDc": 360,
+    "vstart": 50,
+    "vminMppt": 40,
+    "vmaxMppt": 560,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      16,
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": null,
+    "efficiencyEu": null,
+    "protectionClass": "IP66",
+    "width": 274,
+    "height": 404,
+    "depth": 146,
+    "weight": 11,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x1s6000-tlm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X1S6000-TLM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j4000-tp",
+    "model": "PSI-J4000-TP",
+    "version": "2020_09_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 4000,
+    "pmaxAc": 4000,
+    "pnomDc": 4840,
+    "vmaxDc": 1000,
+    "vminDc": 150,
+    "vnomDc": 600,
+    "vstart": 180,
+    "vminMppt": 160,
+    "vmaxMppt": 900,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      11,
+      11
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.978,
+    "efficiencyEu": null,
+    "protectionClass": "IP65",
+    "width": 355,
+    "height": 530,
+    "depth": 190,
+    "weight": 20.5,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j4000-tp.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J4000-TP.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j5000-tp",
+    "model": "PSI-J5000-TP",
+    "version": "2020_09_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 5000,
+    "pmaxAc": 5000,
+    "pnomDc": 6050,
+    "vmaxDc": 1000,
+    "vminDc": 150,
+    "vnomDc": 600,
+    "vstart": 180,
+    "vminMppt": 160,
+    "vmaxMppt": 900,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      11,
+      11
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.978,
+    "efficiencyEu": 0.972,
+    "protectionClass": "IP65",
+    "width": 355,
+    "height": 530,
+    "depth": 190,
+    "weight": 20.5,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j5000-tp.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J5000-TP.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j6000-tp",
+    "model": "PSI-J6000-TP",
+    "version": "2020_09_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 6000,
+    "pmaxAc": 6000,
+    "pnomDc": 7260,
+    "vmaxDc": 1000,
+    "vminDc": 150,
+    "vnomDc": 600,
+    "vstart": 180,
+    "vminMppt": 160,
+    "vmaxMppt": 900,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      11,
+      11
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.978,
+    "efficiencyEu": 0.974,
+    "protectionClass": "IP65",
+    "width": 355,
+    "height": 530,
+    "depth": 190,
+    "weight": 20.5,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j6000-tp.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J6000-TP.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j8000-tp",
+    "model": "PSI-J8000-TP",
+    "version": "2020_09_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 8000,
+    "pmaxAc": 8000,
+    "pnomDc": 9680,
+    "vmaxDc": 1000,
+    "vminDc": 150,
+    "vnomDc": 600,
+    "vstart": 180,
+    "vminMppt": 160,
+    "vmaxMppt": 900,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      2,
+      1
+    ],
+    "imaxPerMppt": [
+      22,
+      11
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": null,
+    "efficiencyEu": 0.975,
+    "protectionClass": "IP65",
+    "width": 355,
+    "height": 530,
+    "depth": 200,
+    "weight": 23,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j8000-tp.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J8000-TP.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j10000-tp",
+    "model": "PSI-J10000-TP",
+    "version": "2020_09_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 10000,
+    "pmaxAc": 10000,
+    "pnomDc": 12000,
+    "vmaxDc": 1000,
+    "vminDc": 150,
+    "vnomDc": 600,
+    "vstart": 180,
+    "vminMppt": 160,
+    "vmaxMppt": 900,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      2,
+      1
+    ],
+    "imaxPerMppt": [
+      22,
+      11
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": null,
+    "efficiencyEu": 0.976,
+    "protectionClass": "IP65",
+    "width": 355,
+    "height": 530,
+    "depth": 200,
+    "weight": 23,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-j10000-tp.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J10000-TP.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j12000-tp",
+    "model": "PSI-J12000-TP",
+    "version": "2020_09_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 12000,
+    "pmaxAc": 13200,
+    "pnomDc": 18000,
+    "vmaxDc": 1000,
+    "vminDc": 180,
+    "vnomDc": 600,
+    "vstart": 200,
+    "vminMppt": 180,
+    "vmaxMppt": 900,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      2,
+      1
+    ],
+    "imaxPerMppt": [
+      22,
+      11
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.983,
+    "efficiencyEu": null,
+    "protectionClass": "IP65",
+    "width": 450,
+    "height": 640,
+    "depth": 232,
+    "weight": 29,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-j12000-tp.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J12000-TP.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j15000-tp",
+    "model": "PSI-J15000-TP",
+    "version": "2020_09_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 15000,
+    "pmaxAc": 16500,
+    "pnomDc": 22500,
+    "vmaxDc": 1000,
+    "vminDc": 180,
+    "vnomDc": 600,
+    "vstart": 200,
+    "vminMppt": 180,
+    "vmaxMppt": 900,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      2,
+      2
+    ],
+    "imaxPerMppt": [
+      22,
+      22
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.984,
+    "efficiencyEu": 0.981,
+    "protectionClass": "IP65",
+    "width": 450,
+    "height": 640,
+    "depth": 232,
+    "weight": 29,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-j15000-tp.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J15000-TP.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j17000-tp",
+    "model": "PSI-J17000-TP",
+    "version": "2020_09_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 17000,
+    "pmaxAc": 18700,
+    "pnomDc": 25500,
+    "vmaxDc": 1000,
+    "vminDc": 180,
+    "vnomDc": 600,
+    "vstart": 200,
+    "vminMppt": 180,
+    "vmaxMppt": 900,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      2,
+      2
+    ],
+    "imaxPerMppt": [
+      22,
+      22
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.985,
+    "efficiencyEu": 0.982,
+    "protectionClass": "IP65",
+    "width": 450,
+    "height": 640,
+    "depth": 232,
+    "weight": 33,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-j17000-tp.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J17000-TP.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j20000-tp",
+    "model": "PSI-J20000-TP",
+    "version": "2020_09_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 20000,
+    "pmaxAc": 22000,
+    "pnomDc": 37500,
+    "vmaxDc": 1000,
+    "vminDc": 180,
+    "vnomDc": 600,
+    "vstart": 200,
+    "vminMppt": 180,
+    "vmaxMppt": 900,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      2,
+      2
+    ],
+    "imaxPerMppt": [
+      22,
+      22
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.985,
+    "efficiencyEu": 0.982,
+    "protectionClass": "IP65",
+    "width": 450,
+    "height": 640,
+    "depth": 232,
+    "weight": 33,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-j20000-tp.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J20000-TP.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j25000-tp",
+    "model": "PSI-J25000-TP",
+    "version": "2020_09_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 25000,
+    "pmaxAc": 27500,
+    "pnomDc": 37500,
+    "vmaxDc": 1000,
+    "vminDc": 180,
+    "vnomDc": 600,
+    "vstart": 200,
+    "vminMppt": 180,
+    "vmaxMppt": 900,
+    "numMppt": 3,
+    "inputsPerMppt": [
+      2,
+      2,
+      2
+    ],
+    "imaxPerMppt": [
+      22,
+      22,
+      22
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.986,
+    "efficiencyEu": 0.984,
+    "protectionClass": "IP65",
+    "width": 530,
+    "height": 700,
+    "depth": 260,
+    "weight": 48,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-j25000-tp.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J25000-TP.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2,3",
+        "name": "three_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2",
+          "mppt_3"
+        ]
+      },
+      {
+        "key": "1-2,3",
+        "name": "parallel_1_and_2",
+        "labels": [
+          "mppt_1_parallel_2",
+          "mppt_3"
+        ]
+      },
+      {
+        "key": "1,2-3",
+        "name": "parallel_2_and_3",
+        "labels": [
+          "mppt_1",
+          "mppt_2_parallel_3"
+        ]
+      },
+      {
+        "key": "1-3,2",
+        "name": "parallel_1_and_3",
+        "labels": [
+          "mppt_1_parallel_3",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j33000-tp",
+    "model": "PSI-J33000-TP",
+    "version": "2020_09_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 30000,
+    "pmaxAc": 33000,
+    "pnomDc": 40000,
+    "vmaxDc": 1000,
+    "vminDc": 180,
+    "vnomDc": 600,
+    "vstart": 200,
+    "vminMppt": 180,
+    "vmaxMppt": 900,
+    "numMppt": 3,
+    "inputsPerMppt": [
+      2,
+      2,
+      2
+    ],
+    "imaxPerMppt": [
+      22,
+      22,
+      22
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.988,
+    "efficiencyEu": 0.985,
+    "protectionClass": "IP65",
+    "width": 530,
+    "height": 700,
+    "depth": 260,
+    "weight": 48,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-j33000-tp.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J33000-TP.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2,3",
+        "name": "three_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2",
+          "mppt_3"
+        ]
+      },
+      {
+        "key": "1-2,3",
+        "name": "parallel_1_and_2",
+        "labels": [
+          "mppt_1_parallel_2",
+          "mppt_3"
+        ]
+      },
+      {
+        "key": "1,2-3",
+        "name": "parallel_2_and_3",
+        "labels": [
+          "mppt_1",
+          "mppt_2_parallel_3"
+        ]
+      },
+      {
+        "key": "1-3,2",
+        "name": "parallel_1_and_3",
+        "labels": [
+          "mppt_1_parallel_3",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j40000-tp",
+    "model": "PSI-J40000-TP",
+    "version": "2020_09_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 40000,
+    "pmaxAc": 44000,
+    "pnomDc": 60000,
+    "vmaxDc": 1000,
+    "vminDc": 250,
+    "vnomDc": 600,
+    "vstart": 300,
+    "vminMppt": 280,
+    "vmaxMppt": 900,
+    "numMppt": 3,
+    "inputsPerMppt": [
+      4,
+      3,
+      3
+    ],
+    "imaxPerMppt": [
+      44,
+      33,
+      33
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.988,
+    "efficiencyEu": 0.985,
+    "protectionClass": "IP65",
+    "width": 550,
+    "height": 800,
+    "depth": 280,
+    "weight": 68,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-j40000-tp.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J40000-TP.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2,3",
+        "name": "three_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2",
+          "mppt_3"
+        ]
+      },
+      {
+        "key": "1-2,3",
+        "name": "parallel_1_and_2",
+        "labels": [
+          "mppt_1_parallel_2",
+          "mppt_3"
+        ]
+      },
+      {
+        "key": "1,2-3",
+        "name": "parallel_2_and_3",
+        "labels": [
+          "mppt_1",
+          "mppt_2_parallel_3"
+        ]
+      },
+      {
+        "key": "1-3,2",
+        "name": "parallel_1_and_3",
+        "labels": [
+          "mppt_1_parallel_3",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j50000-tp",
+    "model": "PSI-J50000-TP",
+    "version": "2020_09_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 50000,
+    "pmaxAc": 55000,
+    "pnomDc": 65000,
+    "vmaxDc": 1000,
+    "vminDc": 250,
+    "vnomDc": 600,
+    "vstart": 300,
+    "vminMppt": 280,
+    "vmaxMppt": 900,
+    "numMppt": 3,
+    "inputsPerMppt": [
+      4,
+      3,
+      3
+    ],
+    "imaxPerMppt": [
+      44,
+      33,
+      33
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.988,
+    "efficiencyEu": 0.985,
+    "protectionClass": "IP65",
+    "width": 550,
+    "height": 800,
+    "depth": 280,
+    "weight": 68,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-j50000-tp.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J50000-TP.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2,3",
+        "name": "three_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2",
+          "mppt_3"
+        ]
+      },
+      {
+        "key": "1-2,3",
+        "name": "parallel_1_and_2",
+        "labels": [
+          "mppt_1_parallel_2",
+          "mppt_3"
+        ]
+      },
+      {
+        "key": "1,2-3",
+        "name": "parallel_2_and_3",
+        "labels": [
+          "mppt_1",
+          "mppt_2_parallel_3"
+        ]
+      },
+      {
+        "key": "1-3,2",
+        "name": "parallel_1_and_3",
+        "labels": [
+          "mppt_1_parallel_3",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-j60000-tp",
+    "model": "PSI-J60000-TP",
+    "version": "2020_09_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 60000,
+    "pmaxAc": 60000,
+    "pnomDc": 78000,
+    "vmaxDc": 1000,
+    "vminDc": 250,
+    "vnomDc": 600,
+    "vstart": 300,
+    "vminMppt": 280,
+    "vmaxMppt": 900,
+    "numMppt": 3,
+    "inputsPerMppt": [
+      4,
+      4,
+      4
+    ],
+    "imaxPerMppt": [
+      44,
+      44,
+      44
+    ],
+    "imaxInput": 11,
+    "percPminCc": 2,
+    "percPmaxCc": 1,
+    "efficiencyMax": 0.989,
+    "efficiencyEu": 0.986,
+    "protectionClass": "IP65",
+    "width": 550,
+    "height": 800,
+    "depth": 280,
+    "weight": 68,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-j60000-tp.png",
+    "imageSource": "https://www.peimar.com/images/PSI-J60000-TP.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2,3",
+        "name": "three_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2",
+          "mppt_3"
+        ]
+      },
+      {
+        "key": "1-2,3",
+        "name": "parallel_1_and_2",
+        "labels": [
+          "mppt_1_parallel_2",
+          "mppt_3"
+        ]
+      },
+      {
+        "key": "1,2-3",
+        "name": "parallel_2_and_3",
+        "labels": [
+          "mppt_1",
+          "mppt_2_parallel_3"
+        ]
+      },
+      {
+        "key": "1-3,2",
+        "name": "parallel_1_and_3",
+        "labels": [
+          "mppt_1_parallel_3",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3p6000-tp",
+    "model": "PSI-X3P6000-TP",
+    "version": "IT_2022_12_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 6000,
+    "pmaxAc": 6600,
+    "pnomDc": 7200,
+    "vmaxDc": 1000,
+    "vminDc": 120,
+    "vnomDc": 640,
+    "vstart": 150,
+    "vminMppt": 120,
+    "vmaxMppt": 980,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      16,
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": 0.983,
+    "efficiencyEu": 0.978,
+    "protectionClass": "IP66",
+    "width": 342,
+    "height": 434,
+    "depth": 144,
+    "weight": 15.5,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x3p6000-tp.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3P6000-TP.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3p8000-tp",
+    "model": "PSI-X3P8000-TP",
+    "version": "IT_2022_12_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 8000,
+    "pmaxAc": 8800,
+    "pnomDc": 9600,
+    "vmaxDc": 1000,
+    "vminDc": 120,
+    "vnomDc": 640,
+    "vstart": 150,
+    "vminMppt": 120,
+    "vmaxMppt": 980,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      16,
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": 0.983,
+    "efficiencyEu": 0.978,
+    "protectionClass": "IP66",
+    "width": 342,
+    "height": 434,
+    "depth": 156,
+    "weight": 17,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x3p8000-tp.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3P8000-TP.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3p10000-tp",
+    "model": "PSI-X3P10000-TP",
+    "version": "IT_2022_12_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 10000,
+    "pmaxAc": 11000,
+    "pnomDc": 12000,
+    "vmaxDc": 1000,
+    "vminDc": 120,
+    "vnomDc": 640,
+    "vstart": 150,
+    "vminMppt": 120,
+    "vmaxMppt": 980,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      1,
+      1
+    ],
+    "imaxPerMppt": [
+      16,
+      16
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6,
+    "efficiencyMax": 0.983,
+    "efficiencyEu": 0.978,
+    "protectionClass": "IP66",
+    "width": 342,
+    "height": 434,
+    "depth": 156,
+    "weight": 17,
+    "communication": "Wi-Fi",
+    "spd": "no",
+    "image": "/images/products/inverters/psi-x3p10000-tp.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3P10000-TP.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3p15000-tpm",
+    "model": "PSI-X3P15000-TPM",
+    "version": "IT_2022_12_01",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 15000,
+    "pmaxAc": 16500,
+    "pnomDc": 18000,
+    "vmaxDc": 1100,
+    "vminDc": 160,
+    "vnomDc": 650,
+    "vstart": 200,
+    "vminMppt": 160,
+    "vmaxMppt": 980,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      2,
+      2
+    ],
+    "imaxPerMppt": [
+      32,
+      32
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": 0.983,
+    "efficiencyEu": 0.978,
+    "protectionClass": "IP66",
+    "width": 482,
+    "height": 417,
+    "depth": 186,
+    "weight": 26,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-x3p15000-tpm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3P15000-TPM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3p20000-tpm",
+    "model": "PSI-X3P20000-TPM",
+    "version": "IT_2022_12_01",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 20000,
+    "pmaxAc": 22000,
+    "pnomDc": 24000,
+    "vmaxDc": 1100,
+    "vminDc": 160,
+    "vnomDc": 650,
+    "vstart": 200,
+    "vminMppt": 160,
+    "vmaxMppt": 980,
+    "numMppt": 2,
+    "inputsPerMppt": [
+      2,
+      2
+    ],
+    "imaxPerMppt": [
+      32,
+      32
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": 0.983,
+    "efficiencyEu": 0.978,
+    "protectionClass": "IP66",
+    "width": 482,
+    "height": 417,
+    "depth": 186,
+    "weight": 26,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-x3p20000-tpm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3P20000-TPM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2",
+        "name": "two_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3p30000-tpm",
+    "model": "PSI-X3P30000-TPM",
+    "version": "IT_2022_12_01",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 30000,
+    "pmaxAc": 30000,
+    "pnomDc": 36000,
+    "vmaxDc": 1100,
+    "vminDc": 160,
+    "vnomDc": 650,
+    "vstart": 200,
+    "vminMppt": 160,
+    "vmaxMppt": 980,
+    "numMppt": 3,
+    "inputsPerMppt": [
+      2,
+      2,
+      2
+    ],
+    "imaxPerMppt": [
+      32,
+      32,
+      32
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": 0.985,
+    "efficiencyEu": null,
+    "protectionClass": "IP66",
+    "width": 482,
+    "height": 417,
+    "depth": 186,
+    "weight": 28,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-x3p30000-tpm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3P30000-TPM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2,3",
+        "name": "three_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2",
+          "mppt_3"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3p40000-tpm",
+    "model": "PSI-X3P40000-TPM",
+    "version": "IT_2023_03_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 40000,
+    "pmaxAc": 44000,
+    "pnomDc": 48000,
+    "vmaxDc": 1100,
+    "vminDc": 180,
+    "vnomDc": 600,
+    "vstart": 200,
+    "vminMppt": 180,
+    "vmaxMppt": 1000,
+    "numMppt": 4,
+    "inputsPerMppt": [
+      2,
+      2,
+      2,
+      2
+    ],
+    "imaxPerMppt": [
+      32,
+      32,
+      32,
+      32
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": 0.984,
+    "efficiencyEu": 0.981,
+    "protectionClass": "IP66",
+    "width": 630,
+    "height": 521,
+    "depth": 286,
+    "weight": 44,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-x3p40000-tpm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3P40000-TPM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2,3,4",
+        "name": "four_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2",
+          "mppt_3",
+          "mppt_4"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3p50000-tpm",
+    "model": "PSI-X3P50000-TPM",
+    "version": "IT_2023_03_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 50000,
+    "pmaxAc": 55000,
+    "pnomDc": 60000,
+    "vmaxDc": 1100,
+    "vminDc": 180,
+    "vnomDc": 600,
+    "vstart": 200,
+    "vminMppt": 180,
+    "vmaxMppt": 1000,
+    "numMppt": 5,
+    "inputsPerMppt": [
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "imaxPerMppt": [
+      32,
+      32,
+      32,
+      32,
+      32
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": 0.984,
+    "efficiencyEu": 0.981,
+    "protectionClass": "IP66",
+    "width": 630,
+    "height": 521,
+    "depth": 286,
+    "weight": 44.5,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-x3p50000-tpm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3P50000-TPM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2,3,4,5",
+        "name": "five_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2",
+          "mppt_3",
+          "mppt_4",
+          "mppt_5"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3p60000-tpm",
+    "model": "PSI-X3P60000-TPM",
+    "version": "IT_2023_03_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 60000,
+    "pmaxAc": 66000,
+    "pnomDc": 72000,
+    "vmaxDc": 1100,
+    "vminDc": 180,
+    "vnomDc": 600,
+    "vstart": 200,
+    "vminMppt": 180,
+    "vmaxMppt": 1000,
+    "numMppt": 6,
+    "inputsPerMppt": [
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "imaxPerMppt": [
+      32,
+      32,
+      32,
+      32,
+      32,
+      32
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": 0.984,
+    "efficiencyEu": 0.981,
+    "protectionClass": "IP66",
+    "width": 630,
+    "height": 521,
+    "depth": 286,
+    "weight": 45.5,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": null,
+    "imageSource": "https://www.peimar.com/images/PSI-X3P60000-TPM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2,3,4,5,6",
+        "name": "six_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2",
+          "mppt_3",
+          "mppt_4",
+          "mppt_5",
+          "mppt_6"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3p100000-tpm",
+    "model": "PSI-X3P100000-TPM",
+    "version": "IT_2025_05_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 100000,
+    "pmaxAc": 110000,
+    "pnomDc": 120000,
+    "vmaxDc": 1100,
+    "vminDc": 180,
+    "vnomDc": 600,
+    "vstart": 200,
+    "vminMppt": 180,
+    "vmaxMppt": 1000,
+    "numMppt": 9,
+    "inputsPerMppt": [
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "imaxPerMppt": [
+      32,
+      32,
+      32,
+      32,
+      32,
+      32,
+      32,
+      32,
+      32
+    ],
+    "imaxInput": null,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": 0.986,
+    "efficiencyEu": 0.983,
+    "protectionClass": "IP66",
+    "width": 985,
+    "height": 660,
+    "depth": 327,
+    "weight": 83,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-x3p100000-tpm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3P100000-TPM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2,3,4,5,6,7,8,9",
+        "name": "nine_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2",
+          "mppt_3",
+          "mppt_4",
+          "mppt_5",
+          "mppt_6",
+          "mppt_7",
+          "mppt_8",
+          "mppt_9"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "psi-x3p125000-tpm",
+    "model": "PSI-X3P125000-TPM",
+    "version": "IT_2023_04_00",
+    "phase": "three_phase",
+    "type": "on-grid",
+    "pnomAc": 125000,
+    "pmaxAc": 132000,
+    "pnomDc": 150000,
+    "vmaxDc": 1100,
+    "vminDc": 180,
+    "vnomDc": 600,
+    "vstart": 200,
+    "vminMppt": 180,
+    "vmaxMppt": 1000,
+    "numMppt": 12,
+    "inputsPerMppt": [
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "imaxPerMppt": [
+      32,
+      32,
+      32,
+      32,
+      32,
+      32,
+      32,
+      32,
+      32,
+      32,
+      32,
+      32
+    ],
+    "imaxInput": 16,
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.8,
+    "efficiencyMax": 0.986,
+    "efficiencyEu": null,
+    "protectionClass": "IP66",
+    "width": 985,
+    "height": 660,
+    "depth": 327,
+    "weight": 87,
+    "communication": "Ethernet",
+    "spd": "SPD tipo 2 lato CC e CA",
+    "image": "/images/products/inverters/psi-x3p125000-tpm.png",
+    "imageSource": "https://www.peimar.com/images/PSI-X3P125000-TPM.png",
+    "mpptConfigs": [
+      {
+        "key": "1,2,3,4,5,6,7,8,9,10,11,12",
+        "name": "twelve_indipendent",
+        "labels": [
+          "mppt_1",
+          "mppt_2",
+          "mppt_3",
+          "mppt_4",
+          "mppt_5",
+          "mppt_6",
+          "mppt_7",
+          "mppt_8",
+          "mppt_9",
+          "mppt_10",
+          "mppt_11",
+          "mppt_12"
+        ]
+      },
+      {
+        "key": "ALL",
+        "name": "parallel_all",
+        "labels": [
+          "mppt_1_parallel_2_parallel_3"
+        ]
+      }
+    ]
+  }
+]

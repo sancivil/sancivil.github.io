@@ -1,0 +1,232 @@
+---
+import ProductWell from './ProductWell.astro';
+import Figure from './Figure.astro';
+import {
+  INVERTER_IMAGE_SIZE,
+  extent,
+  familyImage,
+  familyInverters,
+  familyPower,
+  pad2,
+  powerParts,
+  type Family,
+  type GroupKey,
+} from './data.ts';
+import { localizePath } from '../../i18n/config.ts';
+import type { Locale } from '../../i18n/config.ts';
+import { products } from '../../i18n/products.ts';
+import { familyNote } from '../../i18n/catalog-text.ts';
+
+interface Props {
+  locale: Locale;
+  group: GroupKey;
+  families: Family[];
+  /** Number of the first row, so numbering continues across grouped lists. */
+  start?: number;
+  headingLevel?: 'h2' | 'h3' | 'h4';
+}
+const { locale, group, families, start = 0, headingLevel = 'h3' } = Astro.props;
+const t = products[locale];
+const Heading = headingLevel;
+
+const rows = families.map((family) => {
+  const models = familyInverters(family);
+  const power = familyPower(family);
+  const mppt = models.length ? extent(models.map((m) => m.numMppt)) : null;
+  const kind = t.kind[group][family.phase];
+  return {
+    family,
+    kind,
+    note: familyNote(locale, family.slug),
+    image: familyImage(family),
+    power: power && powerParts(power),
+    mppt: mppt && ([String(mppt[0]), String(mppt[1])] as [string, string]),
+    href: localizePath(`/products/inverters/${family.slug}/`, locale),
+  };
+});
+---
+
+<ol role="list" class="families">
+  {
+    rows.map((row, i) => (
+      <li class="family">
+        <ProductWell
+          src={row.image}
+          alt={t.productAlt(row.family.name, row.kind)}
+          label={row.family.models[0]}
+          size={INVERTER_IMAGE_SIZE}
+          sizes="(max-width: 720px) 96px, (max-width: 1080px) 22vw, 240px"
+          class="family__well"
+        />
+        <div class="family__main">
+          <span class="family__index mono">{pad2(start + i)}</span>
+          <Heading class="h3 family__name">
+            <a class="family__link" href={row.href} dir="ltr">
+              {row.family.name}
+            </a>
+          </Heading>
+          <p class="family__kind">
+            {row.kind}
+            {row.note && <span class="muted"> · {row.note}</span>}
+          </p>
+        </div>
+        <dl class="family__facts">
+          {row.power && (
+            <div>
+              <dt>{t.label.acPower}</dt>
+              <dd>
+                <Figure value={row.power.value} unit={row.power.unit} />
+              </dd>
+            </div>
+          )}
+          {row.mppt && (
+            <div>
+              <dt>MPPT</dt>
+              <dd>
+                <Figure value={row.mppt} />
+              </dd>
+            </div>
+          )}
+          <div>
+            <dt>{t.label.models}</dt>
+            <dd>
+              <Figure value={String(row.family.models.length)} />
+            </dd>
+          </div>
+        </dl>
+        <span class="family__arrow" aria-hidden="true" />
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .families {
+    border-top: 1px solid var(--line-c);
+  }
+  .family {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 5fr) minmax(0, 4fr) 2rem;
+    align-items: center;
+    gap: var(--gap);
+    padding-block: var(--s-5);
+    border-bottom: 1px solid var(--line-c);
+  }
+  .family :global(.family__well) {
+    padding: 8%;
+    transition: background-color var(--dur-2) var(--ease);
+  }
+  .family:hover :global(.family__well) {
+    background: var(--paper-3);
+  }
+  .family__main {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-2);
+  }
+  .family__index {
+    font-size: 0.75rem;
+    color: var(--muted-c);
+  }
+  .family__name {
+    font-family: var(--font-sans);
+  }
+  .family__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .family__link:focus-visible {
+    outline: none;
+  }
+  .family:has(.family__link:focus-visible) {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+  }
+  .family__kind {
+    font-size: 0.9375rem;
+    max-width: 44ch;
+  }
+  .family__facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-4) var(--s-5);
+  }
+  dt {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted-c);
+  }
+  :global([dir='rtl']) dt {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  dd {
+    margin-top: var(--s-1);
+    font-size: 1.125rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .family__arrow {
+    justify-self: end;
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    transition: transform var(--dur-2) var(--ease);
+  }
+  .family__arrow::after {
+    content: '→';
+  }
+  :global([dir='rtl']) .family__arrow::after {
+    content: '←';
+  }
+  .family:hover .family__arrow {
+    transform: translateX(6px);
+  }
+  :global([dir='rtl']) .family:hover .family__arrow {
+    transform: translateX(-6px);
+  }
+
+  @media (max-width: 1080px) {
+    .family {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 6fr) 2rem;
+      row-gap: var(--s-4);
+    }
+    .family :global(.family__well) {
+      grid-row: span 2;
+      align-self: start;
+    }
+    .family__facts {
+      grid-column: 2;
+    }
+    .family__arrow {
+      grid-column: 3;
+      grid-row: 1;
+    }
+  }
+  @media (max-width: 720px) {
+    .family {
+      grid-template-columns: 96px minmax(0, 1fr) 1.25rem;
+      column-gap: var(--s-4);
+      align-items: start;
+    }
+    .family :global(.family__well) {
+      grid-row: auto;
+      padding: 6%;
+    }
+    .family__facts {
+      grid-column: 1 / -1;
+      column-gap: var(--s-4);
+    }
+    .family__arrow {
+      font-size: 1rem;
+    }
+    dd {
+      font-size: 1rem;
+    }
+  }
+</style>

@@ -1,0 +1,45 @@
+---
+interface Props {
+  eyebrow: string;
+  title: string;
+  lead?: string;
+}
+
+const { eyebrow, title, lead } = Astro.props;
+---
+
+<section class="phead theme-dark">
+  <div class="container phead__inner">
+    <div class="phead__copy">
+      <p class="eyebrow eyebrow--dot">{eyebrow}</p>
+      <h1 class="h1 phead__title">{title}</h1>
+      {lead && <p class="lead phead__lead">{lead}</p>}
+    </div>
+    <slot />
+  </div>
+</section>
+
+<style>
+  .phead {
+    padding-block: clamp(var(--s-9), 12vw, var(--s-12)) clamp(var(--s-8), 8vw, var(--s-10));
+  }
+  .phead__inner {
+    display: grid;
+    gap: clamp(var(--s-8), 8vw, var(--s-10));
+  }
+  .phead__copy {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-5);
+  }
+  .phead__title {
+    max-width: 18ch;
+  }
+  :global([dir='rtl']) .phead__title {
+    max-width: 24ch;
+  }
+  .phead__lead {
+    max-width: 44ch;
+    color: var(--muted-inv);
+  }
+</style>

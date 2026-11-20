@@ -1,0 +1,1897 @@
+{
+  "source": "https://peimar.com/ww-en/ (modules, on-grid-inverters, hybrid-inverters-batteries, peimar-accessories, products-services, download pages; EN datasheets; Products Flyer EN_2026_02_00); designerModels from Peimar Designer guest API",
+  "fetched": "2026-11-20",
+  "categories": {
+    "modules": {
+      "title": "Photovoltaic modules",
+      "description": "High-efficiency modules, available in different technologies for every type of installation.",
+      "image": "/images/products/peimar-modules.png",
+      "source": "https://peimar.com/ww-en/products-services/"
+    },
+    "onGrid": {
+      "title": "On-grid inverters",
+      "description": "Single-phase and three-phase inverters for efficient energy management.",
+      "image": "/images/products/peimar-on-grid-inverters.png",
+      "source": "https://peimar.com/ww-en/products-services/"
+    },
+    "hybrid": {
+      "title": "Hybrid inverters and storage",
+      "description": "Systems for managing and storing generated energy, for more efficient use.",
+      "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+      "source": "https://peimar.com/ww-en/products-services/"
+    },
+    "micro": {
+      "title": "Microinverters",
+      "description": "Single-phase and three-phase",
+      "image": "/images/products/peimar-microinverters.webp",
+      "source": "https://peimar.com/ww-en/download/"
+    },
+    "accessories": {
+      "title": "Optimizers, EV chargers and accessories",
+      "description": "Devices and components for the management, optimization and integration of the photovoltaic system.",
+      "image": "/images/products/peimar-accessories.png",
+      "source": "https://peimar.com/ww-en/products-services/"
+    }
+  },
+  "modules": [
+    {
+      "series": "S Series",
+      "name": "S Series SA",
+      "slug": "s-series-sa",
+      "tagline": "Made in Italy module",
+      "description": "Made in Italy module, manufactured in our production factory. Anti-reflective glass, compact and sturdy frame, anchorable also on the short side. Maximum efficiency and high performance.",
+      "technology": [
+        "Monocrystalline M10",
+        "PERC monofacial",
+        "PERC bifacial (SA550M (B))",
+        "TOPCon monofacial N-type (SAxxxMN)"
+      ],
+      "warranty": {
+        "product": 30,
+        "power": 30
+      },
+      "models": [
+        "SA450M (FB)",
+        "SA455M (BF)",
+        "SA460M (BF)",
+        "SA480MN (FB)",
+        "SA485MN (BF)",
+        "SA500M (BF)",
+        "SA500M (FB)",
+        "SA505M (BF)",
+        "SA535MN (BF)",
+        "SA545M (B)",
+        "SA545M",
+        "SA550M (B)",
+        "SA585MN"
+      ],
+      "powerRange": [
+        450,
+        585
+      ],
+      "efficiencyMax": 0.2155,
+      "cells": [
+        60,
+        66,
+        72
+      ],
+      "finishes": [
+        {
+          "code": "FB",
+          "label": null
+        },
+        {
+          "code": "BF",
+          "label": null
+        },
+        {
+          "code": "B",
+          "label": null
+        }
+      ],
+      "datasheets": [
+        {
+          "label": "SA450M (FB)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_SA450M%28FB%29.pdf"
+        },
+        {
+          "label": "SA455M (BF)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_SA455M(BF).pdf"
+        },
+        {
+          "label": "SA460M (BF)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_SA460M%28BF%29.pdf"
+        },
+        {
+          "label": "SA480MN (FB)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_SA480MN%28FB%29.pdf"
+        },
+        {
+          "label": "SA485MN (BF)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_SA485MN%28BF%29.pdf"
+        },
+        {
+          "label": "SA500M (BF)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_SA500M(BF).pdf"
+        },
+        {
+          "label": "SA500M (FB)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_SA500M(FB).pdf"
+        },
+        {
+          "label": "SA505M (BF)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_SA505M%28BF%29.pdf"
+        },
+        {
+          "label": "SA535MN (BF)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_SA535MN%28BF%29.pdf"
+        },
+        {
+          "label": "SA545M (B)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_SA545M%28B%29.pdf"
+        },
+        {
+          "label": "SA545M",
+          "url": "https://peimar.com/datasheet/Peimar_EN_SA545M.pdf"
+        },
+        {
+          "label": "SA550M (B)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_SA550M%28B%29.pdf"
+        },
+        {
+          "label": "SA585MN",
+          "url": "https://peimar.com/datasheet/Peimar_EN_SA585MN.pdf"
+        }
+      ],
+      "image": "/images/products/peimar-modules.png",
+      "designerModels": [
+        "sa450m-fb",
+        "sa455m-bf",
+        "sa460m-bf",
+        "sa500m-bf",
+        "sa500m-fb",
+        "sa505m-bf",
+        "sa545m-b",
+        "sa545m",
+        "sa550m-b"
+      ]
+    },
+    {
+      "series": "S Series",
+      "name": "S Series SF",
+      "slug": "s-series-sf",
+      "tagline": "Made in Italy module",
+      "description": "Made in Italy module, manufactured in our production factory. Available in the Green Line (FG) and Red Line (FR) coloured-glass versions for perfect environmental integration in areas subject to landscape constraints.",
+      "technology": [
+        "Monocrystalline PERC"
+      ],
+      "warranty": {
+        "product": 30,
+        "power": 30
+      },
+      "models": [
+        "SF350M (BF)",
+        "SF350M (FB)",
+        "SF360M (FG)",
+        "SF360M (FR)",
+        "SF365M (BF)",
+        "SF400M (BF)",
+        "SF400M (FB)",
+        "SF410M (BF)",
+        "SF415M (BF)",
+        "SF440M"
+      ],
+      "powerRange": [
+        350,
+        440
+      ],
+      "efficiencyMax": 0.2084,
+      "cells": [
+        60,
+        66,
+        72
+      ],
+      "finishes": [
+        {
+          "code": "BF",
+          "label": null
+        },
+        {
+          "code": "FB",
+          "label": null
+        },
+        {
+          "code": "FG",
+          "label": "Green Line"
+        },
+        {
+          "code": "FR",
+          "label": "Red Line"
+        }
+      ],
+      "datasheets": [
+        {
+          "label": "SF350M (BF) (EN-CA)",
+          "url": "https://peimar.com/datasheet/Peimar_EN-CA_SF350M%28BF%29.pdf"
+        },
+        {
+          "label": "SF350M (FB) (EN-CA)",
+          "url": "https://peimar.com/datasheet/Peimar_EN-CA_SF350M%28FB%29.pdf"
+        },
+        {
+          "label": "SF360M (FG)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_SF360M%28FG%29.pdf"
+        },
+        {
+          "label": "SF360M (FR)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_SF360M(FR).pdf"
+        },
+        {
+          "label": "SF365M (BF) (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SF365M%28BF%29.pdf"
+        },
+        {
+          "label": "SF400M (BF) (FR)",
+          "url": "https://peimar.com/datasheet/Peimar_FR_SF400M(BF).pdf"
+        },
+        {
+          "label": "SF400M (FB) (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SF400M%28FB%29.pdf"
+        },
+        {
+          "label": "SF410M (BF)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_SF410M%28BF%29.pdf"
+        },
+        {
+          "label": "SF415M (BF) (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SF415M%28BF%29.pdf"
+        },
+        {
+          "label": "SF440M (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SF440M.pdf"
+        }
+      ],
+      "image": "/images/products/peimar-modules.png",
+      "designerModels": [
+        "sf350m-bf",
+        "sf350m-fb",
+        "sf360m-fg",
+        "sf360m-fr",
+        "sf365m-bf",
+        "sf400m-bf",
+        "sf400m-fb",
+        "sf410m-bf",
+        "sf415m-bf",
+        "sf440m"
+      ]
+    },
+    {
+      "series": "S Series",
+      "name": "Revamping Line",
+      "slug": "revamping-line",
+      "tagline": "Revamping Line | Made in Italy",
+      "description": "Made in Italy modules in 54, 60 and 72 cell formats, polycrystalline (SGxxxP) and monocrystalline (SGxxxM, SMxxxM).",
+      "technology": [
+        "Polycrystalline",
+        "Monocrystalline"
+      ],
+      "warranty": {
+        "product": 30,
+        "power": 30
+      },
+      "models": [
+        "SG205P",
+        "SG210P",
+        "SG215P",
+        "SG220P",
+        "SG225P",
+        "SG230P",
+        "SG235P",
+        "SG240P",
+        "SG245P",
+        "SG250P",
+        "SG255P",
+        "SG260P",
+        "SG265P",
+        "SG270P",
+        "SG275P",
+        "SG280P",
+        "SG285P",
+        "SG290P",
+        "SG300M (BF)",
+        "SG310M (BF)",
+        "SG310M (FB)",
+        "SG315M (BF)",
+        "SM330M (BF)",
+        "SM330M (FB)",
+        "SM335M (BF)",
+        "SM340M (BF)",
+        "SM390M",
+        "SM395M",
+        "SM400M",
+        "SM405M"
+      ],
+      "powerRange": [
+        205,
+        405
+      ],
+      "efficiencyMax": 0.2042,
+      "cells": [
+        54,
+        60,
+        72
+      ],
+      "finishes": [
+        {
+          "code": "BF",
+          "label": null
+        },
+        {
+          "code": "FB",
+          "label": null
+        }
+      ],
+      "datasheets": [
+        {
+          "label": "SG205P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG205P.pdf"
+        },
+        {
+          "label": "SG210P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG210P.pdf"
+        },
+        {
+          "label": "SG215P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG215P.pdf"
+        },
+        {
+          "label": "SG220P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG220P.pdf"
+        },
+        {
+          "label": "SG225P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG225P.pdf"
+        },
+        {
+          "label": "SG230P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG230P.pdf"
+        },
+        {
+          "label": "SG235P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG235P.pdf"
+        },
+        {
+          "label": "SG240P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG240P.pdf"
+        },
+        {
+          "label": "SG245P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG245P.pdf"
+        },
+        {
+          "label": "SG250P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG250P.pdf"
+        },
+        {
+          "label": "SG255P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG255P.pdf"
+        },
+        {
+          "label": "SG260P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG260P.pdf"
+        },
+        {
+          "label": "SG265P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG265P.pdf"
+        },
+        {
+          "label": "SG270P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG270P.pdf"
+        },
+        {
+          "label": "SG275P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG275P.pdf"
+        },
+        {
+          "label": "SG280P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG280P.pdf"
+        },
+        {
+          "label": "SG285P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG285P.pdf"
+        },
+        {
+          "label": "SG290P (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG290P.pdf"
+        },
+        {
+          "label": "SG300M (BF) (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG300M(BF).pdf"
+        },
+        {
+          "label": "SG310M (BF) (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG310M(BF).pdf"
+        },
+        {
+          "label": "SG310M (FB) (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG310M(FB).pdf"
+        },
+        {
+          "label": "SG315M (BF) (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SG315M(BF).pdf"
+        },
+        {
+          "label": "SM330M (BF) (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SM330M(BF).pdf"
+        },
+        {
+          "label": "SM330M (FB) (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SM330M(FB).pdf"
+        },
+        {
+          "label": "SM335M (BF) (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SM335M(BF).pdf"
+        },
+        {
+          "label": "SM340M (BF) (EN-CA)",
+          "url": "https://peimar.com/datasheet/Peimar_EN-CA_SM340M%28BF%29.pdf"
+        },
+        {
+          "label": "SM390M (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SM390M.pdf"
+        },
+        {
+          "label": "SM395M (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SM395M.pdf"
+        },
+        {
+          "label": "SM400M (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SM400M.pdf"
+        },
+        {
+          "label": "SM405M (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_SM405M.pdf"
+        }
+      ],
+      "image": "/images/products/peimar-modules.png",
+      "designerModels": [
+        "sg205p",
+        "sg210p",
+        "sg215p",
+        "sg220p",
+        "sg225p",
+        "sg230p",
+        "sg235p",
+        "sg240p",
+        "sg245p",
+        "sg250p",
+        "sg255p",
+        "sg260p",
+        "sg265p",
+        "sg270p",
+        "sg275p",
+        "sg280p",
+        "sg285p",
+        "sg290p",
+        "sg300m-bf",
+        "sg310m-bf",
+        "sg310m-fb",
+        "sg315m-bf",
+        "sm330m-bf",
+        "sm330m-fb",
+        "sm335m-bf",
+        "sm340m-bf",
+        "sm390m",
+        "sm395m",
+        "sm400m",
+        "sm405m"
+      ]
+    },
+    {
+      "series": "OR Series",
+      "name": "OR Series OR10E",
+      "slug": "or-series-or10e",
+      "tagline": "Half Cell",
+      "description": "Manufactured in our production factory. TOPCon bifacial technology with anti-reflective double glass. Maximum efficiency and high performance, compact and sturdy frame.",
+      "technology": [
+        "Monocrystalline M10 N-type",
+        "TOPCon bifacial",
+        "Double glass"
+      ],
+      "warranty": {
+        "product": 25,
+        "power": 30
+      },
+      "models": [
+        "OR10E460MNDB (BF)",
+        "OR10E460MNDB (FB)",
+        "OR10E640MNDB"
+      ],
+      "powerRange": [
+        460,
+        640
+      ],
+      "efficiencyMax": 0.2302,
+      "cells": [
+        96
+      ],
+      "finishes": [
+        {
+          "code": "BF",
+          "label": null
+        },
+        {
+          "code": "FB",
+          "label": null
+        }
+      ],
+      "datasheets": [
+        {
+          "label": "OR10E460MNDB (BF)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10E460MNDB%28BF%29.pdf"
+        },
+        {
+          "label": "OR10E460MNDB (FB)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10E460MNDB%28FB%29.pdf"
+        },
+        {
+          "label": "OR10E640MNDB",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10E640MNDB.pdf"
+        }
+      ],
+      "image": "/images/products/peimar-modules.png",
+      "designerModels": [
+        "or10e460mndb-bf",
+        "or10e460mndb-fb"
+      ]
+    },
+    {
+      "series": "OR Series",
+      "name": "OR Series OR10H",
+      "slug": "or-series-or10h",
+      "tagline": "Half Cell",
+      "description": "Manufactured in our production factory. Half-cut M10 cells in PERC monofacial and TOPCon bifacial double-glass (MNDB) versions. Maximum efficiency and high performance, compact and sturdy frame.",
+      "technology": [
+        "Monocrystalline M10 half-cut",
+        "PERC monofacial",
+        "TOPCon bifacial N-type (MNDB)",
+        "Double glass (MNDB)"
+      ],
+      "warranty": {
+        "product": 25,
+        "power": 30
+      },
+      "models": [
+        "OR10H375M (FR)",
+        "OR10H400MN (FR)",
+        "OR10H425MNDB (FB)",
+        "OR10H430MNDB (FB)",
+        "OR10H440MN (BF)",
+        "OR10H440MN (FB)",
+        "OR10H440MNDB (BF)",
+        "OR10H440MNDB (FB)",
+        "OR10H440MNDB (SF)",
+        "OR10H450M",
+        "OR10H450MNDB (BF)",
+        "OR10H450MNDB (FB)",
+        "OR10H500M (FB)",
+        "OR10H500MNDB (BF)",
+        "OR10H500MNDB (FB)",
+        "OR10H510MNDB (BF)",
+        "OR10H510MNDB (FB)",
+        "OR10H545M",
+        "OR10H560M",
+        "OR10H595MNDB",
+        "OR10H610MNDB"
+      ],
+      "powerRange": [
+        375,
+        610
+      ],
+      "efficiencyMax": 0.2363,
+      "cells": [
+        108,
+        120,
+        132,
+        144
+      ],
+      "finishes": [
+        {
+          "code": "FR",
+          "label": "Red Line"
+        },
+        {
+          "code": "FB",
+          "label": null
+        },
+        {
+          "code": "BF",
+          "label": null
+        },
+        {
+          "code": "SF",
+          "label": null
+        }
+      ],
+      "datasheets": [
+        {
+          "label": "OR10H375M (FR)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H375M%28FR%29.pdf"
+        },
+        {
+          "label": "OR10H400MN (FR)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H400MN%28FR%29.pdf"
+        },
+        {
+          "label": "OR10H425MNDB (FB)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H425MNDB%28FB%29.pdf"
+        },
+        {
+          "label": "OR10H430MNDB (FB)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H430MNDB%28FB%29.pdf"
+        },
+        {
+          "label": "OR10H440MN (BF)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H440MN%28BF%29.pdf"
+        },
+        {
+          "label": "OR10H440MN (FB)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H440MN%28FB%29.pdf"
+        },
+        {
+          "label": "OR10H440MNDB (BF)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H440MNDB(BF).pdf"
+        },
+        {
+          "label": "OR10H440MNDB (FB)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H440MNDB%28FB%29.pdf"
+        },
+        {
+          "label": "OR10H440MNDB (SF)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H440MNDB(SF).pdf"
+        },
+        {
+          "label": "OR10H450M (EN-IN)",
+          "url": "https://peimar.com/datasheet/Peimar_EN-IN_OR10H450M.pdf"
+        },
+        {
+          "label": "OR10H450MNDB (BF)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H450MNDB%28BF%29.pdf"
+        },
+        {
+          "label": "OR10H450MNDB (FB)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H450MNDB%28FB%29.pdf"
+        },
+        {
+          "label": "OR10H500M (FB)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H500M(FB).pdf"
+        },
+        {
+          "label": "OR10H500MNDB (BF)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H500MNDB%28BF%29.pdf"
+        },
+        {
+          "label": "OR10H500MNDB (FB)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H500MNDB%28FB%29.pdf"
+        },
+        {
+          "label": "OR10H510MNDB (BF)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H510MNDB%28BF%29.pdf"
+        },
+        {
+          "label": "OR10H510MNDB (FB)",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H510MNDB%28FB%29.pdf"
+        },
+        {
+          "label": "OR10H545M (EN-IN)",
+          "url": "https://peimar.com/datasheet/Peimar_EN-IN_OR10H545M.pdf"
+        },
+        {
+          "label": "OR10H560M",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H560M.pdf"
+        },
+        {
+          "label": "OR10H595MNDB",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H595MNDB.pdf"
+        },
+        {
+          "label": "OR10H610MNDB",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR10H610MNDB.pdf"
+        }
+      ],
+      "image": "/images/products/peimar-modules.png",
+      "designerModels": [
+        "or10h375m-fr",
+        "or10h425mndb-fb",
+        "or10h430mndb-fb",
+        "or10h440mn-bf",
+        "or10h440mn-fb",
+        "or10h440mndb-bf",
+        "or10h440mndb-fb",
+        "or10h440mndb-sf",
+        "or10h450m",
+        "or10h450mndb-bf",
+        "or10h450mndb-fb",
+        "or10h500m-fb",
+        "or10h500mndb-bf",
+        "or10h500mndb-fb",
+        "or10h510mndb-bf",
+        "or10h545m",
+        "or10h560m",
+        "or10h595mndb",
+        "or10h610mndb"
+      ]
+    },
+    {
+      "series": "OR Series",
+      "name": "OR Series OR12H",
+      "slug": "or-series-or12h",
+      "tagline": "Half Cell",
+      "description": "Manufactured in our production factory. M12 half-cut N-type cells with TOPCon bifacial technology and anti-reflective double glass. Maximum efficiency and high performance.",
+      "technology": [
+        "Monocrystalline M12 half-cut N-type",
+        "TOPCon bifacial",
+        "Double glass"
+      ],
+      "warranty": {
+        "product": 25,
+        "power": 30
+      },
+      "models": [
+        "OR12H635MNDB",
+        "OR12H670M",
+        "OR12H715MNDB",
+        "OR12H725MNDB",
+        "OR12H735MNDB"
+      ],
+      "powerRange": [
+        635,
+        735
+      ],
+      "efficiencyMax": 0.2302,
+      "cells": [
+        120,
+        132
+      ],
+      "finishes": [],
+      "datasheets": [
+        {
+          "label": "OR12H635MNDB",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR12H635MNDB.pdf"
+        },
+        {
+          "label": "OR12H670M",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR12H670M.pdf"
+        },
+        {
+          "label": "OR12H715MNDB",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR12H715MNDB.pdf"
+        },
+        {
+          "label": "OR12H725MNDB",
+          "url": "https://peimar.com/datasheet/Peimar_EN_OR12H725MNDB.pdf"
+        },
+        {
+          "label": "OR12H735MNDB (IT)",
+          "url": "https://peimar.com/datasheet/Peimar_IT_OR12H735MNDB.pdf"
+        }
+      ],
+      "image": "/images/products/peimar-modules.png",
+      "designerModels": [
+        "or12h635mndb",
+        "or12h670m",
+        "or12h715mndb"
+      ]
+    },
+    {
+      "series": "DR Series",
+      "name": "DR Series DR10H",
+      "slug": "dr-series-dr10h",
+      "tagline": null,
+      "description": null,
+      "technology": [],
+      "warranty": {
+        "product": 25,
+        "power": 30
+      },
+      "models": [
+        "DR10H450M (FB)",
+        "DR10H500M (FB)",
+        "DR10H550MB"
+      ],
+      "powerRange": [
+        450,
+        550
+      ],
+      "efficiencyMax": 0.2128,
+      "cells": [
+        120,
+        132,
+        144
+      ],
+      "finishes": [
+        {
+          "code": "FB",
+          "label": null
+        }
+      ],
+      "datasheets": [
+        {
+          "label": "DR10H450M (FB) (US)",
+          "url": "https://peimar.com/datasheet/Peimar_USA_DR10H450M(FB).pdf"
+        },
+        {
+          "label": "DR10H500M (FB) (US)",
+          "url": "https://peimar.com/datasheet/Peimar_USA_DR10H500M%28FB%29.pdf"
+        },
+        {
+          "label": "DR10H550MB (US)",
+          "url": "https://peimar.com/datasheet/Peimar_USA_DR10H550MB.pdf"
+        }
+      ],
+      "image": "/images/products/peimar-modules.png",
+      "designerModels": [
+        "dr10h450m-fb",
+        "dr10h500m-fb",
+        "dr10h550mb"
+      ]
+    }
+  ],
+  "inverters": {
+    "onGrid": [
+      {
+        "name": "PSI-X1P TL",
+        "slug": "psi-x1p-tl",
+        "phase": "single_phase",
+        "powerRange": [
+          1100,
+          3000
+        ],
+        "description": "PSI-X1P — Single-phase inverter",
+        "image": "/images/products/peimar-on-grid-inverters.png",
+        "datasheets": [
+          {
+            "label": "PSI-X1P2500-TL | PSI-X1P3000-TL",
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X1P2500-3000-TL.pdf"
+          }
+        ],
+        "manual": "https://peimar.com/documents/Peimar_EN_user-manual_PSI-X1P-TL-TLM.pdf",
+        "models": [
+          "PSI-X1P1100-TL",
+          "PSI-X1P1500-TL",
+          "PSI-X1P2000-TL",
+          "PSI-X1P2500-TL",
+          "PSI-X1P3000-TL"
+        ],
+        "designerModels": [
+          "psi-x1p1100-tl",
+          "psi-x1p1500-tl",
+          "psi-x1p2000-tl",
+          "psi-x1p2500-tl",
+          "psi-x1p3000-tl"
+        ]
+      },
+      {
+        "name": "PSI-X1P TLM",
+        "slug": "psi-x1p-tlm",
+        "phase": "single_phase",
+        "powerRange": [
+          3000,
+          6000
+        ],
+        "description": "PSI-X1P — Single-phase inverter",
+        "image": "/images/products/peimar-on-grid-inverters.png",
+        "datasheets": [
+          {
+            "label": "PSI-X1P3000/4200/5000/6000-TLM",
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X1P3000-4200-5000-6000-TLM.pdf"
+          }
+        ],
+        "manual": "https://peimar.com/documents/Peimar_EN_user-manual_PSI-X1P-TL-TLM.pdf",
+        "models": [
+          "PSI-X1P3000-TLM",
+          "PSI-X1P4200-TLM",
+          "PSI-X1P5000-TLM",
+          "PSI-X1P6000-TLM"
+        ],
+        "designerModels": [
+          "psi-x1p3000-tlm",
+          "psi-x1p4200-tlm",
+          "psi-x1p5000-tlm",
+          "psi-x1p6000-tlm"
+        ]
+      },
+      {
+        "name": "PSI-X1S TL",
+        "slug": "psi-x1s-tl",
+        "phase": "single_phase",
+        "powerRange": [
+          1100,
+          2500
+        ],
+        "description": "PSI-X1S — Single-phase inverter",
+        "image": "/images/products/peimar-on-grid-inverters.png",
+        "datasheets": [
+          {
+            "label": "PSI-X1S1100–3000-TL",
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X1S-1100-1500-2000-2500-3000-TL.pdf"
+          }
+        ],
+        "manual": "https://peimar.com/documents/Peimar_EN_user-manual_PSI-X1S-TL.pdf",
+        "models": [
+          "PSI-X1S1100-TL",
+          "PSI-X1S1500-TL",
+          "PSI-X1S2000-TL",
+          "PSI-X1S2500-TL",
+          "PSI-X1S3000-TL"
+        ],
+        "designerModels": [
+          "psi-x1s1100-tl",
+          "psi-x1s1500-tl",
+          "psi-x1s2000-tl",
+          "psi-x1s2500-tl"
+        ]
+      },
+      {
+        "name": "PSI-X1S TLM",
+        "slug": "psi-x1s-tlm",
+        "phase": "single_phase",
+        "powerRange": [
+          3000,
+          6000
+        ],
+        "description": "PSI-X1S — Single-phase inverter",
+        "image": "/images/products/peimar-on-grid-inverters.png",
+        "datasheets": [
+          {
+            "label": "PSI-X1S3000/4200/5000/6000-TLM",
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X1S3000-4200-5000-6000-TLM.pdf"
+          }
+        ],
+        "manual": "https://peimar.com/documents/Peimar_EN_user-manual_PSI-X1S-TLM.pdf",
+        "models": [
+          "PSI-X1S3000-TLM",
+          "PSI-X1S4200-TLM",
+          "PSI-X1S5000-TLM",
+          "PSI-X1S6000-TLM"
+        ],
+        "designerModels": [
+          "psi-x1s3000-tlm",
+          "psi-x1s4200-tlm",
+          "psi-x1s5000-tlm",
+          "psi-x1s6000-tlm"
+        ]
+      },
+      {
+        "name": "PSI-X3P TP",
+        "slug": "psi-x3p-tp",
+        "phase": "three_phase",
+        "powerRange": [
+          6000,
+          10000
+        ],
+        "description": "PSI-X3P — Three-phase inverter",
+        "image": "/images/products/peimar-on-grid-inverters.png",
+        "datasheets": [
+          {
+            "label": "PSI-X3P6000/8000/10000-TP",
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X3P6000-8000-10000-TP.pdf"
+          }
+        ],
+        "manual": "https://peimar.com/documents/Peimar_EN_user-manual_PSI-X3P6000-8000-10000-TP.pdf",
+        "models": [
+          "PSI-X3P6000-TP",
+          "PSI-X3P8000-TP",
+          "PSI-X3P10000-TP"
+        ],
+        "designerModels": [
+          "psi-x3p6000-tp",
+          "psi-x3p8000-tp",
+          "psi-x3p10000-tp"
+        ]
+      },
+      {
+        "name": "PSI-X3P TPM",
+        "slug": "psi-x3p-tpm",
+        "phase": "three_phase",
+        "powerRange": [
+          15000,
+          125000
+        ],
+        "description": "PSI-X3P — Three-phase inverter",
+        "image": "/images/products/peimar-on-grid-inverters.png",
+        "datasheets": [
+          {
+            "label": "PSI-X3P15000/20000/30000-TPM",
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X3P15000-20000-30000-TPM.pdf"
+          },
+          {
+            "label": "PSI-X3P40000/50000/60000-TPM",
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X3P40000-50000-60000-TPM.pdf"
+          },
+          {
+            "label": "PSI-X3P100000-TPM",
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X3P100000-TPM.pdf"
+          }
+        ],
+        "models": [
+          "PSI-X3P15000-TPM",
+          "PSI-X3P20000-TPM",
+          "PSI-X3P30000-TPM",
+          "PSI-X3P40000-TPM",
+          "PSI-X3P50000-TPM",
+          "PSI-X3P60000-TPM",
+          "PSI-X3P100000-TPM",
+          "PSI-X3P125000-TPM"
+        ],
+        "designerModels": [
+          "psi-x3p15000-tpm",
+          "psi-x3p20000-tpm",
+          "psi-x3p30000-tpm",
+          "psi-x3p40000-tpm",
+          "psi-x3p50000-tpm",
+          "psi-x3p60000-tpm",
+          "psi-x3p100000-tpm",
+          "psi-x3p125000-tpm"
+        ]
+      },
+      {
+        "name": "PSI-J Mirus Line",
+        "slug": "psi-j-mirus-line",
+        "phase": "single_phase",
+        "powerRange": [
+          1000,
+          1500
+        ],
+        "description": "PSI-J — Single-phase inverter",
+        "image": "/images/products/peimar-on-grid-inverters.png",
+        "datasheets": [],
+        "manual": "https://peimar.com/documents/Peimar_UserManual_1-6.pdf",
+        "models": [
+          "PSI-J1000-TL",
+          "PSI-J1500-TL"
+        ],
+        "designerModels": [
+          "psi-j1000-tl",
+          "psi-j1500-tl"
+        ]
+      },
+      {
+        "name": "PSI-J Unicus Line",
+        "slug": "psi-j-unicus-line",
+        "phase": "single_phase",
+        "powerRange": [
+          2000,
+          3000
+        ],
+        "description": "PSI-J — Single-phase inverter",
+        "image": "/images/products/peimar-on-grid-inverters.png",
+        "datasheets": [],
+        "manual": "https://peimar.com/documents/Peimar_UserManual_1-6.pdf",
+        "models": [
+          "PSI-J2000-TL",
+          "PSI-J2500-TL",
+          "PSI-J3000-TL"
+        ],
+        "designerModels": [
+          "psi-j2000-tl",
+          "psi-j2500-tl",
+          "psi-j3000-tl"
+        ]
+      },
+      {
+        "name": "PSI-J Geminus Line",
+        "slug": "psi-j-geminus-line",
+        "phase": "single_phase",
+        "powerRange": [
+          3000,
+          6000
+        ],
+        "description": "PSI-J — Single-phase inverter",
+        "image": "/images/products/peimar-on-grid-inverters.png",
+        "datasheets": [],
+        "manual": "https://peimar.com/documents/Peimar_UserManual_1-6.pdf",
+        "models": [
+          "PSI-J3000-TLM",
+          "PSI-J4000-TLM",
+          "PSI-J5000-TLM",
+          "PSI-J6000-TLM"
+        ],
+        "designerModels": [
+          "psi-j3000-tlm",
+          "psi-j4000-tlm",
+          "psi-j5000-tlm",
+          "psi-j6000-tlm"
+        ]
+      },
+      {
+        "name": "PSI-J Virtus Line",
+        "slug": "psi-j-virtus-line",
+        "phase": "three_phase",
+        "powerRange": [
+          4000,
+          10000
+        ],
+        "description": "PSI-J — Three-phase inverter",
+        "image": "/images/products/peimar-on-grid-inverters.png",
+        "datasheets": [],
+        "manual": "https://peimar.com/documents/Peimar_UserManual_4-10.pdf",
+        "models": [
+          "PSI-J4000-TP",
+          "PSI-J5000-TP",
+          "PSI-J6000-TP",
+          "PSI-J8000-TP",
+          "PSI-J10000-TP"
+        ],
+        "designerModels": [
+          "psi-j4000-tp",
+          "psi-j5000-tp",
+          "psi-j6000-tp",
+          "psi-j8000-tp",
+          "psi-j10000-tp"
+        ]
+      },
+      {
+        "name": "PSI-J Editus Line",
+        "slug": "psi-j-editus-line",
+        "phase": "three_phase",
+        "powerRange": [
+          12000,
+          20000
+        ],
+        "description": "PSI-J — Three-phase inverter",
+        "image": "/images/products/peimar-on-grid-inverters.png",
+        "datasheets": [],
+        "manual": "https://peimar.com/documents/Peimar_UserManual_12-60.pdf",
+        "models": [
+          "PSI-J12000-TP",
+          "PSI-J15000-TP",
+          "PSI-J17000-TP",
+          "PSI-J20000-TP"
+        ],
+        "designerModels": [
+          "psi-j12000-tp",
+          "psi-j15000-tp",
+          "psi-j17000-tp",
+          "psi-j20000-tp"
+        ]
+      },
+      {
+        "name": "PSI-J Magnus Line",
+        "slug": "psi-j-magnus-line",
+        "phase": "three_phase",
+        "powerRange": [
+          25000,
+          60000
+        ],
+        "description": "PSI-J — Three-phase inverter",
+        "image": "/images/products/peimar-on-grid-inverters.png",
+        "datasheets": [],
+        "manual": "https://peimar.com/documents/Peimar_UserManual_12-60.pdf",
+        "models": [
+          "PSI-J25000-TP",
+          "PSI-J33000-TP",
+          "PSI-J40000-TP",
+          "PSI-J50000-TP",
+          "PSI-J60000-TP"
+        ],
+        "designerModels": [
+          "psi-j25000-tp",
+          "psi-j33000-tp",
+          "psi-j40000-tp",
+          "psi-j50000-tp",
+          "psi-j60000-tp"
+        ]
+      }
+    ],
+    "hybrid": [
+      {
+        "name": "PSI-X1P HY",
+        "slug": "psi-x1p-hy",
+        "phase": "single_phase",
+        "powerRange": [
+          3000,
+          6000
+        ],
+        "description": "PSI-X1P — Single-phase hybrid inverter",
+        "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+        "datasheets": [
+          {
+            "label": "PSI-X1P3000-HY | PSI-X1P6000-HY",
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X1P3000-6000-HY.pdf"
+          }
+        ],
+        "manual": "https://peimar.com/documents/Peimar_EN_user-manual_PSI-X1P3000-5000-6000-HY.pdf",
+        "models": [
+          "PSI-X1P3000-HY",
+          "PSI-X1P5000-HY",
+          "PSI-X1P6000-HY"
+        ],
+        "designerModels": [
+          "psi-x1p3000-hy",
+          "psi-x1p5000-hy",
+          "psi-x1p6000-hy"
+        ]
+      },
+      {
+        "name": "PSI-X3S HY",
+        "slug": "psi-x3s-hy",
+        "phase": "three_phase",
+        "powerRange": [
+          6000,
+          15000
+        ],
+        "description": "PSI-X3S — Three-phase hybrid inverter",
+        "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+        "datasheets": [
+          {
+            "label": "PSI-X3S6000/8000/10000/15000-HY",
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X3S6000-8000-10000-15000-HY.pdf"
+          }
+        ],
+        "manual": "https://peimar.com/documents/Peimar_EN_user-manual_PSI-X3S6000-8000-10000-15000-HY.pdf",
+        "models": [
+          "PSI-X3S6000-HY",
+          "PSI-X3S8000-HY",
+          "PSI-X3S10000-HY",
+          "PSI-X3S15000-HY"
+        ],
+        "designerModels": [
+          "psi-x3s6000-hy",
+          "psi-x3s8000-hy",
+          "psi-x3s10000-hy",
+          "psi-x3s15000-hy"
+        ]
+      },
+      {
+        "name": "PSI-X3P HYM",
+        "slug": "psi-x3p-hym",
+        "phase": "three_phase",
+        "powerRange": [
+          20000,
+          30000
+        ],
+        "description": "PSI-X3P — Three-phase hybrid inverter",
+        "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+        "datasheets": [
+          {
+            "label": "PSI-X3P20000-HYM | PSI-X3P30000-HYM",
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X3P20000-30000-HYM.pdf"
+          }
+        ],
+        "manual": "https://peimar.com/documents/Peimar_EN_user-manual_PSI-X3P-HYM.pdf",
+        "models": [
+          "PSI-X3P20000-HYM",
+          "PSI-X3P30000-HYM"
+        ],
+        "designerModels": [
+          "psi-x3p20000-hym",
+          "psi-x3p30000-hym"
+        ]
+      },
+      {
+        "name": "PSI-A1P",
+        "slug": "psi-a1p",
+        "phase": "single_phase",
+        "powerRange": [
+          3680,
+          6000
+        ],
+        "description": "PSI-A — All-in-One systems (with PSI-A-BT3.8S battery)",
+        "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+        "datasheets": [
+          {
+            "label": "PSI-A1P Series",
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-A1P%20Series.pdf"
+          }
+        ],
+        "models": [
+          "PSI-A1P3600-HY",
+          "PSI-A1P6000-HY"
+        ],
+        "designerModels": [
+          "psi-a1p3600-hy",
+          "psi-a1p6000-hy"
+        ]
+      },
+      {
+        "name": "PSI-A3P",
+        "slug": "psi-a3p",
+        "phase": "three_phase",
+        "powerRange": null,
+        "description": "PSI-A — All-in-One systems (with PSI-A-BT3.8S battery)",
+        "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+        "datasheets": [
+          {
+            "label": "PSI-A3P Series",
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-A3P%20Series.pdf"
+          }
+        ],
+        "models": [
+          "PSI-A3P10000-HY"
+        ],
+        "designerModels": []
+      },
+      {
+        "name": "PSI-J HY",
+        "slug": "psi-j-hy",
+        "phase": "single_phase",
+        "powerRange": [
+          3000,
+          6000
+        ],
+        "description": "PSI-J — Single-phase hybrid inverter",
+        "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+        "datasheets": [],
+        "manual": "https://peimar.com/documents/Peimar-user-manual_PSI-J3000-4000-5000-6000-HY.pdf",
+        "models": [
+          "PSI-J3000-HY",
+          "PSI-J4000-HY",
+          "PSI-J5000-HY",
+          "PSI-J6000-HY"
+        ],
+        "designerModels": [
+          "psi-j3000-hy",
+          "psi-j4000-hy",
+          "psi-j5000-hy",
+          "psi-j6000-hy"
+        ]
+      },
+      {
+        "name": "PSI-J RF",
+        "slug": "psi-j-rf",
+        "phase": "single_phase",
+        "powerRange": null,
+        "description": "PSI-J — Retrofit inverter with energy storage",
+        "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+        "datasheets": [],
+        "manual": "https://peimar.com/documents/Peimar-user-manual_PSI-J3000-RF_2021_10_00.pdf",
+        "models": [
+          "PSI-J3000-RF"
+        ],
+        "designerModels": []
+      },
+      {
+        "name": "PSI-X3P HY",
+        "slug": "psi-x3p-hy",
+        "phase": "three_phase",
+        "powerRange": [
+          6000,
+          10000
+        ],
+        "description": null,
+        "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+        "datasheets": [],
+        "models": [
+          "PSI-X3P6000-HY",
+          "PSI-X3P8000-HY",
+          "PSI-X3P10000-HY"
+        ],
+        "designerModels": [
+          "psi-x3p6000-hy",
+          "psi-x3p8000-hy",
+          "psi-x3p10000-hy"
+        ]
+      }
+    ],
+    "micro": [
+      {
+        "name": "PSI-X1P MIC",
+        "slug": "psi-x1p-mic",
+        "phase": "single_phase",
+        "powerRange": [
+          800,
+          1000
+        ],
+        "description": null,
+        "image": "/images/products/peimar-microinverters.webp",
+        "datasheets": [],
+        "models": [
+          "PSI-X1P800-MIC",
+          "PSI-X1P1000-MIC"
+        ],
+        "designerModels": [
+          "psi-x1p800-mic",
+          "psi-x1p1000-mic"
+        ]
+      }
+    ]
+  },
+  "batteries": [
+    {
+      "name": "PSI-X-5.8MST-V2",
+      "slug": "psi-x-5-8mst-v2",
+      "family": "PSI-X-BT Series - HV storage batteries",
+      "role": "Master",
+      "capacity": {
+        "totalKwh": 5.8,
+        "usableKwh": 5.1
+      },
+      "chemistry": "Li-ion (LFP)",
+      "warrantyYears": 10,
+      "description": "PSI-X-BT Series HV storage battery (master). Simple installation, status and residual charge LEDs.",
+      "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+      "datasheets": [
+        {
+          "label": "PSI-X-5.8MST-V2",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-5.8MST-V2.pdf"
+        }
+      ]
+    },
+    {
+      "name": "PSI-X-5.8SLV-V2",
+      "slug": "psi-x-5-8slv-v2",
+      "family": "PSI-X-BT Series - HV storage batteries",
+      "role": "Slave",
+      "capacity": {
+        "ratedKwh": 5.8,
+        "depthOfDischarge": 0.9
+      },
+      "chemistry": "LiFePO4",
+      "warrantyYears": 10,
+      "description": "PSI-X-BT Series HV storage battery (slave). Compatible with Peimar PSI-X1P-HY single-phase and PSI-X3S-HY three-phase hybrid inverters.",
+      "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+      "datasheets": [
+        {
+          "label": "PSI-X-5.8SLV-V2",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-5.8SLV-V2.pdf"
+        }
+      ]
+    },
+    {
+      "name": "PSI-X-HS 2.5",
+      "slug": "psi-x-hs-2-5",
+      "family": "PSI-X-HS - HV storage batteries",
+      "role": "Modular: PSI-X-BMS-HS + PSI-X-2.5HS modules + PSI-X-SBOX-HS",
+      "capacity": {
+        "moduleKwh": 2.5,
+        "modules": [
+          2,
+          13
+        ],
+        "nominalKwh": [
+          5.1,
+          33.2
+        ],
+        "usableKwh": [
+          4.6,
+          29.9
+        ],
+        "depthOfDischarge": 0.9
+      },
+      "chemistry": "Lithium-ion (LiFePO4)",
+      "warrantyYears": 10,
+      "description": "Storage batteries HV, from 2 to 13 PSI-X-2.5HS modules. Remote monitoring via Peimar X Portal.",
+      "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+      "datasheets": [
+        {
+          "label": "PSI-X-HS 2.5",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-HS_2.5.pdf"
+        }
+      ]
+    },
+    {
+      "name": "PSI-X-HS 3.6",
+      "slug": "psi-x-hs-3-6",
+      "family": "PSI-X-HS - HV storage batteries",
+      "role": "Modular: PSI-X-BMS-HS + PSI-X-3.6HS modules + PSI-X-SBOX-HS",
+      "capacity": {
+        "moduleKwh": 3.6,
+        "modules": [
+          2,
+          13
+        ],
+        "nominalKwh": [
+          7.3,
+          47.9
+        ],
+        "usableKwh": [
+          6.5,
+          43.1
+        ],
+        "depthOfDischarge": 0.9
+      },
+      "chemistry": "Lithium-ion (LiFePO4)",
+      "warrantyYears": 10,
+      "description": "Storage batteries HV, from 2 to 13 PSI-X-3.6HS modules. Remote monitoring via Peimar X Portal.",
+      "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+      "datasheets": [
+        {
+          "label": "PSI-X-HS 3.6",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-HS_3.6.pdf"
+        }
+      ]
+    },
+    {
+      "name": "PSI-A-BT3.8S",
+      "slug": "psi-a-bt3-8s",
+      "family": "PSI-A Series",
+      "role": "Battery module for PSI-A All-in-One systems",
+      "capacity": {
+        "moduleKwh": 3.8,
+        "usableKwhPerModule": 3.648,
+        "modules": [
+          1,
+          6
+        ],
+        "totalKwh": [
+          3.8,
+          22.8
+        ],
+        "depthOfDischarge": 0.95
+      },
+      "chemistry": "LFP (LiFePO4)",
+      "warrantyYears": 10,
+      "warrantyNote": "The 10-year warranty is valid only upon product registration on the portal and activation of the monitoring service.",
+      "description": "3.8 kWh battery module for PSI-A single-phase and three-phase systems, for residential applications. Possible configurations from 1 to 6 modules in series.",
+      "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+      "datasheets": [
+        {
+          "label": "PSI-A-BT3.8S",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-A-BT3.8S.pdf"
+        }
+      ]
+    },
+    {
+      "name": "PSI-X-PRL-BMS",
+      "slug": "psi-x-prl-bms",
+      "family": "PSI-X-PRL Series",
+      "role": "External parallel BMS",
+      "capacity": null,
+      "chemistry": null,
+      "description": "External parallel BMS for increased storage capacity.",
+      "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+      "datasheets": [
+        {
+          "label": "PSI-X-PRL-BMS",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-PRL-BMS.pdf"
+        }
+      ]
+    },
+    {
+      "name": "PSI-XCAB-PCS100-B215",
+      "slug": "psi-xcab-pcs100-b215",
+      "family": "PSI-XCAB - Cabinets for C&I",
+      "role": "PSI-XCAB-PCS100 | PSI-X-14.3CAB",
+      "capacity": null,
+      "chemistry": null,
+      "description": null,
+      "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+      "datasheets": [
+        {
+          "label": "PSI-XCAB-PCS100-B215",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-XCAB-PCS100-B215.pdf"
+        }
+      ]
+    },
+    {
+      "name": "PSI-XCAB-X3P50-B100 | PSI-XCAB-X3P50-B200",
+      "slug": "psi-xcab-x3p50",
+      "family": "PSI-XCAB - Cabinets for C&I",
+      "role": "PSI-XCAB-X3P50 | PSI-X-14.3CAB",
+      "capacity": null,
+      "chemistry": null,
+      "description": null,
+      "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+      "datasheets": [
+        {
+          "label": "PSI-XCAB-X3P50-B100 | B200",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-XCAB-X3P50-B100-PSI-XCAB-X3P50-B200.pdf"
+        }
+      ]
+    }
+  ],
+  "accessories": [
+    {
+      "group": "Adapter Box",
+      "name": "PSI-X-HPAB-S",
+      "slug": "psi-x-hpab-s",
+      "description": null,
+      "image": null,
+      "datasheets": [
+        {
+          "label": "PSI-X-HPAB-S",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-HPAB-S.pdf"
+        }
+      ]
+    },
+    {
+      "group": "Meter",
+      "name": "PSI-X-1PMETER-ZI",
+      "slug": "psi-x-1pmeter-zi",
+      "description": "Single-phase meter PSI-X Series",
+      "image": null,
+      "datasheets": [
+        {
+          "label": "PSI-X-1PMETER-ZI",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-1PMETER-ZI.pdf"
+        }
+      ]
+    },
+    {
+      "group": "Meter",
+      "name": "PSI-X-3PMETER-HY",
+      "slug": "psi-x-3pmeter-hy",
+      "description": "Three-phase meter PSI-X Series",
+      "image": null,
+      "datasheets": [
+        {
+          "label": "PSI-X-3PMETER-HY",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-3PMETER-HY.pdf"
+        }
+      ]
+    },
+    {
+      "group": "Meter",
+      "name": "PSI-X-3PMETER-HY-TA",
+      "slug": "psi-x-3pmeter-hy-ta",
+      "description": "Three-phase meter PSI-X Series (with CT)",
+      "image": null,
+      "datasheets": [
+        {
+          "label": "PSI-X-3PMETER-HY-TA",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-3PMETER-HY-TA.pdf"
+        }
+      ]
+    },
+    {
+      "group": "Meter",
+      "name": "PSI-X-1SMETER-TA",
+      "slug": "psi-x-1smeter-ta",
+      "description": "Single-phase meter PSI-X Series (with CT)",
+      "image": null,
+      "datasheets": []
+    },
+    {
+      "group": "Meter",
+      "name": "PSI-X-3SMETER-NO-TA | PSI-X-3SMETER-TA-100A",
+      "slug": "psi-x-3smeter-no-ta-psi-x-3smeter-ta-100a",
+      "description": "Three-phase meter PSI-X Series (with and without CT)",
+      "image": null,
+      "datasheets": []
+    },
+    {
+      "group": "Meter",
+      "name": "PSI-X-3SMETER-TAD",
+      "slug": "psi-x-3smeter-tad",
+      "description": "Three-phase meter PSI-X Series (DUAL model)",
+      "image": null,
+      "datasheets": []
+    },
+    {
+      "group": "Meter",
+      "name": "PSI-A-3PMETER-HY",
+      "slug": "psi-a-3pmeter-hy",
+      "description": "Three-phase meter PSI-A Series",
+      "image": null,
+      "datasheets": []
+    },
+    {
+      "group": "Meter",
+      "name": "PSI-A-3PMETER-HY-TA",
+      "slug": "psi-a-3pmeter-hy-ta",
+      "description": "Three-phase meter PSI-A Series (with CT)",
+      "image": null,
+      "datasheets": []
+    },
+    {
+      "group": "Data hub",
+      "name": "PSI-X-DH1000",
+      "slug": "psi-x-dh1000",
+      "description": "Data hub for PSI-X Series inverters",
+      "image": null,
+      "datasheets": [
+        {
+          "label": "PSI-X-DH1000",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-DH1000.pdf"
+        }
+      ]
+    },
+    {
+      "group": "Wi-Fi & LAN dongle",
+      "name": "PSI-X-H-WIFI-3.0",
+      "slug": "psi-x-h-wifi-3-0",
+      "description": "Wi-Fi dongle for PSI-X Series inverters",
+      "image": null,
+      "datasheets": [
+        {
+          "label": "PSI-X-H-WIFI-3.0",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-H-WIFI-3.0.pdf"
+        }
+      ]
+    },
+    {
+      "group": "Wi-Fi & LAN dongle",
+      "name": "PSI-X-H-ETH-3.0",
+      "slug": "psi-x-h-eth-3-0",
+      "description": "LAN dongle for PSI-X Series inverters",
+      "image": null,
+      "datasheets": [
+        {
+          "label": "PSI-X-H-ETH-3.0",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-H-ETH-3.0.pdf"
+        }
+      ]
+    },
+    {
+      "group": "Wi-Fi & LAN dongle",
+      "name": "PSI-X-H-WIFI-ETH",
+      "slug": "psi-x-h-wifi-eth",
+      "description": "Wi-Fi + LAN dongle for PSI-X Series inverters",
+      "image": null,
+      "datasheets": [
+        {
+          "label": "PSI-X-H-WIFI-ETH",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-H-WIFI-ETH.pdf"
+        }
+      ]
+    },
+    {
+      "group": "Power optimizers",
+      "name": "PSI-OP650 | PSI-OPSW | PSI-OPBE",
+      "slug": "psi-op650-psi-opsw-psi-opbe",
+      "description": "Power optimizers",
+      "image": null,
+      "datasheets": [
+        {
+          "label": "PSI-OP650 | PSI-OPSW | PSI-OPBE",
+          "url": "https://peimar.com/datasheet/Peimar_EN_POWER-OPTIMIZERS.pdf"
+        }
+      ]
+    },
+    {
+      "group": "External electrical panel",
+      "name": "PSI-X1-MTB",
+      "slug": "psi-x1-mtb",
+      "description": "Single-phase panel – DC, AC and FULL BACKUP line centralization",
+      "image": null,
+      "datasheets": [
+        {
+          "label": "PSI-X1-MTB",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X1-MTB.pdf"
+        }
+      ]
+    },
+    {
+      "group": "External electrical panel",
+      "name": "PSI-X3-MTB",
+      "slug": "psi-x3-mtb",
+      "description": "Three-phase panel – DC, AC and FULL BACKUP line centralization",
+      "image": null,
+      "datasheets": [
+        {
+          "label": "PSI-X3-MTB",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X3-MTB.pdf"
+        }
+      ]
+    },
+    {
+      "group": "EV Charger",
+      "name": "PSI-X1-EVC",
+      "slug": "psi-x1-evc",
+      "description": "PSI-X1-EVC7.2-SXC | PSI-X1-EVC7.2-PXC | PSI-X1-EVC7.2-SLC | PSI-X1-EVC7.2-PLC",
+      "image": null,
+      "datasheets": [
+        {
+          "label": "PSI-X1-EVC",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X1-EVC7.2.pdf"
+        }
+      ]
+    },
+    {
+      "group": "EV Charger",
+      "name": "PSI-X3-EVC",
+      "slug": "psi-x3-evc",
+      "description": "PSI-X3-EVC22-SXC | PSI-X3-EVC22-PXC | PSI-X3-EVC22-SLC | PSI-X3-EVC22-PLC",
+      "image": null,
+      "datasheets": [
+        {
+          "label": "PSI-X3-EVC",
+          "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X3-EVC22.pdf"
+        }
+      ]
+    },
+    {
+      "group": "EPS Box",
+      "name": "PSI-X1-BU-EPSBOX",
+      "slug": "psi-x1-bu-epsbox",
+      "description": "Single-phase EPS Box PSI-X Series",
+      "image": null,
+      "datasheets": []
+    },
+    {
+      "group": "EPS Box",
+      "name": "PSI-X3-BU-EPSBOX",
+      "slug": "psi-x3-bu-epsbox",
+      "description": "Three-phase EPS Box PSI-X Series",
+      "image": null,
+      "datasheets": []
+    },
+    {
+      "group": "EMS – Energy Management System",
+      "name": "PSI-X-EMS-PR1000",
+      "slug": "psi-x-ems-pr1000",
+      "description": null,
+      "image": null,
+      "datasheets": []
+    }
+  ],
+  "warranty": {
+    "modules": {
+      "S Series": {
+        "product": 30,
+        "power": 30
+      },
+      "OR Series": {
+        "product": 25,
+        "power": 30
+      },
+      "DR Series": {
+        "product": 25,
+        "power": 30
+      }
+    },
+    "powerOutput": {
+      "polycrystalline": "2% in the first year, thereafter 0,41% per year, ending with 86,11% in the 30th year",
+      "monoPerc": "3% in the first year, thereafter 0,41% per year, ending with 85,11% in the 30th year",
+      "monoTopcon": "1% in the first year, thereafter 0,3% per year, ending with 90,30% in the 30th year"
+    },
+    "batteries": {
+      "years": 10,
+      "note": "Per PSI-X-BT, PSI-X-HS and PSI-A-BT3.8S datasheets; PSI-A requires product registration and monitoring activation."
+    },
+    "documents": [
+      {
+        "label": "PV modules warranty 2026 (EN)",
+        "url": "https://peimar.com/documents/Peimar_EN_WARRANTY-PV-MODULES_2026.pdf"
+      },
+      {
+        "label": "PSI-X Series inverter warranty (EN)",
+        "url": "https://peimar.com/documents/Peimar_EN_PSI-X-SERIES-INVERTER-WARRANTY.pdf"
+      },
+      {
+        "label": "PSI-X storage warranty 2026 (IT)",
+        "url": "https://peimar.com/documents/Garanzia%20storage%20Peimar%20serie%20PSI-X_2026.pdf"
+      },
+      {
+        "label": "PSI-A Series warranty conditions (IT)",
+        "url": "https://peimar.com/certificate/Condizioni%20di%20garanzia%20prodotti%20Peimar%20serie%20PSI-A.pdf"
+      },
+      {
+        "label": "Warranty registration",
+        "url": "https://registrazionegaranzia.peimar.com/"
+      }
+    ],
+    "source": [
+      "https://peimar.com/ww-en/products-services/",
+      "https://peimar.com/documents/Peimar_EN_WARRANTY-PV-MODULES_2026.pdf"
+    ]
+  },
+  "insurance": {
+    "provider": "QBE Insurance Group",
+    "headline": "Peimar products are covered by QBE Insurance",
+    "text": "A comprehensive policy, taken out with QBE Insurance Group, one of the world's leading insurers and reinsurers, protects customers against third-party damage caused by product defects.",
+    "coverages": [
+      {
+        "name": "Third Party Liability",
+        "text": "Covers unintentional damage to third parties caused by the insured, including property damage and bodily injury."
+      },
+      {
+        "name": "Product Liability",
+        "text": "Covers damage caused by defects in products manufactured, sold or distributed by the insured."
+      },
+      {
+        "name": "Employer's Liability",
+        "text": "Covers compensation for injuries suffered by employees in the work environment."
+      }
+    ],
+    "source": "https://peimar.com/ww-en/products-services/"
+  },
+  "documents": {
+    "installationManual": "https://peimar.com/documents/Peimar_EN_Installation-Manual.pdf",
+    "installationManualAR": "https://peimar.com/documents/Peimar_AR_Installation-Manual.pdf",
+    "productsFlyer": "https://peimar.com/documents/Peimar_EN_Products%20Flyer.pdf",
+    "companyBrochure": "https://peimar.com/documents/Peimar_WW_Company%20Brochure.pdf",
+    "companyPresentation": "https://peimar.com/documents/Peimar_EN_CompanyBrochure_Presentation.pdf"
+  }
+}

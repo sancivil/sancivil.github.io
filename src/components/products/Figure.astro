@@ -1,0 +1,39 @@
+---
+/*
+  A figure with its unit. Digits and Latin units sit in one left-to-right .num run, so
+  "450–585 W" never flips in Arabic or Kurdish; a translated word ("years", "سنة") follows
+  outside that run in the page direction.
+*/
+interface Props {
+  /** One value, or a [from, to] range that collapses when both ends match. */
+  value: string | [string, string];
+  unit?: string;
+  word?: string;
+  count?: boolean;
+  /** Text-switching hook for the model picker. */
+  hook?: string;
+  class?: string;
+}
+const { value, unit, word, count = false, hook, class: className } = Astro.props;
+const parts = Array.isArray(value) ? (value[0] === value[1] ? [value[0]] : value) : [value];
+const decimals = (part: string) => part.split('.')[1]?.length ?? 0;
+---
+
+<span class:list={['fig', className]}><span class="num"><span data-k={hook}>{parts.map((part, i) => <>{i > 0 && '–'}{count ? <span data-reveal="count" data-to={part} data-decimals={decimals(part)}>{part}</span> : part}</>)}</span>{unit && <span class="unit">{unit}</span>}</span>{word && <span class="fig__word">{word}</span>}</span>
+
+<style>
+  .fig {
+    display: inline-flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    column-gap: 0.3em;
+  }
+  .fig__word {
+    font-size: 0.6em;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+  :global([dir='rtl']) .fig__word {
+    font-size: 0.55em;
+  }
+</style>

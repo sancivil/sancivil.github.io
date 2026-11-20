@@ -1,0 +1,95 @@
+---
+import { company } from '../../i18n/company.ts';
+import type { Locale } from '../../i18n/config.ts';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const entries = Object.entries(company[locale].peimar.timeline);
+---
+
+<ol class="tl" role="list">
+  {
+    entries.map(([year, entry], i) => (
+      <li class:list={['tl__item', { 'is-latest': i === entries.length - 1 }]}>
+        <span class="tl__year num">{year}</span>
+        <h3 class="tl__title">{entry.title}</h3>
+        <p class="tl__text">{entry.text}</p>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .tl {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .tl__item {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: var(--s-3);
+    padding-block-start: var(--s-6);
+    padding-inline-end: var(--s-5);
+    border-top: 1px solid var(--line-inv-strong);
+  }
+  .tl__item::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    inset-inline-start: 0;
+    width: 7px;
+    height: 7px;
+    background: var(--paper);
+  }
+  .tl__item.is-latest::before {
+    background: var(--sun);
+  }
+  .tl__year {
+    justify-self: start;
+    font-size: clamp(1.75rem, 1.1rem + 1.5vw, 2.75rem);
+    line-height: 1;
+    margin-block-end: var(--s-2);
+  }
+  .tl__title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .tl__text {
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--muted-inv);
+  }
+
+  @media (max-width: 1080px) {
+    .tl {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      row-gap: var(--s-8);
+    }
+  }
+
+  @media (max-width: 720px) {
+    .tl {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 0;
+    }
+    .tl__item {
+      border-top: 0;
+      border-inline-start: 1px solid var(--line-inv-strong);
+      padding-block: 0 var(--s-7);
+      padding-inline: var(--s-6) 0;
+      gap: var(--s-2);
+    }
+    .tl__item:last-child {
+      padding-block-end: 0;
+    }
+    .tl__item::before {
+      top: 0.6rem;
+      inset-inline-start: -4px;
+    }
+  }
+</style>

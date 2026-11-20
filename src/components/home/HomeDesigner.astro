@@ -1,0 +1,311 @@
+---
+import { home } from '../../i18n/home.ts';
+import { localizePath, type Locale } from '../../i18n/config.ts';
+import { cityCount, stringMatrix as m } from '../company/facts.ts';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = home[locale].designer;
+
+type State = 'ok' | 'warn' | 'bad' | 'selected';
+const stateOf = (strings: number, series: number): State =>
+  strings > 1 ? 'bad' : series === m.selected ? 'selected' : m.firstRow[series];
+
+const panels = m.mppts * m.selected;
+const kwp = ((panels * m.power) / 1000).toFixed(2);
+const legend: State[] = ['ok', 'warn', 'bad', 'selected'];
+---
+
+<section class="dz theme-dark section" aria-labelledby="dz-title">
+  <div class="container dz__grid">
+    <div class="dz__copy">
+      <p class="eyebrow eyebrow--dot">{t.eyebrow}</p>
+      <h2 id="dz-title" class="h2 dz__title">{t.title}</h2>
+      <p class="dz__text">{t.text(cityCount)}</p>
+      <a class="btn btn--sun" href={localizePath('/designer/', locale)}>{t.cta}</a>
+    </div>
+
+    <figure class="dz__figure">
+      <figcaption class="dz__caption">
+        <span class="mono dz__models" dir="ltr">{m.panel} <span aria-hidden="true">→</span> {m.inverter}</span>
+        <span class="dz__setup">{t.matrix.caption}</span>
+      </figcaption>
+
+      <div class="dz__scroll">
+        <table class="mx" dir="ltr" data-matrix>
+          <thead>
+            <tr>
+              <td></td>
+              <th scope="col" colspan={m.series.length} class="mx__axis" dir="auto">{t.matrix.series}</th>
+            </tr>
+            <tr>
+              <th scope="col" class="mx__axis mx__corner" dir="auto">{t.matrix.strings}</th>
+              {m.series.map((n) => <th scope="col" class="mx__head num">{n}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {
+              m.strings.map((s) => (
+                <tr>
+                  <th scope="row" class="mx__head num">{s}</th>
+                  {m.series.map((n) => {
+                    const state = stateOf(s, n);
+                    return (
+                      <td class:list={['mx__cell', `mx__cell--${state}`]} data-cell={s === 1 ? 'lead' : 'rest'}>
+                        <span class="num">{m.power * n * s}</span>
+                        <span class="sr-only">{t.matrix.states[state]}</span>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="dz__foot">
+        <ul class="dz__legend" role="list">
+          {
+            legend.map((state) => (
+              <li>
+                <span class:list={['dz__swatch', `dz__swatch--${state}`]} aria-hidden="true" />
+                {t.matrix.legend[state]}
+              </li>
+            ))
+          }
+        </ul>
+        <p class="dz__total mono">{t.matrix.total(panels, kwp)} <span class="dz__unit">· {t.matrix.unit}</span></p>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .dz__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: center;
+    gap: var(--s-8) clamp(var(--s-7), 7vw, var(--s-11));
+  }
+  .dz__copy {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-5);
+  }
+  .dz__title {
+    max-width: 14ch;
+  }
+  :global([dir='rtl']) .dz__title {
+    max-width: none;
+  }
+  .dz__text {
+    max-width: 44ch;
+    color: var(--muted-inv);
+  }
+  .dz__copy .btn {
+    margin-block-start: var(--s-3);
+  }
+
+  .dz__figure {
+    display: grid;
+    gap: var(--s-5);
+    padding: clamp(var(--s-5), 3vw, var(--s-7));
+    border: 1px solid var(--line-inv);
+    border-radius: var(--r-2);
+    background: var(--ink-2);
+  }
+  .dz__caption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s-2) var(--s-5);
+    padding-block-end: var(--s-4);
+    border-bottom: 1px solid var(--line-inv);
+    font-size: 0.8125rem;
+    color: var(--muted-inv);
+  }
+  .dz__models {
+    color: var(--paper);
+    font-size: 0.875rem;
+  }
+
+  .dz__scroll {
+    overflow-x: auto;
+  }
+  .mx {
+    width: 100%;
+    min-width: 17rem;
+    border-collapse: separate;
+    border-spacing: 6px;
+    table-layout: fixed;
+  }
+  .mx__axis {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-inv);
+    text-align: center;
+  }
+  :global([dir='rtl']) .mx__axis {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .mx__corner {
+    width: 5.5rem;
+    text-align: start;
+    vertical-align: bottom;
+  }
+  .mx__head {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--paper);
+    text-align: center;
+    padding-block: var(--s-1);
+  }
+  tbody .mx__head {
+    text-align: start;
+    padding-inline-start: var(--s-1);
+  }
+  .mx__cell {
+    height: 3.25rem;
+    border: 1px solid;
+    border-radius: var(--r-1);
+    text-align: center;
+    font-size: 0.875rem;
+    transition:
+      background-color 420ms var(--ease),
+      border-color 420ms var(--ease),
+      color 420ms var(--ease);
+  }
+  .mx__cell--ok {
+    background: rgb(46 158 106 / 0.16);
+    border-color: rgb(46 158 106 / 0.8);
+    color: var(--paper);
+  }
+  .mx__cell--warn {
+    background: rgb(227 155 45 / 0.16);
+    border-color: rgb(227 155 45 / 0.8);
+    color: var(--paper);
+  }
+  .mx__cell--bad {
+    background: transparent;
+    border-color: var(--line-inv);
+    color: var(--muted-inv);
+  }
+  .mx__cell--selected {
+    background: var(--sun);
+    border-color: var(--sun);
+    color: var(--sun-ink);
+    font-weight: 500;
+  }
+  .mx.is-armed .mx__cell:not(.is-lit) {
+    background: transparent;
+    border-color: rgb(255 255 255 / 0.08);
+    color: rgb(255 255 255 / 0.18);
+  }
+  .mx.is-armed .mx__cell--selected.is-lit:not(.is-picked) {
+    background: rgb(46 158 106 / 0.16);
+    border-color: rgb(46 158 106 / 0.8);
+    color: var(--paper);
+  }
+
+  .dz__foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--s-4) var(--s-6);
+  }
+  .dz__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-5);
+    font-size: 0.8125rem;
+    color: var(--muted-inv);
+  }
+  .dz__legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+  }
+  .dz__swatch {
+    width: 10px;
+    height: 10px;
+    border: 1px solid;
+    border-radius: 1px;
+  }
+  .dz__swatch--ok {
+    background: rgb(46 158 106 / 0.35);
+    border-color: var(--ok);
+  }
+  .dz__swatch--warn {
+    background: rgb(227 155 45 / 0.35);
+    border-color: var(--warn);
+  }
+  .dz__swatch--bad {
+    border-color: var(--line-inv-strong);
+  }
+  .dz__swatch--selected {
+    background: var(--sun);
+    border-color: var(--sun);
+  }
+  .dz__total {
+    font-size: 0.8125rem;
+    color: var(--paper);
+  }
+  .dz__unit {
+    color: var(--muted-inv);
+  }
+
+  @media (max-width: 900px) {
+    .dz__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .dz__figure {
+      padding: var(--s-4);
+    }
+    .mx {
+      border-spacing: 3px;
+    }
+    .mx__corner {
+      width: 3.75rem;
+    }
+    .mx__cell {
+      height: 2.75rem;
+      font-size: 0.6875rem;
+    }
+    .mx__head {
+      font-size: 0.75rem;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduceMotion } from '../../lib/motion/init.ts';
+
+  const table = document.querySelector<HTMLElement>('[data-matrix]');
+  if (table && !reduceMotion) {
+    const lead = [...table.querySelectorAll<HTMLElement>('[data-cell="lead"]')];
+    const rest = [...table.querySelectorAll<HTMLElement>('[data-cell="rest"]')];
+    const selected = table.querySelector<HTMLElement>('.mx__cell--selected');
+    const light = (el: HTMLElement) => el.classList.add('is-lit');
+    const tl = gsap.timeline({ paused: true });
+    lead.forEach((el, i) => tl.call(light, [el], 0.1 + i * 0.16));
+    rest.forEach((el, i) => tl.call(light, [el], 0.1 + lead.length * 0.16 + Math.floor(i / 5) * 0.1 + (i % 5) * 0.03));
+    if (selected) tl.call(() => selected.classList.add('is-picked'), [], '+=0.35');
+    ScrollTrigger.create({ trigger: table, start: 'top bottom', once: true, onEnter: () => table.classList.add('is-armed') });
+    ScrollTrigger.create({ trigger: table, start: 'top 80%', once: true, onEnter: () => tl.play() });
+  }
+</script>

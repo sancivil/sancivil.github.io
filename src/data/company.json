@@ -1,0 +1,56 @@
+{
+  "name": "Faraday",
+  "legalName": "Faraday Co",
+  "brandVariants": ["Faraday Company", "Faraday®", "Faradayelect ®", "Faraday Iraq"],
+  "taglines": [
+    "RENEWABLE ENERGY FOR EVERYONE",
+    "WE INSTALL A Sustainable Future"
+  ],
+  "metaDescription": "Faraday Company : The Exclusive agent of Italian Peimar Company in Iraq",
+  "founded": null,
+  "copyrightYear": 2017,
+  "exclusiveAgentOf": "Peimar",
+  "address": {
+    "street": "Qasmlu Street",
+    "city": "Sulaymaniyah",
+    "country": "Iraq",
+    "postalCode": "46001"
+  },
+  "phones": ["+(964) 7736989694"],
+  "phoneHref": "tel:+9647736989694",
+  "email": "info@faradayiq.com",
+  "whatsapp": null,
+  "social": {
+    "facebook": "https://www.facebook.com/102574992430776",
+    "instagram": null,
+    "linkedin": null,
+    "telegram": null,
+    "youtube": null
+  },
+  "hours": [
+    { "days": "Saturday", "open": "08:00", "close": "17:00" },
+    { "days": "Sunday", "open": "08:00", "close": "17:00" },
+    { "days": "Monday", "open": "08:00", "close": "17:00" },
+    { "days": "Tuesday", "open": "08:00", "close": "17:00" },
+    { "days": "Wednesday", "open": "08:00", "close": "17:00" },
+    { "days": "Thursday", "open": "08:00", "close": "17:00" },
+    { "days": "Friday", "open": null, "close": null, "closed": true }
+  ],
+  "mapsQuery": "46001 Qasimlu Street, Sulaymaniyah",
+  "about": [
+    "Faraday Company : The Exclusive agent of Italian Peimar Company in Iraq",
+    "Faraday® aims to support our energy needs with new technologies for a humanitarian future and contribute to the world economy.",
+    "Faraday® aims to promote the use of solar energy by pioneering new technologies to satisfy the energy needs of the planet we live in through clean resources."
+  ],
+  "mission": "Faraday Company ® aims to promote the use of solar energy by pioneering new technologies to meet the energy needs of our planet with clean resources, support a sustainable future, contribute to the world economy and leave a livable nature to future generations.",
+  "highlights": ["Easy Installation", "Low Installation Costs", "High Efficiency Products", "Latest Technology", "German Engineering"],
+  "productCategories": ["Solar Panel", "Inverter", "Accessories", "Solar Solutions"],
+  "logo": "/images/legacy/faraday-logo-legacy.png",
+  "logoMark": "/images/legacy/faraday-mark-legacy.png",
+  "sources": [
+    "https://web.archive.org/web/20260215170449/https://faradayiq.com/",
+    "https://web.archive.org/web/20250317022543/https://faradayiq.com/about-us/",
+    "https://web.archive.org/web/20250210194835/https://faradayiq.com/contact/",
+    "https://web.archive.org/web/20250513195512/https://faradayiq.com/products/"
+  ]
+}

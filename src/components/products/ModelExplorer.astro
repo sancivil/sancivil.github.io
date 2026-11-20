@@ -1,0 +1,389 @@
+---
+import SpecList, { type SpecRow } from './SpecList.astro';
+import DocList from './DocList.astro';
+import { datasheetsFor, docItem, panelName, pct, signed, type Panel, type Series } from './data.ts';
+import { specFromPanel } from '../../lib/three/types.ts';
+import { whatsappLink } from '../../data/site.ts';
+import { localizePath } from '../../i18n/config.ts';
+import type { Locale } from '../../i18n/config.ts';
+import { products } from '../../i18n/products.ts';
+
+interface Props {
+  locale: Locale;
+  series: Series;
+  panels: Panel[];
+  initial: Panel;
+}
+const { locale, series, panels, initial } = Astro.props;
+const t = products[locale];
+const s = t.seriesPage;
+
+const values = (p: Panel) => ({
+  name: panelName(p),
+  pmax: String(p.power),
+  vmp: p.vmp.toFixed(2),
+  imp: p.imp.toFixed(2),
+  voc: p.voc.toFixed(2),
+  isc: p.isc.toFixed(2),
+  eff: p.efficiency === null ? '—' : pct(p.efficiency),
+  ctPmax: signed(p.ctPmax),
+  ctVoc: signed(p.ctVoc),
+  ctIsc: signed(p.ctIsc),
+  dims: `${p.height} × ${p.width} × ${p.depth}`,
+  weight: String(p.weight),
+  cells: String(p.cellQuantity),
+  cut: p.cellFullness === 'half' ? s.cut.half : s.cut.full,
+  cellType: p.cellType === 'poly' ? s.cellType.poly : s.cellType.mono,
+  bifacial: specFromPanel(p).bifacial ? t.yes : t.no,
+  vdcMax: String(p.vdcMax),
+  fuse: String(p.imaxFuse),
+  ip: p.protectionClass,
+});
+type Values = ReturnType<typeof values>;
+
+const v = values(initial);
+const fig = (label: string, key: keyof Values, unit?: string): SpecRow => ({ label, value: v[key], unit, hook: key });
+const txt = (label: string, key: keyof Values): SpecRow => ({ label, text: v[key], textHook: key });
+
+const groups: { title: string; rows: SpecRow[] }[] = [
+  {
+    title: s.group.electrical,
+    rows: [
+      fig(s.row.pmax, 'pmax', 'W'),
+      fig(s.row.vmp, 'vmp', 'V'),
+      fig(s.row.imp, 'imp', 'A'),
+      fig(s.row.voc, 'voc', 'V'),
+      fig(s.row.isc, 'isc', 'A'),
+      fig(s.row.efficiency, 'eff', '%'),
+    ],
+  },
+  {
+    title: s.group.temperature,
+    rows: [fig(s.row.ctPmax, 'ctPmax', '%/°C'), fig(s.row.ctVoc, 'ctVoc', '%/°C'), fig(s.row.ctIsc, 'ctIsc', '%/°C')],
+  },
+  {
+    title: s.group.mechanical,
+    rows: [
+      fig(s.row.dimensions, 'dims', 'mm'),
+      fig(s.row.weight, 'weight', 'kg'),
+      { label: s.row.cells, value: v.cells, hook: 'cells', text: v.cut, textHook: 'cut' },
+      txt(s.row.cellType, 'cellType'),
+      txt(s.row.bifacial, 'bifacial'),
+      fig(s.row.vdcMax, 'vdcMax', 'V'),
+      fig(s.row.fuse, 'fuse', 'A'),
+      fig(s.row.protection, 'ip'),
+    ],
+  },
+];
+
+const models = panels.map((p) => ({
+  id: p.id,
+  k: values(p),
+  spec: specFromPanel(p),
+  designer: localizePath(`/designer/?module=${encodeURIComponent(p.id)}`, locale),
+  quote: whatsappLink(t.quoteMessage(panelName(p))),
+}));
+
+const sheets = panels.flatMap((p) =>
+  datasheetsFor(series, panelName(p)).map((doc) => ({ ...docItem(doc), for: p.id, hidden: p.id !== initial.id })),
+);
+const json = JSON.stringify(models).replace(/</g, '\\u003c');
+---
+
+<div class="explorer" data-explorer data-status-template={s.status('{model}')}>
+  <fieldset class="picker">
+    <legend class="picker__legend">{s.pick}</legend>
+    <div class="picker__list">
+      {
+        panels.map((p) => (
+          <label class="chip">
+            <input type="radio" name="model" value={p.id} checked={p.id === initial.id} />
+            <span class="chip__box">
+              <span class="chip__w num">{p.power} W</span>
+              <bdi class="chip__code">{panelName(p)}</bdi>
+            </span>
+          </label>
+        ))
+      }
+    </div>
+  </fieldset>
+
+  <div class="explorer__actions">
+    <a class="btn btn--sun" href={models.find((m) => m.id === initial.id)!.designer} data-designer>{s.designWith}</a>
+    <a class="btn btn--line" href={models.find((m) => m.id === initial.id)!.quote} target="_blank" rel="noopener" data-quote>
+      {t.quote}<span class="sr-only">{t.newTab}</span>
+    </a>
+  </div>
+
+  <section class="specs" aria-labelledby="specs-title">
+    <h2 id="specs-title" class="specs__title">
+      <span>{s.specs}</span>
+      <span class="specs__model" data-k="name" dir="ltr">{v.name}</span>
+    </h2>
+    <p class="sr-only" aria-live="polite" data-status></p>
+    <div class="specs__groups">
+      {
+        groups.map((g) => (
+          <div class="specs__group">
+            <h3 class="specs__group-title">{g.title}</h3>
+            <SpecList rows={g.rows} />
+          </div>
+        ))
+      }
+    </div>
+    {
+      sheets.length > 0 && (
+        <div class="specs__docs">
+          <h3 class="specs__group-title">{t.label.datasheet}</h3>
+          <DocList locale={locale} items={sheets} />
+        </div>
+      )
+    }
+  </section>
+
+  <script type="application/json" data-models set:html={json} />
+</div>
+
+<style>
+  .explorer {
+    display: grid;
+    gap: var(--s-6);
+  }
+  .picker {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .picker__legend {
+    margin-bottom: var(--s-3);
+    padding: 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-c);
+  }
+  :global([dir='rtl']) .picker__legend {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .picker__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+    gap: 6px;
+  }
+  .chip {
+    position: relative;
+    display: grid;
+  }
+  .chip input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .chip__box {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: 2px;
+    min-height: 52px;
+    padding: 6px var(--s-3);
+    border: 1px solid var(--line-c-strong);
+    border-radius: var(--r-1);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    transition:
+      background-color var(--dur-1) var(--ease),
+      border-color var(--dur-1) var(--ease),
+      color var(--dur-1) var(--ease);
+  }
+  .chip__w {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+  .chip__code {
+    font-size: 0.6875rem;
+    color: var(--muted-c);
+  }
+  .chip:hover .chip__box {
+    border-color: var(--ink);
+  }
+  .chip input:checked + .chip__box {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+  .chip input:checked + .chip__box .chip__code {
+    color: var(--muted-inv);
+  }
+  .chip input:checked + .chip__box .chip__w::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--sun);
+  }
+  .chip input:focus-visible + .chip__box {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+
+  .explorer__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+
+  .specs {
+    display: grid;
+    gap: var(--s-5);
+    margin-top: var(--s-4);
+  }
+  .specs__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s-2) var(--s-4);
+    font-size: clamp(1.375rem, 1rem + 0.9vw, 1.75rem);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+  }
+  :global([dir='rtl']) .specs__title {
+    letter-spacing: 0;
+    line-height: 1.5;
+  }
+  .specs__model {
+    font-family: var(--font-mono);
+    font-size: 0.75em;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--muted-c);
+  }
+  .specs__groups {
+    display: grid;
+    gap: var(--s-6);
+  }
+  .specs__group,
+  .specs__docs {
+    display: grid;
+    align-content: start;
+    gap: var(--s-3);
+  }
+  .specs__group-title {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-c);
+  }
+  :global([dir='rtl']) .specs__group-title {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  @media (min-width: 721px) and (max-width: 900px) {
+    .specs__groups {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--gap);
+    }
+    .specs__group:last-child {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+  }
+  @media (max-width: 720px) {
+    .picker__list {
+      display: flex;
+      overflow-x: auto;
+      margin-inline: calc(var(--gutter) * -1);
+      padding-inline: var(--gutter);
+      padding-bottom: var(--s-1);
+      scroll-snap-type: x proximity;
+      scroll-padding-inline: var(--gutter);
+      scrollbar-width: none;
+    }
+    .picker__list::-webkit-scrollbar {
+      display: none;
+    }
+    .chip {
+      flex: none;
+      scroll-snap-align: start;
+    }
+    .explorer__actions .btn {
+      flex: 1 1 100%;
+    }
+  }
+</style>
+
+<script>
+  interface Model {
+    id: string;
+    k: Record<string, string>;
+    spec: unknown;
+    designer: string;
+    quote: string;
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-explorer]').forEach((root) => {
+    const models: Model[] = JSON.parse(root.querySelector('[data-models]')?.textContent ?? '[]');
+    const byId = new Map(models.map((m) => [m.id, m]));
+    const viewer = document.querySelector('pv-module-viewer');
+    const status = root.querySelector('[data-status]');
+    const designer = root.querySelector<HTMLAnchorElement>('[data-designer]');
+    const quote = root.querySelector<HTMLAnchorElement>('[data-quote]');
+    const template = root.dataset.statusTemplate ?? '{model}';
+
+    const select = (id: string, announce: boolean) => {
+      const model = byId.get(id);
+      if (!model) return;
+      for (const [key, value] of Object.entries(model.k)) {
+        root.querySelectorAll(`[data-k="${key}"]`).forEach((el) => (el.textContent = value));
+      }
+      root.querySelectorAll<HTMLElement>('[data-for]').forEach((el) => (el.hidden = el.dataset.for !== id));
+      if (designer) designer.href = model.designer;
+      if (quote) quote.href = model.quote;
+      viewer?.setAttribute('data-spec', JSON.stringify(model.spec));
+      if (announce && status) status.textContent = template.replace('{model}', model.k.name);
+      const url = new URL(location.href);
+      url.searchParams.set('model', id);
+      history.replaceState(history.state, '', url);
+    };
+
+    root.addEventListener('change', (event) => {
+      const input = event.target as HTMLInputElement;
+      if (input.name === 'model') select(input.value, true);
+    });
+
+    const requested = new URLSearchParams(location.search).get('model');
+    if (requested && byId.has(requested)) {
+      const input = root.querySelector<HTMLInputElement>(`input[name="model"][value="${CSS.escape(requested)}"]`);
+      if (input && !input.checked) {
+        input.checked = true;
+        select(requested, false);
+      }
+    }
+
+    /* On phones the chips scroll sideways: bring the selected one into view without moving the page. */
+    const list = root.querySelector<HTMLElement>('.picker__list');
+    const chip = root.querySelector<HTMLInputElement>('input[name="model"]:checked')?.parentElement;
+    if (list && chip && list.scrollWidth > list.clientWidth) {
+      const box = list.getBoundingClientRect();
+      const rect = chip.getBoundingClientRect();
+      list.scrollBy({ left: rect.left - box.left - (box.width - rect.width) / 2 });
+    }
+  });
+</script>

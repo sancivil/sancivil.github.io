@@ -1,0 +1,188 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import PageIntro from '../../../../components/products/PageIntro.astro';
+import Stats from '../../../../components/products/Stats.astro';
+import SeriesList from '../../../../components/products/SeriesList.astro';
+import { moduleEfficiency, modulePower, modules, pct, seriesTraits, type Trait } from '../../../../components/products/data.ts';
+import { localeFromParam, localeParams } from '../../../../i18n/config.ts';
+import { common } from '../../../../i18n/common.ts';
+import { products } from '../../../../i18n/products.ts';
+import { catalogText } from '../../../../i18n/catalog-text.ts';
+
+export const getStaticPaths = () => localeParams();
+const locale = localeFromParam(Astro.params.locale);
+const t = products[locale];
+const p = t.modulesPage;
+const nav = common[locale];
+
+const powerYears = Math.min(...modules.map((s) => s.warranty.power));
+const order: Trait[] = ['italy', 'topcon', 'perc', 'bifacial', 'coloured'];
+const traits = order.filter((trait) => modules.some((s) => seriesTraits(s).includes(trait)));
+---
+
+<Base title={p.title} description={p.description}>
+  <PageIntro
+    locale={locale}
+    crumbs={[{ label: nav.nav.products, href: '/products/' }, { label: nav.productNav.modules }]}
+    eyebrow={p.eyebrow}
+    title={nav.productNav.modules}
+    lead={catalogText[locale].categories.modules}
+    display
+  >
+    <Stats
+      items={[
+        { label: p.stat.power, value: [String(modulePower[0]), String(modulePower[1])], unit: 'W' },
+        { label: p.stat.efficiency, value: pct(moduleEfficiency), unit: '%', count: true },
+        { label: p.stat.warranty, value: String(powerYears), word: t.years(powerYears) },
+      ]}
+    />
+  </PageIntro>
+
+  <section class="section catalog" aria-labelledby="series-title">
+    <div class="container">
+      <div class="catalog__bar">
+        <h2 id="series-title" class="catalog__title">{p.listTitle}</h2>
+        <fieldset class="filter" data-filter hidden>
+          <legend class="sr-only">{p.filterLegend}</legend>
+          <label class="filter__option">
+            <input type="radio" name="series-filter" value="all" checked />
+            <span>{p.filter.all}</span>
+          </label>
+          {
+            traits.map((trait) => (
+              <label class="filter__option">
+                <input type="radio" name="series-filter" value={trait} />
+                <span>{p.filter[trait]}</span>
+              </label>
+            ))
+          }
+        </fieldset>
+        <p class="catalog__status" aria-live="polite" data-filter-status data-template={p.showing('{n}', modules.length)}>
+        </p>
+      </div>
+      <SeriesList locale={locale} series={modules} />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .catalog {
+    padding-block-start: clamp(40px, 6vw, 80px);
+  }
+  .catalog__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4) var(--gap);
+    margin-bottom: var(--s-5);
+  }
+  .catalog__title {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  :global([dir='rtl']) .catalog__title {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .catalog__status {
+    flex-basis: 100%;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .catalog__status:empty {
+    display: none;
+  }
+  .filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .filter__option {
+    position: relative;
+    display: block;
+  }
+  .filter__option input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .filter__option span {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 44px;
+    padding: 0 var(--s-4);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition:
+      background-color var(--dur-1) var(--ease),
+      border-color var(--dur-1) var(--ease),
+      color var(--dur-1) var(--ease);
+  }
+  .filter__option:hover span {
+    border-color: var(--ink);
+  }
+  .filter__option input:checked + span {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+  .filter__option input:focus-visible + span {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+  @media (max-width: 720px) {
+    .filter {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      width: calc(100% + 2 * var(--gutter));
+      margin-inline: calc(var(--gutter) * -1);
+      padding-inline: var(--gutter);
+      scrollbar-width: none;
+    }
+    .filter::-webkit-scrollbar {
+      display: none;
+    }
+    .filter__option {
+      flex: none;
+    }
+  }
+</style>
+
+<script>
+  const filter = document.querySelector<HTMLFieldSetElement>('[data-filter]');
+  const status = document.querySelector<HTMLElement>('[data-filter-status]');
+  if (filter && status) {
+    const rows = [...document.querySelectorAll<HTMLElement>('[data-traits]')];
+    filter.hidden = false;
+    filter.addEventListener('change', (event) => {
+      const value = (event.target as HTMLInputElement).value;
+      let shown = 0;
+      for (const row of rows) {
+        const match = value === 'all' || (row.dataset.traits ?? '').split(' ').includes(value);
+        row.hidden = !match;
+        if (match) shown++;
+      }
+      status.textContent = value === 'all' ? '' : (status.dataset.template ?? '').replace('{n}', String(shown));
+    });
+  }
+</script>

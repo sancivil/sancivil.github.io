@@ -1,0 +1,307 @@
+---
+import ModuleDrawing from './ModuleDrawing.astro';
+import Figure from './Figure.astro';
+import { drawingBox, largestPanel, pad2, panelName, pct, seriesTraits, type Series } from './data.ts';
+import { specFromPanel } from '../../lib/three/types.ts';
+import { localizePath } from '../../i18n/config.ts';
+import type { Locale } from '../../i18n/config.ts';
+import { products } from '../../i18n/products.ts';
+import { seriesText } from '../../i18n/catalog-text.ts';
+
+interface Props {
+  locale: Locale;
+  series: Series[];
+  /** Short rows (name, power, efficiency) for "related" lists. */
+  compact?: boolean;
+  headingLevel?: 'h2' | 'h3';
+}
+const { locale, series, compact = false, headingLevel = 'h2' } = Astro.props;
+const t = products[locale];
+const Heading = headingLevel;
+
+const rows = series.map((s) => {
+  const text = seriesText(locale, s.slug);
+  const big = largestPanel(s);
+  return {
+    s,
+    text,
+    traits: seriesTraits(s).join(' '),
+    big,
+    spec: specFromPanel(big),
+    href: localizePath(`/products/modules/${s.slug}/`, locale),
+  };
+});
+---
+
+<ol role="list" class:list={['series', { 'series--compact': compact }]}>
+  {
+    rows.map((row, i) => (
+      <li class="row" data-traits={row.traits}>
+        <figure class="row__figure">
+          <div class="row__well" data-reveal="clip">
+            <ModuleDrawing spec={row.spec} box={drawingBox} />
+          </div>
+          {!compact && (
+            <figcaption class="row__caption">
+              <bdi>
+                {panelName(row.big)} · {row.big.height} × {row.big.width} mm
+              </bdi>
+            </figcaption>
+          )}
+        </figure>
+
+        <div class="row__main">
+          <span class="row__index mono">{pad2(i)}</span>
+          <Heading class:list={[compact ? 'h3' : 'h2', 'row__name']}>
+            <a class="row__link" href={row.href} dir="ltr">
+              {row.s.name}
+            </a>
+          </Heading>
+          {row.text && <p class="row__tagline">{row.text.tagline}</p>}
+          {!compact && row.text && row.text.technology.length > 0 && (
+            <ul role="list" class="row__tags">
+              {row.text.technology.map((tech) => (
+                <li class="tag">{tech}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <dl class="row__facts">
+          <div>
+            <dt>{t.label.power}</dt>
+            <dd>
+              <Figure value={[String(row.s.powerRange[0]), String(row.s.powerRange[1])]} unit="W" />
+            </dd>
+          </div>
+          <div>
+            <dt>{t.label.maxEfficiency}</dt>
+            <dd>
+              <Figure value={pct(row.s.efficiencyMax)} unit="%" />
+            </dd>
+          </div>
+          {!compact && (
+            <>
+              <div>
+                <dt>{t.label.productWarranty}</dt>
+                <dd>
+                  <Figure value={String(row.s.warranty.product)} word={t.years(row.s.warranty.product)} />
+                </dd>
+              </div>
+              <div>
+                <dt>{t.label.powerWarranty}</dt>
+                <dd>
+                  <Figure value={String(row.s.warranty.power)} word={t.years(row.s.warranty.power)} />
+                </dd>
+              </div>
+              <div class="row__meta">
+                <dt>{t.label.models}</dt>
+                <dd class="row__meta-value">{t.count.models(row.s.models.length)}</dd>
+              </div>
+              {row.s.finishes.length > 0 && (
+                <div class="row__meta">
+                  <dt>{t.label.finishes}</dt>
+                  <dd class="row__meta-value row__finishes">
+                    {row.s.finishes.map((f) => (
+                      <bdi>{f.label ? `${f.code} ${f.label}` : f.code}</bdi>
+                    ))}
+                  </dd>
+                </div>
+              )}
+            </>
+          )}
+        </dl>
+
+        <span class="row__arrow" aria-hidden="true" />
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .series {
+    border-top: 1px solid var(--line-c);
+  }
+  .row {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 5fr) minmax(0, 4fr) 2rem;
+    align-items: start;
+    gap: var(--s-6) var(--gap);
+    padding-block: var(--s-6);
+    border-bottom: 1px solid var(--line-c);
+  }
+  .row[hidden] {
+    display: none;
+  }
+  .row__figure {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .row__well {
+    aspect-ratio: 1;
+    padding: 10% 12%;
+    background: var(--paper-2);
+    border-radius: var(--r-2);
+    transition: background-color var(--dur-2) var(--ease);
+  }
+  .row:hover .row__well {
+    background: var(--paper-3);
+  }
+  .row__caption {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+    color: var(--muted-c);
+  }
+  .row__main {
+    display: grid;
+    justify-items: start;
+    align-content: start;
+    gap: var(--s-3);
+  }
+  .row__index {
+    font-size: 0.75rem;
+    color: var(--muted-c);
+  }
+  .row__name {
+    font-family: var(--font-sans);
+  }
+  .row__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .row__link:focus-visible {
+    outline: none;
+  }
+  .row:has(.row__link:focus-visible) {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+  }
+  .row__tagline {
+    font-size: 1.0625rem;
+    color: var(--muted-c);
+  }
+  .row__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    margin-top: var(--s-2);
+  }
+  .row__tags .tag {
+    height: auto;
+    min-height: 26px;
+    padding-block: 3px;
+    white-space: normal;
+  }
+  .row__facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-5) var(--s-5);
+    padding-top: var(--s-2);
+  }
+  dt {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted-c);
+  }
+  :global([dir='rtl']) dt {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  dd {
+    margin-top: var(--s-1);
+    font-size: clamp(1.25rem, 1.6vw, 1.5rem);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .row__meta-value {
+    font-size: 0.875rem;
+    font-weight: 400;
+    white-space: normal;
+  }
+  .row__finishes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px var(--s-3);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+  }
+  .row__arrow {
+    justify-self: end;
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    transition: transform var(--dur-2) var(--ease);
+  }
+  .row__arrow::after {
+    content: '→';
+  }
+  :global([dir='rtl']) .row__arrow::after {
+    content: '←';
+  }
+  .row:hover .row__arrow {
+    transform: translateX(6px);
+  }
+  :global([dir='rtl']) .row:hover .row__arrow {
+    transform: translateX(-6px);
+  }
+
+  .series--compact .row {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 6fr) minmax(0, 4fr) 2rem;
+    align-items: center;
+    padding-block: var(--s-5);
+  }
+  .series--compact .row__well {
+    padding: 8% 10%;
+  }
+
+  @media (max-width: 1080px) {
+    .row,
+    .series--compact .row {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 7fr) 2rem;
+      row-gap: var(--s-5);
+    }
+    .row__figure {
+      grid-row: span 2;
+    }
+    .row__facts {
+      grid-column: 2;
+    }
+    .row__arrow {
+      grid-column: 3;
+      grid-row: 1;
+    }
+  }
+  @media (max-width: 720px) {
+    .row,
+    .series--compact .row {
+      grid-template-columns: 104px minmax(0, 1fr) 1.25rem;
+      column-gap: var(--s-4);
+      padding-block: var(--s-5);
+    }
+    .row__figure {
+      grid-row: auto;
+    }
+    .row__caption {
+      display: none;
+    }
+    .row__facts {
+      grid-column: 1 / -1;
+      gap: var(--s-4);
+    }
+    .row__arrow {
+      font-size: 1rem;
+    }
+    .row__name {
+      font-size: 1.625rem;
+    }
+    .row__tagline {
+      font-size: 0.9375rem;
+    }
+  }
+</style>

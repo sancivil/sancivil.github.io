@@ -1,0 +1,75 @@
+---
+import Figure from './Figure.astro';
+
+export interface SpecRow {
+  label: string;
+  /** A figure, set in mono with its Latin unit. */
+  value?: string | [string, string];
+  unit?: string;
+  /** Translated text, after the figure or on its own. */
+  text?: string;
+  /** Switching hooks (data-k) for the model picker. */
+  hook?: string;
+  textHook?: string;
+}
+interface Props {
+  rows: SpecRow[];
+  class?: string;
+}
+const { rows, class: className } = Astro.props;
+---
+
+<dl class:list={['spec', className]}>
+  {
+    rows.map((row) => (
+      <div class="spec__row">
+        <dt>{row.label}</dt>
+        <dd>
+          {row.value !== undefined && <Figure value={row.value} unit={row.unit} hook={row.hook} />}
+          {row.text !== undefined && (
+            <span class="spec__text" data-k={row.textHook}>
+              {row.text}
+            </span>
+          )}
+        </dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .spec {
+    border-top: 1px solid var(--line-c);
+  }
+  .spec__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: var(--s-4);
+    padding-block: 0.8rem;
+    border-bottom: 1px solid var(--line-c);
+    font-size: 0.9375rem;
+  }
+  dt {
+    color: var(--muted-c);
+  }
+  dd {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: baseline;
+    gap: 0.4em;
+    max-width: 30ch;
+    text-align: end;
+    text-wrap: pretty;
+  }
+  dd :global(.num) {
+    white-space: nowrap;
+  }
+  /* At table size the global 0.6em unit drops to 9px; keep it readable and quieter than the figure. */
+  dd :global(.unit) {
+    margin-inline-start: 0.3em;
+    font-size: 0.8em;
+    color: var(--muted-c);
+  }
+</style>

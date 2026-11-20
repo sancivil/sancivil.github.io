@@ -1,0 +1,186 @@
+---
+import Figure from './Figure.astro';
+import { headlineCapacity, pad2, type Battery } from './data.ts';
+import { localizePath } from '../../i18n/config.ts';
+import type { Locale } from '../../i18n/config.ts';
+import { products } from '../../i18n/products.ts';
+import { chemistryText, storageText } from '../../i18n/catalog-text.ts';
+
+interface Props {
+  locale: Locale;
+  batteries: Battery[];
+}
+const { locale, batteries } = Astro.props;
+const t = products[locale];
+
+const rows = batteries.map((b) => ({
+  b,
+  text: storageText(locale, b.slug),
+  capacity: headlineCapacity(b),
+  href: localizePath(`/products/storage/${b.slug}/`, locale),
+}));
+---
+
+<ol role="list" class="batteries">
+  {
+    rows.map((row, i) => (
+      <li class="battery">
+        <span class="battery__index mono">{pad2(i)}</span>
+        <div class="battery__main">
+          <h3 class="h3 battery__name">
+            <a class="battery__link" href={row.href}>
+              <bdi>{row.b.name}</bdi>
+            </a>
+          </h3>
+          {row.text && <p class="battery__family">{row.text.family}</p>}
+        </div>
+        <dl class="battery__facts">
+          {row.capacity && (
+            <div>
+              <dt>{t.label.capacity}</dt>
+              <dd>
+                <Figure value={row.capacity} unit="kWh" />
+              </dd>
+            </div>
+          )}
+          {row.b.chemistry && (
+            <div>
+              <dt>{t.label.chemistry}</dt>
+              <dd class="battery__chem">
+                <bdi>{chemistryText(locale, row.b.chemistry)}</bdi>
+              </dd>
+            </div>
+          )}
+          {row.b.warrantyYears && (
+            <div>
+              <dt>{t.label.warranty}</dt>
+              <dd>
+                <Figure value={String(row.b.warrantyYears)} word={t.years(row.b.warrantyYears)} />
+              </dd>
+            </div>
+          )}
+        </dl>
+        <span class="battery__arrow" aria-hidden="true" />
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .batteries {
+    border-top: 1px solid var(--line-c);
+  }
+  .battery {
+    position: relative;
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 6fr) minmax(0, 6fr) 2rem;
+    align-items: baseline;
+    gap: var(--s-3) var(--gap);
+    padding-block: var(--s-5);
+    border-bottom: 1px solid var(--line-c);
+    transition: background-color var(--dur-2) var(--ease);
+  }
+  .battery__index {
+    font-size: 0.75rem;
+    color: var(--muted-c);
+  }
+  .battery__main {
+    display: grid;
+    gap: var(--s-1);
+  }
+  .battery__name {
+    font-family: var(--font-sans);
+    overflow-wrap: anywhere;
+  }
+  .battery__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .battery__link:focus-visible {
+    outline: none;
+  }
+  .battery:has(.battery__link:focus-visible) {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+  }
+  .battery__family {
+    font-size: 0.9375rem;
+    color: var(--muted-c);
+  }
+  .battery__facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-4) var(--s-5);
+  }
+  dt {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted-c);
+  }
+  :global([dir='rtl']) dt {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  dd {
+    margin-top: var(--s-1);
+    font-size: 1.125rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .battery__chem {
+    font-size: 0.875rem;
+    font-weight: 400;
+    white-space: normal;
+  }
+  .battery__arrow {
+    justify-self: end;
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    transition: transform var(--dur-2) var(--ease);
+  }
+  .battery__arrow::after {
+    content: '→';
+  }
+  :global([dir='rtl']) .battery__arrow::after {
+    content: '←';
+  }
+  .battery:hover .battery__arrow {
+    transform: translateX(6px);
+  }
+  :global([dir='rtl']) .battery:hover .battery__arrow {
+    transform: translateX(-6px);
+  }
+
+  @media (max-width: 1080px) {
+    .battery {
+      grid-template-columns: 2.5rem minmax(0, 1fr) 2rem;
+    }
+    .battery__facts {
+      grid-column: 2;
+    }
+    .battery__arrow {
+      grid-column: 3;
+      grid-row: 1;
+    }
+  }
+  @media (max-width: 720px) {
+    .battery {
+      grid-template-columns: 1.75rem minmax(0, 1fr) 1.25rem;
+      column-gap: var(--s-3);
+    }
+    .battery__facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .battery__arrow {
+      font-size: 1rem;
+    }
+    dd {
+      font-size: 1rem;
+    }
+  }
+</style>

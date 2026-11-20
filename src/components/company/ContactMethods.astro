@@ -1,0 +1,163 @@
+---
+import { contact, whatsappLink } from '../../data/site.ts';
+import { common } from '../../i18n/common.ts';
+import { company } from '../../i18n/company.ts';
+import type { Locale } from '../../i18n/config.ts';
+import { officeHours } from './facts.ts';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = company[locale].methods;
+const address = common[locale].address;
+---
+
+<div class="cm">
+  <dl class="cm__main">
+    <div class="cm__item">
+      <dt class="eyebrow">{t.phone}</dt>
+      <dd><a class="cm__link cm__phone num" dir="ltr" href={contact.phoneHref}>{contact.phoneDisplay}</a></dd>
+    </div>
+    <div class="cm__item">
+      <dt class="eyebrow">{t.email}</dt>
+      <dd><a class="cm__link cm__email mono" dir="ltr" href={`mailto:${contact.email}`}>{contact.email}</a></dd>
+    </div>
+    <div class="cm__item">
+      <dt class="eyebrow">{t.whatsapp}</dt>
+      <dd>
+        <a class="btn btn--sun cm__wa" href={whatsappLink(t.whatsappText)} target="_blank" rel="noopener">
+          {t.whatsappCta}
+        </a>
+      </dd>
+    </div>
+  </dl>
+
+  <dl class="cm__side">
+    <div class="cm__item">
+      <dt class="eyebrow">{t.office}</dt>
+      <dd class="cm__stack">
+        <address class="cm__address">
+          {address.street}<br />{address.place}
+        </address>
+        <a class="link-arrow cm__maps" href={contact.mapsHref} target="_blank" rel="noopener">{t.maps}</a>
+      </dd>
+    </div>
+    <div class="cm__item">
+      <dt class="eyebrow">{t.hours}</dt>
+      <dd class="cm__hours">
+        <p><span>{t.days}</span> <span class="num">{officeHours}</span></p>
+        <p><span>{t.friday}</span> <span class="cm__closed">{t.closed}</span></p>
+      </dd>
+    </div>
+  </dl>
+</div>
+
+<style>
+  .cm {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: var(--s-8) var(--gap);
+  }
+  .cm__main,
+  .cm__side {
+    display: grid;
+    align-content: start;
+    gap: var(--s-7);
+  }
+  .cm__side {
+    border-inline-start: 1px solid var(--line-c);
+    padding-inline-start: var(--gap);
+  }
+  .cm__item {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: var(--s-3);
+  }
+  .cm__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    text-decoration-line: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+    transition: text-decoration-color var(--dur-2) var(--ease);
+  }
+  .cm__link:hover {
+    text-decoration-color: currentColor;
+  }
+  .cm__phone {
+    font-size: clamp(1.75rem, 0.9rem + 3.2vw, 3.75rem);
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+  }
+  .cm__email {
+    font-size: clamp(1.25rem, 0.9rem + 1.3vw, 2rem);
+    line-height: 1.3;
+  }
+  .cm__stack {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-3);
+  }
+  .cm__address {
+    font-style: normal;
+    font-size: 1.25rem;
+    line-height: 1.45;
+  }
+  .cm__maps {
+    min-height: 44px;
+  }
+  .cm__hours {
+    display: grid;
+    gap: var(--s-1);
+    font-size: 1.0625rem;
+  }
+  .cm__hours p {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--s-3);
+  }
+  .cm__hours .num {
+    white-space: nowrap;
+  }
+  .cm__closed {
+    color: var(--muted-c);
+  }
+
+  @media (max-width: 900px) {
+    .cm {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .cm__side {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--gap);
+      border-inline-start: 0;
+      padding-inline-start: 0;
+      border-top: 1px solid var(--line-c);
+      padding-block-start: var(--s-6);
+    }
+  }
+
+  @media (max-width: 720px) {
+    .cm__main {
+      gap: var(--s-6);
+    }
+    .cm__wa {
+      width: 100%;
+    }
+    .cm__item:has(.cm__wa) {
+      justify-items: stretch;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .cm__side {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--s-6);
+    }
+  }
+</style>

@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+import ModuleAnatomy from '../../components/three/ModuleAnatomy.astro';
+import HomeHero from '../../components/home/HomeHero.astro';
+import HomeCommitment from '../../components/home/HomeCommitment.astro';
+import HomeRange from '../../components/home/HomeRange.astro';
+import HomeDesigner from '../../components/home/HomeDesigner.astro';
+import HomeProjects from '../../components/home/HomeProjects.astro';
+import HomeWarranty from '../../components/home/HomeWarranty.astro';
+import HomeContact from '../../components/home/HomeContact.astro';
+import { heroSpec } from '../../components/company/facts.ts';
+import Faq from '../../components/seo/Faq.astro';
+import { siteFaq } from '../../lib/seo/facts.ts';
+import { faq } from '../../i18n/faq.ts';
+import { common } from '../../i18n/common.ts';
+import { localeFromParam, localeParams, localizePath } from '../../i18n/config.ts';
+import { home } from '../../i18n/home.ts';
+
+export const getStaticPaths = () => localeParams();
+
+const locale = localeFromParam(Astro.params.locale);
+const t = home[locale].meta;
+---
+
+<Base title={t.title} description={t.description}>
+  <HomeHero locale={locale} />
+  <HomeCommitment locale={locale} />
+  <ModuleAnatomy spec={heroSpec} />
+  <HomeRange locale={locale} />
+  <HomeDesigner locale={locale} />
+  <HomeProjects locale={locale} />
+  <HomeWarranty locale={locale} />
+  <Faq qas={siteFaq(locale).slice(0, 5)} heading={faq[locale].heading} eyebrow={faq[locale].eyebrow} id="faq" theme="light">
+    <a class="link-arrow" href={localizePath('/faq/', locale)}>{common[locale].footer.faq}</a>
+  </Faq>
+  <HomeContact locale={locale} />
+</Base>

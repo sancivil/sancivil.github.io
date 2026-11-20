@@ -1,0 +1,45 @@
+---
+import ContactMethods from '../company/ContactMethods.astro';
+import { home } from '../../i18n/home.ts';
+import { company } from '../../i18n/company.ts';
+import type { Locale } from '../../i18n/config.ts';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = home[locale].contact;
+---
+
+<section class="cb theme-dark section" aria-labelledby="cb-title">
+  <div class="container cb__inner">
+    <div class="cb__head">
+      <p class="eyebrow eyebrow--dot">{t.eyebrow}</p>
+      <h2 id="cb-title" class="h2">{t.title}</h2>
+    </div>
+    <ContactMethods locale={locale} />
+    <div class="cb__close">
+      <p class="h1 cb__tagline" data-reveal="lines">{company[locale].tagline}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cb__inner {
+    display: grid;
+    gap: clamp(var(--s-7), 6vw, var(--s-9));
+  }
+  .cb__head {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+  }
+  .cb__close {
+    padding-block-start: clamp(var(--s-7), 6vw, var(--s-9));
+    border-top: 1px solid var(--line-inv);
+  }
+  .cb__tagline {
+    max-width: 16ch;
+  }
+</style>

@@ -1,0 +1,351 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/company/PageHead.astro';
+import Timeline from '../../components/company/Timeline.astro';
+import CtaBand from '../../components/company/CtaBand.astro';
+import { peimar } from '../../components/company/facts.ts';
+import { localeFromParam, localeParams, localizePath } from '../../i18n/config.ts';
+import { company } from '../../i18n/company.ts';
+
+export const getStaticPaths = () => localeParams();
+
+const locale = localeFromParam(Astro.params.locale);
+const c = company[locale];
+const t = c.about;
+const p = t.peimar;
+---
+
+<Base title={t.meta.title} description={t.meta.description}>
+  <PageHead eyebrow={t.eyebrow} title={t.title} lead={t.lead} />
+
+  <section class="services theme-light section" aria-labelledby="services-title">
+    <div class="container services__grid">
+      <div class="services__head">
+        <p class="eyebrow">{t.services.eyebrow}</p>
+        <h2 id="services-title" class="h2">{t.services.title}</h2>
+      </div>
+      <ol class="services__list" role="list">
+        {
+          t.services.items.map((s, i) => (
+            <li class="services__item">
+              <span class="services__index mono" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3 class="h3 services__title">{s.title}</h3>
+              <p class="services__text">{s.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="mission theme-paper section" aria-labelledby="mission-title">
+    <div class="container">
+      <figure class="mission__figure">
+        <h2 id="mission-title" class="eyebrow">{t.mission.eyebrow}</h2>
+        <blockquote class="mission__quote">
+          <p>{t.mission.text}</p>
+        </blockquote>
+        <figcaption class="mission__by"><bdi>{t.mission.by}</bdi></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="why theme-light section" aria-labelledby="why-title">
+    <div class="container">
+      <div class="why__intro">
+        <div class="why__heading">
+          <p class="eyebrow">{p.eyebrow}</p>
+          <h2 id="why-title" class="h2">{p.title(peimar.founded)}</h2>
+        </div>
+        <p class="lead why__lead">{p.text(peimar.founded, peimar.bresciaSince, peimar.capacityGw)}</p>
+      </div>
+
+      <dl class="why__stats">
+        <div class="why__stat">
+          <dt>{p.stats.founded}</dt>
+          <dd><span class="num">{peimar.founded}</span></dd>
+        </div>
+        <div class="why__stat">
+          <dt>{p.stats.brescia}</dt>
+          <dd><span class="num">{peimar.bresciaSince}</span></dd>
+        </div>
+        <div class="why__stat">
+          <dt>{p.stats.capacity}</dt>
+          <dd>
+            <span class="num"
+              >+<span data-reveal="count" data-to={peimar.capacityGw} data-decimals="1">{peimar.capacityGw.toFixed(1)}</span
+              ><span class="unit">GW</span></span
+            >
+          </dd>
+        </div>
+      </dl>
+
+      <div class="why__cols">
+        <div class="why__block">
+          <h3 class="eyebrow why__label">{p.sites}</h3>
+          <ul class="why__sites" role="list">
+            {
+              Object.entries(c.peimar.sites).map(([id, site]) => (
+                <li class="why__site" data-site={id}>
+                  <p class="why__place">{site.place}</p>
+                  <p class="why__text">{site.text}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div class="why__block">
+          <h3 class="eyebrow why__label">{p.certifications}</h3>
+          <dl class="why__certs">
+            {
+              Object.entries(c.peimar.certifications).map(([code, scope]) => (
+                <div class="why__cert">
+                  <dt class="mono" dir="ltr">{code}</dt>
+                  <dd>{scope}</dd>
+                </div>
+              ))
+            }
+          </dl>
+          <p class="why__note">{p.certificationsNote}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="timeline theme-dark section" aria-labelledby="timeline-title">
+    <div class="container">
+      <div class="timeline__head">
+        <p class="eyebrow eyebrow--dot">{t.timeline.eyebrow}</p>
+        <h2 id="timeline-title" class="h2">{t.timeline.title}</h2>
+      </div>
+      <Timeline locale={locale} />
+    </div>
+  </section>
+
+  <CtaBand
+    title={t.cta.title}
+    primary={{ label: t.cta.designer, href: localizePath('/designer/', locale) }}
+    secondary={{ label: t.cta.contact, href: localizePath('/contact/', locale) }}
+  />
+</Base>
+
+<style>
+  .services__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: var(--s-7) var(--gap);
+  }
+  .services__head {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: var(--s-4);
+  }
+  .services__head .h2 {
+    max-width: 12ch;
+  }
+  :global([dir='rtl']) .services__head .h2,
+  :global([dir='rtl']) .why__heading .h2 {
+    max-width: none;
+  }
+  .services__list {
+    border-bottom: 1px solid var(--line);
+  }
+  .services__item {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 4fr) minmax(0, 6fr);
+    align-items: baseline;
+    gap: var(--s-2) var(--gap);
+    padding-block: var(--s-6);
+    border-top: 1px solid var(--line);
+  }
+  .services__index {
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .services__text {
+    color: var(--muted);
+    max-width: 48ch;
+  }
+
+  .mission__figure {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-6);
+  }
+  .mission__quote p {
+    max-width: 34ch;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1rem + 1.8vw, 2.625rem);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    text-wrap: pretty;
+  }
+  :global([dir='rtl']) .mission__quote p {
+    letter-spacing: 0;
+    line-height: 1.7;
+  }
+  .mission__by {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    font-weight: 600;
+  }
+  .mission__by::before {
+    content: '';
+    width: var(--s-6);
+    height: 1px;
+    background: currentColor;
+  }
+
+  .why__intro {
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+    align-items: end;
+    gap: var(--s-6) var(--gap);
+  }
+  .why__heading {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+  }
+  .why__heading .h2 {
+    max-width: 14ch;
+  }
+  .why__lead {
+    max-width: 40ch;
+    color: var(--muted);
+  }
+  .why__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-block: clamp(var(--s-8), 7vw, var(--s-10));
+    border-top: 1px solid var(--line);
+  }
+  .why__stat {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: var(--s-2);
+    padding-block-start: var(--s-5);
+    padding-inline: var(--gap);
+  }
+  .why__stat:first-child {
+    padding-inline-start: 0;
+  }
+  .why__stat + .why__stat {
+    border-inline-start: 1px solid var(--line);
+  }
+  .why__stat dt {
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+  .why__stat dd {
+    font-size: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+    line-height: 1;
+  }
+  .why__cols {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--s-8) clamp(var(--s-7), 6vw, var(--s-10));
+  }
+  .why__block {
+    display: grid;
+    align-content: start;
+    gap: var(--s-5);
+  }
+  .why__sites {
+    display: grid;
+    border-top: 1px solid var(--line);
+  }
+  .why__site {
+    display: grid;
+    gap: var(--s-1);
+    padding-block: var(--s-5);
+    border-bottom: 1px solid var(--line);
+  }
+  .why__place {
+    font-weight: 600;
+  }
+  .why__text {
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+  .why__certs {
+    display: grid;
+    border-top: 1px solid var(--line);
+  }
+  .why__cert {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: var(--s-2) var(--gap);
+    padding-block: var(--s-4);
+    border-bottom: 1px solid var(--line);
+  }
+  .why__cert dt {
+    font-size: 0.875rem;
+    text-align: start;
+  }
+  :global([dir='rtl']) .why__cert dt {
+    text-align: end;
+  }
+  .why__cert dd {
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+  .why__note {
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+
+  .timeline__head {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+    margin-block-end: clamp(var(--s-8), 7vw, var(--s-10));
+  }
+
+  @media (max-width: 1080px) {
+    .services__grid,
+    .why__cols {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .services__head .h2 {
+      max-width: 18ch;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .why__intro {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 720px) {
+    .services__item {
+      grid-template-columns: 2rem minmax(0, 1fr);
+    }
+    .services__text {
+      grid-column: 2;
+    }
+    .why__stats {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .why__stat,
+    .why__stat:first-child {
+      padding-inline: 0;
+      padding-block: var(--s-5);
+    }
+    .why__stat + .why__stat {
+      border-inline-start: 0;
+      border-top: 1px solid var(--line);
+    }
+    .why__cert {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--s-1);
+    }
+  }
+</style>

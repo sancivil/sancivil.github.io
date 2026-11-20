@@ -1,0 +1,417 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import Breadcrumbs from '../../../../components/products/Breadcrumbs.astro';
+import ProductWell from '../../../../components/products/ProductWell.astro';
+import Figure from '../../../../components/products/Figure.astro';
+import SpecList, { type SpecRow } from '../../../../components/products/SpecList.astro';
+import DocList from '../../../../components/products/DocList.astro';
+import InverterTable from '../../../../components/products/InverterTable.astro';
+import FamilyList from '../../../../components/products/FamilyList.astro';
+import JsonLd from '../../../../components/seo/JsonLd.astro';
+import { absolute, breadcrumbList, product } from '../../../../lib/seo/schema.ts';
+import {
+  GROUPS,
+  INVERTER_IMAGE_SIZE,
+  categoryHref,
+  docItem,
+  extent,
+  familyBySlug,
+  familyImage,
+  familyInverters,
+  familyPower,
+  families,
+  pct,
+  powerParts,
+  span,
+  storageReady,
+} from '../../../../components/products/data.ts';
+import { whatsappLink } from '../../../../data/site.ts';
+import { localeFromParam, localizePath, withLocales } from '../../../../i18n/config.ts';
+import { common } from '../../../../i18n/common.ts';
+import { products } from '../../../../i18n/products.ts';
+import { familyNote } from '../../../../i18n/catalog-text.ts';
+
+export const getStaticPaths = () =>
+  withLocales(GROUPS.flatMap((group) => families[group].map((f) => ({ params: { slug: f.slug } }))));
+
+const locale = localeFromParam(Astro.params.locale);
+const { family, group } = familyBySlug(Astro.params.slug!)!;
+const t = products[locale];
+const p = t.inverterPage;
+const nav = common[locale];
+
+const kind = t.kind[group][family.phase];
+const note = familyNote(locale, family.slug);
+const image = familyImage(family);
+const models = familyInverters(family);
+const missing = family.models.filter((name) => !models.some((m) => m.model === name));
+const power = familyPower(family);
+const powerFig = power && powerParts(power);
+
+const unique = (xs: string[]) => [...new Set(xs)];
+const range = (xs: number[]) => span(extent(xs).map(String) as [string, string]);
+const mppt = models.length ? (extent(models.map((m) => m.numMppt)).map(String) as [string, string]) : null;
+const efficiencies = models.flatMap((m) => (m.efficiencyMax === null ? [] : [m.efficiencyMax]));
+const comms = unique(models.map((m) => m.communication));
+const sharedComm = comms.length === 1 && comms[0] !== 'no' ? comms[0] : null;
+const spd = models.length > 0 && models.every((m) => /tipo 2/i.test(m.spd));
+
+const facts: SpecRow[] = [
+  { label: p.fact.phase, text: t.phase[family.phase] },
+  ...(models.length
+    ? [
+        {
+          label: p.fact.mpptRange,
+          value: `${Math.min(...models.map((m) => m.vminMppt))}–${Math.max(...models.map((m) => m.vmaxMppt))}`,
+          unit: 'V',
+        },
+        { label: p.fact.vmaxDc, value: range(models.map((m) => m.vmaxDc)), unit: 'V' },
+        { label: p.fact.protection, value: unique(models.map((m) => m.protectionClass)).join(' · ') },
+        ...(sharedComm ? [{ label: p.fact.communication, value: sharedComm }] : []),
+        ...(spd ? [{ label: p.fact.spd, text: p.spd }] : []),
+        { label: p.fact.battery, text: models.some(storageReady) ? t.yes : t.no },
+      ]
+    : []),
+  { label: p.fact.models, value: String(family.models.length) },
+];
+
+const docs = [
+  ...family.datasheets.map((doc) => docItem(doc)),
+  ...(family.manual ? [docItem({ label: `${t.label.manual} · ${family.name}`, url: family.manual })] : []),
+];
+
+/* Families of the same group, same phase first, closest in power. */
+const anchor = power ? power[0] : 0;
+const more = families[group]
+  .filter((f) => f.slug !== family.slug)
+  .map((f) => ({ f, start: familyPower(f)?.[0] ?? Infinity }))
+  .sort(
+    (a, b) =>
+      Number(b.f.phase === family.phase) - Number(a.f.phase === family.phase) ||
+      Math.abs(Math.log((a.start || 1) / (anchor || 1))) - Math.abs(Math.log((b.start || 1) / (anchor || 1))),
+  )
+  .slice(0, 3)
+  .map((r) => r.f);
+const pageUrl = absolute(localizePath(`/products/inverters/${family.slug}/`, locale));
+const groupPath = { hybrid: '/products/hybrid/', onGrid: '/products/on-grid/', micro: '/products/micro/' }[group];
+const groupLabel = { hybrid: nav.productNav.hybrid, onGrid: nav.productNav.onGrid, micro: nav.productNav.micro }[group];
+const schema = [
+  product({
+    name: `Peimar ${family.name}`,
+    model: family.name,
+    description: note ?? family.description ?? `${family.name} · ${kind}`,
+    image: image ?? '/images/products/peimar-hybrid-inverters-batteries.png',
+    url: pageUrl,
+    category: kind,
+    additionalProperty: [
+      ...(power ? [{ name: 'AC nominal power', value: `${power[0] / 1000}–${power[1] / 1000}`, unitCode: 'KWT' }] : []),
+      { name: 'Phase', value: family.phase === 'three_phase' ? 'Three-phase' : 'Single-phase' },
+      ...(models.length ? [{ name: 'Models', value: models.map((x) => x.model).join(', ') }] : []),
+    ],
+  }),
+  breadcrumbList([
+    { name: nav.nav.products, url: absolute(localizePath('/products/', locale)) },
+    { name: groupLabel, url: absolute(localizePath(groupPath, locale)) },
+    { name: family.name, url: pageUrl },
+  ]),
+];
+---
+
+<Base title={p.title(family.name, kind)} description={p.description(family.name, kind)}>
+  <JsonLd data={schema} />
+  <section class="product theme-light">
+    <div class="container">
+      <Breadcrumbs
+        locale={locale}
+        items={[
+          { label: nav.nav.products, href: '/products/' },
+          { label: nav.productNav[group], href: categoryHref(group) },
+          { label: family.name },
+        ]}
+      />
+
+      <div class="product__grid">
+        <ProductWell
+          src={image}
+          alt={t.productAlt(family.name, kind)}
+          label={family.models[0]}
+          size={INVERTER_IMAGE_SIZE}
+          sizes="(max-width: 900px) 100vw, 50vw"
+          eager
+          class="product__well"
+        />
+
+        <div class="product__info">
+          <header class="product__head">
+            <p class="eyebrow eyebrow--dot">{kind}</p>
+            <h1 class="h1 product__title" data-reveal="lines">{family.name}</h1>
+            {note && <p class="product__lead">{note}</p>}
+          </header>
+
+          {
+            (powerFig || mppt) && (
+              <dl class="figures">
+                {powerFig && (
+                  <div class="figures__item">
+                    <dt>{t.label.acPower}</dt>
+                    <dd class="figures__value">
+                      <Figure value={powerFig.value} unit={powerFig.unit} count />
+                    </dd>
+                  </div>
+                )}
+                {mppt && (
+                  <div class="figures__item">
+                    <dt>{p.fact.mppt}</dt>
+                    <dd class="figures__value">
+                      <Figure value={mppt} count />
+                    </dd>
+                  </div>
+                )}
+                {efficiencies.length > 0 && (
+                  <div class="figures__item">
+                    <dt>{p.fact.efficiency}</dt>
+                    <dd class="figures__value">
+                      <Figure value={pct(Math.max(...efficiencies), 1)} unit="%" count />
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            )
+          }
+
+          <section class="product__facts" aria-labelledby="facts-title">
+            <h2 id="facts-title" class="product__label">{p.facts}</h2>
+            <SpecList rows={facts} />
+          </section>
+
+          <div class="product__actions">
+            {
+              models.length > 0 && (
+                <a class="btn btn--sun" href={localizePath(`/designer/?inverter=${encodeURIComponent(models[0].id)}`, locale)}>
+                  {p.sizeStrings}
+                </a>
+              )
+            }
+            <a
+              class:list={['btn', models.length > 0 ? 'btn--line' : 'btn--sun']}
+              href={whatsappLink(t.quoteMessage(family.name))}
+              target="_blank"
+              rel="noopener"
+            >
+              {t.quote}<span class="sr-only">{t.newTab}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight compare-section" aria-labelledby="compare-title">
+    <div class="container">
+      <div class="compare-section__head">
+        <h2 id="compare-title" class="h2">{models.length > 0 ? p.tableTitle : p.modelsTitle}</h2>
+        <p class="compare-section__meta">{t.count.models(family.models.length)}</p>
+      </div>
+      {models.length > 0 && <InverterTable locale={locale} name={family.name} models={models} />}
+      {
+        missing.length > 0 && (
+          <div class="models-only">
+            <ul role="list" class="models-only__list">
+              {missing.map((name) => (
+                <li class="tag" dir="ltr">
+                  {name}
+                </li>
+              ))}
+            </ul>
+            <p class="models-only__note">{p.noTable}</p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  {
+    docs.length > 0 && (
+      <section class="section section--tight theme-paper" aria-labelledby="docs-title">
+        <div class="container docs__grid">
+          <h2 id="docs-title" class="h3">
+            {t.label.documents}
+          </h2>
+          <DocList locale={locale} items={docs} />
+        </div>
+      </section>
+    )
+  }
+
+  {
+    more.length > 0 && (
+      <section class="section" aria-labelledby="more-title">
+        <div class="container">
+          <div class="more__head">
+            <h2 id="more-title" class="h2">
+              {p.moreIn}
+            </h2>
+            <a class="link-arrow" href={localizePath(categoryHref(group), locale)}>
+              {nav.productNav[group]}
+            </a>
+          </div>
+          <FamilyList locale={locale} group={group} families={more} />
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .product {
+    padding-block: var(--s-4) clamp(56px, 7vw, 112px);
+  }
+  .product__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+    gap: var(--s-7) clamp(32px, 5vw, 96px);
+    margin-top: var(--s-6);
+    align-items: start;
+  }
+  .product :global(.product__well) {
+    position: sticky;
+    top: calc(var(--header-h) + var(--s-5));
+    padding: 10%;
+  }
+  .product__info {
+    display: grid;
+    gap: var(--s-7);
+    min-width: 0;
+  }
+  .product__head {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+  }
+  .product__title {
+    font-family: var(--font-sans);
+    font-size: clamp(2.5rem, 1rem + 3.4vw, 4.25rem);
+  }
+  .product__lead {
+    max-width: 48ch;
+    font-size: 1.0625rem;
+    color: var(--muted);
+  }
+  .figures {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid var(--line-strong);
+  }
+  .figures__item {
+    display: grid;
+    align-content: start;
+    gap: var(--s-1);
+    padding-block: var(--s-4);
+    padding-inline: var(--s-4);
+    border-bottom: 1px solid var(--line);
+  }
+  .figures__item:first-child {
+    padding-inline-start: 0;
+  }
+  .figures__item + .figures__item {
+    border-inline-start: 1px solid var(--line);
+  }
+  .figures dt,
+  .product__label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  :global([dir='rtl']) :is(.figures dt, .product__label) {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .figures__value {
+    font-size: clamp(1.625rem, 1rem + 1.4vw, 2.375rem);
+    font-weight: 500;
+    line-height: 1.15;
+  }
+  .product__facts {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .product__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+  .compare-section {
+    border-top: 1px solid var(--line);
+  }
+  .compare-section__head,
+  .more__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3) var(--s-5);
+    margin-bottom: var(--s-6);
+  }
+  .more__head .link-arrow {
+    min-height: 44px;
+  }
+  .compare-section__meta {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .models-only {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .compare-section :global(.compare) ~ .models-only {
+    margin-top: var(--s-6);
+  }
+  .models-only__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+  .models-only__note {
+    color: var(--muted);
+  }
+  .docs__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--s-5) var(--gap);
+  }
+  @media (max-width: 900px) {
+    .product__grid,
+    .docs__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .product :global(.product__well) {
+      position: static;
+      aspect-ratio: 4 / 3;
+      padding: 6%;
+    }
+  }
+  @media (max-width: 720px) {
+    .product__actions .btn {
+      flex: 1 1 100%;
+    }
+  }
+  @media (max-width: 520px) {
+    .figures {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .figures__item + .figures__item:nth-child(3) {
+      grid-column: 1 / -1;
+      padding-inline-start: 0;
+      border-inline-start: 0;
+    }
+    .figures__value {
+      font-size: 1.5rem;
+    }
+  }
+</style>

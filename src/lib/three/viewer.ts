@@ -1,0 +1,316 @@
+import {
+  CanvasTexture,
+  DirectionalLight,
+  Mesh,
+  MeshBasicMaterial,
+  PerspectiveCamera,
+  PlaneGeometry,
+  SRGBColorSpace,
+  Scene,
+  Spherical,
+  Vector3,
+} from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { buildModule } from './module.ts';
+import type { PvModule } from './module.ts';
+import { createRenderer, deg, device, environment, fitDistance, isRtl, watchVisibility } from './stage.ts';
+import { drawShadow } from './textures.ts';
+import type { ModuleSpec } from './types.ts';
+
+const FOV = 30;
+const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+type View = { radius: number; phi: number; theta: number };
+type Tween<T> = { from: T; to: T; start: number; dur: number };
+
+export interface ViewerElements {
+  stage: HTMLElement;
+  canvas: HTMLCanvasElement;
+  /** Overlay holding an <svg> and labels [data-dim="w|h|d"]. */
+  dims: HTMLElement;
+  /** Space covered by overlaid UI at the top and bottom of the stage, in CSS px. */
+  insets: () => { top: number; bottom: number };
+}
+
+export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
+  const { stage, canvas } = el;
+  const side = isRtl(stage) ? -1 : 1;
+
+  const renderer = createRenderer(canvas);
+  const scene = new Scene();
+  const env = environment(renderer);
+  const camera = new PerspectiveCamera(FOV, 1, 0.05, 60);
+  // Key light rides with the camera so front, back and exploded views are all lit; warm rim stays put.
+  const key = new DirectionalLight(0xffffff, 2.1);
+  key.position.set(-2 * side, 3, 2);
+  camera.add(key);
+  const rim = new DirectionalLight(0xfff0d8, 0.6);
+  rim.position.set(4 * side, 2.5, -3);
+  scene.add(camera, rim);
+
+  const controls = new OrbitControls(camera, canvas);
+  canvas.style.touchAction = 'pan-y pinch-zoom';
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.09;
+  controls.enablePan = false;
+  controls.enableZoom = false;
+  controls.rotateSpeed = 0.75;
+  controls.minPolarAngle = deg(45);
+  controls.maxPolarAngle = deg(98);
+
+  const shadowTexture = new CanvasTexture(drawShadow());
+  shadowTexture.colorSpace = SRGBColorSpace;
+  const shadowGeometry = new PlaneGeometry(1, 1);
+  const shadowMaterial = new MeshBasicMaterial({ map: shadowTexture, transparent: true, depthWrite: false, toneMapped: false });
+  const shadow = new Mesh(shadowGeometry, shadowMaterial);
+  shadow.rotation.x = -Math.PI / 2;
+  scene.add(shadow);
+
+  const svg = el.dims.querySelector('svg')!;
+  const path = svg.querySelector('path')!;
+  const labels = {
+    w: el.dims.querySelector<HTMLElement>('[data-dim="w"]')!,
+    h: el.dims.querySelector<HTMLElement>('[data-dim="h"]')!,
+    d: el.dims.querySelector<HTMLElement>('[data-dim="d"]')!,
+  };
+
+  let spec = initial;
+  let pv: PvModule;
+  let explode = 0;
+  let fit = 6;
+  let dimsOn = false;
+  let visible = false;
+  let raf = 0;
+  let camTween: Tween<View> | null = null;
+  let explodeTween: Tween<number> | null = null;
+  const sph = new Spherical();
+
+  const current = (): View => {
+    sph.setFromVector3(camera.position.clone().sub(controls.target));
+    return { radius: sph.radius, phi: sph.phi, theta: sph.theta };
+  };
+  const home = (): View => ({ radius: fit, phi: deg(80), theta: side * deg(-32) });
+  const setView = (v: View) => {
+    sph.set(v.radius, v.phi, v.theta);
+    camera.position.setFromSpherical(sph).add(controls.target);
+  };
+
+  const request = () => {
+    if (!raf && visible) raf = requestAnimationFrame(frame);
+  };
+
+  const goTo = (to: Partial<View>, dur = 800) => {
+    const from = current();
+    const dest = { ...from, ...to };
+    const turn = dest.theta - from.theta;
+    dest.theta = from.theta + ((((turn + Math.PI) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) - Math.PI;
+    camTween = { from, to: dest, start: performance.now(), dur };
+    request();
+  };
+
+  const applyExplode = () => {
+    pv.setExplode(explode);
+    pv.root.position.z = -pv.center(explode);
+    let lo = Infinity;
+    let hi = -Infinity;
+    for (const p of pv.points(explode)) {
+      lo = Math.min(lo, p.z);
+      hi = Math.max(hi, p.z);
+    }
+    shadow.scale.set(pv.size.w * 1.7, (hi - lo) * 1.5 + 0.35, 1);
+    shadow.position.y = -pv.size.h / 2 - 0.002;
+  };
+
+  const project = (x: number, y: number, z: number, w: number, h: number) => {
+    const v = new Vector3(x, y, z).applyMatrix4(pv.root.matrixWorld).project(camera);
+    return [((v.x + 1) / 2) * w, ((1 - v.y) / 2) * h];
+  };
+
+  const drawDims = () => {
+    const w = stage.clientWidth;
+    const h = stage.clientHeight;
+    const { w: W, h: H, d: D } = pv.size;
+    const o = W * 0.07;
+    const fz = pv.layers[5].position.z;
+    const zf = D / 2 + fz;
+    const zb = -D / 2 + fz;
+    const ex = (side * W) / 2;
+    const P = (x: number, y: number, z: number) => project(x, y, z, w, h);
+    const lines = {
+      w: [P(-W / 2, -H / 2, zf), P(-W / 2, -H / 2 - o, zf), P(W / 2, -H / 2 - o, zf), P(W / 2, -H / 2, zf)],
+      h: [P(ex, -H / 2, zf), P(ex + side * o, -H / 2, zf), P(ex + side * o, H / 2, zf), P(ex, H / 2, zf)],
+      d: [P(ex, H / 2, zb), P(ex, H / 2 + o, zb), P(ex, H / 2 + o, zf), P(ex, H / 2, zf)],
+    };
+    let d = '';
+    for (const key of ['w', 'h', 'd'] as const) {
+      const [e1, a, b, e2] = lines[key];
+      const len = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+      const tx = (b[0] - a[0]) / len;
+      const ty = (b[1] - a[1]) / len;
+      const sx = (tx - ty) * 4;
+      const sy = (ty + tx) * 4;
+      d += `M${e1}L${a}M${e2}L${b}M${a}L${b}`;
+      d += `M${a[0] - sx},${a[1] - sy}L${a[0] + sx},${a[1] + sy}M${b[0] - sx},${b[1] - sy}L${b[0] + sx},${b[1] + sy}`;
+      const nl = Math.hypot(a[0] - e1[0], a[1] - e1[1]) || 1;
+      const nx = (a[0] - e1[0]) / nl;
+      const ny = (a[1] - e1[1]) / nl;
+      const push = key === 'd' ? 22 : 16;
+      labels[key].style.transform = `translate(${(a[0] + b[0]) / 2 + nx * push}px, ${(a[1] + b[1]) / 2 + ny * push}px) translate(-50%, -50%)`;
+    }
+    path.setAttribute('d', d);
+  };
+
+  function frame(now: number) {
+    raf = 0;
+    let busy = false;
+    if (camTween) {
+      const k = Math.min(1, (now - camTween.start) / camTween.dur);
+      const e = ease(k);
+      const { from, to } = camTween;
+      setView({
+        radius: from.radius + (to.radius - from.radius) * e,
+        phi: from.phi + (to.phi - from.phi) * e,
+        theta: from.theta + (to.theta - from.theta) * e,
+      });
+      if (k >= 1) camTween = null;
+      busy = true;
+    }
+    if (explodeTween) {
+      const k = Math.min(1, (now - explodeTween.start) / explodeTween.dur);
+      explode = explodeTween.from + (explodeTween.to - explodeTween.from) * ease(k);
+      applyExplode();
+      if (k >= 1) explodeTween = null;
+      busy = true;
+    }
+    const moved = controls.update();
+    renderer.render(scene, camera);
+    if (dimsOn) drawDims();
+    if (!stage.classList.contains('is-ready')) stage.classList.add('is-ready');
+    if (busy || moved) request();
+  }
+
+  const layout = () => {
+    const w = stage.clientWidth;
+    const h = stage.clientHeight;
+    if (!w || !h) return;
+    renderer.setSize(w, h, false);
+    const { top, bottom } = el.insets();
+    const safe = Math.max(120, h - top - bottom);
+    const cy = (top + safe / 2) / h;
+    const fullH = 2 * Math.max(cy, 1 - cy) * h;
+    camera.aspect = w / fullH;
+    camera.setViewOffset(w, fullH, 0, cy >= 0.5 ? 0 : fullH - h, w, h);
+    camera.updateProjectionMatrix();
+    const pts: Vector3[] = [];
+    for (let a = 0; a < 360; a += 30) {
+      for (const p of pv.points(0)) pts.push(p.applyAxisAngle(new Vector3(0, 1, 0), deg(a)));
+    }
+    const ratio = camTween ? 1 : current().radius / fit;
+    fit = fitDistance(pts, FOV, camera.aspect, 0.86, (0.94 * safe) / fullH);
+    controls.minDistance = fit * 0.55;
+    controls.maxDistance = fit * 1.35;
+    if (!camTween) setView({ ...current(), radius: fit * (Number.isFinite(ratio) && ratio > 0 ? ratio : 1) });
+    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    request();
+  };
+
+  const build = (next: ModuleSpec) => {
+    if (pv) {
+      scene.remove(pv.root);
+      pv.dispose();
+    }
+    spec = next;
+    pv = buildModule(spec, {
+      textureMax: device.textureMax,
+      anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()),
+      envMap: env,
+      envIntensity: 1,
+      envRotation: 0,
+      lineColor: '#0b0b0c',
+    });
+    scene.add(pv.root);
+    applyExplode();
+    labels.w.textContent = `${spec.width} mm`;
+    labels.h.textContent = `${spec.height} mm`;
+    labels.d.textContent = `${spec.depth} mm`;
+  };
+
+  build(initial);
+  setView(home());
+  layout();
+
+  controls.addEventListener('change', request);
+  controls.addEventListener('start', () => {
+    camTween = null;
+  });
+
+  const onKey = (e: KeyboardEvent) => {
+    const v = current();
+    const moves: Record<string, Partial<View>> = {
+      ArrowLeft: { theta: v.theta - deg(20) },
+      ArrowRight: { theta: v.theta + deg(20) },
+      ArrowUp: { phi: Math.max(controls.minPolarAngle, v.phi - deg(10)) },
+      ArrowDown: { phi: Math.min(controls.maxPolarAngle, v.phi + deg(10)) },
+    };
+    if (!(e.key in moves)) return;
+    e.preventDefault();
+    goTo(moves[e.key], 450);
+  };
+  canvas.addEventListener('keydown', onKey);
+
+  const ro = new ResizeObserver(layout);
+  ro.observe(stage);
+  const stopWatching = watchVisibility(stage, (v) => {
+    visible = v;
+    request();
+  });
+
+  return {
+    setSpec(next: ModuleSpec) {
+      build(next);
+      layout();
+    },
+    front() {
+      goTo({ phi: deg(86), theta: 0, radius: fit });
+    },
+    back() {
+      goTo({ phi: deg(86), theta: Math.PI, radius: fit });
+    },
+    reset() {
+      goTo(home());
+      this.setExplode(false);
+    },
+    setExplode(on: boolean) {
+      explodeTween = { from: explode, to: on ? 1 : 0, start: performance.now(), dur: 900 };
+      const v = current();
+      if (on && Math.abs(Math.sin(v.theta)) < 0.45) {
+        goTo({ theta: Math.cos(v.theta) > 0 ? side * deg(-42) : Math.PI + side * deg(42) }, 900);
+      }
+      request();
+    },
+    setDims(on: boolean) {
+      dimsOn = on;
+      el.dims.hidden = !on;
+      request();
+    },
+    zoom(factor: number) {
+      const r = current().radius * factor;
+      goTo({ radius: Math.min(controls.maxDistance, Math.max(controls.minDistance, r)) }, 420);
+    },
+    dispose() {
+      cancelAnimationFrame(raf);
+      stopWatching();
+      ro.disconnect();
+      canvas.removeEventListener('keydown', onKey);
+      controls.dispose();
+      pv.dispose();
+      shadowGeometry.dispose();
+      shadowMaterial.dispose();
+      shadowTexture.dispose();
+      env.dispose();
+      renderer.dispose();
+    },
+  };
+}
+
+export type ModuleViewerScene = ReturnType<typeof mountViewer>;

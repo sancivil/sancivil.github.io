@@ -1,0 +1,161 @@
+---
+import '@fontsource-variable/dm-sans';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource-variable/noto-sans-arabic';
+import '@fontsource-variable/noto-kufi-arabic';
+import '../styles/global.css';
+import dmSansLatin from '@fontsource-variable/dm-sans/files/dm-sans-latin-wght-normal.woff2?url';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { contact } from '../data/site.ts';
+import { common } from '../i18n/common.ts';
+import { locales, localeMeta, localeFromPath, localizePath, stripLocale } from '../i18n/config.ts';
+import { website } from '../lib/seo/schema.ts';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  /** Single-URL pages (404, dev): no canonical or hreflang, and the language switcher goes to each language's home. */
+  noindex?: boolean;
+}
+
+const { title, description, image = '/brand/og-default.png', noindex = false } = Astro.props;
+const locale = localeFromPath(Astro.url.pathname);
+const meta = localeMeta[locale];
+const basePath = stripLocale(Astro.url.pathname);
+const fullTitle = title.includes('Faraday') ? title : `${title} · Faraday`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image, Astro.site);
+const alternates = locales.map((l) => ({
+  hreflang: localeMeta[l].hreflang,
+  href: new URL(localizePath(basePath, l), Astro.site).toString(),
+}));
+
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': ['LocalBusiness', 'Store'],
+  '@id': `${Astro.site}#business`,
+  name: 'Faraday Co.',
+  alternateName: ['Faraday', 'Faraday Iraq', 'فاراداي', 'فارادەی'],
+  description:
+    'Exclusive agent of Peimar in Iraq: Peimar photovoltaic modules, hybrid and on-grid inverters, batteries and accessories, with system design and installation from Sulaymaniyah.',
+  slogan: 'Renewable energy for everyone',
+  url: Astro.site?.toString(),
+  brand: { '@type': 'Brand', name: 'Peimar', url: 'https://peimar.com/' },
+  knowsAbout: [
+    'Photovoltaic modules',
+    'Solar panels',
+    'Hybrid inverters',
+    'On-grid inverters',
+    'Battery energy storage',
+    'PV string sizing',
+    'Solar power systems for homes and businesses in Iraq',
+    'Peimar',
+  ],
+  knowsLanguage: ['en', 'ar', 'ckb'],
+  areaServed: [
+    { '@type': 'Country', name: 'Iraq' },
+    { '@type': 'AdministrativeArea', name: 'Kurdistan Region' },
+    { '@type': 'City', name: 'Sulaymaniyah' },
+    { '@type': 'City', name: 'Erbil' },
+    { '@type': 'City', name: 'Duhok' },
+    { '@type': 'City', name: 'Kirkuk' },
+    { '@type': 'City', name: 'Baghdad' },
+    { '@type': 'City', name: 'Basra' },
+    { '@type': 'City', name: 'Mosul' },
+  ],
+  hasMap: contact.mapsHref,
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'sales',
+    telephone: contact.phoneHref.replace('tel:', ''),
+    email: contact.email,
+    availableLanguage: ['English', 'Arabic', 'Kurdish'],
+    areaServed: 'IQ',
+  },
+  logo: new URL('/brand/icon-512.png', Astro.site).toString(),
+  image: new URL('/brand/og-default.png', Astro.site).toString(),
+  telephone: contact.phoneHref.replace('tel:', ''),
+  email: contact.email,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: contact.street,
+    addressLocality: contact.city,
+    postalCode: contact.postalCode,
+    addressCountry: 'IQ',
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'],
+      opens: '08:00',
+      closes: '17:00',
+    },
+  ],
+  sameAs: ['https://www.facebook.com/102574992430776'],
+};
+---
+
+<!doctype html>
+<html lang={meta.lang} dir={meta.dir} class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {
+      noindex ? (
+        <meta name="robots" content="noindex" />
+      ) : (
+        <>
+          <link rel="canonical" href={canonical} />
+          {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
+          <link rel="alternate" hreflang="x-default" href={alternates[0].href} />
+        </>
+      )
+    }
+    <link rel="preload" href={dmSansLatin} as="font" type="font/woff2" crossorigin />
+    <meta name="theme-color" content="#0b0b0c" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <script type="application/ld+json" set:html={JSON.stringify(organization)} />
+    {!noindex && <script type="application/ld+json" set:html={JSON.stringify(website(locale))} />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Faraday" />
+    <meta property="og:locale" content={meta.ogLocale} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        d.classList.remove('no-js');
+        d.classList.add('js');
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('motion');
+        setTimeout(function () {
+          d.classList.add('motion-ready');
+        }, 2500);
+      })();
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{common[locale].skip}</a>
+    <Header localized={!noindex} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import '../lib/motion/init.ts';
+    </script>
+  </body>
+</html>

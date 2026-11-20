@@ -1,0 +1,67 @@
+{
+  "_note": "Exact records used by the Peimar Designer guest session on 2026-11-20 (untagged OR10H560M datasheet version). src/data/designer/panels.json keeps the NEWEST OR10H560M datasheet (ctVoc -0.25, ctIsc 0.046), which gives different voltages. Use THIS fixture for the reference test.",
+  "temps": {
+    "tmin": -10,
+    "tnom": 45,
+    "tmax": 70
+  },
+  "module": {
+    "model": "OR10H560M",
+    "power": 560,
+    "vmp": 40.86,
+    "imp": 13.7,
+    "voc": 48.29,
+    "isc": 14.53,
+    "vdcMax": 1500,
+    "ctPmax": -0.37,
+    "ctVoc": -0.28,
+    "ctIsc": 0.042
+  },
+  "inverter": {
+    "model": "PSI-X1P6000-HY",
+    "pnomDc": 7200,
+    "pnomAc": 6000,
+    "vmaxDc": 600,
+    "vstart": 90,
+    "vminMppt": 70,
+    "vmaxMppt": 550,
+    "numMppt": 2,
+    "imaxPerMppt": [
+      16,
+      16
+    ],
+    "percPminCc": 1.2,
+    "percPmaxCc": 0.6
+  },
+  "panels": 12,
+  "config": "two_indipendent",
+  "selection": [
+    {
+      "mppt": 1,
+      "series": 6,
+      "strings": 1
+    },
+    {
+      "mppt": 2,
+      "series": 6,
+      "strings": 1
+    }
+  ],
+  "expected": {
+    "vocAtTmax": 253,
+    "vocAtTmin": 318,
+    "vmpAtTmax": 214,
+    "vmpAtTmin": 269,
+    "impAtTmax": 13.96,
+    "nominalPowerRatioPct": 107.14,
+    "pvPeakKwp": 6.72,
+    "matrixWithOtherMpptAt1x6": {
+      "3": "amber",
+      "4": "amber",
+      "5": "green",
+      "6": "green",
+      "7": "green"
+    },
+    "rowsWith2PlusStrings": "invalid (current)"
+  }
+}

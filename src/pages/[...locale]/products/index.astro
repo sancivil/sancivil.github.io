@@ -1,0 +1,611 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageIntro from '../../../components/products/PageIntro.astro';
+import Stats from '../../../components/products/Stats.astro';
+import ProductWell from '../../../components/products/ProductWell.astro';
+import Figure from '../../../components/products/Figure.astro';
+import DocList from '../../../components/products/DocList.astro';
+import {
+  GROUPS,
+  accessories,
+  batteries,
+  categoryHref,
+  categoryImage,
+  docInfo,
+  docItem,
+  documents,
+  extent,
+  groupModels,
+  groupPower,
+  moduleCount,
+  modulePower,
+  modules,
+  pad2,
+  powerParts,
+  warranty,
+  type CategoryKey,
+} from '../../../components/products/data.ts';
+import { localeFromParam, localeParams, localizePath } from '../../../i18n/config.ts';
+import { common } from '../../../i18n/common.ts';
+import { products } from '../../../i18n/products.ts';
+import { catalogText, warrantyDocLabel } from '../../../i18n/catalog-text.ts';
+
+export const getStaticPaths = () => localeParams();
+const locale = localeFromParam(Astro.params.locale);
+const t = products[locale];
+const ct = catalogText[locale];
+const nav = common[locale].productNav;
+
+const modulePowerParts = { value: [String(modulePower[0]), String(modulePower[1])] as [string, string], unit: 'W' };
+const inverterPower = powerParts(extent(GROUPS.flatMap(groupPower)));
+const powerYears = Math.min(...Object.values(warranty.modules).map((w) => w.power));
+
+const rows: { key: CategoryKey; count: string; range: { value: [string, string]; unit?: string; word?: string } }[] = [
+  {
+    key: 'hybrid',
+    count: `${t.count.models(groupModels('hybrid'))} · ${t.count.storage(batteries.length)}`,
+    range: powerParts(groupPower('hybrid')),
+  },
+  {
+    key: 'modules',
+    count: `${t.count.series(modules.length)} · ${t.count.models(moduleCount)}`,
+    range: modulePowerParts,
+  },
+  { key: 'onGrid', count: t.count.models(groupModels('onGrid')), range: powerParts(groupPower('onGrid')) },
+  { key: 'micro', count: t.count.models(groupModels('micro')), range: powerParts(groupPower('micro')) },
+  {
+    key: 'accessories',
+    count: t.count.products(accessories.length),
+    range: { value: ['', ''], word: t.count.groups(new Set(accessories.map((a) => a.group)).size) },
+  },
+];
+
+/* Warranty terms, grouped where series share the same terms: "OR Series · DR Series". */
+const terms = new Map<string, { names: string[]; product: number; power: number }>();
+for (const [name, w] of Object.entries(warranty.modules)) {
+  const key = `${w.product}/${w.power}`;
+  const entry = terms.get(key) ?? { names: [], product: w.product, power: w.power };
+  entry.names.push(name);
+  terms.set(key, entry);
+}
+
+const outputKeys = ['monoTopcon', 'monoPerc', 'polycrystalline'] as const;
+const outputs = outputKeys.map((key) => {
+  const [first, yearly, end] = [...warranty.powerOutput[key].matchAll(/([\d,]+)%/g)].map((m) => m[1].replace(',', '.'));
+  return { key, first, yearly, end };
+});
+
+const manuals = [
+  docItem({ label: ct.documents.installationManual, url: documents.installationManual }),
+  docItem({ label: ct.documents.installationManualAR, url: documents.installationManualAR }),
+];
+const docs = [
+  ...(locale === 'ar' ? manuals.reverse() : manuals),
+  docItem({ label: ct.documents.productsFlyer, url: documents.productsFlyer }),
+  docItem({ label: ct.documents.companyBrochure, url: documents.companyBrochure }),
+  docItem({ label: ct.documents.companyPresentation, url: documents.companyPresentation }),
+  ...warranty.documents.map((doc) => docItem(doc, warrantyDocLabel(locale, docInfo(doc).label))),
+];
+---
+
+<Base title={t.index.title} description={t.index.description}>
+  <PageIntro
+    locale={locale}
+    crumbs={[{ label: common[locale].nav.products }]}
+    eyebrow={t.index.eyebrow}
+    title={t.index.h1}
+    lead={t.index.lead}
+    display
+  >
+    <Stats
+      items={[
+        { label: t.index.stat.modules, value: modulePowerParts.value, unit: 'W' },
+        { label: t.index.stat.inverters, value: inverterPower.value, unit: inverterPower.unit },
+        { label: t.index.stat.warranty, value: String(powerYears), word: t.years(powerYears), count: true },
+      ]}
+    />
+  </PageIntro>
+
+  <section class="section lines" aria-labelledby="lines-title">
+    <div class="container">
+      <h2 id="lines-title" class="sr-only">{t.index.listTitle}</h2>
+      <div class="lines__head" aria-hidden="true">
+        <span>{t.index.head.no}</span>
+        <span>{t.index.head.line}</span>
+        <span>{t.index.head.models}</span>
+        <span>{t.index.head.range}</span>
+      </div>
+      <ol role="list" class="lines__list">
+        {
+          rows.map((row, i) => (
+            <li class="line">
+              <span class="line__index mono">{pad2(i)}</span>
+              <div class="line__main">
+                <h3 class="h2 line__name">
+                  <a class="line__link" href={localizePath(categoryHref(row.key), locale)}>
+                    {nav[row.key]}
+                  </a>
+                </h3>
+                <p class="line__desc">{ct.categories[row.key]}</p>
+              </div>
+              <p class="line__count">{row.count}</p>
+              <p class="line__range">
+                {row.range.word ? (
+                  <span class="line__range-word">{row.range.word}</span>
+                ) : (
+                  <Figure value={row.range.value} unit={row.range.unit} />
+                )}
+              </p>
+              <ProductWell
+                src={categoryImage[row.key].src}
+                size={categoryImage[row.key].size}
+                alt={t.categoryAlt[row.key]}
+                label={nav[row.key]}
+                sizes="(max-width: 640px) 96px, (max-width: 1080px) 180px, 220px"
+                eager={i === 0}
+                class="line__well"
+              />
+              <span class="line__arrow" aria-hidden="true" />
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section theme-dark warranty" aria-labelledby="warranty-title">
+    <div class="container">
+      <div class="warranty__head">
+        <p class="eyebrow eyebrow--dot">{t.warranty.eyebrow}</p>
+        <h2 id="warranty-title" class="h2" data-reveal="lines">{t.warranty.title(powerYears)}</h2>
+      </div>
+
+      <div class="terms">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">{t.warranty.colRange}</th>
+              <th scope="col">{t.warranty.colProduct}</th>
+              <th scope="col">{t.warranty.colPower}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              [...terms.values()].map((row) => (
+                <tr>
+                  <th scope="row">
+                    <bdi>{row.names.join(' · ')}</bdi>
+                  </th>
+                  <td>
+                    <Figure value={String(row.product)} word={t.years(row.product)} />
+                  </td>
+                  <td>
+                    <Figure value={String(row.power)} word={t.years(row.power)} />
+                  </td>
+                </tr>
+              ))
+            }
+            <tr>
+              <th scope="row">{t.warranty.storage}</th>
+              <td colspan="2">
+                <Figure value={String(warranty.batteries.years)} word={t.years(warranty.batteries.years)} />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="terms__note small">{ct.batteryWarranty(warranty.batteries.years)}</p>
+      </div>
+
+      <div class="output">
+        <h3 class="output__title">{t.warranty.outputTitle(powerYears)}</h3>
+        <ul role="list" class="output__list">
+          {
+            outputs.map((row) => (
+              <li class="output__item">
+                <p class="output__figure">
+                  <Figure value={row.end} unit="%" count />
+                </p>
+                <p class="output__label">{t.warranty.tech[row.key]}</p>
+                <dl class="output__steps">
+                  <div>
+                    <dt>{t.warranty.firstYear}</dt>
+                    <dd>
+                      <Figure value={`−${row.first}`} unit="%" />
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>{t.warranty.perYear}</dt>
+                    <dd>
+                      <Figure value={`−${row.yearly}`} unit="%" />
+                    </dd>
+                  </div>
+                </dl>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="insurance">
+        <div class="insurance__text">
+          <p class="eyebrow">{t.warranty.insurance}</p>
+          <h3 class="h3">{ct.insurance.headline}</h3>
+          <p class="insurance__body">{ct.insurance.text}</p>
+        </div>
+        <dl class="insurance__list">
+          {
+            ct.insurance.coverages.map((c) => (
+              <div>
+                <dt>{c.name}</dt>
+                <dd>{c.text}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="section docs" aria-labelledby="docs-title">
+    <div class="container docs__grid">
+      <div class="docs__head">
+        <p class="eyebrow">{t.docs.eyebrow}</p>
+        <h2 id="docs-title" class="h2">{t.docs.title}</h2>
+      </div>
+      <DocList locale={locale} items={docs} />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .lines {
+    padding-block-start: clamp(40px, 6vw, 96px);
+  }
+  .lines__head,
+  .line {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 5fr) minmax(0, 2.4fr) minmax(0, 2fr) minmax(0, 2fr) 2rem;
+    column-gap: var(--gap);
+  }
+  .lines__head {
+    padding-bottom: var(--s-3);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  :global([dir='rtl']) .lines__head {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .lines__list {
+    border-top: 1px solid var(--line);
+  }
+  .line {
+    position: relative;
+    align-items: baseline;
+    padding-block: var(--s-5);
+    border-bottom: 1px solid var(--line);
+  }
+  .line__index {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .line__main {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .line__name {
+    font-family: var(--font-sans);
+  }
+  .line__desc {
+    max-width: 46ch;
+    color: var(--muted);
+  }
+  .line__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .line__link:focus-visible {
+    outline: none;
+  }
+  .line:has(.line__link:focus-visible) {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+  }
+  .line__count {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .line__range {
+    font-size: clamp(1.25rem, 1.8vw, 1.75rem);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .line__range-word {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: var(--muted);
+  }
+  .line :global(.line__well) {
+    align-self: start;
+    padding: 7%;
+    transition: background-color var(--dur-2) var(--ease);
+  }
+  .line:hover :global(.line__well) {
+    background: var(--paper-3);
+  }
+  .line__arrow {
+    justify-self: end;
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    transition: transform var(--dur-2) var(--ease);
+  }
+  .line__arrow::after {
+    content: '→';
+  }
+  :global([dir='rtl']) .line__arrow::after {
+    content: '←';
+  }
+  .line:hover .line__arrow {
+    transform: translateX(6px);
+  }
+  :global([dir='rtl']) .line:hover .line__arrow {
+    transform: translateX(-6px);
+  }
+
+  .warranty__head {
+    display: grid;
+    gap: var(--s-5);
+    margin-bottom: var(--s-8);
+  }
+  .warranty__head h2 {
+    max-width: 20ch;
+  }
+  .terms {
+    max-width: 960px;
+  }
+  .terms table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .terms th,
+  .terms td {
+    padding-block: var(--s-5);
+    padding-inline: 0 var(--s-4);
+    border-bottom: 1px solid var(--line-inv);
+    text-align: start;
+    vertical-align: baseline;
+    font-weight: 400;
+  }
+  .terms thead th {
+    padding-block: 0 var(--s-3);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted-inv);
+    vertical-align: bottom;
+  }
+  :global([dir='rtl']) .terms thead th {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .terms tbody th {
+    width: 38%;
+    font-size: 1.0625rem;
+    font-weight: 500;
+  }
+  .terms td {
+    font-size: clamp(1.75rem, 3.2vw, 3rem);
+    font-weight: 500;
+    line-height: 1.1;
+  }
+  .terms__note {
+    margin-top: var(--s-4);
+    max-width: 68ch;
+    color: var(--muted-inv);
+  }
+
+  .output {
+    margin-top: var(--s-10);
+  }
+  .output__title {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-inv);
+  }
+  :global([dir='rtl']) .output__title {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .output__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--gap);
+    margin-top: var(--s-5);
+  }
+  .output__item {
+    display: grid;
+    align-content: start;
+    gap: var(--s-3);
+    padding-top: var(--s-5);
+    border-top: 1px solid var(--line-inv);
+  }
+  .output__figure {
+    font-size: clamp(2.75rem, 1rem + 4.4vw, 5rem);
+    font-weight: 500;
+    line-height: 1;
+  }
+  .output__item:first-child .output__figure {
+    color: var(--sun);
+  }
+  .output__label {
+    font-weight: 600;
+  }
+  .output__steps {
+    display: grid;
+    gap: var(--s-2);
+    margin-top: var(--s-2);
+  }
+  .output__steps div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-4);
+    padding-block: var(--s-2);
+    border-bottom: 1px solid var(--line-inv);
+    font-size: 0.875rem;
+  }
+  .output__steps dt {
+    color: var(--muted-inv);
+  }
+
+  .insurance {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--s-7) var(--gap);
+    margin-top: var(--s-10);
+    padding-top: var(--s-7);
+    border-top: 1px solid var(--line-inv);
+  }
+  .insurance__text {
+    grid-column: 1 / 6;
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: var(--s-4);
+  }
+  .insurance__body {
+    max-width: 52ch;
+    color: var(--muted-inv);
+  }
+  .insurance__list {
+    grid-column: 7 / 13;
+    border-top: 1px solid var(--line-inv);
+  }
+  .insurance__list div {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: var(--gap);
+    padding-block: var(--s-5);
+    border-bottom: 1px solid var(--line-inv);
+  }
+  .insurance__list dt {
+    font-weight: 600;
+  }
+  .insurance__list dd {
+    color: var(--muted-inv);
+    font-size: 0.9375rem;
+  }
+
+  .docs__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--s-7) var(--gap);
+  }
+  .docs__head {
+    display: grid;
+    align-content: start;
+    gap: var(--s-4);
+  }
+  .docs__head h2 {
+    max-width: 14ch;
+  }
+
+  @media (max-width: 1080px) {
+    .lines__head {
+      display: none;
+    }
+    .line {
+      grid-template-columns: 2.5rem minmax(0, 1fr) minmax(0, 1fr) clamp(120px, 20vw, 180px);
+      grid-template-areas:
+        'index main main well'
+        'index count range well';
+      row-gap: var(--s-4);
+    }
+    .line__index {
+      grid-area: index;
+    }
+    .line__main {
+      grid-area: main;
+    }
+    .line__count {
+      grid-area: count;
+    }
+    .line__range {
+      grid-area: range;
+    }
+    .line :global(.line__well) {
+      grid-area: well;
+    }
+    .line__arrow {
+      display: none;
+    }
+  }
+  @media (max-width: 900px) {
+    .insurance__text,
+    .insurance__list {
+      grid-column: 1 / -1;
+    }
+    .docs__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 720px) {
+    .output__list {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--s-7);
+    }
+    .terms tbody th {
+      width: auto;
+      font-size: 0.9375rem;
+    }
+    .terms td {
+      font-size: 1.75rem;
+    }
+  }
+  @media (max-width: 640px) {
+    .line {
+      grid-template-columns: 1.5rem minmax(0, 1fr) 88px;
+      grid-template-areas:
+        'index main well'
+        'index count well'
+        'index range well';
+      column-gap: var(--s-4);
+      row-gap: var(--s-2);
+      align-items: start;
+    }
+    .line__main {
+      gap: var(--s-2);
+    }
+    .line__name {
+      font-size: 1.5rem;
+    }
+    .line__desc {
+      font-size: 0.9375rem;
+    }
+    .line__count {
+      margin-top: var(--s-2);
+    }
+    .line__range {
+      font-size: 1.25rem;
+    }
+    .insurance__list div {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--s-2);
+    }
+  }
+</style>

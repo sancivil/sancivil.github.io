@@ -1,0 +1,82 @@
+---
+import Breadcrumbs from './Breadcrumbs.astro';
+import type { Locale } from '../../i18n/config.ts';
+
+interface Props {
+  locale: Locale;
+  crumbs: { label: string; href?: string }[];
+  eyebrow: string;
+  title: string;
+  lead?: string;
+  display?: boolean;
+}
+const { locale, crumbs, eyebrow, title, lead, display = false } = Astro.props;
+const hasAside = Astro.slots.has('default');
+---
+
+<section class="intro theme-dark">
+  <div class="container">
+    <Breadcrumbs locale={locale} items={crumbs} />
+    <div class:list={['intro__grid', { 'intro__grid--split': hasAside }]}>
+      <div class="intro__text">
+        <p class="eyebrow eyebrow--dot">{eyebrow}</p>
+        <h1 class={display ? 'display' : 'h1'} data-reveal="lines">{title}</h1>
+        {lead && <p class="lead intro__lead">{lead}</p>}
+      </div>
+      {
+        hasAside && (
+          <div class="intro__aside">
+            <slot />
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .intro {
+    padding-block: var(--s-4) clamp(56px, 7vw, 112px);
+  }
+  .intro__grid {
+    display: grid;
+    gap: var(--s-7) var(--gap);
+    margin-top: clamp(40px, 7vw, 112px);
+  }
+  .intro__grid--split {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: end;
+  }
+  .intro__text {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-5);
+  }
+  .intro__grid--split .intro__text {
+    grid-column: 1 / 9;
+  }
+  .intro__aside {
+    grid-column: 9 / 13;
+    padding-inline-start: var(--gap);
+    border-inline-start: 1px solid var(--line-inv);
+  }
+  h1 {
+    max-width: 15ch;
+  }
+  .intro__lead {
+    max-width: 46ch;
+    color: var(--muted-inv);
+  }
+  @media (max-width: 900px) {
+    .intro__grid--split .intro__text,
+    .intro__aside {
+      grid-column: 1 / -1;
+    }
+    .intro__aside {
+      padding-inline-start: 0;
+      padding-top: var(--s-5);
+      border-inline-start: 0;
+      border-top: 1px solid var(--line-inv);
+    }
+  }
+</style>

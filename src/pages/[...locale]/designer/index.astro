@@ -1,0 +1,74 @@
+---
+import Base from '../../../layouts/Base.astro';
+import DesignerApp from '../../../components/designer/DesignerApp.tsx';
+import '../../../components/designer/designer.css';
+import { localeFromParam, localeParams } from '../../../i18n/config.ts';
+import { designer } from '../../../i18n/designer.ts';
+import { common } from '../../../i18n/common.ts';
+import { whatsappLink } from '../../../data/site.ts';
+import panels from '../../../data/designer/panels.json';
+import inverters from '../../../data/designer/inverters.json';
+import solar from '../../../data/iraq-solar.json';
+
+export const getStaticPaths = () => localeParams();
+const locale = localeFromParam(Astro.params.locale);
+const t = designer[locale];
+
+const facts = [
+  { value: panels.length, label: t.landing.factModules },
+  { value: inverters.length, label: t.landing.factInverters },
+  { value: solar.cities.length, label: t.landing.factCities },
+];
+const choices = [
+  { mode: 'design', no: '01', title: t.landing.equipmentTitle, text: t.landing.equipmentText },
+  { mode: 'needs', no: '02', title: t.landing.needsTitle, text: t.landing.needsText },
+];
+---
+
+<Base title={t.meta.title} description={t.meta.description}>
+  <section class="dz-landing theme-dark" aria-labelledby="dz-landing-title">
+    <div class="container dz-landing__inner">
+      <div class="dz-landing__copy">
+        <p class="eyebrow eyebrow--dot">{t.landing.eyebrow}</p>
+        <h1 class="h1 dz-landing__title" id="dz-landing-title" data-reveal="lines">{t.landing.title}</h1>
+        <p class="lead dz-landing__lead">{t.landing.lead}</p>
+      </div>
+      <dl class="dz-landing__facts">
+        {
+          facts.map((f) => (
+            <div>
+              <dt>{f.label}</dt>
+              <dd class="num" data-reveal="count" data-to={f.value}>{f.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <ul class="dz-choices" role="list">
+        {
+          choices.map((c) => (
+            <li>
+              <a class="dz-choice" href="#designer" data-dz-mode={c.mode}>
+                <span class="dz-choice__no mono">{c.no}</span>
+                <span class="dz-choice__title">{c.title}</span>
+                <span class="dz-choice__text">{c.text}</span>
+                <span class="dz-choice__arrow" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" width="20" height="20"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" /></svg>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <div id="designer" class="dz-mount">
+    <DesignerApp client:only="preact" locale={locale} />
+    <noscript>
+      <div class="container dz-noscript">
+        <p>{t.landing.noscript}</p>
+        <a class="btn btn--line" href={whatsappLink(t.landing.eyebrow)} rel="noopener" target="_blank">{common[locale].footer.whatsapp}</a>
+      </div>
+    </noscript>
+  </div>
+</Base>

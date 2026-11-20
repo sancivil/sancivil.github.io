@@ -1,0 +1,161 @@
+---
+/*
+  Design cell temperatures on a fixed −20…90 °C scale (the same for every city, so pages compare),
+  over the band of air temperatures from the PVGIS typical year.
+*/
+import { fmt } from '../../lib/designer/format.ts';
+
+interface Props {
+  tmin: number;
+  tnom: number;
+  tmax: number;
+  airMin: number;
+  airMax: number;
+  /** Accessible summary of the three design temperatures. */
+  label: string;
+  airLabel: string;
+}
+const { tmin, tnom, tmax, airMin, airMax, label, airLabel } = Astro.props;
+
+const MIN = -20;
+const MAX = 90;
+const at = (t: number) => `${(((t - MIN) / (MAX - MIN)) * 100).toFixed(2)}%`;
+const ticks = Array.from({ length: (MAX - MIN) / 10 + 1 }, (_, i) => MIN + i * 10);
+const marks = [
+  { key: 'min', t: tmin },
+  { key: 'nom', t: tnom },
+  { key: 'max', t: tmax },
+];
+---
+
+<figure class="tscale" role="img" aria-label={label}>
+  <div class="tscale__scale" dir="ltr" aria-hidden="true">
+    <div class="tscale__marks">
+      {
+        marks.map((m) => (
+          <span class={`tscale__mark tscale__mark--${m.key}`} style={`--at:${at(m.t)}`}>
+            <span class="num">{fmt(m.t)}</span>
+          </span>
+        ))
+      }
+    </div>
+    <div class="tscale__track">
+      <span class="tscale__air" style={`--from:${at(airMin)};--to:${at(airMax)}`}></span>
+      {ticks.map((t) => <span class="tscale__tick" style={`--at:${at(t)}`} />)}
+    </div>
+    <div class="tscale__labels">
+      {
+        ticks.map((t) => (
+          <span class="num" style={`--at:${at(t)}`}>
+            {fmt(t)}
+          </span>
+        ))
+      }
+    </div>
+  </div>
+  <p class="tscale__legend" aria-hidden="true">
+    <span class="tscale__swatch"></span>
+    <span>{airLabel}</span>
+    <span class="num" dir="ltr">{fmt(airMin, 1)} … {fmt(airMax, 1)} °C</span>
+  </p>
+</figure>
+
+<style>
+  .tscale {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .tscale__scale {
+    position: relative;
+    padding-inline: 0.75rem;
+  }
+  .tscale__marks {
+    position: relative;
+    height: 3.25rem;
+  }
+  .tscale__mark {
+    position: absolute;
+    bottom: 0;
+    inset-inline-start: var(--at);
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    transform: translateX(-50%);
+  }
+  .tscale__mark::after {
+    content: '';
+    width: 1px;
+    height: 1.25rem;
+    background: currentColor;
+  }
+  .tscale__mark .num {
+    padding: 2px 6px;
+    border: 1px solid var(--line-inv-strong);
+    font-size: 0.8125rem;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+  .tscale__mark--max .num {
+    border-color: var(--sun);
+    background: var(--sun);
+    color: var(--sun-ink);
+  }
+  .tscale__track {
+    position: relative;
+    height: 1px;
+    background: var(--line-inv-strong);
+  }
+  .tscale__air {
+    position: absolute;
+    top: -2px;
+    inset-inline-start: var(--from);
+    width: calc(var(--to) - var(--from));
+    height: 5px;
+    background: var(--muted-inv);
+    opacity: 0.55;
+  }
+  .tscale__tick {
+    position: absolute;
+    top: -4px;
+    inset-inline-start: var(--at);
+    width: 1px;
+    height: 9px;
+    background: var(--line-inv-strong);
+  }
+  .tscale__labels {
+    position: relative;
+    height: 1.5rem;
+    margin-top: var(--s-2);
+  }
+  .tscale__labels .num {
+    position: absolute;
+    inset-inline-start: var(--at);
+    transform: translateX(-50%);
+    font-size: 0.6875rem;
+    color: var(--muted-inv);
+  }
+  .tscale__legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-2) var(--s-3);
+    font-size: 0.8125rem;
+    color: var(--muted-inv);
+  }
+  .tscale__swatch {
+    width: 20px;
+    height: 5px;
+    background: var(--muted-inv);
+    opacity: 0.55;
+  }
+
+  @media (max-width: 520px) {
+    .tscale__labels .num:nth-child(even) {
+      visibility: hidden;
+    }
+    .tscale__mark .num {
+      font-size: 0.75rem;
+      padding: 1px 4px;
+    }
+  }
+</style>

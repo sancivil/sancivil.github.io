@@ -1,0 +1,858 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageIntro from '../../../components/products/PageIntro.astro';
+import Stats from '../../../components/products/Stats.astro';
+import SpecList from '../../../components/products/SpecList.astro';
+import ModuleDrawing from '../../../components/products/ModuleDrawing.astro';
+import CtaBand from '../../../components/company/CtaBand.astro';
+import JsonLd from '../../../components/seo/JsonLd.astro';
+import Faq from '../../../components/seo/Faq.astro';
+import MonthlyChart from '../../../components/solar/MonthlyChart.astro';
+import TempScale from '../../../components/solar/TempScale.astro';
+import {
+  MONTHLY_USE,
+  cities,
+  cityById,
+  cityName,
+  flagship,
+  flagshipDatasheet,
+  flagshipSeries,
+  heatLoss,
+  lowMonth,
+  nearest,
+  peakMonth,
+  perDay,
+  pvgis,
+  sizing,
+  type SolarCity,
+} from '../../../components/solar/data.ts';
+import { specFromPanel } from '../../../lib/three/types.ts';
+import { fmt } from '../../../lib/designer/format.ts';
+import { PVGIS, absolute, breadcrumbList, dataset, place, webPage } from '../../../lib/seo/schema.ts';
+import { localeFromParam, localizePath, withLocales } from '../../../i18n/config.ts';
+import { solar, type CityFacts } from '../../../i18n/solar.ts';
+import { faq } from '../../../i18n/faq.ts';
+
+export const getStaticPaths = () => withLocales(cities.map((c) => ({ params: { city: c.id } })));
+
+const locale = localeFromParam(Astro.params.locale);
+const city = cityById(Astro.params.city!)!;
+const s = solar[locale];
+const t = s.city;
+const name = cityName(city, locale);
+const governorate = (c: SolarCity) => s.governorate(s.governorates[c.governorate as keyof typeof s.governorates]);
+const href = (path: string) => localizePath(path, locale);
+
+const yearly = fmt(city.yieldAnnual, 1);
+const daily = fmt(perDay(city.yieldAnnual), 1);
+const tilt = String(city.optimalTilt);
+const peak = peakMonth(city);
+const low = lowMonth(city);
+const coords = s.coords(fmt(city.lat, 2), fmt(city.lon, 2));
+const rows = MONTHLY_USE.map((m) => sizing(city, m));
+const example = sizing(city, 1000);
+const loss = String(pvgis.loss);
+const ct = fmt(flagship.ctPmax, 2);
+const designer = href(`/designer/?city=${city.id}`);
+
+const facts: CityFacts = {
+  city: name,
+  yieldYear: yearly,
+  perDay: daily,
+  tilt,
+  loss,
+  peakMonth: s.months[peak],
+  peak: fmt(city.yieldMonthly[peak], 1),
+  lowMonth: s.months[low],
+  low: fmt(city.yieldMonthly[low], 1),
+  panels: String(example.panels),
+  model: flagship.model,
+  watts: String(flagship.power),
+  installed: fmt(example.installed, 2),
+  kwp: fmt(example.kwp, 2),
+  area: fmt(example.area, 1),
+  facing: s.facing(city.optimalAzimuth),
+  coords,
+  tmin: fmt(city.design.tmin),
+  tnom: fmt(city.design.tnom),
+  tmax: fmt(city.design.tmax),
+  tmyMin: fmt(city.tmyMinC, 1),
+  tmyMax: fmt(city.tmyMaxC, 1),
+};
+const qas = t.faq.qas(facts);
+
+const temps = [
+  { key: 'min', t: city.design.tmin, ...t.temps.min },
+  { key: 'nom', t: city.design.tnom, ...t.temps.nom },
+  { key: 'max', t: city.design.tmax, ...t.temps.max },
+];
+
+const near = nearest(city, 4).map(({ city: other, km }) => ({
+  other,
+  km: fmt(Math.round(km / 5) * 5),
+  diff: ((other.yieldAnnual - city.yieldAnnual) / city.yieldAnnual) * 100,
+}));
+const signedPct = (v: number) => (Math.abs(v) < 0.05 ? '0.0%' : `${v > 0 ? '+' : ''}${fmt(v, 1)}%`);
+
+const moduleRows = [
+  { label: t.sizing.module.power, value: String(flagship.power), unit: 'W' },
+  { label: t.sizing.module.efficiency, value: fmt((flagship.efficiency ?? 0) * 100, 2), unit: '%' },
+  {
+    label: t.sizing.module.size,
+    value: `${flagship.height} × ${flagship.width} × ${flagship.depth}`,
+    unit: 'mm',
+  },
+  { label: t.sizing.module.weight, value: fmt(flagship.weight, 1).replace(/\.0$/, ''), unit: 'kg' },
+  { label: t.sizing.module.cells, value: String(flagship.cellQuantity), text: t.sizing.module.cellsText },
+  { label: t.sizing.module.coefficient, value: ct, unit: '%/°C' },
+  {
+    label: t.sizing.module.warranty,
+    text: t.sizing.module.warrantyText(flagshipSeries.warranty.product, flagshipSeries.warranty.power),
+  },
+];
+
+/* ---------- structured data ---------- */
+const title = t.meta.title(name);
+const description = t.meta.description(name, yearly, tilt);
+const url = absolute(href(`/solar/${city.id}/`));
+const crumbs = breadcrumbList([
+  { name: 'Faraday', url: absolute(href('/')) },
+  { name: s.crumb, url: absolute(href('/solar/')) },
+  { name, url },
+]);
+const cityPlace = place({ name, lat: city.lat, lon: city.lon, elevation: city.elevation, region: governorate(city) });
+const graph = [
+  webPage({ url, name: title, description, locale, breadcrumb: crumbs, about: cityPlace }),
+  crumbs,
+  dataset({
+    ...PVGIS,
+    name: t.dataset.name(name),
+    description: t.dataset.description(name, yearly, fmt(city.irradiationAnnual, 1), tilt),
+    url,
+    locale,
+    spatialCoverage: cityPlace,
+    variableMeasured: [
+      { name: 'Annual PV energy yield per kWp', unitText: 'kWh/kWp' },
+      { name: 'Monthly PV energy yield per kWp', unitText: 'kWh/kWp' },
+      { name: 'Annual in-plane irradiation', unitText: 'kWh/m²' },
+      { name: 'Optimal tilt and azimuth', unitText: '°' },
+      { name: 'Design cell temperatures (min, typical, max)', unitText: '°C' },
+    ],
+    dateModified: pvgis.fetched,
+    keywords: ['solar energy', 'photovoltaic yield', 'PVGIS', city.name, 'Iraq', 'Peimar'],
+  }),
+];
+---
+
+<Base title={title} description={description}>
+  <JsonLd slot="head" data={graph} />
+
+  <PageIntro
+    locale={locale}
+    crumbs={[{ label: s.crumb, href: '/solar/' }, { label: name }]}
+    eyebrow={t.eyebrow(governorate(city))}
+    title={t.title(name)}
+    lead={t.lead(name, yearly, daily, tilt)}
+  >
+    <p class="coords mono">
+      <span>{coords}</span>
+      <span>{s.elevation(fmt(city.elevation))}</span>
+    </p>
+    <Stats
+      items={[
+        { label: t.stats.yield, value: yearly, unit: 'kWh' },
+        { label: t.stats.irradiation, value: fmt(city.irradiationAnnual, 1), unit: 'kWh/m²' },
+        { label: t.stats.tilt, value: tilt, unit: '°' },
+        {
+          label: t.stats.azimuth,
+          value: String(city.optimalAzimuth),
+          unit: '°',
+          word: s.azimuthWord(city.optimalAzimuth),
+        },
+      ]}
+    />
+  </PageIntro>
+
+  <section class="theme-light section" aria-labelledby="monthly-title">
+    <div class="container">
+      <div class="shead">
+        <div class="shead__title">
+          <p class="eyebrow">{t.monthly.eyebrow}</p>
+          <h2 id="monthly-title" class="h2">{t.monthly.title(name)}</h2>
+        </div>
+        <div class="shead__aside">
+          <p>{t.monthly.text(s.months[peak], facts.peak, s.months[low], facts.low)}</p>
+          <p class="shead__figure mono">{t.monthly.total(yearly)}</p>
+        </div>
+      </div>
+      <MonthlyChart
+        values={city.yieldMonthly}
+        short={s.monthsShort}
+        months={s.months}
+        label={t.monthly.chartLabel(name)}
+        average={t.monthly.average}
+        unit="kWh"
+      />
+    </div>
+  </section>
+
+  <section class="theme-paper section" aria-labelledby="sizing-title">
+    <div class="container">
+      <div class="shead">
+        <div class="shead__title">
+          <p class="eyebrow">{t.sizing.eyebrow}</p>
+          <h2 id="sizing-title" class="h2">{t.sizing.title(name)}</h2>
+        </div>
+        <div class="shead__aside">
+          <p>{t.sizing.text(yearly, flagship.model, String(flagship.power))}</p>
+        </div>
+      </div>
+
+      <div class="sizing">
+        <div class="sizing__main">
+          <div class="sizing__scroll" tabindex="0" role="region" aria-label={t.sizing.caption(name, flagship.model)}>
+            <table class="sizing__table">
+              <caption class="sr-only">{t.sizing.caption(name, flagship.model)}</caption>
+              <thead>
+                <tr>
+                  <th scope="col">{t.sizing.col.use}<span class="th-unit">{t.sizing.perMonth}</span></th>
+                  <th scope="col">{t.sizing.col.kwp}<span class="th-unit">kWp</span></th>
+                  <th scope="col">
+                    {t.sizing.col.panels}<span class="th-unit">{flagship.model}</span>
+                  </th>
+                  <th scope="col">{t.sizing.col.area}<span class="th-unit">m²</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  rows.map((r) => (
+                    <tr class:list={{ 'is-example': r.monthly === 1000 }}>
+                      <th scope="row">
+                        <span class="num cell-main">{fmt(r.monthly)}</span>
+                        <span class="cell-sub">{t.sizing.perYear(fmt(r.annual))}</span>
+                      </th>
+                      <td>
+                        <span class="num cell-main">{fmt(r.kwp, 2)}</span>
+                      </td>
+                      <td>
+                        <span class="num cell-big">{r.panels}</span>
+                        <span class="cell-sub">{t.sizing.installed(fmt(r.installed, 2))}</span>
+                      </td>
+                      <td>
+                        <span class="num cell-main">{fmt(r.area, 1)}</span>
+                      </td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+          <p class="sizing__note">{t.sizing.note}</p>
+        </div>
+
+        <aside class="module" aria-labelledby="module-title">
+          <div class="module__head">
+            <p class="eyebrow">{t.sizing.module.eyebrow}</p>
+            <h3 id="module-title" class="h3 mono">{flagship.model}</h3>
+            <p class="module__tech">{t.sizing.module.tech}</p>
+          </div>
+          <figure class="module__drawing" dir="ltr">
+            <div class="module__art" style={`aspect-ratio:${flagship.width} / ${flagship.height}`}>
+              <ModuleDrawing spec={specFromPanel(flagship)} box={{ width: flagship.width, height: flagship.height }} />
+            </div>
+            <span class="module__dim module__dim--h"><span class="num">{flagship.height}</span></span>
+            <span class="module__dim module__dim--w num">{flagship.width}</span>
+            <figcaption class="sr-only">
+              {t.sizing.module.drawing(flagship.model, String(flagship.width), String(flagship.height))}
+            </figcaption>
+          </figure>
+          <SpecList rows={moduleRows} class="module__spec" />
+          <div class="module__links">
+            <a class="link-arrow" href={href(`/products/modules/${flagshipSeries.slug}/`)}>{t.sizing.module.link}</a>
+            {
+              flagshipDatasheet && (
+                <a class="link-arrow" href={flagshipDatasheet.url} rel="noopener" target="_blank">
+                  {t.sizing.module.datasheet}
+                </a>
+              )
+            }
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="theme-dark section" aria-labelledby="temps-title">
+    <div class="container">
+      <div class="shead">
+        <div class="shead__title">
+          <p class="eyebrow eyebrow--dot">{t.temps.eyebrow}</p>
+          <h2 id="temps-title" class="h2">{t.temps.title(name)}</h2>
+        </div>
+        <div class="shead__aside">
+          <p class="muted">{t.temps.text}</p>
+        </div>
+      </div>
+
+      <TempScale
+        tmin={city.design.tmin}
+        tnom={city.design.tnom}
+        tmax={city.design.tmax}
+        airMin={city.tmyMinC}
+        airMax={city.tmyMaxC}
+        label={t.temps.scale(facts.tmin, facts.tnom, facts.tmax)}
+        airLabel={t.temps.air}
+      />
+
+      <dl class="temps">
+        {
+          temps.map((item) => (
+            <div class:list={['temps__item', `temps__item--${item.key}`]}>
+              <dt>{item.label}</dt>
+              <dd class="temps__value">
+                <span class="num">{fmt(item.t)}<span class="unit">°C</span></span>
+              </dd>
+              <dd class="temps__text">{item.text}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <div class="temps__foot">
+        <p class="temps__heat">
+          {t.temps.heat(facts.tnom, flagship.model, ct, fmt(heatLoss(city.design.tnom, flagship.ctPmax), 1))}
+        </p>
+        <p class="temps__source">{t.temps.source(facts.tmyMin, facts.tmyMax, fmt(city.summerDayMeanC, 1))}</p>
+        <a class="link-arrow" href={designer}>{t.temps.designer(name)}</a>
+      </div>
+    </div>
+  </section>
+
+  <Faq qas={qas} eyebrow={faq[locale].eyebrow} heading={t.faq.heading(name)} id="faq" />
+
+  <section class="theme-light nearby" aria-labelledby="nearby-title">
+    <div class="container">
+      <div class="nearby__head">
+        <div>
+          <p class="eyebrow">{t.nearby.eyebrow}</p>
+          <h2 id="nearby-title" class="h3">{t.nearby.title}</h2>
+        </div>
+        <a class="link-arrow" href={href('/solar/')}>{t.nearby.all(String(cities.length))}</a>
+      </div>
+      <ol class="nearby__list" role="list">
+        {
+          near.map(({ other, km, diff }) => (
+            <li class="nearby__row">
+              <div class="nearby__main">
+                <a class="nearby__link" href={href(`/solar/${other.id}/`)}>
+                  {cityName(other, locale)}
+                </a>
+                <span class="nearby__gov">{governorate(other)}</span>
+              </div>
+              <dl class="nearby__facts">
+                <div>
+                  <dt>{t.nearby.distance}</dt>
+                  <dd>
+                    <span class="num">{km}<span class="unit">km</span></span>
+                  </dd>
+                </div>
+                <div>
+                  <dt>{t.nearby.yield}</dt>
+                  <dd>
+                    <span class="num">{fmt(other.yieldAnnual, 1)}<span class="unit">kWh/kWp</span></span>
+                  </dd>
+                </div>
+                <div>
+                  <dt>{t.nearby.diff(name)}</dt>
+                  <dd>
+                    <span class="num">{signedPct(diff)}</span>
+                  </dd>
+                </div>
+              </dl>
+              <span class="nearby__arrow" aria-hidden="true" />
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="source">
+        <p class="eyebrow">{t.source.eyebrow}</p>
+        <p class="source__text">{t.source.text(loss, pvgis.fetched)}</p>
+        <p class="source__credit mono">{s.credit}</p>
+        <a class="link-arrow" href={href('/solar/#method')}>{t.source.method}</a>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title={t.cta.title(name)}
+    primary={{ label: t.cta.designer(name), href: designer }}
+    secondary={{ label: t.cta.contact, href: href('/contact/') }}
+  />
+</Base>
+
+<style>
+  .coords {
+    display: grid;
+    gap: var(--s-1);
+    margin-bottom: var(--s-6);
+    font-size: 0.8125rem;
+    color: var(--muted-inv);
+    text-align: end;
+  }
+  @media (max-width: 900px) {
+    .coords {
+      text-align: start;
+    }
+  }
+
+  .shead {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: end;
+    gap: var(--s-5) var(--gap);
+    margin-bottom: clamp(var(--s-7), 5vw, var(--s-9));
+  }
+  .shead__title {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+  }
+  .shead__title .h2 {
+    max-width: 20ch;
+  }
+  .shead__aside {
+    display: grid;
+    gap: var(--s-3);
+    max-width: 46ch;
+    color: var(--muted-c);
+  }
+  .shead__figure {
+    font-size: 0.875rem;
+    color: var(--ink);
+  }
+  :global([dir='rtl']) .shead__figure {
+    font-family: var(--font-sans);
+  }
+
+  .sizing {
+    display: grid;
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+    align-items: start;
+    gap: var(--s-8) clamp(var(--s-7), 5vw, var(--s-9));
+  }
+  .sizing__scroll {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    border-top: 1px solid var(--line-strong);
+  }
+  .sizing__table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .sizing__table th,
+  .sizing__table td {
+    padding: var(--s-4) var(--s-3);
+    border-bottom: 1px solid var(--line);
+    text-align: end;
+    vertical-align: baseline;
+    white-space: nowrap;
+  }
+  .sizing__table th:first-child {
+    padding-inline-start: 0;
+    text-align: start;
+  }
+  .sizing__table th:last-child,
+  .sizing__table td:last-child {
+    padding-inline-end: 0;
+  }
+  .sizing__table thead th {
+    padding-block: var(--s-4) var(--s-3);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    vertical-align: bottom;
+    white-space: normal;
+  }
+  :global([dir='rtl']) .sizing__table thead th {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .th-unit {
+    display: block;
+    margin-top: 2px;
+    font-family: var(--font-mono);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ink);
+    opacity: 0.6;
+  }
+  .sizing__table tbody th {
+    font-weight: 400;
+  }
+  .cell-main {
+    font-size: 1.125rem;
+  }
+  .cell-big {
+    font-size: clamp(1.5rem, 1rem + 1.4vw, 2.25rem);
+    font-weight: 500;
+    line-height: 1;
+  }
+  .cell-sub {
+    display: block;
+    margin-top: var(--s-1);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .is-example > * {
+    background: var(--paper);
+  }
+  .is-example th[scope='row'] {
+    box-shadow: inset 3px 0 0 var(--sun);
+    padding-inline-start: var(--s-3);
+  }
+  :global([dir='rtl']) .is-example th[scope='row'] {
+    box-shadow: inset -3px 0 0 var(--sun);
+  }
+  @media (min-width: 1081px) {
+    .sizing__main {
+      position: sticky;
+      top: calc(var(--header-h) + var(--s-6));
+    }
+  }
+  .sizing__note {
+    margin-top: var(--s-4);
+    max-width: 68ch;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .module {
+    display: grid;
+    gap: var(--s-5);
+    padding: var(--s-6);
+    background: var(--paper);
+    border-radius: var(--r-2);
+  }
+  .module__head {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-2);
+  }
+  .module__head .h3 {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .module__tech {
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+  .module__drawing {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: center;
+    align-items: center;
+    gap: var(--s-2) var(--s-3);
+    padding-block: var(--s-3);
+  }
+  .module__art {
+    height: clamp(180px, 22vw, 280px);
+    border-radius: 2px;
+  }
+  .module__dim {
+    font-size: 0.6875rem;
+    color: var(--muted);
+  }
+  .module__dim--h {
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+    border-inline-start: 1px solid var(--line-strong);
+    padding-inline-start: var(--s-2);
+  }
+  .module__dim--h .num {
+    writing-mode: vertical-rl;
+  }
+  .module__dim--w {
+    grid-column: 1;
+    text-align: center;
+    border-top: 1px solid var(--line-strong);
+    padding-top: var(--s-2);
+  }
+  .module__links {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-2);
+  }
+  .module__links .link-arrow {
+    min-height: 44px;
+  }
+
+  .temps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: clamp(var(--s-7), 5vw, var(--s-9));
+    border-top: 1px solid var(--line-inv);
+  }
+  .temps__item {
+    display: grid;
+    align-content: start;
+    gap: var(--s-2);
+    padding-block-start: var(--s-5);
+    padding-inline: var(--gap);
+  }
+  .temps__item:first-child {
+    padding-inline-start: 0;
+  }
+  .temps__item + .temps__item {
+    border-inline-start: 1px solid var(--line-inv);
+  }
+  .temps__item dt {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted-inv);
+  }
+  :global([dir='rtl']) .temps__item dt {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .temps__value {
+    font-size: clamp(2.25rem, 1.5rem + 2.4vw, 3.75rem);
+    font-weight: 500;
+    line-height: 1.05;
+  }
+  .temps__item--max .temps__value {
+    color: var(--sun);
+  }
+  .temps__text {
+    max-width: 34ch;
+    font-size: 0.9375rem;
+    color: var(--muted-inv);
+  }
+  .temps__foot {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-3);
+    margin-top: clamp(var(--s-7), 5vw, var(--s-8));
+    padding-top: var(--s-5);
+    border-top: 1px solid var(--line-inv);
+  }
+  .temps__heat {
+    max-width: 60ch;
+    font-size: 1.125rem;
+  }
+  .temps__source {
+    max-width: 80ch;
+    font-size: 0.875rem;
+    color: var(--muted-inv);
+  }
+  .temps__foot .link-arrow {
+    min-height: 44px;
+  }
+
+  .nearby {
+    padding-block: 0 var(--section);
+  }
+  .nearby__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: var(--s-4) var(--gap);
+    margin-bottom: var(--s-6);
+    padding-top: var(--s-8);
+    border-top: 1px solid var(--line);
+  }
+  .nearby__head > div {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .nearby__head .link-arrow {
+    min-height: 44px;
+  }
+  .nearby__list {
+    border-top: 1px solid var(--line);
+  }
+  .nearby__row {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr) 2rem;
+    align-items: center;
+    gap: var(--s-4) var(--gap);
+    padding-block: var(--s-5);
+    border-bottom: 1px solid var(--line);
+  }
+  .nearby__main {
+    display: grid;
+    gap: var(--s-1);
+  }
+  .nearby__link {
+    font-size: clamp(1.25rem, 1rem + 0.8vw, 1.625rem);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  :global([dir='rtl']) .nearby__link {
+    letter-spacing: 0;
+  }
+  .nearby__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .nearby__link:focus-visible {
+    outline: none;
+  }
+  .nearby__row:has(.nearby__link:focus-visible) {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+  }
+  .nearby__gov {
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+  .nearby__facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: end;
+    gap: var(--s-4) var(--s-5);
+  }
+  .nearby__facts dt {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  :global([dir='rtl']) .nearby__facts dt {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .nearby__facts dd {
+    margin-top: var(--s-1);
+    font-size: 1.125rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .nearby__arrow {
+    justify-self: end;
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    transition: transform var(--dur-2) var(--ease);
+  }
+  .nearby__arrow::after {
+    content: '→';
+  }
+  :global([dir='rtl']) .nearby__arrow::after {
+    content: '←';
+  }
+  .nearby__row:hover .nearby__arrow {
+    transform: translateX(6px);
+  }
+  :global([dir='rtl']) .nearby__row:hover .nearby__arrow {
+    transform: translateX(-6px);
+  }
+
+  .source {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-3);
+    margin-top: var(--s-8);
+    max-width: 80ch;
+  }
+  .source__text {
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+  .source__credit {
+    font-size: 0.8125rem;
+  }
+  .source .link-arrow {
+    min-height: 44px;
+  }
+
+  @media (max-width: 1080px) {
+    .sizing {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .module {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: start;
+    }
+    .module__head,
+    .module__links {
+      grid-column: 1 / -1;
+    }
+    .module__drawing {
+      grid-row: span 2;
+    }
+  }
+  @media (max-width: 900px) {
+    .shead {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .nearby__row {
+      grid-template-columns: minmax(0, 1fr) 1.5rem;
+    }
+    .nearby__facts {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    .nearby__arrow {
+      grid-column: 2;
+      grid-row: 1;
+    }
+  }
+  @media (max-width: 720px) {
+    .module {
+      grid-template-columns: minmax(0, 1fr);
+      padding: var(--s-5);
+    }
+    .module__drawing {
+      grid-row: auto;
+    }
+    .temps {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .temps__item,
+    .temps__item:first-child {
+      padding-inline: 0;
+      padding-block: var(--s-5);
+    }
+    .temps__item + .temps__item {
+      border-inline-start: 0;
+      border-top: 1px solid var(--line-inv);
+    }
+    .sizing__table th,
+    .sizing__table td {
+      padding-inline: var(--s-2);
+      white-space: normal;
+    }
+    .sizing__table .num {
+      white-space: nowrap;
+    }
+    .cell-main {
+      font-size: 1rem;
+    }
+    .cell-sub {
+      font-size: 0.6875rem;
+    }
+    .nearby__facts {
+      column-gap: var(--s-4);
+    }
+    .nearby__facts dd {
+      font-size: 1rem;
+    }
+  }
+</style>

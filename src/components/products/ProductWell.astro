@@ -1,0 +1,86 @@
+---
+interface Props {
+  src: string | null;
+  alt: string;
+  /** Model code set as a typographic tile when there is no photo. */
+  label: string;
+  size?: [number, number];
+  eager?: boolean;
+  /** Width hint for the browser, e.g. "(max-width: 900px) 40vw, 320px". */
+  sizes?: string;
+  class?: string;
+}
+const { src, alt, label, size = [720, 720], eager = false, sizes, class: className } = Astro.props;
+---
+
+<div class:list={['well', { 'well--tile': !src }, className]} data-reveal="clip">
+  {
+    src ? (
+      <img
+        src={src}
+        alt={alt}
+        width={size[0]}
+        height={size[1]}
+        sizes={sizes}
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchpriority={eager ? 'high' : undefined}
+      />
+    ) : (
+      <span class="tile" role="img" aria-label={alt}>
+        <span class="tile__brand">Peimar</span>
+        <span class="tile__code" dir="ltr">
+          {label}
+        </span>
+      </span>
+    )
+  }
+</div>
+
+<style>
+  .well {
+    display: grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+    aspect-ratio: 1;
+    padding: 9%;
+    background: var(--paper-2);
+    border-radius: var(--r-2);
+    overflow: hidden;
+  }
+  :global(.theme-paper) .well {
+    background: var(--paper-3);
+  }
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .well--tile {
+    container-type: inline-size;
+    padding: 8%;
+  }
+  .tile {
+    display: grid;
+    align-content: space-between;
+    gap: var(--s-3);
+    font-family: var(--font-mono);
+    color: var(--ink);
+  }
+  .tile__brand {
+    font-size: clamp(0.625rem, 5cqi, 0.8125rem);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .tile__code {
+    font-size: clamp(0.8125rem, 9cqi, 2.25rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+    text-align: start;
+  }
+  :global([dir='rtl']) .tile__code {
+    text-align: end;
+  }
+</style>

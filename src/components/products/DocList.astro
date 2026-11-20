@@ -1,0 +1,99 @@
+---
+import type { DocLang } from './data.ts';
+import type { Locale } from '../../i18n/config.ts';
+import { products } from '../../i18n/products.ts';
+
+export interface DocItem {
+  label: string;
+  url: string;
+  lang: DocLang | null;
+  pdf: boolean;
+  /** Toggled by the model picker: the id of the model this document belongs to. */
+  for?: string;
+  hidden?: boolean;
+}
+interface Props {
+  locale: Locale;
+  items: DocItem[];
+  class?: string;
+}
+const { locale, items, class: className } = Astro.props;
+const t = products[locale];
+const meta = (doc: DocItem) => [doc.pdf ? 'PDF' : t.web, doc.lang && t.docLang[doc.lang]].filter(Boolean).join(' · ');
+---
+
+<ul role="list" class:list={['docs', className]}>
+  {
+    items.map((doc) => (
+      <li data-for={doc.for} hidden={doc.hidden}>
+        <a class="doc" href={doc.url} target="_blank" rel="noopener">
+          <span class="doc__label">{doc.label}</span>
+          <span class="doc__meta">{meta(doc)}</span>
+          <span class="doc__arrow" aria-hidden="true">
+            ↗
+          </span>
+          <span class="sr-only">{t.newTab}</span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .docs {
+    border-top: 1px solid var(--line-c);
+  }
+  .doc {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 1.25em;
+    align-items: center;
+    gap: var(--s-4);
+    min-height: 56px;
+    padding-block: var(--s-3);
+    border-bottom: 1px solid var(--line-c);
+    font-weight: 500;
+    font-size: 0.9375rem;
+  }
+  .doc__label {
+    overflow-wrap: anywhere;
+  }
+  .doc__meta {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+    color: var(--muted-c);
+    white-space: nowrap;
+  }
+  .doc__arrow {
+    justify-self: end;
+    font-family: var(--font-mono);
+    transition: transform var(--dur-2) var(--ease);
+  }
+  .doc:hover .doc__arrow {
+    transform: translate(3px, -3px);
+  }
+  :global([dir='rtl']) .doc__arrow {
+    transform: scaleX(-1);
+  }
+  :global([dir='rtl']) .doc:hover .doc__arrow {
+    transform: scaleX(-1) translate(3px, -3px);
+  }
+  .doc:hover .doc__label {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+  }
+  @media (max-width: 520px) {
+    .doc {
+      grid-template-columns: minmax(0, 1fr) 1.25em;
+      row-gap: 2px;
+    }
+    .doc__meta {
+      grid-row: 2;
+    }
+    .doc__arrow {
+      grid-row: 1 / span 2;
+      grid-column: 2;
+    }
+  }
+</style>

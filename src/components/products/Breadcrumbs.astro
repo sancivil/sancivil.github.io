@@ -1,0 +1,77 @@
+---
+import { localizePath } from '../../i18n/config.ts';
+import type { Locale } from '../../i18n/config.ts';
+import { products } from '../../i18n/products.ts';
+
+interface Props {
+  locale: Locale;
+  /** Site-root paths; the last item is the current page. */
+  items: { label: string; href?: string }[];
+}
+const { locale, items } = Astro.props;
+const trail = [{ label: 'Faraday', href: '/' }, ...items];
+---
+
+<nav class="crumbs" aria-label={products[locale].crumbs}>
+  <ol role="list">
+    {
+      trail.map((item, i) =>
+        i < trail.length - 1 && item.href ? (
+          <li>
+            <a href={localizePath(item.href, locale)}>{item.label}</a>
+          </li>
+        ) : (
+          <li>
+            <span aria-current="page">{item.label}</span>
+          </li>
+        ),
+      )
+    }
+  </ol>
+</nav>
+
+<style>
+  .crumbs {
+    --strong: var(--ink);
+  }
+  :global(.theme-dark) .crumbs {
+    --strong: var(--paper);
+  }
+  ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    min-height: 44px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted-c);
+  }
+  :global([dir='rtl']) ol {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  li {
+    display: inline-flex;
+    align-items: center;
+  }
+  /* The divider trails its crumb, so a wrapped trail never starts a line with a slash. */
+  li:not(:last-child)::after {
+    content: '/';
+    padding-inline: 0.75em;
+    opacity: 0.5;
+  }
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    transition: color var(--dur-1) var(--ease);
+  }
+  a:hover,
+  [aria-current='page'] {
+    color: var(--strong);
+  }
+</style>

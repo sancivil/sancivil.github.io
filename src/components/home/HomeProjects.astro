@@ -1,0 +1,146 @@
+---
+import ProjectMedia from '../company/ProjectMedia.astro';
+import { home } from '../../i18n/home.ts';
+import { company, type ProjectSlug } from '../../i18n/company.ts';
+import { localizePath, type Locale } from '../../i18n/config.ts';
+import { projectList, projectSpan } from '../company/facts.ts';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = home[locale].projects;
+const c = company[locale];
+---
+
+<section class="pj theme-light section" aria-labelledby="pj-title">
+  <div class="container pj__head">
+    <div class="pj__heading">
+      <p class="eyebrow">{t.eyebrow}</p>
+      <h2 id="pj-title" class="h2">{t.title(projectSpan.count, projectSpan.min, projectSpan.max)}</h2>
+    </div>
+    <a class="link-arrow pj__all" href={localizePath('/projects/', locale)}>{t.link}</a>
+  </div>
+
+  <ul class="pj__row" role="list">
+    {
+      projectList.map((p) => {
+        const copy = c.projects[p.slug as ProjectSlug];
+        return (
+          <li class="pj__item">
+            <a class="pj__card" href={localizePath(`/projects/#${p.slug}`, locale)}>
+              <ProjectMedia project={p} alt="" />
+              <span class="pj__meta">
+                <span class="pj__kwp num">{p.kwp}<span class="unit">kWp</span></span>
+                <span class="tag">{c.categories[p.category]}</span>
+              </span>
+              <span class="pj__title">{copy.title}</span>
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</section>
+
+<style>
+  .pj__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: var(--s-5) var(--gap);
+    margin-block-end: clamp(var(--s-7), 5vw, var(--s-9));
+  }
+  .pj__heading {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+  }
+  .pj__heading .h2 {
+    max-width: 16ch;
+  }
+  :global([dir='rtl']) .pj__heading .h2 {
+    max-width: 22ch;
+  }
+  .pj__all {
+    min-height: 44px;
+  }
+
+  .pj__row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-8) var(--gap);
+    width: 100%;
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+  .pj__card {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .pj__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--s-3);
+    padding-block-start: var(--s-2);
+  }
+  .pj__kwp {
+    font-size: clamp(2rem, 1.3rem + 1.9vw, 3rem);
+    line-height: 1;
+  }
+  .pj__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+    max-width: 28ch;
+  }
+  :global([dir='rtl']) .pj__title {
+    letter-spacing: 0;
+    line-height: 1.6;
+  }
+  .pj__card :global(.pmedia img) {
+    transition: opacity var(--dur-2) var(--ease);
+  }
+  .pj__card:hover :global(.pmedia img) {
+    opacity: 0.88;
+  }
+  .pj__card:hover .pj__title {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+  }
+
+  @media (max-width: 1080px) {
+    .pj__row {
+      gap: var(--s-7) var(--gap);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .pj__row {
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: min(64vw, 22rem);
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter);
+      padding-block-end: var(--s-4);
+      scrollbar-width: thin;
+    }
+    .pj__item {
+      scroll-snap-align: start;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .pj__row {
+      grid-auto-columns: 78vw;
+    }
+  }
+</style>

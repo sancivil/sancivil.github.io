@@ -1,0 +1,527 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageIntro from '../../../components/products/PageIntro.astro';
+import Stats from '../../../components/products/Stats.astro';
+import CtaBand from '../../../components/company/CtaBand.astro';
+import JsonLd from '../../../components/seo/JsonLd.astro';
+import Faq from '../../../components/seo/Faq.astro';
+import {
+  azimuthRange,
+  best,
+  byYield,
+  cities,
+  cityName,
+  flattest,
+  lowest,
+  perDay,
+  pvgis,
+  rank,
+  steepest,
+  tiltRange,
+  type SolarCity,
+} from '../../../components/solar/data.ts';
+import { fmt } from '../../../lib/designer/format.ts';
+import { PVGIS, absolute, breadcrumbList, dataset, place, webPage } from '../../../lib/seo/schema.ts';
+import { localeFromParam, localeParams, localizePath } from '../../../i18n/config.ts';
+import { solar, type IraqFacts } from '../../../i18n/solar.ts';
+import { faq } from '../../../i18n/faq.ts';
+
+export const getStaticPaths = () => localeParams();
+
+const locale = localeFromParam(Astro.params.locale);
+const s = solar[locale];
+const t = s.index;
+const href = (path: string) => localizePath(path, locale);
+const name = (c: SolarCity) => cityName(c, locale);
+const governorate = (c: SolarCity) => s.governorate(s.governorates[c.governorate as keyof typeof s.governorates]);
+const n = String(cities.length);
+
+const facts: IraqFacts = {
+  count: n,
+  best: name(best),
+  bestY: fmt(best.yieldAnnual, 1),
+  bestDay: fmt(perDay(best.yieldAnnual), 1),
+  second: name(byYield[1]),
+  secondY: fmt(byYield[1].yieldAnnual, 1),
+  third: name(byYield[2]),
+  thirdY: fmt(byYield[2].yieldAnnual, 1),
+  lowest: name(lowest),
+  lowY: fmt(lowest.yieldAnnual, 1),
+  lowDay: fmt(perDay(lowest.yieldAnnual), 1),
+  diff: fmt(((best.yieldAnnual - lowest.yieldAnnual) / best.yieldAnnual) * 100, 1),
+  loss: String(pvgis.loss),
+  tiltMin: String(tiltRange[0]),
+  tiltMax: String(tiltRange[1]),
+  azMax: String(azimuthRange[1]),
+  flattest: name(flattest),
+  steepest: name(steepest),
+};
+
+/* Yield strip: a labelled, truncated scale in 50 kWh/kWp steps. */
+const lo = Math.floor(lowest.yieldAnnual / 50) * 50;
+const hi = Math.ceil(best.yieldAnnual / 50) * 50;
+const strip = (y: number) => `${(((y - lo) / (hi - lo)) * 100).toFixed(1)}%`;
+const temps = (c: SolarCity) => `${fmt(c.design.tmin)} / ${fmt(c.design.tnom)} / ${fmt(c.design.tmax)}`;
+
+const title = t.meta.title(n);
+const description = t.meta.description(facts);
+const url = absolute(href('/solar/'));
+const crumbs = breadcrumbList([
+  { name: 'Faraday', url: absolute(href('/')) },
+  { name: s.crumb, url },
+]);
+const graph = [
+  webPage({ url, name: title, description, locale, breadcrumb: crumbs, type: 'CollectionPage' }),
+  crumbs,
+  dataset({
+    ...PVGIS,
+    name: t.dataset.name(n),
+    description: t.dataset.description(n),
+    url,
+    locale,
+    spatialCoverage: cities.map((c) =>
+      place({ name: name(c), lat: c.lat, lon: c.lon, elevation: c.elevation, region: governorate(c) }),
+    ),
+    variableMeasured: [
+      { name: 'Annual PV energy yield per kWp', unitText: 'kWh/kWp' },
+      { name: 'Monthly PV energy yield per kWp', unitText: 'kWh/kWp' },
+      { name: 'Annual in-plane irradiation', unitText: 'kWh/m²' },
+      { name: 'Optimal tilt and azimuth', unitText: '°' },
+      { name: 'Design cell temperatures (min, typical, max)', unitText: '°C' },
+    ],
+    dateModified: pvgis.fetched,
+    keywords: ['solar energy', 'photovoltaic yield', 'PVGIS', 'Iraq', ...cities.map((c) => c.name)],
+  }),
+];
+---
+
+<Base title={title} description={description}>
+  <JsonLd slot="head" data={graph} />
+
+  <PageIntro locale={locale} crumbs={[{ label: s.crumb }]} eyebrow={t.eyebrow(n)} title={t.title} lead={t.lead(facts)}>
+    <div class="hero-stats">
+      <Stats
+        items={[
+          { label: t.stats.best(name(best)), value: facts.bestY, unit: 'kWh/kWp' },
+          { label: t.stats.lowest(name(lowest)), value: facts.lowY, unit: 'kWh/kWp' },
+          { label: t.stats.tilt, value: [facts.tiltMin, facts.tiltMax], unit: '°' },
+        ]}
+      />
+    </div>
+  </PageIntro>
+
+  <section class="theme-light section" aria-labelledby="table-title">
+    <div class="container">
+      <div class="thead">
+        <div class="thead__title">
+          <p class="eyebrow">{t.table.eyebrow}</p>
+          <h2 id="table-title" class="h2">{t.table.title}</h2>
+        </div>
+        <p class="thead__lead">{t.table.lead}</p>
+      </div>
+
+      <div class="cities" data-cities>
+        <div class="cities__bar">
+          <div class="sort" role="group" aria-label={t.table.sort.label}>
+            <button type="button" class="sort__btn" data-sort="north" aria-pressed="true">{t.table.sort.north}</button>
+            <button type="button" class="sort__btn" data-sort="yield" aria-pressed="false">{t.table.sort.yield}</button>
+          </div>
+          <p class="cities__scale">{t.table.scale(fmt(lo), fmt(hi))}</p>
+        </div>
+
+        <div class="cities__scroll" tabindex="0" role="region" aria-label={t.table.caption(n)}>
+          <table>
+            <caption class="sr-only">{t.table.caption(n)}</caption>
+            <thead>
+              <tr>
+                <th scope="col" class="cities__corner">{t.table.col.city}</th>
+                <th scope="col" class="cities__yield-col">
+                  {t.table.col.yield}<span class="th-unit">kWh/kWp</span>
+                </th>
+                <th scope="col">{t.table.col.rank}</th>
+                <th scope="col">{t.table.col.irradiation}<span class="th-unit">kWh/m²</span></th>
+                <th scope="col">{t.table.col.tilt}<span class="th-unit">°</span></th>
+                <th scope="col">{t.table.col.azimuth}<span class="th-unit">°</span></th>
+                <th scope="col">
+                  {t.table.col.temps}<span class="th-unit">°C · {t.table.col.tempsSub}</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                cities.map((c, i) => (
+                  <tr data-north={i} data-yield={rank(c)}>
+                    <th scope="row">
+                      <a class="cities__link" href={href(`/solar/${c.id}/`)}>
+                        {name(c)}
+                      </a>
+                      <span class="cities__gov">{governorate(c)}</span>
+                    </th>
+                    <td class="cities__yield">
+                      <span class="num">{fmt(c.yieldAnnual, 1)}</span>
+                      <span class="cities__strip" aria-hidden="true" dir="ltr">
+                        <span class:list={['cities__dot', { 'is-best': c === best }]} style={`--at:${strip(c.yieldAnnual)}`} />
+                      </span>
+                    </td>
+                    <td class="num cities__rank">{String(rank(c)).padStart(2, '0')}</td>
+                    <td class="num">{fmt(c.irradiationAnnual, 1)}</td>
+                    <td class="num">{c.optimalTilt}</td>
+                    <td class="num">{c.optimalAzimuth}</td>
+                    <td class="num">{temps(c)}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="cities__hint" aria-hidden="true">{t.table.swipe}</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="method" class="theme-paper section" aria-labelledby="method-title">
+    <div class="container method">
+      <div class="method__head">
+        <p class="eyebrow">{t.method.eyebrow}</p>
+        <h2 id="method-title" class="h2">{t.method.title}</h2>
+        <p class="method__credit mono">{s.credit}</p>
+      </div>
+      <div class="method__body">
+        <dl class="method__list">
+          {
+            t.method.rows(String(pvgis.loss), pvgis.fetched).map((row) => (
+              <div class="method__row">
+                <dt>{row.label}</dt>
+                <dd>{row.text}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="method__note">{t.method.note}</p>
+      </div>
+    </div>
+  </section>
+
+  <Faq qas={t.faq.qas(facts)} eyebrow={faq[locale].eyebrow} heading={t.faq.heading} id="faq" />
+
+  <CtaBand
+    title={t.cta.title}
+    primary={{ label: t.cta.designer, href: href('/designer/') }}
+    secondary={{ label: t.cta.contact, href: href('/contact/') }}
+  />
+</Base>
+
+<style>
+  .thead {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: end;
+    gap: var(--s-5) var(--gap);
+    margin-bottom: clamp(var(--s-7), 5vw, var(--s-9));
+  }
+  .thead__title {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+  }
+  .thead__title .h2 {
+    max-width: 18ch;
+  }
+  .thead__lead {
+    max-width: 52ch;
+    color: var(--muted);
+  }
+
+  .cities__bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--s-3) var(--gap);
+    margin-bottom: var(--s-4);
+  }
+  .sort {
+    display: none;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-1);
+  }
+  :global(.js) .sort {
+    display: inline-flex;
+  }
+  .sort__btn {
+    min-height: 44px;
+    padding: 0 var(--s-4);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--muted);
+    transition:
+      background-color var(--dur-2) var(--ease),
+      color var(--dur-2) var(--ease);
+  }
+  .sort__btn + .sort__btn {
+    border-inline-start: 1px solid var(--line-strong);
+  }
+  .sort__btn:hover {
+    color: var(--ink);
+  }
+  .sort__btn[aria-pressed='true'] {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .cities__scale {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  :global([dir='rtl']) :is(.cities__scale, .cities__hint) {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+  }
+
+  .cities__scroll {
+    position: relative;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    border-top: 1px solid var(--line-strong);
+  }
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.9375rem;
+  }
+  th,
+  td {
+    padding: var(--s-4) var(--s-3);
+    border-bottom: 1px solid var(--line);
+    text-align: end;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  thead th {
+    padding-block: var(--s-4) var(--s-3);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    vertical-align: bottom;
+    white-space: normal;
+    min-width: 5.5em;
+  }
+  :global([dir='rtl']) thead th {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .th-unit {
+    display: block;
+    margin-top: 2px;
+    font-family: var(--font-mono);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ink);
+    opacity: 0.6;
+  }
+  th[scope='row'],
+  .cities__corner {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 1;
+    min-width: 9.5rem;
+    padding-inline-start: 0;
+    text-align: start;
+    background: var(--paper);
+    box-shadow: inset -1px 0 0 var(--line);
+  }
+  :global([dir='rtl']) th[scope='row'],
+  :global([dir='rtl']) .cities__corner {
+    box-shadow: inset 1px 0 0 var(--line);
+  }
+  th[scope='row'] {
+    font-weight: 400;
+  }
+  .cities__link {
+    display: block;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  :global([dir='rtl']) .cities__link {
+    letter-spacing: 0;
+  }
+  .cities__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .cities__gov {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  tbody tr:hover > * {
+    background-color: var(--paper-2);
+  }
+  .cities__rank {
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .cities__yield-col {
+    min-width: 12rem;
+  }
+  .cities__yield .num {
+    display: inline-block;
+    min-width: 4.5em;
+    font-weight: 500;
+  }
+  .cities__strip {
+    position: relative;
+    display: inline-block;
+    width: 7rem;
+    height: 9px;
+    margin-inline-start: var(--s-3);
+    vertical-align: middle;
+    background: linear-gradient(var(--line-strong), var(--line-strong)) center / 100% 1px no-repeat;
+  }
+  .cities__dot {
+    position: absolute;
+    top: 50%;
+    inset-inline-start: var(--at);
+    width: 9px;
+    height: 9px;
+    margin-inline-start: -4.5px;
+    margin-top: -4.5px;
+    background: var(--ink);
+  }
+  .cities__dot.is-best {
+    background: var(--sun);
+    outline: 1px solid var(--ink);
+  }
+  .cities__hint {
+    display: none;
+    margin-top: var(--s-3);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .cities__hint::after {
+    content: ' →';
+  }
+  :global([dir='rtl']) .cities__hint::after {
+    content: ' ←';
+  }
+  .cities.is-scrollable .cities__hint {
+    display: block;
+  }
+
+  .method {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: var(--s-7) var(--gap);
+  }
+  .method__head {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: var(--s-4);
+  }
+  .method__head .h2 {
+    max-width: 12ch;
+  }
+  .method__credit {
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .method__list {
+    border-top: 1px solid var(--line);
+  }
+  .method__row {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 7fr);
+    gap: var(--s-2) var(--gap);
+    padding-block: var(--s-4);
+    border-bottom: 1px solid var(--line);
+  }
+  .method__row dt {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-top: 0.2em;
+  }
+  :global([dir='rtl']) .method__row dt {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .method__row dd {
+    max-width: 60ch;
+  }
+  .method__note {
+    margin-top: var(--s-5);
+    max-width: 68ch;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 520px) {
+    .hero-stats :global(.stats) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 1080px) {
+    .method {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 900px) {
+    .thead {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 720px) {
+    th[scope='row'],
+    .cities__corner {
+      min-width: 7.5rem;
+      max-width: 9rem;
+      white-space: normal;
+    }
+    .cities__strip {
+      width: 4.5rem;
+    }
+    .cities__yield-col {
+      min-width: 9rem;
+    }
+    .method__row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--s-1);
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-cities]').forEach((root) => {
+    const scroller = root.querySelector<HTMLElement>('.cities__scroll')!;
+    const body = root.querySelector('tbody')!;
+    const rows = [...body.querySelectorAll<HTMLTableRowElement>('tr')];
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-sort]')];
+    const update = () => root.classList.toggle('is-scrollable', scroller.scrollWidth > scroller.clientWidth + 1);
+    new ResizeObserver(update).observe(scroller);
+
+    buttons.forEach((button) =>
+      button.addEventListener('click', () => {
+        const key = button.dataset.sort === 'yield' ? 'yield' : 'north';
+        rows
+          .slice()
+          .sort((a, b) => Number(a.dataset[key]) - Number(b.dataset[key]))
+          .forEach((row) => body.append(row));
+        buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+      }),
+    );
+  });
+</script>

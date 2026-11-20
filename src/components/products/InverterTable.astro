@@ -1,0 +1,191 @@
+---
+import { euEfficiency, kw, mpptCurrents, pct, storageReady, type Inverter } from './data.ts';
+import type { Locale } from '../../i18n/config.ts';
+import { products } from '../../i18n/products.ts';
+
+interface Props {
+  locale: Locale;
+  name: string;
+  models: Inverter[];
+}
+const { locale, name, models } = Astro.props;
+const t = products[locale];
+const c = t.inverterPage.col;
+
+/* Micro and small inverters read better in W; everything else in kW. */
+const inWatts = Math.max(...models.map((m) => m.pnomDc)) < 2000;
+const power = (w: number) => (inWatts ? String(w) : kw(w));
+const powerUnit = inWatts ? 'W' : 'kW';
+const efficiency = (v: number | null) => (v === null ? null : pct(v, 1));
+
+const allColumns: { label: string; unit?: string; cell: (m: Inverter) => string | null }[] = [
+  { label: c.ac, unit: powerUnit, cell: (m) => power(m.pnomAc) },
+  { label: c.dc, unit: powerUnit, cell: (m) => power(m.pnomDc) },
+  { label: c.mppt, cell: (m) => String(m.numMppt) },
+  { label: c.mpptRange, unit: 'V', cell: (m) => `${m.vminMppt}–${m.vmaxMppt}` },
+  { label: c.vmaxDc, unit: 'V', cell: (m) => String(m.vmaxDc) },
+  { label: c.imax, unit: 'A', cell: mpptCurrents },
+  { label: c.effMax, unit: '%', cell: (m) => efficiency(m.efficiencyMax) },
+  { label: c.effEu, unit: '%', cell: (m) => efficiency(euEfficiency(m)) },
+  { label: c.ip, cell: (m) => m.protectionClass },
+  { label: c.weight, unit: 'kg', cell: (m) => String(m.weight) },
+  { label: c.dims, unit: 'mm', cell: (m) => `${m.width} × ${m.height} × ${m.depth}` },
+];
+/* A column the datasheets leave blank for every model is only a row of dashes. */
+const columns = allColumns.filter((col) => models.some((m) => col.cell(m) !== null));
+---
+
+<div class="compare" data-compare>
+  <div class="compare__scroll" tabindex="0" role="region" aria-label={t.inverterPage.tableCaption(name)}>
+    <table>
+      <caption class="sr-only">{t.inverterPage.tableCaption(name)}</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="compare__corner">{c.model}</th>
+          {
+            columns.map((col) => (
+              <th scope="col">
+                {col.label}
+                {col.unit && <span class="compare__unit">{col.unit}</span>}
+              </th>
+            ))
+          }
+          <th scope="col">{c.battery}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          models.map((m) => (
+            <tr>
+              <th scope="row">
+                <bdi>{m.model}</bdi>
+              </th>
+              {columns.map((col) => {
+                const v = col.cell(m);
+                return v === null ? (
+                  <td>
+                    <span aria-hidden="true">—</span>
+                    <span class="sr-only">{t.notStated}</span>
+                  </td>
+                ) : (
+                  <td class="num">{v}</td>
+                );
+              })}
+              <td>{storageReady(m) ? t.yes : t.no}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="compare__hint" aria-hidden="true">{t.inverterPage.swipe}</p>
+</div>
+
+<style>
+  .compare {
+    position: relative;
+  }
+  .compare__scroll {
+    position: relative;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    border-top: 1px solid var(--line-c-strong);
+  }
+  .compare__scroll:focus-visible {
+    outline-offset: 2px;
+  }
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.875rem;
+  }
+  th,
+  td {
+    padding: var(--s-3);
+    border-bottom: 1px solid var(--line-c);
+    text-align: end;
+    white-space: nowrap;
+    vertical-align: baseline;
+  }
+  thead th {
+    padding-block: var(--s-4) var(--s-3);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted-c);
+    vertical-align: bottom;
+    white-space: normal;
+    min-width: 6em;
+  }
+  :global([dir='rtl']) thead th {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .compare__unit {
+    display: block;
+    margin-top: 2px;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--ink);
+    opacity: 0.6;
+  }
+  th[scope='row'],
+  .compare__corner {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 1;
+    text-align: start;
+    background: var(--paper);
+    box-shadow: inset -1px 0 0 var(--line-c);
+  }
+  :global([dir='rtl']) th[scope='row'],
+  :global([dir='rtl']) .compare__corner {
+    box-shadow: inset 1px 0 0 var(--line-c);
+  }
+  :global(.theme-paper) th[scope='row'],
+  :global(.theme-paper) .compare__corner {
+    background: var(--paper-2);
+  }
+  th[scope='row'] {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+  tbody tr:hover > * {
+    background-color: var(--paper-2);
+  }
+  td.num {
+    font-size: 0.9375rem;
+  }
+  .compare__hint {
+    display: none;
+    margin-top: var(--s-3);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--muted-c);
+  }
+  .compare__hint::after {
+    content: ' →';
+  }
+  :global([dir='rtl']) .compare__hint::after {
+    content: ' ←';
+  }
+  .compare.is-scrollable .compare__hint {
+    display: block;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-compare]').forEach((root) => {
+    const scroller = root.querySelector<HTMLElement>('.compare__scroll')!;
+    const update = () => root.classList.toggle('is-scrollable', scroller.scrollWidth > scroller.clientWidth + 1);
+    const observer = new ResizeObserver(update);
+    observer.observe(scroller);
+    observer.observe(scroller.querySelector('table')!);
+  });
+</script>

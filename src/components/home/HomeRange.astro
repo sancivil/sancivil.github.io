@@ -1,0 +1,260 @@
+---
+import { home } from '../../i18n/home.ts';
+import { common } from '../../i18n/common.ts';
+import { localizePath, type Locale } from '../../i18n/config.ts';
+import { formatPower, rangeRows } from '../company/facts.ts';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = home[locale].range;
+const names = common[locale].productNav;
+---
+
+<section class="range theme-light section" aria-labelledby="range-title">
+  <div class="container">
+    <div class="range__head">
+      <div class="range__heading">
+        <p class="eyebrow">{t.eyebrow}</p>
+        <h2 id="range-title" class="h2">{t.title}</h2>
+      </div>
+      <p class="range__intro">{t.intro}</p>
+    </div>
+
+    <ol class="range__list" role="list">
+      {
+        rangeRows.map((row, i) => {
+          const power = row.power ? formatPower(row.power) : null;
+          return (
+            <li class="range__row">
+              <div class="range__text">
+                <span class="range__index mono" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 class="h3 range__title">
+                  <a class="range__link" href={localizePath(row.href, locale)}>
+                    {names[row.key]}
+                  </a>
+                </h3>
+                <p class="range__desc">{t.items[row.key]}</p>
+              </div>
+              <dl class="range__figs">
+                <div>
+                  <dt>{power ? t.figures.lines : t.figures.products}</dt>
+                  <dd><span class="num">{row.lines}</span></dd>
+                </div>
+                {power && (
+                  <div>
+                    <dt>{t.figures.power}</dt>
+                    <dd><span class="num">{power.value}<span class="unit">{power.unit}</span></span></dd>
+                  </div>
+                )}
+              </dl>
+              <div class="range__well" data-reveal="clip">
+                <img
+                  src={row.image.src}
+                  width={row.image.width}
+                  height={row.image.height}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <span class="range__arrow" aria-hidden="true" />
+            </li>
+          );
+        })
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .range__head {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: end;
+    gap: var(--s-5) var(--gap);
+    margin-block-end: clamp(var(--s-7), 6vw, var(--s-9));
+  }
+  .range__heading {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+  }
+  .range__heading .h2 {
+    max-width: 18ch;
+  }
+  :global([dir='rtl']) .range__heading .h2 {
+    max-width: none;
+  }
+  .range__intro {
+    max-width: 44ch;
+    color: var(--muted);
+  }
+
+  .range__list {
+    border-bottom: 1px solid var(--line);
+  }
+  .range__row {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 15rem) 9.5rem 2.5rem;
+    grid-template-areas: 'text figs well arrow';
+    align-items: center;
+    column-gap: var(--gap);
+    padding-block: var(--s-5);
+    border-top: 1px solid var(--line);
+  }
+  .range__text {
+    grid-area: text;
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr);
+    align-items: baseline;
+    gap: var(--s-2) var(--gap);
+  }
+  .range__index {
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .range__desc {
+    grid-column: 2;
+  }
+  .range__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .range__link:focus-visible {
+    outline: none;
+  }
+  .range__link:focus-visible::after {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+  .range__desc {
+    max-width: 52ch;
+    color: var(--muted);
+  }
+  .range__figs {
+    grid-area: figs;
+    display: flex;
+    gap: var(--s-6);
+  }
+  .range__figs dt {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  :global([dir='rtl']) .range__figs dt {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .range__figs dd {
+    font-size: 1.375rem;
+    line-height: 1.3;
+  }
+  .range__well {
+    grid-area: well;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    padding: var(--s-3);
+    border-radius: var(--r-2);
+    background: var(--paper-2);
+  }
+  .range__well img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .range__arrow {
+    grid-area: arrow;
+    justify-self: end;
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    transition: transform var(--dur-2) var(--ease);
+  }
+  .range__arrow::before {
+    content: '→';
+  }
+  :global([dir='rtl']) .range__arrow::before {
+    content: '←';
+  }
+  .range__row:hover .range__arrow,
+  .range__row:focus-within .range__arrow {
+    transform: translateX(6px);
+  }
+  :global([dir='rtl']) .range__row:hover .range__arrow,
+  :global([dir='rtl']) .range__row:focus-within .range__arrow {
+    transform: translateX(-6px);
+  }
+  .range__title {
+    transition: color var(--dur-1) var(--ease);
+  }
+  .range__row:hover .range__title {
+    color: var(--muted);
+  }
+
+  @media (max-width: 1080px) {
+    .range__row {
+      grid-template-columns: minmax(0, 1fr) 8.5rem 2rem;
+      grid-template-areas:
+        'text well arrow'
+        'figs well arrow';
+      row-gap: var(--s-4);
+    }
+    .range__text {
+      grid-template-columns: 3rem minmax(0, 1fr);
+    }
+    .range__figs {
+      padding-inline-start: calc(3rem + var(--gap));
+    }
+  }
+
+  @media (max-width: 900px) {
+    .range__head {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 720px) {
+    .range__row {
+      grid-template-columns: minmax(0, 1fr) 5.5rem;
+      grid-template-areas:
+        'text well'
+        'figs well';
+      column-gap: var(--s-4);
+      row-gap: var(--s-3);
+      align-items: start;
+    }
+    .range__text {
+      grid-template-columns: 1.75rem minmax(0, 1fr);
+      column-gap: var(--s-3);
+    }
+    .range__figs {
+      padding-inline-start: calc(1.75rem + var(--s-3));
+    }
+    .range__well {
+      padding: var(--s-2);
+    }
+    .range__arrow {
+      display: none;
+    }
+    .range__desc {
+      font-size: 0.9375rem;
+    }
+    .range__figs {
+      gap: var(--s-5);
+    }
+    .range__figs dd {
+      font-size: 1.125rem;
+    }
+  }
+</style>

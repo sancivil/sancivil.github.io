@@ -1,0 +1,244 @@
+---
+import { company } from '../../i18n/company.ts';
+import type { Locale } from '../../i18n/config.ts';
+import { cityOptions } from './facts.ts';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const f = company[locale].contactPage.form;
+const cities = cityOptions(locale);
+const copy = {
+  greeting: f.greeting,
+  subject: f.subject,
+  labels: { name: f.name, phone: f.phone, city: f.city, interest: f.interest },
+  errors: f.errors,
+  done: f.done,
+};
+---
+
+<form class="eq" novalidate data-enquiry data-copy={JSON.stringify(copy)}>
+  <div class="eq__grid">
+    <div class="field">
+      <label class="field__label" for="eq-name">{f.name} <span class="eq__req">· {f.required}</span></label>
+      <input
+        class="input"
+        id="eq-name"
+        name="name"
+        type="text"
+        autocomplete="name"
+        required
+        aria-describedby="eq-name-error"
+      />
+      <p class="eq__error" id="eq-name-error" hidden></p>
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="eq-phone">{f.phone} <span class="eq__req">· {f.required}</span></label>
+      <input
+        class="input eq__tel"
+        id="eq-phone"
+        name="phone"
+        type="tel"
+        inputmode="tel"
+        autocomplete="tel"
+        dir="ltr"
+        required
+        aria-describedby="eq-phone-error"
+      />
+      <p class="eq__error" id="eq-phone-error" hidden></p>
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="eq-city">{f.city}</label>
+      <select class="select" id="eq-city" name="city">
+        <option value="">{f.cityPlaceholder}</option>
+        {cities.map((c) => <option value={c.name}>{c.name}</option>)}
+        <option value={f.cityOther}>{f.cityOther}</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="eq-interest">{f.interest}</label>
+      <select class="select" id="eq-interest" name="interest">
+        <option value="">{f.interestPlaceholder}</option>
+        {Object.values(f.interests).map((label) => <option value={label}>{label}</option>)}
+      </select>
+    </div>
+
+    <div class="field eq__wide">
+      <label class="field__label" for="eq-message">{f.message} <span class="eq__req">· {f.required}</span></label>
+      <textarea
+        class="textarea"
+        id="eq-message"
+        name="message"
+        rows="5"
+        required
+        aria-describedby="eq-message-hint eq-message-error"></textarea>
+      <p class="eq__hint" id="eq-message-hint">{f.messageHint}</p>
+      <p class="eq__error" id="eq-message-error" hidden></p>
+    </div>
+  </div>
+
+  <div class="eq__actions">
+    <button class="btn btn--sun" type="submit" value="whatsapp">{f.sendWhatsapp}</button>
+    <button class="btn btn--line" type="submit" value="email">{f.sendEmail}</button>
+  </div>
+
+  <p class="eq__status" role="status" aria-live="polite"></p>
+</form>
+
+<style>
+  .eq {
+    display: grid;
+    gap: var(--s-6);
+  }
+  .eq__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-6) var(--gap);
+  }
+  .eq__wide {
+    grid-column: 1 / -1;
+  }
+  .eq__req {
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+  :global([dir='rtl']) .eq__tel {
+    text-align: end;
+  }
+  .eq__hint {
+    font-size: 0.875rem;
+    color: var(--muted-c);
+  }
+  .eq__error {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #b3372e;
+  }
+  .eq__error[hidden] {
+    display: none;
+  }
+  .eq__error::before {
+    content: '';
+    flex: none;
+    width: 6px;
+    height: 6px;
+    background: currentColor;
+  }
+  .eq :global([aria-invalid='true']) {
+    border-color: #b3372e;
+  }
+  .eq__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+  .eq__status:empty {
+    display: none;
+  }
+  .eq__status {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-3);
+    padding: var(--s-4) var(--s-5);
+    border: 1px solid var(--line-c-strong);
+    border-radius: var(--r-1);
+    font-weight: 500;
+  }
+  .eq__status::before {
+    content: '';
+    flex: none;
+    width: 8px;
+    height: 8px;
+    background: var(--sun);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 720px) {
+    .eq__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .eq__actions {
+      display: grid;
+    }
+  }
+</style>
+
+<script>
+  import { contact, whatsappLink } from '../../data/site.ts';
+
+  type Key = 'name' | 'phone' | 'message';
+  type Copy = {
+    greeting: string;
+    subject: string;
+    labels: Record<'name' | 'phone' | 'city' | 'interest', string>;
+    errors: Record<Key, string>;
+    done: Record<'whatsapp' | 'email', string>;
+  };
+
+  const form = document.querySelector<HTMLFormElement>('[data-enquiry]');
+
+  if (form) {
+    const copy: Copy = JSON.parse(form.dataset.copy ?? '{}');
+    const status = form.querySelector<HTMLElement>('.eq__status');
+    const keys: Key[] = ['name', 'phone', 'message'];
+    const field = (key: Key) => form.elements.namedItem(key) as HTMLInputElement | HTMLTextAreaElement;
+    const valid: Record<Key, (value: string) => boolean> = {
+      name: (v) => v.trim().length > 0,
+      phone: (v) => v.replace(/\D/g, '').length >= 7,
+      message: (v) => v.trim().length > 0,
+    };
+
+    const showError = (key: Key, message: string) => {
+      const error = form.querySelector<HTMLElement>(`#eq-${key}-error`);
+      field(key).setAttribute('aria-invalid', String(Boolean(message)));
+      if (error) {
+        error.textContent = message;
+        error.hidden = !message;
+      }
+    };
+
+    form.addEventListener('input', (event) => {
+      const target = event.target as HTMLInputElement;
+      const key = target.name as Key;
+      if (keys.includes(key) && target.getAttribute('aria-invalid') === 'true' && valid[key](target.value)) {
+        showError(key, '');
+      }
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const invalid = keys.filter((key) => !valid[key](field(key).value));
+      keys.forEach((key) => showError(key, invalid.includes(key) ? copy.errors[key] : ''));
+      if (invalid.length) {
+        if (status) status.textContent = '';
+        field(invalid[0]).focus();
+        return;
+      }
+
+      const data = new FormData(form);
+      const value = (name: string) => String(data.get(name) ?? '').trim();
+      const lines = [copy.greeting, '', `${copy.labels.name}: ${value('name')}`, `${copy.labels.phone}: ${value('phone')}`];
+      if (value('city')) lines.push(`${copy.labels.city}: ${value('city')}`);
+      if (value('interest')) lines.push(`${copy.labels.interest}: ${value('interest')}`);
+      lines.push('', value('message'));
+      const text = lines.join('\n');
+
+      const via = (event.submitter as HTMLButtonElement | null)?.value === 'email' ? 'email' : 'whatsapp';
+      if (via === 'whatsapp') {
+        window.open(whatsappLink(text), '_blank', 'noopener');
+      } else {
+        window.location.href = `mailto:${contact.email}?subject=${encodeURIComponent(copy.subject)}&body=${encodeURIComponent(text)}`;
+      }
+      if (status) status.textContent = copy.done[via];
+    });
+  }
+</script>

@@ -1,0 +1,163 @@
+---
+import { home } from '../../i18n/home.ts';
+import { company } from '../../i18n/company.ts';
+import { localizePath, type Locale } from '../../i18n/config.ts';
+import { peimar, warranty } from '../company/facts.ts';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = home[locale].commitment;
+const years = company[locale].years;
+---
+
+<section class="commit theme-light section" aria-labelledby="commit-title">
+  <div class="container commit__grid">
+    <div class="commit__main">
+      <p class="eyebrow">{t.eyebrow}</p>
+      <h2 id="commit-title" class="h2 commit__title" data-reveal="lines">{t.title}</h2>
+      <div class="commit__body">
+        {t.body.map((p) => <p>{p}</p>)}
+      </div>
+      <a class="link-arrow commit__link" href={localizePath('/about/', locale)}>{t.link}</a>
+    </div>
+
+    <dl class="commit__stats">
+      <div class="commit__stat">
+        <dt>{t.stats.capacity}</dt>
+        <dd>
+          <span class="num"
+            >+<span data-reveal="count" data-to={peimar.capacityGw} data-decimals="1">{peimar.capacityGw.toFixed(1)}</span
+            ><span class="unit">GW</span></span
+          >
+        </dd>
+      </div>
+      <div class="commit__stat">
+        <dt>{t.stats.warranty}</dt>
+        <dd>
+          <span class="num" data-reveal="count" data-to={warranty.linearPowerYears}>{warranty.linearPowerYears}</span><span
+            class="unit">{years}</span
+          >
+        </dd>
+      </div>
+      <div class="commit__stat">
+        <dt>{t.stats.founded}</dt>
+        <dd><span class="num">{peimar.founded}</span></dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<style>
+  .commit__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+    column-gap: var(--gap);
+  }
+  .commit__main {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: var(--s-5);
+    padding-inline-end: clamp(var(--s-5), 5vw, var(--s-9));
+  }
+  .commit__title {
+    max-width: 20ch;
+  }
+  :global([dir='rtl']) .commit__title {
+    max-width: 26ch;
+  }
+  .commit__body {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-4) var(--gap);
+    max-width: 60rem;
+    margin-block-start: var(--s-4);
+    color: var(--muted);
+  }
+  .commit__link {
+    min-height: 44px;
+  }
+
+  .commit__stats {
+    display: grid;
+    align-content: start;
+    border-inline-start: 1px solid var(--line);
+    padding-inline-start: var(--gap);
+    text-align: end;
+  }
+  .commit__stat {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: var(--s-2);
+    padding-block: var(--s-6);
+  }
+  .commit__stat:first-child {
+    padding-block-start: 0;
+  }
+  .commit__stat + .commit__stat {
+    border-top: 1px solid var(--line);
+  }
+  .commit__stat dt {
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+  .commit__stat dd {
+    font-size: clamp(2.75rem, 1.4rem + 3.4vw, 5.25rem);
+    line-height: 1;
+    font-weight: 400;
+  }
+
+  @media (max-width: 1080px) {
+    .commit__body {
+      grid-template-columns: minmax(0, 1fr);
+      max-width: 62ch;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .commit__grid {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: var(--s-8);
+    }
+    .commit__main {
+      padding-inline-end: 0;
+    }
+    .commit__stats {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border-inline-start: 0;
+      padding-inline-start: 0;
+      border-top: 1px solid var(--line);
+      text-align: start;
+    }
+    .commit__stat,
+    .commit__stat:first-child {
+      padding-block: var(--s-5) 0;
+      padding-inline-end: var(--s-4);
+    }
+    .commit__stat + .commit__stat {
+      border-top: 0;
+      border-inline-start: 1px solid var(--line);
+      padding-inline-start: var(--s-4);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .commit__stats {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .commit__stat,
+    .commit__stat:first-child {
+      padding-block: var(--s-5);
+      padding-inline: 0;
+    }
+    .commit__stat + .commit__stat {
+      border-inline-start: 0;
+      border-top: 1px solid var(--line);
+      padding-inline-start: 0;
+    }
+  }
+</style>

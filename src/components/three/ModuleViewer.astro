@@ -1,0 +1,362 @@
+---
+/*
+  CONTRACT (implemented by the 3D work package; pages may rely on it):
+  Interactive orbit viewer of one module for product pages.
+  Props: spec (ModuleSpec), class?, label? (accessible name), locale? (defaults to the URL's locale).
+  Root element: <pv-module-viewer data-spec="{json ModuleSpec}">. Changing the data-spec
+  attribute at runtime rebuilds the module (used by model pickers on product pages).
+  Fills its parent width. The stage is 4/3 (1/1 under 720px, where the toolbar moves below it)
+  on --paper-2 with a soft contact shadow, and draws its own controls (front / back / explode /
+  dimensions / zoom / reset). Touch: vertical swipes scroll the page, horizontal drags turn the
+  module, no pinch capture. Without JS or WebGL it shows a front elevation with model and size.
+*/
+import type { Locale } from '../../i18n/config.ts';
+import { localeFromPath } from '../../i18n/config.ts';
+import { three } from '../../i18n/three.ts';
+import { moduleSvg } from '../../lib/three/drawing.ts';
+import type { ModuleSpec } from '../../lib/three/types.ts';
+
+interface Props {
+  spec: ModuleSpec;
+  class?: string;
+  label?: string;
+  locale?: Locale;
+}
+const { spec, class: className, locale = localeFromPath(Astro.url.pathname) } = Astro.props;
+const t = three[locale].viewer;
+const label = Astro.props.label ?? t.label(spec.model);
+---
+
+<pv-module-viewer class:list={['module-viewer', className]} data-spec={JSON.stringify(spec)} role="group" aria-label={label}>
+  <div class="module-viewer__stage" data-stage>
+    <div class="module-viewer__fallback" data-fallback set:html={moduleSvg(spec)} />
+    <div class="module-viewer__dims" data-dims hidden aria-hidden="true">
+      <svg><path></path></svg>
+      <span class="mono" data-dim="w"></span>
+      <span class="mono" data-dim="h"></span>
+      <span class="mono" data-dim="d"></span>
+    </div>
+    <p class="module-viewer__meta mono">
+      <bdi data-model>{spec.model}</bdi>
+      <span class="num" data-size>{spec.width} × {spec.height} × {spec.depth} mm</span>
+    </p>
+    <p class="module-viewer__hint small" data-hint hidden>{t.hint}</p>
+  </div>
+  <div class="module-viewer__bar" role="group" aria-label={t.controls} data-bar hidden>
+    <span class="module-viewer__seg">
+      <button type="button" data-act="front">{t.front}</button>
+      <button type="button" data-act="back">{t.back}</button>
+    </span>
+    <span class="module-viewer__seg">
+      <button type="button" data-act="explode" aria-pressed="false">{t.explode}</button>
+      <button type="button" data-act="dims" aria-pressed="false">{t.dimensions}</button>
+    </span>
+    <span class="module-viewer__seg">
+      <button type="button" data-act="out" aria-label={t.zoomOut}><span aria-hidden="true">−</span></button>
+      <button type="button" data-act="in" aria-label={t.zoomIn}><span aria-hidden="true">+</span></button>
+      <button type="button" data-act="reset">{t.reset}</button>
+    </span>
+  </div>
+  <p class="module-viewer__note small" data-nowebgl hidden>{t.noWebgl}</p>
+</pv-module-viewer>
+
+<style>
+  .module-viewer {
+    position: relative;
+    display: block;
+    color: var(--ink);
+    background: var(--paper-2);
+    border-radius: var(--r-2);
+    overflow: hidden;
+  }
+  .module-viewer__stage {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    max-height: min(84svh, 860px);
+    width: 100%;
+  }
+  .module-viewer__stage :global(canvas) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: grab;
+    transition: opacity 600ms var(--ease);
+  }
+  .module-viewer__stage :global(canvas:active) {
+    cursor: grabbing;
+  }
+  .module-viewer__stage :global(canvas:focus-visible) {
+    outline-offset: -4px;
+  }
+  .module-viewer__fallback {
+    position: absolute;
+    inset: 14% 0 18%;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    transition: opacity 400ms var(--ease);
+  }
+  .module-viewer__fallback :global(svg) {
+    width: auto;
+    height: 100%;
+    max-width: 80%;
+  }
+  .module-viewer__stage:global(.is-ready) :global(canvas) {
+    opacity: 1;
+  }
+  .module-viewer__stage:global(.is-ready) .module-viewer__fallback {
+    opacity: 0;
+  }
+
+  .module-viewer__meta {
+    position: absolute;
+    inset-block-start: var(--s-4);
+    inset-inline-start: var(--s-4);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--s-3);
+    font-size: 0.75rem;
+    pointer-events: none;
+  }
+  .module-viewer__meta .num {
+    color: var(--muted);
+    letter-spacing: 0;
+  }
+  .module-viewer__hint {
+    position: absolute;
+    inset-block-start: var(--s-4);
+    inset-inline-end: var(--s-4);
+    font-size: 0.75rem;
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  .module-viewer__dims {
+    position: absolute;
+    inset: 0;
+    direction: ltr;
+    pointer-events: none;
+  }
+  .module-viewer__dims svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .module-viewer__dims path {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1;
+  }
+  .module-viewer__dims span {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    padding: 2px 6px;
+    background: var(--paper-2);
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .module-viewer__bar {
+    position: absolute;
+    inset-block-end: var(--s-4);
+    inset-inline: var(--s-4);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--s-2);
+  }
+  .module-viewer__bar[hidden] {
+    display: none;
+  }
+  .module-viewer__seg {
+    display: flex;
+  }
+  .module-viewer__seg button {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 var(--s-4);
+    border: 1px solid var(--line-strong);
+    background: var(--paper);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    transition:
+      background-color var(--dur-1) var(--ease),
+      color var(--dur-1) var(--ease),
+      border-color var(--dur-1) var(--ease);
+  }
+  .module-viewer__seg button + button {
+    margin-inline-start: -1px;
+  }
+  .module-viewer__seg button:first-child {
+    border-start-start-radius: var(--r-1);
+    border-end-start-radius: var(--r-1);
+  }
+  .module-viewer__seg button:last-child {
+    border-start-end-radius: var(--r-1);
+    border-end-end-radius: var(--r-1);
+  }
+  .module-viewer__seg button:hover {
+    position: relative;
+    border-color: var(--ink);
+  }
+  .module-viewer__seg button:focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .module-viewer__seg button[aria-pressed='true'] {
+    position: relative;
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+  .module-viewer__seg [data-act='out'],
+  .module-viewer__seg [data-act='in'] {
+    padding: 0;
+    font-size: 1.125rem;
+    font-weight: 400;
+  }
+  .module-viewer__note {
+    position: absolute;
+    inset-block-end: var(--s-4);
+    inset-inline: var(--s-4);
+    color: var(--muted);
+    text-align: center;
+  }
+
+  @media (max-width: 720px) {
+    .module-viewer__stage {
+      aspect-ratio: 1 / 1;
+    }
+    .module-viewer__bar {
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .module-viewer__seg {
+      flex: none;
+    }
+    .module-viewer__bar {
+      position: static;
+      padding: 0 var(--s-3) var(--s-4);
+    }
+    .module-viewer__seg button {
+      padding: 0 var(--s-3);
+    }
+    .module-viewer__hint {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { moduleSvg } from '../../lib/three/drawing.ts';
+  import { loadScenes, webglAvailable, whenNear } from '../../lib/three/load.ts';
+  import type { ModuleSpec } from '../../lib/three/types.ts';
+  import type { ModuleViewerScene } from '../../lib/three/viewer.ts';
+
+  class PvModuleViewer extends HTMLElement {
+    static observedAttributes = ['data-spec'];
+    scene: ModuleViewerScene | null = null;
+
+    get spec() {
+      return JSON.parse(this.dataset.spec ?? '{}') as ModuleSpec;
+    }
+
+    connectedCallback() {
+      if (!webglAvailable()) {
+        this.querySelector<HTMLElement>('[data-nowebgl]')!.hidden = false;
+        return;
+      }
+      whenNear(this, () => this.mount(), '400px');
+    }
+
+    disconnectedCallback() {
+      this.scene?.dispose();
+      this.scene = null;
+    }
+
+    attributeChangedCallback(_name: string, previous: string | null, value: string | null) {
+      if (!value || value === previous || !this.isConnected) return;
+      const spec = this.spec;
+      this.querySelector('[data-model]')!.textContent = spec.model;
+      this.querySelector('[data-size]')!.textContent = `${spec.width} × ${spec.height} × ${spec.depth} mm`;
+      this.querySelector('[data-fallback]')!.innerHTML = moduleSvg(spec);
+      this.scene?.setSpec(spec);
+    }
+
+    async mount() {
+      const { mountViewer } = await loadScenes();
+      await document.fonts.ready;
+      if (!this.isConnected || this.scene) return;
+      const stage = this.querySelector<HTMLElement>('[data-stage]')!;
+      const bar = this.querySelector<HTMLElement>('[data-bar]')!;
+      const meta = this.querySelector<HTMLElement>('.module-viewer__meta')!;
+      const canvas = document.createElement('canvas');
+      canvas.tabIndex = 0;
+      canvas.setAttribute('role', 'img');
+      canvas.setAttribute('aria-label', this.getAttribute('aria-label') ?? '');
+      stage.prepend(canvas);
+      bar.hidden = false;
+      this.querySelector<HTMLElement>('[data-hint]')!.hidden = false;
+      const overlaid = () => getComputedStyle(bar).position === 'absolute';
+      this.scene = mountViewer(
+        {
+          stage,
+          canvas,
+          dims: this.querySelector<HTMLElement>('[data-dims]')!,
+          insets: () => ({ top: meta.offsetHeight + 24, bottom: overlaid() ? bar.offsetHeight + 28 : 16 }),
+        },
+        this.spec,
+      );
+      bar.addEventListener('click', (e) => {
+        const button = (e.target as Element).closest<HTMLButtonElement>('button[data-act]');
+        if (button) this.act(button);
+      });
+    }
+
+    act(button: HTMLButtonElement) {
+      const scene = this.scene;
+      if (!scene) return;
+      const toggle = () => {
+        const on = button.getAttribute('aria-pressed') !== 'true';
+        button.setAttribute('aria-pressed', String(on));
+        return on;
+      };
+      switch (button.dataset.act) {
+        case 'front':
+          scene.front();
+          break;
+        case 'back':
+          scene.back();
+          break;
+        case 'explode':
+          scene.setExplode(toggle());
+          break;
+        case 'dims':
+          scene.setDims(toggle());
+          break;
+        case 'in':
+          scene.zoom(0.8);
+          break;
+        case 'out':
+          scene.zoom(1.25);
+          break;
+        case 'reset':
+          this.querySelectorAll('[aria-pressed]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+          scene.setDims(false);
+          scene.reset();
+          break;
+      }
+    }
+  }
+
+  if (!customElements.get('pv-module-viewer')) customElements.define('pv-module-viewer', PvModuleViewer);
+</script>

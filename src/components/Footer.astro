@@ -1,0 +1,155 @@
+---
+import Logo from './Logo.astro';
+import { contact, nav, productNav } from '../data/site.ts';
+import { common } from '../i18n/common.ts';
+import { localeFromPath, localizePath } from '../i18n/config.ts';
+
+const locale = localeFromPath(Astro.url.pathname);
+const t = common[locale];
+const href = (p: string) => localizePath(p, locale);
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer theme-dark">
+  <div class="container">
+    <div class="site-footer__top">
+      <div class="site-footer__intro">
+        <p class="eyebrow eyebrow--dot">{t.footer.eyebrow}</p>
+        <p class="h3 site-footer__claim">{t.footer.claim(contact.founded)}</p>
+        <a class="btn btn--sun" href={href('/designer/')}>{t.footer.openDesigner}</a>
+      </div>
+
+      <nav class="site-footer__col" aria-label={t.footer.products}>
+        <p class="eyebrow">{t.footer.products}</p>
+        <ul role="list">
+          {productNav.map((item) => <li><a class="link-underline" href={href(item.href)}>{t.productNav[item.key]}</a></li>)}
+        </ul>
+      </nav>
+
+      <nav class="site-footer__col" aria-label={t.footer.company}>
+        <p class="eyebrow">{t.footer.company}</p>
+        <ul role="list">
+          {nav.map((item) => <li><a class="link-underline" href={href(item.href)}>{t.nav[item.key]}</a></li>)}
+          <li><a class="link-underline" href={href('/faq/')}>{t.footer.faq}</a></li>
+          <li><a class="link-underline" href={href('/solar/')}>{t.footer.solar}</a></li>
+        </ul>
+      </nav>
+
+      <div class="site-footer__col">
+        <p class="eyebrow">{t.footer.contact}</p>
+        <ul role="list">
+          <li><a class="link-underline mono" dir="ltr" href={contact.phoneHref}>{contact.phoneDisplay}</a></li>
+          <li><a class="link-underline mono" dir="ltr" href={`mailto:${contact.email}`}>{contact.email}</a></li>
+          <li><a class="link-underline" href={contact.whatsappHref} rel="noopener" target="_blank">{t.footer.whatsapp}</a></li>
+        </ul>
+        <address>
+          <a class="link-underline" href={contact.mapsHref} rel="noopener" target="_blank">
+            {t.address.street}<br />{t.address.place}
+          </a>
+          <span class="small">{t.hours}</span>
+        </address>
+      </div>
+    </div>
+
+    <div class="site-footer__mark" aria-hidden="true" dir="ltr">
+      <Logo title="" />
+    </div>
+
+    <div class="site-footer__legal small">
+      <p>© <span class="num">{year}</span> <bdi>{contact.company}</bdi> {t.footer.rights}</p>
+      <p>{t.footer.trademark}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: var(--s-9) var(--s-6);
+    border-top: 1px solid var(--line-inv);
+  }
+  .site-footer__top {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) repeat(3, minmax(0, 2fr));
+    gap: var(--gap);
+    padding-bottom: var(--s-9);
+  }
+  .site-footer__intro {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: var(--s-5);
+    padding-inline-end: var(--s-7);
+  }
+  .site-footer__claim {
+    max-width: 24ch;
+  }
+  .site-footer__col {
+    display: grid;
+    align-content: start;
+    gap: var(--s-4);
+  }
+  .site-footer__col ul {
+    display: grid;
+    gap: var(--s-1);
+  }
+  .site-footer__col li a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .site-footer__col a {
+    color: var(--muted-inv);
+    transition: color var(--dur-1) var(--ease);
+  }
+  .site-footer__col a:hover {
+    color: var(--paper);
+  }
+  .site-footer__col .mono {
+    font-size: 0.875rem;
+  }
+  address {
+    display: grid;
+    gap: var(--s-2);
+    font-style: normal;
+    color: var(--muted-inv);
+    margin-top: var(--s-3);
+  }
+  .site-footer__mark {
+    color: var(--paper);
+    padding-block: var(--s-5) var(--s-7);
+    border-top: 1px solid var(--line-inv);
+  }
+  .site-footer__mark :global(.logo) {
+    width: 100%;
+  }
+  .site-footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s-3);
+    color: var(--muted-inv);
+  }
+  @media (max-width: 960px) {
+    .site-footer__top {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      row-gap: var(--s-7);
+    }
+    .site-footer__intro {
+      grid-column: 1 / -1;
+      padding-inline-end: 0;
+    }
+  }
+  @media (max-width: 720px) {
+    .site-footer__top {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--s-5);
+    }
+    .site-footer__col:last-child {
+      grid-column: 1 / -1;
+    }
+    .site-footer__col li a {
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+  }
+</style>

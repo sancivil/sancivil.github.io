@@ -1,0 +1,50 @@
+---
+import type { Project } from './facts.ts';
+
+interface Props {
+  project: Project;
+  alt: string;
+}
+
+const { project, alt } = Astro.props;
+const { photo } = project;
+---
+
+{
+  photo ? (
+    <div class="pmedia" data-reveal="clip">
+      <img src={photo.src} width={photo.width} height={photo.height} alt={alt} loading="lazy" decoding="async" />
+    </div>
+  ) : (
+    <div class="pmedia pmedia--tile" data-reveal="clip" aria-hidden="true" />
+  )
+}
+
+<style>
+  .pmedia {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: var(--r-2);
+    background: var(--paper-2);
+  }
+  .pmedia img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .pmedia--tile {
+    background-color: #121214;
+    background-image:
+      linear-gradient(90deg, var(--ink) 3px, transparent 3px),
+      linear-gradient(var(--ink) 3px, transparent 3px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.06) 1px, transparent 1px),
+      linear-gradient(rgb(255 255 255 / 0.06) 1px, transparent 1px);
+    background-size:
+      64px 104px,
+      64px 104px,
+      16px 13px,
+      16px 13px;
+    background-position: center;
+  }
+</style>

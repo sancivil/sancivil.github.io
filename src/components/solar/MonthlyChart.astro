@@ -1,0 +1,263 @@
+---
+/*
+  Monthly PV production as bars. The SVG draws bars and gridlines only; every label is HTML so
+  it stays legible at phone width. Time runs left to right in every language.
+*/
+import { fmt } from '../../lib/designer/format.ts';
+
+interface Props {
+  values: number[];
+  /** Axis label per month. */
+  short: string[];
+  /** Full month names for the value list. */
+  months: string[];
+  /** Accessible name of the chart. */
+  label: string;
+  average: string;
+  unit: string;
+}
+const { values, short, months, label, average, unit } = Astro.props;
+
+const W = 1200;
+const H = 400;
+const STEP = 50;
+const top = Math.ceil(Math.max(...values) / STEP) * STEP;
+const ticks = Array.from({ length: top / STEP + 1 }, (_, i) => i * STEP);
+const col = W / values.length;
+const bar = col * 0.56;
+const y = (v: number) => H - (v / top) * H;
+const mean = values.reduce((a, b) => a + b, 0) / values.length;
+const peak = values.indexOf(Math.max(...values));
+const at = (v: number) => `${((v / top) * 100).toFixed(2)}%`;
+---
+
+<figure class="mchart">
+  <div class="mchart__chart" dir="ltr">
+    <div class="mchart__plot">
+      <span class="mchart__unit mono" aria-hidden="true">{unit}</span>
+      <ol class="mchart__ticks" role="list" aria-hidden="true">
+        {ticks.map((t) => <li class="num" style={`--at:${at(t)}`}>{t}</li>)}
+      </ol>
+      <div class="mchart__area" data-reveal="clip">
+        <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" role="img" aria-label={label}>
+          {
+            ticks.map((t) => (
+              <line class="mchart__grid" x1="0" x2={W} y1={y(t)} y2={y(t)} vector-effect="non-scaling-stroke" />
+            ))
+          }
+          {
+            values.map((v, i) => (
+              <rect
+                class:list={['mchart__bar', { 'is-peak': i === peak }]}
+                x={(i * col + (col - bar) / 2).toFixed(1)}
+                y={y(v).toFixed(1)}
+                width={bar.toFixed(1)}
+                height={(H - y(v)).toFixed(1)}
+              />
+            ))
+          }
+          <line class="mchart__mean" x1="0" x2={W} y1={y(mean)} y2={y(mean)} vector-effect="non-scaling-stroke" />
+        </svg>
+        <span class="mchart__peak num" aria-hidden="true" style={`--at:${at(values[peak])};--col:${peak}`}>
+          {fmt(values[peak], 1)}
+        </span>
+        <span class="mchart__mean-label" aria-hidden="true" style={`--at:${at(mean)}`}>
+          {average} <span class="num">{fmt(mean, 1)}</span>
+        </span>
+      </div>
+    </div>
+    <ol class="mchart__months" role="list" aria-hidden="true">
+      {short.map((m, i) => <li class:list={['mono', { 'is-peak': i === peak }]}>{m}</li>)}
+    </ol>
+  </div>
+
+  <dl class="mchart__values">
+    {
+      values.map((v, i) => (
+        <div class:list={['mchart__value', { 'is-peak': i === peak }]}>
+          <dt>{months[i]}</dt>
+          <dd>
+            <span class="num">{fmt(v, 1)}<span class="unit">{unit}</span></span>
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
+</figure>
+
+<style>
+  .mchart {
+    display: grid;
+    gap: clamp(var(--s-6), 4vw, var(--s-8));
+  }
+  .mchart__plot {
+    position: relative;
+    margin-top: var(--s-5);
+    padding-inline-start: 2.75rem;
+  }
+  .mchart__unit {
+    position: absolute;
+    bottom: calc(100% + var(--s-3));
+    inset-inline-start: 0;
+    font-size: 0.6875rem;
+    line-height: 1;
+    color: var(--muted-c);
+  }
+  .mchart__area {
+    position: relative;
+    height: clamp(200px, 26vw, 360px);
+  }
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .mchart__grid {
+    stroke: var(--line-c);
+    stroke-width: 1;
+  }
+  .mchart__bar {
+    fill: var(--ink);
+  }
+  .mchart__bar.is-peak {
+    fill: var(--sun);
+  }
+  .mchart__mean {
+    stroke: var(--ink);
+    stroke-width: 1;
+    stroke-dasharray: 3 5;
+  }
+  .mchart__ticks {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 2.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .mchart__ticks li {
+    position: absolute;
+    bottom: var(--at);
+    inset-inline-start: 0;
+    transform: translateY(50%);
+    font-size: 0.6875rem;
+    line-height: 1;
+    color: var(--muted-c);
+  }
+  .mchart__peak {
+    position: absolute;
+    bottom: calc(var(--at) + 8px);
+    inset-inline-start: calc((var(--col) + 0.5) / 12 * 100%);
+    transform: translateX(-50%);
+    padding: 2px 6px;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 0.75rem;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+  .mchart__mean-label {
+    position: absolute;
+    bottom: calc(var(--at) + 6px);
+    inset-inline-end: 0;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    line-height: 1;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  :global([dir='rtl']) .mchart__mean-label {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+  }
+  .mchart__months {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    margin: var(--s-3) 0 0;
+    margin-inline-start: 2.75rem;
+    padding: 0;
+    list-style: none;
+  }
+  .mchart__months li {
+    font-size: 0.6875rem;
+    text-align: center;
+    color: var(--muted-c);
+  }
+  .mchart__months li.is-peak {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .mchart__values {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    border-top: 1px solid var(--line-c);
+  }
+  .mchart__value {
+    display: grid;
+    gap: var(--s-1);
+    padding-block: var(--s-4);
+    padding-inline-end: var(--s-4);
+    border-bottom: 1px solid var(--line-c);
+  }
+  .mchart__value dt {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    font-size: 0.8125rem;
+    color: var(--muted-c);
+  }
+  .mchart__value.is-peak dt::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--sun);
+    flex: none;
+  }
+  .mchart__value dd {
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  @media (max-width: 900px) {
+    .mchart__values {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 720px) {
+    .mchart__mean-label {
+      bottom: calc(100% + var(--s-3));
+      display: flex;
+      align-items: center;
+      gap: var(--s-2);
+    }
+    .mchart__mean-label::before {
+      content: '';
+      width: 16px;
+      border-top: 1px dashed currentColor;
+    }
+  }
+  @media (max-width: 520px) {
+    .mchart__plot {
+      padding-inline-start: 2.25rem;
+    }
+    .mchart__ticks {
+      width: 2.25rem;
+    }
+    .mchart__months {
+      margin-inline-start: 2.25rem;
+    }
+    .mchart__months li {
+      font-size: 0.625rem;
+    }
+    .mchart__values {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .mchart__value dd {
+      font-size: 1rem;
+    }
+  }
+</style>

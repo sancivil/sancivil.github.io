@@ -1,0 +1,69 @@
+---
+import Figure from './Figure.astro';
+
+interface Props {
+  items: { label: string; value: string | [string, string]; unit?: string; word?: string; count?: boolean }[];
+}
+const { items } = Astro.props;
+---
+
+<dl class="stats">
+  {
+    items.map((item) => (
+      <div class="stats__item">
+        <dt>{item.label}</dt>
+        <dd>
+          <Figure value={item.value} unit={item.unit} word={item.word} count={item.count} />
+        </dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .stats {
+    display: grid;
+    gap: var(--s-5);
+  }
+  .stats__item {
+    display: grid;
+    gap: var(--s-1);
+    justify-items: end;
+    text-align: end;
+  }
+  dt {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted-c);
+  }
+  :global([dir='rtl']) dt {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  dd {
+    font-size: clamp(1.75rem, 1rem + 2vw, 2.75rem);
+    font-weight: 500;
+    line-height: 1.1;
+  }
+  @media (max-width: 900px) {
+    .stats {
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+      gap: var(--s-5) var(--gap);
+    }
+    /* Four figures: a 2 × 2 grid, so long values such as "2,122.4 kWh/m²" keep a full half-width column. */
+    .stats:has(> :nth-child(4)) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .stats__item {
+      justify-items: start;
+      text-align: start;
+    }
+    dd {
+      font-size: clamp(1.375rem, 0.9rem + 2vw, 2.25rem);
+    }
+  }
+</style>

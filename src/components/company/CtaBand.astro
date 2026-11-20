@@ -1,0 +1,55 @@
+---
+interface Link {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  title: string;
+  primary: Link;
+  secondary: Link;
+}
+
+const { title, primary, secondary } = Astro.props;
+---
+
+<section class="ctab theme-paper">
+  <div class="container ctab__inner">
+    <h2 class="h2 ctab__title">{title}</h2>
+    <div class="ctab__actions">
+      <a class="btn btn--sun" href={primary.href}>{primary.label}</a>
+      <a class="btn btn--line" href={secondary.href}>{secondary.label}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ctab {
+    padding-block: clamp(var(--s-8), 8vw, var(--s-10));
+  }
+  .ctab__inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: var(--s-6) var(--gap);
+  }
+  .ctab__title {
+    max-width: 16ch;
+  }
+  :global([dir='rtl']) .ctab__title {
+    max-width: 22ch;
+  }
+  .ctab__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+
+  @media (max-width: 720px) {
+    .ctab__actions {
+      display: grid;
+      width: 100%;
+    }
+  }
+</style>

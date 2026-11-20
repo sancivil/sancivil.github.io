@@ -1,0 +1,63 @@
+---
+/*
+  Front elevation of a module, drawn in millimetres from its datasheet dimensions. Drawings that
+  share the same `box` render at the same scale, so modules can be compared by size.
+*/
+import type { ModuleSpec } from '../../lib/three/types.ts';
+
+interface Props {
+  spec: ModuleSpec;
+  box: { width: number; height: number };
+  class?: string;
+}
+const { spec, box, class: className } = Astro.props;
+
+const FRAME = 16;
+const PAD = 14;
+const GAP = 6;
+const SPLIT = 28;
+const COLS = 6;
+
+const x0 = (box.width - spec.width) / 2;
+const y0 = box.height - spec.height;
+const rows = Math.round(spec.cells / COLS);
+const blocks = spec.halfCut ? 2 : 1;
+const cellW = (spec.width - 2 * (FRAME + PAD) - (COLS - 1) * GAP) / COLS;
+const cellH = (spec.height - 2 * (FRAME + PAD) - (blocks - 1) * SPLIT - (rows - blocks) * GAP) / rows;
+
+const r1 = (n: number) => Math.round(n * 10) / 10;
+let cells = '';
+for (let r = 0; r < rows; r++) {
+  const block = Math.floor(r / (rows / blocks));
+  const y = y0 + FRAME + PAD + r * (cellH + GAP) + block * (SPLIT - GAP);
+  for (let c = 0; c < COLS; c++) {
+    const x = x0 + FRAME + PAD + c * (cellW + GAP);
+    cells += `M${r1(x)} ${r1(y)}h${r1(cellW)}v${r1(cellH)}h${r1(-cellW)}z`;
+  }
+}
+
+const frameFill = { black: '#0b0b0c', silver: '#b9babe', red: '#6b3a30', green: '#2f4033' }[spec.frame];
+const backFill = { white: '#ffffff', black: '#1c1c20', glass: '#8f949c' }[spec.back];
+const cellFill = { standard: '#16181d', red: '#5a2b25', green: '#26352b' }[spec.tint];
+---
+
+<svg
+  class:list={['drawing', className]}
+  viewBox={`0 0 ${box.width} ${box.height}`}
+  preserveAspectRatio="xMidYMax meet"
+  aria-hidden="true"
+  focusable="false"
+>
+  <rect x={x0} y={y0} width={spec.width} height={spec.height} rx="8" fill={frameFill}></rect>
+  <rect x={x0 + FRAME} y={y0 + FRAME} width={spec.width - 2 * FRAME} height={spec.height - 2 * FRAME} fill={backFill}
+  ></rect>
+  <path d={cells} fill={cellFill}></path>
+</svg>
+
+<style>
+  .drawing {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>

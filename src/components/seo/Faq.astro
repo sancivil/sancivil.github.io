@@ -1,0 +1,208 @@
+---
+/*
+  Question-and-answer accordion on native <details>, plus the matching FAQPage JSON-LD.
+  Use it once per page. Links in `qas` must already be localized (localizePath).
+*/
+import JsonLd from './JsonLd.astro';
+import { faqPage } from '../../lib/seo/schema.ts';
+import { localeFromPath } from '../../i18n/config.ts';
+import type { Qa } from '../../i18n/solar.ts';
+
+interface Props {
+  qas: Qa[];
+  heading?: string;
+  eyebrow?: string;
+  intro?: string;
+  id?: string;
+  theme?: 'light' | 'paper';
+}
+const { qas, heading, eyebrow, intro, id = 'faq', theme = 'light' } = Astro.props;
+const locale = localeFromPath(Astro.url.pathname);
+const url = new URL(Astro.url.pathname, Astro.site).toString();
+const hasHead = Boolean(heading || eyebrow || intro || Astro.slots.has('default'));
+---
+
+<section
+  id={id}
+  class:list={['faq', 'section', `theme-${theme}`]}
+  aria-labelledby={heading ? `${id}-title` : undefined}
+>
+  <div class:list={['container', 'faq__grid', { 'faq__grid--split': hasHead }]}>
+    {
+      hasHead && (
+        <div class="faq__head">
+          {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+          {heading && (
+            <h2 id={`${id}-title`} class="h2 faq__title">
+              {heading}
+            </h2>
+          )}
+          {intro && <p class="faq__intro">{intro}</p>}
+          <slot />
+        </div>
+      )
+    }
+    <div class="faq__list">
+      {
+        qas.map((qa, i) => (
+          <details class="faq__item">
+            <summary class="faq__q">
+              <span class="faq__index mono" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3 class="faq__question">{qa.q}</h3>
+              <span class="faq__icon" aria-hidden="true" />
+            </summary>
+            <div class="faq__a">
+              <p>{qa.a}</p>
+              {qa.link && (
+                <a class="link-arrow" href={qa.link.href}>
+                  {qa.link.label}
+                </a>
+              )}
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+  <JsonLd data={faqPage(qas, { url, locale })} />
+</section>
+
+<style>
+  .faq__grid--split {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    align-items: start;
+    gap: var(--s-7) var(--gap);
+  }
+  .faq__head {
+    position: sticky;
+    top: calc(var(--header-h) + var(--s-6));
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+  }
+  .faq__title {
+    max-width: 14ch;
+    text-wrap: balance;
+  }
+  :global([dir='rtl']) .faq__title {
+    max-width: 20ch;
+  }
+  .faq__intro {
+    max-width: 36ch;
+    color: var(--muted-c);
+  }
+
+  .faq__list {
+    border-top: 1px solid var(--line-c);
+  }
+  .faq__item {
+    border-bottom: 1px solid var(--line-c);
+    interpolate-size: allow-keywords;
+  }
+  .faq__item::details-content {
+    block-size: 0;
+    overflow-y: clip;
+    transition:
+      block-size var(--dur-3) var(--ease-out-expo),
+      content-visibility var(--dur-3) allow-discrete;
+  }
+  .faq__item[open]::details-content {
+    block-size: auto;
+  }
+  .faq__q {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr) 1.25rem;
+    align-items: baseline;
+    gap: var(--s-4);
+    min-height: 44px;
+    padding-block: var(--s-5);
+    cursor: pointer;
+    list-style: none;
+  }
+  .faq__q::-webkit-details-marker {
+    display: none;
+  }
+  .faq__index {
+    font-size: 0.75rem;
+    color: var(--muted-c);
+    transition: color var(--dur-2) var(--ease);
+  }
+  .faq__q:hover .faq__index,
+  .faq__item[open] .faq__index {
+    color: currentColor;
+  }
+  .faq__question {
+    font-size: clamp(1.0625rem, 0.95rem + 0.5vw, 1.375rem);
+    font-weight: 600;
+    letter-spacing: -0.012em;
+    line-height: 1.3;
+    text-wrap: pretty;
+  }
+  :global([dir='rtl']) .faq__question {
+    letter-spacing: 0;
+    line-height: 1.6;
+  }
+  .faq__icon {
+    position: relative;
+    align-self: center;
+    justify-self: end;
+    width: 14px;
+    height: 14px;
+  }
+  .faq__icon::before,
+  .faq__icon::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: calc(50% - 0.75px);
+    width: 14px;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform var(--dur-2) var(--ease);
+  }
+  .faq__icon::after {
+    transform: rotate(90deg);
+  }
+  .faq__item[open] .faq__icon::after {
+    transform: rotate(0deg);
+  }
+  .faq__a {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+    padding-block-end: var(--s-6);
+    padding-inline: calc(2.25rem + var(--s-4)) calc(1.25rem + var(--s-4));
+  }
+  .faq__a p {
+    max-width: 68ch;
+    text-wrap: pretty;
+  }
+  .faq__a .link-arrow {
+    min-height: 44px;
+  }
+
+  @media (max-width: 1080px) {
+    .faq__grid--split {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .faq__head {
+      position: static;
+    }
+    .faq__title,
+    :global([dir='rtl']) .faq__title {
+      max-width: 24ch;
+    }
+  }
+  @media (max-width: 720px) {
+    .faq__q {
+      grid-template-columns: 1.75rem minmax(0, 1fr) 1rem;
+      gap: var(--s-3);
+    }
+    .faq__a {
+      padding-inline: calc(1.75rem + var(--s-3)) 0;
+    }
+  }
+</style>

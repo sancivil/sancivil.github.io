@@ -1,0 +1,4 @@
+# Cloudflare Pages preview (*.pages.dev): keep the preview out of search engines.
+# Ignored by the SiteBunker (Apache) hosting, where faradayiq.com is the indexed site.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex

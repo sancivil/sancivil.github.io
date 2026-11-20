@@ -1,0 +1,72 @@
+---
+import ProductWell from './ProductWell.astro';
+
+interface Props {
+  id: string;
+  title: string;
+  lead?: string;
+  meta?: string;
+  image?: { src: string; size: [number, number]; alt: string };
+}
+const { id, title, lead, meta, image } = Astro.props;
+---
+
+<div class:list={['head', { 'head--image': image }]}>
+  <div class="head__text">
+    <h2 id={id} class="h2">{title}</h2>
+    {lead && <p class="head__lead">{lead}</p>}
+    {meta && <p class="head__meta">{meta}</p>}
+  </div>
+  {
+    image && (
+      <ProductWell
+        src={image.src}
+        size={image.size}
+        alt={image.alt}
+        label={title}
+        eager
+        sizes="(max-width: 900px) 100vw, 50vw"
+        class="head__well"
+      />
+    )
+  }
+</div>
+
+<style>
+  .head {
+    display: grid;
+    gap: var(--s-6) var(--gap);
+    margin-bottom: var(--s-7);
+  }
+  .head--image {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: end;
+  }
+  .head__text {
+    display: grid;
+    align-content: end;
+    gap: var(--s-4);
+  }
+  .head__lead {
+    max-width: 48ch;
+    color: var(--muted-c);
+  }
+  .head__meta {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--muted-c);
+  }
+  .head :global(.head__well) {
+    aspect-ratio: 16 / 10;
+    padding: 5% 8%;
+  }
+  @media (max-width: 900px) {
+    .head--image {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .head :global(.head__well) {
+      grid-row: 1;
+      aspect-ratio: 4 / 3;
+    }
+  }
+</style>

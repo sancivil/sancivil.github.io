@@ -1,0 +1,65 @@
+---
+import FamilyList from './FamilyList.astro';
+import { families, familyPower, type GroupKey, type Phase } from './data.ts';
+import type { Locale } from '../../i18n/config.ts';
+import { products } from '../../i18n/products.ts';
+
+interface Props {
+  locale: Locale;
+  group: GroupKey;
+}
+const { locale, group } = Astro.props;
+const t = products[locale];
+
+const byPower = (f: (typeof families)[GroupKey][number]) => familyPower(f)?.[0] ?? Infinity;
+const phases = (['single_phase', 'three_phase'] as Phase[])
+  .map((phase) => ({
+    phase,
+    list: families[group].filter((f) => f.phase === phase).sort((a, b) => byPower(a) - byPower(b)),
+  }))
+  .filter((g) => g.list.length > 0);
+const offsets = phases.map((_, i) => phases.slice(0, i).reduce((n, g) => n + g.list.length, 0));
+---
+
+{
+  phases.length > 1 ? (
+    phases.map((g, i) => (
+      <div class="phase">
+        <h3 class="phase__title">
+          {t.phase[g.phase]}
+          <span class="phase__count">{t.count.models(g.list.reduce((n, f) => n + f.models.length, 0))}</span>
+        </h3>
+        <FamilyList locale={locale} group={group} families={g.list} start={offsets[i]} headingLevel="h4" />
+      </div>
+    ))
+  ) : (
+    <FamilyList locale={locale} group={group} families={phases[0].list} />
+  )
+}
+
+<style>
+  .phase + .phase {
+    margin-top: var(--s-9);
+  }
+  .phase__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3);
+    margin-bottom: var(--s-4);
+    font-size: clamp(1.25rem, 1rem + 0.8vw, 1.625rem);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  :global([dir='rtl']) .phase__title {
+    letter-spacing: 0;
+  }
+  .phase__count {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--muted-c);
+  }
+</style>

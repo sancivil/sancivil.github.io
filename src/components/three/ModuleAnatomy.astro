@@ -1,0 +1,378 @@
+---
+/*
+  CONTRACT (implemented by the 3D work package; pages may rely on it):
+  Complete theme-dark section with a pinned, scroll-scrubbed exploded view of one module.
+  Owns its heading, layer captions (01–07, sourced Peimar facts) and layout. The pinned part is
+  320svh of scroll on desktop, 220svh on iPad, 200svh on phones; the stage is sticky and sized
+  with svh. Captions sit on the start side (right in RTL), under the stage on iPad portrait and
+  phones. Reduced motion and no-JS: static exploded view with every caption listed.
+  Props: spec (ModuleSpec), id? (anchor id), class?, locale? (defaults to the URL's locale).
+*/
+import type { Locale } from '../../i18n/config.ts';
+import { localeFromPath } from '../../i18n/config.ts';
+import { three } from '../../i18n/three.ts';
+import { moduleFacts } from '../../lib/three/facts.ts';
+import type { ModuleSpec } from '../../lib/three/types.ts';
+
+interface Props {
+  spec: ModuleSpec;
+  id?: string;
+  class?: string;
+  locale?: Locale;
+}
+const { spec, id = 'anatomy', class: className, locale = localeFromPath(Astro.url.pathname) } = Astro.props;
+const t = three[locale].anatomy;
+const facts = moduleFacts(spec);
+const layers = t.layers(facts);
+const pad = (n: number) => String(n).padStart(2, '0');
+const certs = facts.series === 'other' ? [] : ['IEC 61215', 'IEC 61730', `${t.pidFree} · IEC TS 62804-1`];
+---
+
+<section id={id} class:list={['anatomy theme-dark', className]} data-anatomy data-spec={JSON.stringify(spec)}>
+  <div class="container anatomy__head">
+    <p class="eyebrow eyebrow--dot">{t.eyebrow}</p>
+    <h2 class="h2 anatomy__title">
+      {t.titlePre}<span class="num">{spec.depth}<span class="unit">mm</span></span>{t.titlePost}
+    </h2>
+    <p class="anatomy__intro muted">{t.intro(facts)}</p>
+  </div>
+
+  <div class="anatomy__track" data-track>
+    <div class="anatomy__sticky">
+      <div class="anatomy__stage" data-stage aria-hidden="true"><canvas></canvas></div>
+      <div class="container anatomy__panel">
+        <ol class="anatomy__list" role="list">
+          {
+            layers.map((layer, i) => (
+              <li class="anatomy__item" data-layer={i}>
+                <span class="anatomy__index mono">{pad(i + 1)}</span>
+                <div class="anatomy__text">
+                  <h3 class="anatomy__name">{layer.name}</h3>
+                  <div class="anatomy__body">
+                    <div>
+                      <p>{layer.body}</p>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+        <p class="anatomy__count" aria-hidden="true">
+          <span class="mono" dir="ltr"><span data-count>01</span> / {pad(layers.length)}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  {
+    certs.length > 0 && (
+      <div class="container anatomy__foot">
+        <p class="eyebrow">{t.certs}</p>
+        <ul class="anatomy__certs" role="list">
+          {certs.map((c) => (
+            <li class="tag">{c}</li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .anatomy {
+    --split: calc(max(0px, (100vw - var(--container)) / 2) + min(100vw, var(--container)) * 0.4);
+    --list-w: min(30rem, calc(min(100vw, var(--container)) * 0.4 - var(--gutter) - 32px));
+    position: relative;
+  }
+  .anatomy__head {
+    display: grid;
+    gap: var(--s-4);
+    padding-block: var(--section) clamp(24px, 4vw, 56px);
+  }
+  .anatomy__title {
+    max-width: 16ch;
+  }
+  .anatomy__intro {
+    max-width: 46ch;
+  }
+
+  .anatomy__track {
+    position: relative;
+    height: 320svh;
+  }
+  .anatomy__sticky {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+  }
+  .anatomy__stage {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: var(--split);
+    inset-inline-end: 0;
+  }
+  .anatomy__stage canvas {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 700ms var(--ease);
+  }
+  .anatomy__stage.is-ready canvas {
+    opacity: 1;
+  }
+  .anatomy__stage > :global(svg) {
+    position: absolute;
+    inset: 14% 12%;
+    width: 76%;
+    height: 72%;
+  }
+  .anatomy__panel {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--s-5);
+    padding-block: calc(var(--header-h) + var(--s-5)) var(--s-7);
+  }
+  .anatomy__list {
+    width: var(--list-w);
+  }
+  .anatomy__item {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    padding-block: var(--s-3);
+    border-top: 1px solid var(--line-inv);
+    color: var(--muted-inv);
+    transition: color var(--dur-2) var(--ease);
+  }
+  .anatomy__item:last-child {
+    border-bottom: 1px solid var(--line-inv);
+  }
+  .anatomy__index {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    height: 1.4rem;
+    font-size: 0.75rem;
+  }
+  .anatomy__index::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--sun);
+    transform: scale(0);
+    transition: transform var(--dur-2) var(--ease);
+  }
+  .anatomy__name {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+  }
+  .anatomy__body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--dur-3) var(--ease-out-expo);
+  }
+  .anatomy__body > div {
+    min-height: 0;
+    overflow: hidden;
+  }
+  .anatomy__body p {
+    max-width: 42ch;
+    padding-top: var(--s-2);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--muted-inv);
+    text-wrap: pretty;
+  }
+  .anatomy__item.is-active {
+    color: var(--paper);
+  }
+  .anatomy__item.is-active .anatomy__index::before {
+    transform: scale(1);
+  }
+  .anatomy__item.is-active .anatomy__body {
+    grid-template-rows: 1fr;
+  }
+  .anatomy__count {
+    display: none;
+    font-size: 0.75rem;
+    color: var(--muted-inv);
+  }
+  .anatomy__count [data-count] {
+    color: var(--paper);
+  }
+
+  .anatomy__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-3) var(--s-5);
+    padding-block: var(--s-7) var(--section);
+  }
+  .anatomy__certs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+
+  :global([dir='rtl']) .anatomy__name {
+    letter-spacing: 0;
+    line-height: 1.6;
+  }
+  :global([dir='rtl']) .anatomy__body p {
+    line-height: 1.8;
+  }
+
+  @media (max-width: 1180px), (pointer: coarse) and (max-width: 1366px) {
+    .anatomy__track {
+      height: 220svh;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .anatomy__sticky {
+      display: flex;
+      flex-direction: column;
+    }
+    .anatomy__stage {
+      position: relative;
+      inset: auto;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+    .anatomy__panel {
+      flex: none;
+      height: auto;
+      gap: var(--s-3);
+      padding-block: var(--s-3) var(--s-6);
+    }
+    .anatomy__list {
+      width: auto;
+    }
+    .anatomy__item {
+      padding-block: 10px;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .anatomy__track {
+      height: 200svh;
+    }
+    :global(html.motion) .anatomy__list {
+      display: grid;
+    }
+    :global(html.motion) .anatomy__item {
+      grid-area: 1 / 1;
+      border: 0;
+      padding-block: 0;
+      opacity: 0;
+      visibility: hidden;
+      transition:
+        opacity var(--dur-2) var(--ease),
+        visibility 0s linear var(--dur-2);
+    }
+    :global(html.motion) .anatomy__item.is-active {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity var(--dur-2) var(--ease);
+    }
+    :global(html.motion) .anatomy__body {
+      grid-template-rows: 1fr;
+    }
+    :global(html.motion) .anatomy__count {
+      display: block;
+      padding-top: var(--s-3);
+      border-top: 1px solid var(--line-inv);
+    }
+  }
+
+  /* Reduced motion and no JS: a static exploded view with every caption open. */
+  :global(html:not(.motion)) .anatomy__track {
+    height: auto;
+  }
+  :global(html:not(.motion)) .anatomy__sticky {
+    position: relative;
+    height: auto;
+    min-height: min(100svh, 720px);
+  }
+  :global(html:not(.motion)) .anatomy__item {
+    color: var(--paper);
+  }
+  :global(html:not(.motion)) .anatomy__body {
+    grid-template-rows: 1fr;
+  }
+  :global(html:not(.motion)) .anatomy__index::before {
+    transform: scale(1);
+  }
+  @media (max-width: 900px) {
+    :global(html:not(.motion)) .anatomy__stage {
+      flex: none;
+      height: 64svh;
+    }
+  }
+</style>
+
+<script>
+  import { ScrollTrigger, reduceMotion } from '../../lib/motion/init.ts';
+  import { moduleSvg } from '../../lib/three/drawing.ts';
+  import { loadScenes, webglAvailable, whenNear } from '../../lib/three/load.ts';
+  import { anatomyAt } from '../../lib/three/timeline.ts';
+  import type { ModuleSpec } from '../../lib/three/types.ts';
+
+  document.querySelectorAll<HTMLElement>('[data-anatomy]').forEach((root) => {
+    if (!root.getClientRects().length) return;
+    const track = root.querySelector<HTMLElement>('[data-track]')!;
+    const stage = root.querySelector<HTMLElement>('[data-stage]')!;
+    const count = root.querySelector<HTMLElement>('[data-count]')!;
+    const items = [...root.querySelectorAll<HTMLElement>('[data-layer]')];
+    const spec = JSON.parse(root.dataset.spec ?? '{}') as ModuleSpec;
+    let scene: { setProgress(p: number): void } | null = null;
+    let progress = reduceMotion ? 1 : 0;
+    let active = -1;
+
+    const setActive = (i: number) => {
+      if (i === active) return;
+      active = i;
+      items.forEach((el, k) => {
+        el.classList.toggle('is-active', k === i);
+        if (k === i) el.setAttribute('aria-current', 'step');
+        else el.removeAttribute('aria-current');
+      });
+      count.textContent = String(i + 1).padStart(2, '0');
+    };
+
+    if (!reduceMotion) {
+      setActive(0);
+      ScrollTrigger.create({
+        trigger: track,
+        start: 'top top',
+        end: 'bottom bottom',
+        onUpdate: (self) => {
+          progress = self.progress;
+          setActive(anatomyAt(progress).active);
+          scene?.setProgress(progress);
+        },
+      });
+    }
+
+    if (!webglAvailable()) {
+      stage.innerHTML = moduleSvg(spec);
+      return;
+    }
+    whenNear(
+      root,
+      async () => {
+        const { mountAnatomy } = await loadScenes();
+        await document.fonts.ready;
+        scene = mountAnatomy(stage, spec);
+        scene.setProgress(progress);
+      },
+      '600px',
+    );
+  });
+</script>

@@ -1,0 +1,14 @@
+---
+import type { JsonLdNode } from '../../lib/seo/schema.ts';
+
+interface Props {
+  /** One node, or several: each becomes its own script block. */
+  data: JsonLdNode | JsonLdNode[];
+}
+const { data } = Astro.props;
+const nodes = Array.isArray(data) ? data : [data];
+/* "<" escaped so text can never close the script element. */
+const json = (node: JsonLdNode) => JSON.stringify(node).replace(/</g, '\\u003c');
+---
+
+{nodes.map((node) => <script type="application/ld+json" set:html={json(node)} />)}
