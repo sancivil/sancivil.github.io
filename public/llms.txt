@@ -1,6 +1,6 @@
 # Faraday Co. — exclusive Peimar agent in Iraq
 
-> Faraday Co. is the exclusive agent of Peimar, the Italian photovoltaic brand founded in 2007, in Iraq. From its office on Qasmlu Street, Sulaymaniyah 46001, Iraq, Faraday supplies Peimar solar modules, on-grid and hybrid inverters, storage batteries and accessories, designs systems with the climate data of each city and installs them on roofs and on the ground. Open Saturday to Thursday 08:00–17:00, closed Friday. Phone and WhatsApp +964 773 698 9694, email info@faradayiq.com. The site is published in English (https://faradayiq.com/), Arabic (https://faradayiq.com/ar/) and Kurdish Sorani (https://faradayiq.com/ku/).
+> Faraday Co. is the exclusive agent of Peimar, the Italian photovoltaic brand founded in 2007, in Iraq. Founded in Sulaymaniyah in 2017, Faraday has held Peimar's agency for all of Iraq since 2021 (renewed in 2025 for ten years) and has supplied and installed 100 MW of solar capacity. From its office on Qasmlu Street, Sulaymaniyah 46001, Iraq, Faraday supplies Peimar solar modules, on-grid and hybrid inverters, storage batteries and accessories, designs systems with the climate data of each city and installs them on roofs and on the ground. Open Saturday to Thursday 08:00–17:00, closed Friday. Phone and WhatsApp +964 773 698 9694, email info@faradayiq.com. The site is published in English (https://faradayiq.com/), Arabic (https://faradayiq.com/ar/) and Kurdish Sorani (https://faradayiq.com/ku/).
 
 Key facts:
 
@@ -47,6 +47,14 @@ Key facts:
 - [Samawah](https://faradayiq.com/solar/samawah/): 1,673.4 kWh/kWp a year, optimal tilt 30°, design temperatures −3 / 61 / 81 °C (Muthanna Governorate).
 - [Nasiriyah](https://faradayiq.com/solar/nasiriyah/): 1,660.0 kWh/kWp a year, optimal tilt 30°, design temperatures −3 / 61 / 80 °C (Dhi Qar Governorate).
 - [Basra](https://faradayiq.com/solar/basra/): 1,655.2 kWh/kWp a year, optimal tilt 29°, design temperatures −3 / 63 / 82 °C (Basra Governorate).
+
+## Company history
+
+- 2017: Faraday Co. is founded in Sulaymaniyah.
+- 2018: First solar projects.
+- 2021: Peimar appoints Faraday as its agent for all of Iraq.
+- 2025: Peimar renews the agency agreement for ten years.
+- 2026: Faraday reaches 100 MW of solar capacity supplied and installed.
 
 ## Company
 

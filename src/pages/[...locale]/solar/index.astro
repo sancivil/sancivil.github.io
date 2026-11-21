@@ -61,7 +61,6 @@ const facts: IraqFacts = {
 const lo = Math.floor(lowest.yieldAnnual / 50) * 50;
 const hi = Math.ceil(best.yieldAnnual / 50) * 50;
 const strip = (y: number) => `${(((y - lo) / (hi - lo)) * 100).toFixed(1)}%`;
-const temps = (c: SolarCity) => `${fmt(c.design.tmin)} / ${fmt(c.design.tnom)} / ${fmt(c.design.tmax)}`;
 
 const title = t.meta.title(n);
 const description = t.meta.description(facts);
@@ -126,7 +125,6 @@ const graph = [
             <button type="button" class="sort__btn" data-sort="north" aria-pressed="true">{t.table.sort.north}</button>
             <button type="button" class="sort__btn" data-sort="yield" aria-pressed="false">{t.table.sort.yield}</button>
           </div>
-          <p class="cities__scale">{t.table.scale(fmt(lo), fmt(hi))}</p>
         </div>
 
         <div class="cities__scroll" tabindex="0" role="region" aria-label={t.table.caption(n)}>
@@ -134,17 +132,21 @@ const graph = [
             <caption class="sr-only">{t.table.caption(n)}</caption>
             <thead>
               <tr>
-                <th scope="col" class="cities__corner">{t.table.col.city}</th>
-                <th scope="col" class="cities__yield-col">
-                  {t.table.col.yield}<span class="th-unit">kWh/kWp</span>
+                <th scope="col" rowspan="2" class="cities__corner">{t.table.col.city}</th>
+                <th scope="col" rowspan="2" class="cities__yield-col">
+                  {t.table.col.yield}
+                  <span class="th-unit" dir="ltr">kWh/kWp · {fmt(lo)}–{fmt(hi)}</span>
                 </th>
-                <th scope="col">{t.table.col.rank}</th>
-                <th scope="col">{t.table.col.irradiation}<span class="th-unit">kWh/m²</span></th>
-                <th scope="col">{t.table.col.tilt}<span class="th-unit">°</span></th>
-                <th scope="col">{t.table.col.azimuth}<span class="th-unit">°</span></th>
-                <th scope="col">
-                  {t.table.col.temps}<span class="th-unit">°C · {t.table.col.tempsSub}</span>
-                </th>
+                <th scope="col" rowspan="2">{t.table.col.rank}</th>
+                <th scope="col" rowspan="2">{t.table.col.irradiation}<span class="th-unit">kWh/m²</span></th>
+                <th scope="col" rowspan="2">{t.table.col.tilt}<span class="th-unit">°</span></th>
+                <th scope="col" rowspan="2">{t.table.col.azimuth}<span class="th-unit">°</span></th>
+                <th scope="colgroup" colspan="3" class="cities__group">{t.table.col.temps}</th>
+              </tr>
+              <tr>
+                <th scope="col">{t.table.col.tmin}<span class="th-unit">°C</span></th>
+                <th scope="col">{t.table.col.tnom}<span class="th-unit">°C</span></th>
+                <th scope="col">{t.table.col.tmax}<span class="th-unit">°C</span></th>
               </tr>
             </thead>
             <tbody>
@@ -167,7 +169,9 @@ const graph = [
                     <td class="num">{fmt(c.irradiationAnnual, 1)}</td>
                     <td class="num">{c.optimalTilt}</td>
                     <td class="num">{c.optimalAzimuth}</td>
-                    <td class="num">{temps(c)}</td>
+                    <td class="num">{fmt(c.design.tmin)}</td>
+                    <td class="num">{fmt(c.design.tnom)}</td>
+                    <td class="num">{fmt(c.design.tmax)}</td>
                   </tr>
                 ))
               }
@@ -294,9 +298,21 @@ const graph = [
   td {
     padding: var(--s-4) var(--s-3);
     border-bottom: 1px solid var(--line);
-    text-align: end;
+    text-align: right;
     white-space: nowrap;
     vertical-align: middle;
+  }
+  /* Figures stay LTR runs in Arabic and Kurdish, so headings and values share one physical edge. */
+  :global([dir='rtl']) th,
+  :global([dir='rtl']) td {
+    text-align: left;
+  }
+  .cities__group {
+    text-align: center !important;
+    border-bottom-color: var(--line-strong);
+  }
+  thead tr + tr th {
+    padding-block-start: var(--s-2);
   }
   thead th {
     padding-block: var(--s-4) var(--s-3);
@@ -318,6 +334,8 @@ const graph = [
   }
   .th-unit {
     display: block;
+    direction: ltr;
+    unicode-bidi: isolate;
     margin-top: 2px;
     font-family: var(--font-mono);
     letter-spacing: 0;
@@ -338,6 +356,7 @@ const graph = [
   }
   :global([dir='rtl']) th[scope='row'],
   :global([dir='rtl']) .cities__corner {
+    text-align: right;
     box-shadow: inset 1px 0 0 var(--line);
   }
   th[scope='row'] {

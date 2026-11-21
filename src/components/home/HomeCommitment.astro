@@ -2,11 +2,16 @@
 import { home } from '../../i18n/home.ts';
 import { company } from '../../i18n/company.ts';
 import { localizePath, type Locale } from '../../i18n/config.ts';
-import { peimar, warranty } from '../company/facts.ts';
+import { warranty } from '../company/facts.ts';
+import { contact } from '../../data/site.ts';
 
 interface Props {
   locale: Locale;
 }
+
+/** Client-confirmed history (src/data/history.json): founded 2017, Peimar agent for all of Iraq since 2021, 100 MW supplied and installed by 2026. */
+const peimarAgentSince = 2021;
+const installedMw = 100;
 
 const { locale } = Astro.props;
 const t = home[locale].commitment;
@@ -24,13 +29,12 @@ const years = company[locale].years;
       <a class="link-arrow commit__link" href={localizePath('/about/', locale)}>{t.link}</a>
     </div>
 
-    <dl class="commit__stats">
+    <dl class="commit__stats" aria-label={t.statsLabel}>
       <div class="commit__stat">
-        <dt>{t.stats.capacity}</dt>
+        <dt>{t.stats.installed}</dt>
         <dd>
           <span class="num"
-            >+<span data-reveal="count" data-to={peimar.capacityGw} data-decimals="1">{peimar.capacityGw.toFixed(1)}</span
-            ><span class="unit">GW</span></span
+            ><span data-reveal="count" data-to={installedMw}>{installedMw}</span><span class="unit">MW</span></span
           >
         </dd>
       </div>
@@ -43,12 +47,35 @@ const years = company[locale].years;
         </dd>
       </div>
       <div class="commit__stat">
-        <dt>{t.stats.founded}</dt>
-        <dd><span class="num">{peimar.founded}</span></dd>
+        <dt>{t.stats.agent}</dt>
+        <dd>
+          <span class="num" data-year-from={contact.founded} data-year-to={peimarAgentSince}>{peimarAgentSince}</span>
+        </dd>
       </div>
     </dl>
   </div>
 </section>
+
+<script>
+  import { gsap, reduceMotion } from '../../lib/motion/init.ts';
+
+  /* Counts the year up from the founding year, so the stat reads as Faraday's own timeline. */
+  const year = document.querySelector<HTMLElement>('[data-year-from]');
+  if (year && !reduceMotion) {
+    const to = Number(year.dataset.yearTo);
+    const state = { v: Number(year.dataset.yearFrom) };
+    year.textContent = String(state.v);
+    gsap.to(state, {
+      v: to,
+      duration: 1.6,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: year, start: 'top bottom', once: true },
+      onUpdate: () => {
+        year.textContent = String(Math.round(state.v));
+      },
+    });
+  }
+</script>
 
 <style>
   .commit__grid {

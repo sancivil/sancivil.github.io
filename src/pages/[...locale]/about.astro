@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PageHead from '../../components/company/PageHead.astro';
+import History from '../../components/company/History.astro';
 import Timeline from '../../components/company/Timeline.astro';
 import CtaBand from '../../components/company/CtaBand.astro';
 import { peimar } from '../../components/company/facts.ts';
@@ -17,6 +18,8 @@ const p = t.peimar;
 
 <Base title={t.meta.title} description={t.meta.description}>
   <PageHead eyebrow={t.eyebrow} title={t.title} lead={t.lead} />
+
+  <History locale={locale} />
 
   <section class="services theme-light section" aria-labelledby="services-title">
     <div class="container services__grid">
@@ -119,6 +122,7 @@ const p = t.peimar;
       <div class="timeline__head">
         <p class="eyebrow eyebrow--dot">{t.timeline.eyebrow}</p>
         <h2 id="timeline-title" class="h2">{t.timeline.title}</h2>
+        <p class="timeline__lead">{t.timeline.lead}</p>
       </div>
       <Timeline locale={locale} />
     </div>
@@ -306,6 +310,10 @@ const p = t.peimar;
     justify-items: start;
     gap: var(--s-4);
     margin-block-end: clamp(var(--s-8), 7vw, var(--s-10));
+  }
+  .timeline__lead {
+    max-width: 40ch;
+    color: var(--muted-inv);
   }
 
   @media (max-width: 1080px) {
