@@ -75,6 +75,14 @@ export type GroupSel = { subArrayId: string; series: number; strings: number };
 
 export type InverterBlock = { id: string; inverterId: string; count: number; configKey: string; groups: GroupSel[] };
 
+export type Currency = 'IQD' | 'USD';
+
+/**
+ * Payback inputs: project cost and electricity price in one currency (no conversion). useKwh is the yearly
+ * consumption when the design came from the needs path; energy above it saves nothing. NaN = not entered.
+ */
+export type Finance = { currency: Currency; cost: number; pricePerKwh: number; useKwh: number };
+
 export type Project = {
   name: string;
   number: string;
@@ -87,4 +95,5 @@ export type Project = {
   subArrays: SubArray[];
   customPanels: Panel[];
   inverters: InverterBlock[];
+  finance: Finance;
 };

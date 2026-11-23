@@ -1,5 +1,5 @@
 import { MAX_COUNT, createProject, normalizeProject } from './project.ts';
-import type { Catalog, GroupSel, InverterBlock, Panel, Project, SubArray } from './types.ts';
+import type { Catalog, Finance, GroupSel, InverterBlock, Panel, Project, SubArray } from './types.ts';
 
 const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : NaN);
 const str = (v: unknown, max = 2000): string => (typeof v === 'string' ? v.slice(0, max) : '');
@@ -10,7 +10,10 @@ const whole = (v: unknown): number => (typeof v === 'number' && Number.isInteger
 
 const CUSTOM_FIELDS = ['power', 'vmp', 'imp', 'voc', 'isc', 'ctPmax', 'ctVoc', 'ctIsc', 'vdcMax'] as const;
 
-/** Short array form keeps share links compact: [name, number, client, address, notes, cityId, temps, subArrays, customPanels, inverters]. */
+/**
+ * Short array form keeps share links compact: [name, number, client, address, notes, cityId, temps, subArrays,
+ * customPanels, inverters, finance]. finance ([currency, cost, price per kWh, yearly use]) came later: links without it still open.
+ */
 export function toCompact(p: Project): unknown[] {
   return [
     p.name,
@@ -23,13 +26,14 @@ export function toCompact(p: Project): unknown[] {
     p.subArrays.map((s) => [s.id, s.name, s.panelId, s.count]),
     p.customPanels.map((c) => [c.id, c.model, ...CUSTOM_FIELDS.map((f) => c[f])]),
     p.inverters.map((b) => [b.id, b.inverterId, b.count, b.configKey, b.groups.map((g) => [g.subArrayId, g.series, g.strings])]),
+    [p.finance.currency, p.finance.cost, p.finance.pricePerKwh, p.finance.useKwh],
   ];
 }
 
 /** Rebuild a project from its compact form; pass the catalogue to also repair it against the inverter data (normalizeProject). */
 export function fromCompact(raw: unknown, catalog?: Catalog): Project | null {
   if (!Array.isArray(raw) || raw.length < 10) return null;
-  const [name, number, client, address, notes, cityId, temps, subs, customs, invs] = raw;
+  const [name, number, client, address, notes, cityId, temps, subs, customs, invs, fin] = raw;
   const t = arr(temps);
   const subArrays: SubArray[] = arr(subs).map((s) => {
     const a = arr(s);
@@ -63,6 +67,8 @@ export function fromCompact(raw: unknown, catalog?: Catalog): Project | null {
     return { id: str(a[0], 20), inverterId: str(a[1], 60), count: num(a[2]), configKey: str(a[3], 60), groups };
   });
   if (!subArrays.length || !inverters.length) return null;
+  const f = arr(fin);
+  const finance: Finance = { currency: f[0] === 'USD' ? 'USD' : 'IQD', cost: num(f[1]), pricePerKwh: num(f[2]), useKwh: num(f[3]) };
   const base = createProject();
   const project: Project = {
     ...base,
@@ -76,6 +82,7 @@ export function fromCompact(raw: unknown, catalog?: Catalog): Project | null {
     subArrays,
     customPanels,
     inverters,
+    finance,
   };
   return catalog ? normalizeProject(project, catalog) : project;
 }

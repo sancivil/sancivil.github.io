@@ -13,7 +13,7 @@ import {
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { buildModule } from './module.ts';
 import type { MarkKey, PvModule } from './module.ts';
-import { createRenderer, deg, device, environment, fitDistance, isRtl, watchVisibility } from './stage.ts';
+import { createRenderer, deg, detailTextureMax, environment, fitDistance, isRtl, maxAnisotropy, studio, watchVisibility } from './stage.ts';
 import { drawShadow } from './textures.ts';
 import type { ModuleSpec } from './types.ts';
 
@@ -40,7 +40,9 @@ export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
 
   const renderer = createRenderer(canvas);
   const scene = new Scene();
-  const env = environment(renderer, side < 0);
+  let env = environment(renderer, side < 0);
+  let envStrength = 1;
+  let envRotation = 0;
   const camera = new PerspectiveCamera(FOV, 1, 0.05, 60);
   // Key light rides with the camera so front, back and exploded views are all lit; warm rim stays put.
   const key = new DirectionalLight(0xffffff, 2.1);
@@ -114,6 +116,20 @@ export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
 
   const request = () => {
     if (!raf && visible) raf = requestAnimationFrame(frame);
+  };
+
+  let disposed = false;
+  /** After the first frame: reflections from the photographed studio (not on phones). Rebuilds keep it. */
+  const upgrade = async () => {
+    const s = await studio(renderer, side < 0);
+    if (!s) return;
+    if (disposed) return s.texture.dispose();
+    envStrength = s.gain;
+    envRotation = s.rotation;
+    pv.setEnvironment(s.texture, envStrength, envRotation);
+    env.dispose();
+    env = s.texture;
+    request();
   };
 
   const goTo = (to: Partial<View>, dur = 800) => {
@@ -235,7 +251,10 @@ export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
     renderer.render(scene, camera);
     if (dimsOn) drawDims();
     drawSpots();
-    if (!stage.classList.contains('is-ready')) stage.classList.add('is-ready');
+    if (!stage.classList.contains('is-ready')) {
+      stage.classList.add('is-ready');
+      void upgrade();
+    }
     if (busy || moved) request();
   }
 
@@ -271,11 +290,11 @@ export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
     }
     spec = next;
     pv = buildModule(spec, {
-      textureMax: device.textureMax,
-      anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()),
+      textureMax: detailTextureMax(renderer),
+      anisotropy: maxAnisotropy(renderer),
       envMap: env,
-      envIntensity: 1,
-      envRotation: 0,
+      envIntensity: envStrength,
+      envRotation,
       lineColor: '#0b0b0c',
     });
     scene.add(pv.root);
@@ -361,6 +380,7 @@ export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
       goTo({ radius: Math.min(controls.maxDistance, Math.max(controls.minDistance, r)) }, 420);
     },
     dispose() {
+      disposed = true;
       cancelAnimationFrame(raf);
       stopWatching();
       ro.disconnect();

@@ -1,7 +1,7 @@
 import { Color, Group, MeshStandardMaterial, PerspectiveCamera, Scene, Vector3 } from 'three';
 import type { Mesh } from 'three';
 import { buildModule } from './module.ts';
-import { addLights, createRenderer, deg, device, environment, isRtl, watchVisibility } from './stage.ts';
+import { addLights, createRenderer, deg, detailTextureMax, device, environment, isRtl, maxAnisotropy, studio, watchVisibility } from './stage.ts';
 import type { SunPosition } from './sun.ts';
 import { smooth } from './timeline.ts';
 import type { ModuleSpec } from './types.ts';
@@ -100,13 +100,13 @@ export function mountHero(host: HTMLElement, spec: ModuleSpec, sun: SunPosition)
 
   const renderer = createRenderer(canvas);
   const scene = new Scene();
-  const env = environment(renderer, rtl);
+  let env = environment(renderer, rtl);
   const lights = addLights(scene, rtl, 1.9, 1.6);
   const camera = new PerspectiveCamera(FOV, 1, 0.05, 60);
 
   const pv = buildModule(spec, {
-    textureMax: device.textureMax,
-    anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()),
+    textureMax: detailTextureMax(renderer),
+    anisotropy: maxAnisotropy(renderer),
     envMap: env,
     envIntensity: 1,
     envRotation: 0,
@@ -148,6 +148,21 @@ export function mountHero(host: HTMLElement, spec: ModuleSpec, sun: SunPosition)
   applyLook(1);
   pv.sweepFlip.value = lit.dir.x > 0 ? 1 : 0;
 
+  let disposed = false;
+  /** After the first frame: reflections from the photographed studio (not on phones). */
+  const upgrade = async () => {
+    const s = await studio(renderer, rtl);
+    if (!s) return;
+    if (disposed) return s.texture.dispose();
+    pv.setEnvironment(s.texture, s.gain, s.rotation);
+    env.dispose();
+    env = s.texture;
+    reflective.forEach((_, m) => reflective.set(m, m.envMapIntensity));
+    envApplied = -1;
+    applyLook(0);
+    if (!running) render(performance.now());
+  };
+
   let last = performance.now();
   let cycle = 0.7;
   let tx = 0;
@@ -183,7 +198,10 @@ export function mountHero(host: HTMLElement, spec: ModuleSpec, sun: SunPosition)
       pv.sweepStrength.value = lit.sweepI * (0.72 + 0.28 * Math.sin(Math.PI * wave));
     }
     renderer.render(scene, camera);
-    if (!host.classList.contains('is-ready')) host.classList.add('is-ready');
+    if (!host.classList.contains('is-ready')) {
+      host.classList.add('is-ready');
+      void upgrade();
+    }
   };
 
   let running = false;
@@ -274,6 +292,7 @@ export function mountHero(host: HTMLElement, spec: ModuleSpec, sun: SunPosition)
       awayTarget = still ? 0 : Math.min(1, Math.max(0, p));
     },
     dispose() {
+      disposed = true;
       setRunning(false);
       stopWatching();
       ro.disconnect();

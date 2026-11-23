@@ -1,7 +1,8 @@
 import type { Locale } from './config.ts';
 
-type QuoteData = { project: string; city: string; panels: string[]; inverters: string[]; yearly: string | null; link: string };
-type NeedsQuoteData = { city: string; monthly: string; kwp: string; panels: string; inverter: string; battery: string | null; link: string };
+type QuoteData = { project: string; city: string; panels: string[]; inverters: string[]; yearly: string | null; payback: string[]; link: string };
+type NeedsQuoteData = { city: string; monthly: string; kwp: string; panels: string; inverter: string; battery: string | null; payback: string[]; link: string };
+type PaybackQuote = { cost: string; price: string; bill: string | null; time: string; yearly: string };
 type FailFn = (qty: string, value: string, limit: string, name: string) => string;
 
 const en = {
@@ -327,6 +328,7 @@ const en = {
         `Panels: ${d.panels.join(', ')}`,
         `Inverters: ${d.inverters.join('; ')}`,
         d.yearly ? `Yearly production (estimate): ${d.yearly}` : '',
+        ...d.payback,
         `Design: ${d.link}`,
       ]
         .filter(Boolean)
@@ -339,6 +341,7 @@ const en = {
         `Estimate: ${d.kwp}, ${d.panels}`,
         `Inverter: ${d.inverter}`,
         d.battery ? `Battery: ${d.battery}` : '',
+        ...d.payback,
         `Design: ${d.link}`,
       ]
         .filter(Boolean)
@@ -401,6 +404,52 @@ const en = {
     keepCurrent: 'Keep my project',
     projectName: (city: string) => `Home in ${city}`,
   },
+  payback: {
+    title: 'Payback',
+    optional: 'optional',
+    intro: 'Enter the project cost and what you pay for electricity, both in the same currency.',
+    currency: 'Currency',
+    cost: 'Project cost',
+    costHelp: 'Total price of the installed system.',
+    basis: 'Electricity price',
+    basisKwh: 'Per kWh',
+    basisBill: 'Monthly bill',
+    price: 'Electricity price per kWh',
+    priceHelp: 'What one kWh costs you, from your bill or generator subscription.',
+    bill: 'Monthly electricity bill',
+    billHelp: 'What you pay in an average month.',
+    billPrice: (price: string) => `That is ${price}.`,
+    billNeedsMonthly: 'Enter your monthly consumption first, so the bill becomes a price per kWh.',
+    billUnit: (currency: string) => `${currency} / month`,
+    errAmount: 'Enter an amount above 0.',
+    hint: 'Enter the project cost and your electricity price to see when the system pays for itself.',
+    noEnergy: 'Choose a city in step 1: the payback needs the energy estimate.',
+    label: 'Payback time',
+    duration: <T,>(years: number, months: number, n: (v: number) => T): (T | string)[] => [
+      ...(years ? [n(years), years === 1 ? ' year' : ' years'] : []),
+      ...(months ? [years ? ' ' : '', n(months), months === 1 ? ' month' : ' months'] : []),
+    ],
+    over: (years: number) => `More than ${years} years`,
+    yearly: 'Yearly savings',
+    monthly: 'Monthly savings',
+    total: (years: number) => `Savings over ${years} years`,
+    capped: (kwh: string) => `Counted up to your yearly consumption of ${kwh}.`,
+    costLine: 'Project cost',
+    axisYear: 'Year',
+    tip: (year: number, value: string) => `Year ${year}: ${value}`,
+    chart: (cost: string, year: number | null, total: string, years: number) =>
+      year
+        ? `Savings so far pass the project cost of ${cost} in year ${year} and reach ${total} after ${years} years.`
+        : `Savings reach ${total} after ${years} years, below the project cost of ${cost}.`,
+    note: (tech: string, first: string, per: string) =>
+      `Estimate at today's price. It assumes the solar energy replaces electricity you would buy, and that module output drops as far as Peimar's warranty allows for ${tech} modules: ${first} in the first year, then ${per} a year. Your tariff, consumption and self-use change the result.`,
+    tech: { topcon: 'TOPCon', perc: 'PERC', poly: 'polycrystalline' },
+    quote: (d: PaybackQuote) => [
+      `Project cost: ${d.cost}`,
+      d.bill ? `Monthly electricity bill: ${d.bill} (${d.price})` : `Electricity price: ${d.price}`,
+      `Payback (estimate): ${d.time}, saving ${d.yearly} a year`,
+    ],
+  },
   months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
   monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 };
@@ -418,6 +467,9 @@ const arStrings = arCount('سلسلة واحدة', 'سلسلتان', 'سلاسل
 const arPanels = arCount('لوح واحد', 'لوحان', 'ألواح', 'لوحًا', 'لوح');
 /** The same after "من", where 2 takes the genitive dual. */
 const arPanelsOf = arCount('لوح واحد', 'لوحين', 'ألواح', 'لوحًا', 'لوح');
+/** A counted Arabic unit beside a number: 1 and 2 are words, 3–10 take the plural, 11 and up the singular. */
+const arUnit = <T,>(v: number, n: (v: number) => T, one: string, two: string, few: string, many: string): (T | string)[] =>
+  v === 1 ? [one] : v === 2 ? [two] : [n(v), ` ${v % 100 >= 3 && v % 100 <= 10 ? few : many}`];
 const arMppts = arCount('مدخل MPPT واحد', 'مدخلان MPPT مستقلان', 'مداخل MPPT مستقلة', 'مدخلًا MPPT مستقلًا', 'مدخل MPPT مستقل');
 
 const ar: DesignerStrings = {
@@ -743,6 +795,7 @@ const ar: DesignerStrings = {
         `الألواح: ${d.panels.join('، ')}`,
         `الإنفرترات: ${d.inverters.join('؛ ')}`,
         d.yearly ? `الإنتاج السنوي المتوقع: ${d.yearly}` : '',
+        ...d.payback,
         `رابط التصميم: ${d.link}`,
       ]
         .filter(Boolean)
@@ -755,6 +808,7 @@ const ar: DesignerStrings = {
         `المنظومة المقترحة: ${d.kwp}، ${d.panels}`,
         `الإنفرتر: ${d.inverter}`,
         d.battery ? `البطارية: ${d.battery}` : '',
+        ...d.payback,
         `رابط التصميم: ${d.link}`,
       ]
         .filter(Boolean)
@@ -816,6 +870,52 @@ const ar: DesignerStrings = {
     replace: 'استبدل المشروع',
     keepCurrent: 'أبقِ مشروعي',
     projectName: (city: string) => `منزل في ${city}`,
+  },
+  payback: {
+    title: 'مدة استرداد الكلفة',
+    optional: 'اختياري',
+    intro: 'أدخل تكلفة المشروع وما تدفعه ثمنًا للكهرباء، بالعملة نفسها.',
+    currency: 'العملة',
+    cost: 'تكلفة المشروع',
+    costHelp: 'السعر الكامل للمنظومة مع التركيب.',
+    basis: 'سعر الكهرباء',
+    basisKwh: 'لكل kWh',
+    basisBill: 'الفاتورة الشهرية',
+    price: 'سعر الكهرباء للكيلوواط ساعة',
+    priceHelp: 'كم يكلّفك كل kWh، من فاتورة الكهرباء أو اشتراك المولّدة.',
+    bill: 'فاتورة الكهرباء الشهرية',
+    billHelp: 'ما تدفعه في شهر متوسط.',
+    billPrice: (price: string) => `أي ${price}.`,
+    billNeedsMonthly: 'أدخل استهلاكك الشهري أولًا لنحوّل الفاتورة إلى سعر للكيلوواط ساعة.',
+    billUnit: (currency: string) => `${currency} / شهر`,
+    errAmount: 'أدخل مبلغًا أكبر من صفر.',
+    hint: 'أدخل تكلفة المشروع وسعر الكهرباء لتعرف متى تسترد المنظومة كلفتها.',
+    noEnergy: 'اختر مدينة في الخطوة 1، فحساب مدة الاسترداد يحتاج إلى تقدير الإنتاج.',
+    label: 'مدة الاسترداد',
+    duration: <T,>(years: number, months: number, n: (v: number) => T): (T | string)[] => [
+      ...(years ? arUnit(years, n, 'سنة واحدة', 'سنتان', 'سنوات', 'سنة') : []),
+      ...(months ? [years ? ' و' : '', ...arUnit(months, n, 'شهر واحد', 'شهران', 'أشهر', 'شهرًا')] : []),
+    ],
+    over: (years: number) => `أكثر من ${years} سنة`,
+    yearly: 'التوفير السنوي',
+    monthly: 'التوفير الشهري',
+    total: (years: number) => `التوفير خلال ${years} سنة`,
+    capped: (kwh: string) => `محسوب حتى استهلاكك السنوي البالغ ${kwh}.`,
+    costLine: 'تكلفة المشروع',
+    axisYear: 'السنة',
+    tip: (year: number, value: string) => `السنة ${year}: ${value}`,
+    chart: (cost: string, year: number | null, total: string, years: number) =>
+      year
+        ? `يتجاوز مجموع التوفير تكلفة المشروع البالغة ${cost} في السنة ${year}، ويصل إلى ${total} بعد ${years} سنة.`
+        : `يصل مجموع التوفير إلى ${total} بعد ${years} سنة، وهو أقل من تكلفة المشروع البالغة ${cost}.`,
+    note: (tech: string, first: string, per: string) =>
+      `هذا تقدير بسعر الكهرباء الحالي. يفترض أن الطاقة الشمسية تحلّ محل كهرباء كنت ستشتريها، وأن قدرة الألواح تنخفض بأقصى ما يسمح به ضمان Peimar لألواح ${tech}: ${first} في السنة الأولى، ثم ${per} كل سنة. التعرفة الفعلية واستهلاكك ونسبة استهلاكك الذاتي تغيّر النتيجة.`,
+    tech: { topcon: 'TOPCon', perc: 'PERC', poly: 'متعددة البلورات' },
+    quote: (d: PaybackQuote) => [
+      `تكلفة المشروع: ${d.cost}`,
+      d.bill ? `فاتورة الكهرباء الشهرية: ${d.bill} (${d.price})` : `سعر الكهرباء: ${d.price}`,
+      `مدة استرداد الكلفة (تقدير): ${d.time}، والتوفير ${d.yearly} في السنة`,
+    ],
   },
   months: ['كانون الثاني', 'شباط', 'آذار', 'نيسان', 'أيار', 'حزيران', 'تموز', 'آب', 'أيلول', 'تشرين الأول', 'تشرين الثاني', 'كانون الأول'],
   monthsShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
@@ -1144,6 +1244,7 @@ const ckb: DesignerStrings = {
         `پانێڵەکان: ${d.panels.join('، ')}`,
         `ئینڤێرتەرەکان: ${d.inverters.join('؛ ')}`,
         d.yearly ? `بەرهەمی ساڵانەی چاوەڕوانکراو: ${d.yearly}` : '',
+        ...d.payback,
         `لینکی دیزاین: ${d.link}`,
       ]
         .filter(Boolean)
@@ -1156,6 +1257,7 @@ const ckb: DesignerStrings = {
         `سیستەمی پێشنیارکراو: ${d.kwp}، ${d.panels}`,
         `ئینڤێرتەر: ${d.inverter}`,
         d.battery ? `پاتری: ${d.battery}` : '',
+        ...d.payback,
         `لینکی دیزاین: ${d.link}`,
       ]
         .filter(Boolean)
@@ -1217,6 +1319,52 @@ const ckb: DesignerStrings = {
     replace: 'پڕۆژەکە بگۆڕە',
     keepCurrent: 'پڕۆژەکەم بهێڵەوە',
     projectName: (city: string) => `ماڵێک لە ${city}`,
+  },
+  payback: {
+    title: 'ماوەی گەڕانەوەی پارە',
+    optional: 'ئارەزوومەندانە',
+    intro: 'تێچووی پڕۆژە و ئەو نرخەی بۆ کارەبا دەیدەیت بنووسە، هەردووکیان بە هەمان دراو.',
+    currency: 'دراو',
+    cost: 'تێچووی پڕۆژە',
+    costHelp: 'کۆی نرخی سیستەمەکە لەگەڵ دامەزراندن.',
+    basis: 'نرخی کارەبا',
+    basisKwh: 'بۆ هەر kWh',
+    basisBill: 'پسوولەی مانگانە',
+    price: 'نرخی کارەبا بۆ هەر کیلۆوات کاتژمێرێک',
+    priceHelp: 'ئەوەی بۆ هەر kWh دەیدەیت، لە پسوولەی کارەبا یان بەشداریی مۆلیدەوە.',
+    bill: 'پسوولەی مانگانەی کارەبا',
+    billHelp: 'ئەوەی لە مانگێکی ئاساییدا دەیدەیت.',
+    billPrice: (price: string) => `واتە ${price}.`,
+    billNeedsMonthly: 'سەرەتا بەکارهێنانی مانگانەت بنووسە، تا پسوولەکە بکرێت بە نرخی هەر کیلۆوات کاتژمێرێک.',
+    billUnit: (currency: string) => `${currency} / مانگ`,
+    errAmount: 'بڕێکی سەروو سفر بنووسە.',
+    hint: 'تێچووی پڕۆژە و نرخی کارەبا بنووسە تا بزانیت سیستەمەکە کەی تێچووی خۆی دەداتەوە.',
+    noEnergy: 'لە هەنگاوی 1 شارێک هەڵبژێرە، چونکە ژمێردنی ماوەی گەڕانەوە پێویستی بە خەمڵاندنی بەرهەمە.',
+    label: 'ماوەی گەڕانەوەی پارە',
+    duration: <T,>(years: number, months: number, n: (v: number) => T): (T | string)[] => [
+      ...(years ? [n(years), ' ساڵ'] : []),
+      ...(months ? [years ? ' و ' : '', n(months), ' مانگ'] : []),
+    ],
+    over: (years: number) => `زیاتر لە ${years} ساڵ`,
+    yearly: 'پاشەکەوتی ساڵانە',
+    monthly: 'پاشەکەوتی مانگانە',
+    total: (years: number) => `پاشەکەوت لە ماوەی ${years} ساڵدا`,
+    capped: (kwh: string) => `تا سنووری بەکارهێنانی ساڵانەت (${kwh}) ژمێردراوە.`,
+    costLine: 'تێچووی پڕۆژە',
+    axisYear: 'ساڵ',
+    tip: (year: number, value: string) => `ساڵی ${year}: ${value}`,
+    chart: (cost: string, year: number | null, total: string, years: number) =>
+      year
+        ? `کۆی پاشەکەوت لە ساڵی ${year}دا لە تێچووی پڕۆژە (${cost}) تێدەپەڕێت و دوای ${years} ساڵ دەگاتە ${total}.`
+        : `کۆی پاشەکەوت دوای ${years} ساڵ دەگاتە ${total}، کە لە تێچووی پڕۆژە (${cost}) کەمترە.`,
+    note: (tech: string, first: string, per: string) =>
+      `ئەمە خەمڵاندنە بە نرخی ئێستای کارەبا. وا دادەنێین وزەی خۆر جێی ئەو کارەبایە دەگرێتەوە کە دەتکڕی، و توانای پانێڵەکان بەقەد ئەوەی گەرەنتیی Peimar بۆ پانێڵی ${tech} ڕێگەی پێدەدات دادەبەزێت: ${first} لە ساڵی یەکەمدا، پاشان ${per} هەموو ساڵێک. نرخی ڕاستەقینەی کارەبا، بەکارهێنانەکەت و ڕێژەی بەکارهێنانی خۆت ئەنجامەکە دەگۆڕن.`,
+    tech: { topcon: 'TOPCon', perc: 'PERC', poly: 'فرە کریستاڵ' },
+    quote: (d: PaybackQuote) => [
+      `تێچووی پڕۆژە: ${d.cost}`,
+      d.bill ? `پسوولەی مانگانەی کارەبا: ${d.bill} (${d.price})` : `نرخی کارەبا: ${d.price}`,
+      `ماوەی گەڕانەوەی پارە (خەمڵاندن): ${d.time}، پاشەکەوتی ساڵانە ${d.yearly}`,
+    ],
   },
   months: ['کانوونی دووەم', 'شوبات', 'ئازار', 'نیسان', 'ئایار', 'حوزەیران', 'تەممووز', 'ئاب', 'ئەیلوول', 'تشرینی یەکەم', 'تشرینی دووەم', 'کانوونی یەکەم'],
   monthsShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],

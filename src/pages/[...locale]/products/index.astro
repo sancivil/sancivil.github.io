@@ -411,7 +411,11 @@ const docs = [
       <div class="insurance">
         <div class="insurance__text">
           <p class="eyebrow">{t.warranty.insurance}</p>
-          <h3 class="h3">{ct.insurance.headline}</h3>
+          <h3 class="h3">
+            <a class="insurance__link" href="https://peimar.com/ww-en/products-services/#insurance" target="_blank" rel="noopener"
+              >{ct.insurance.headline}<span class="insurance__ext" aria-hidden="true">↗</span></a
+            >
+          </h3>
           <p class="insurance__body">{ct.insurance.text}</p>
         </div>
         <dl class="insurance__list">
@@ -945,6 +949,24 @@ const docs = [
     margin-top: var(--s-10);
     padding-top: var(--s-7);
     border-top: 1px solid var(--line-inv);
+  }
+  .insurance__link {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+    text-decoration-color: var(--line-strong);
+    transition: text-decoration-color var(--dur-2) var(--ease);
+  }
+  .insurance__link:hover,
+  .insurance__link:focus-visible {
+    text-decoration-color: currentColor;
+  }
+  .insurance__ext {
+    display: inline-block;
+    margin-inline-start: 0.25em;
+    font-family: var(--font-mono);
+    font-size: 0.7em;
+    vertical-align: super;
   }
   .insurance__text {
     grid-column: 1 / 6;

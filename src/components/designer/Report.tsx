@@ -10,7 +10,8 @@ import { CheckTable } from './Matrix.tsx';
 import { stringing } from './StepInverter.tsx';
 import { Wordmark } from './Wordmark.tsx';
 import { configLabel, groupName, panelLabel } from './labels.ts';
-import { cityName, project, summary, useI18n } from './store.ts';
+import { FinanceFields, PaybackView, paybackLines, projectPayback } from './Payback.tsx';
+import { cityName, project, summary, update, useI18n } from './store.ts';
 import { Dot, Icon, Num } from './ui.tsx';
 import { RatioGauge, StringDiagram, VoltageRuler, useTween } from './Visuals.tsx';
 
@@ -48,12 +49,14 @@ function components(s: ProjectSummary, t: DesignerStrings) {
 export function quoteText(p: Project, s: ProjectSummary, t: DesignerStrings, locale: Locale, link: string): string {
   const city = cities.find((c) => c.id === p.cityId) ?? null;
   const est = estimateFor(s, city);
+  const { r } = projectPayback(p, s, est ? est.annual : null);
   return t.quote.message({
     project: p.name || t.rail.untitled,
     city: city ? cityName(city, locale) : '–',
     panels: s.subArrays.filter((x) => x.panel && x.subArray.count > 0).map((x) => ltr(`${x.subArray.count} × Peimar ${panelLabel(x.panel!)} (${kw(x.installedW)} kWp)`)),
     inverters: s.blocks.filter((b) => b.inv).map((b) => ltr(`${b.count} × Peimar ${b.inv!.model}, ${stringing(b)}`)),
     yearly: est ? unit(fmt(est.annual), 'kWh') : null,
+    payback: paybackLines(t, r, p.finance, null),
     link,
   });
 }
@@ -163,6 +166,32 @@ function Dashboard({ s, est, still }: { s: ProjectSummary; est: ReturnType<typeo
   );
 }
 
+/** Cost and price inputs on screen; the result prints with the report once both are entered. */
+function PaybackSection({ s, est, printOnly }: { s: ProjectSummary; est: ReturnType<typeof estimateFor>; printOnly?: boolean }) {
+  const { t } = useI18n();
+  const p = project.value;
+  const { r, tech, useKwh } = projectPayback(p, s, est ? est.annual : null);
+  if (printOnly && !r) return null;
+  return (
+    <section class={`dz-rsec dz-pbsec${r ? '' : ' dz-screen-only'}`}>
+      <h4 class="dz-rsec__title">{t.payback.title}</h4>
+      <div class="dz-pbsec__grid">
+        {!printOnly && (
+          <div class="dz-pbsec__inputs dz-screen-only">
+            <p class="dz-pbsec__intro">{t.payback.intro}</p>
+            <FinanceFields id="dz-pb" value={p.finance} onChange={(patch) => update((x) => ({ ...x, finance: { ...x.finance, ...patch } }))} />
+          </div>
+        )}
+        {r ? (
+          <PaybackView r={r} cost={p.finance.cost} currency={p.finance.currency} tech={tech} useKwh={useKwh} />
+        ) : (
+          <p class="dz-note dz-pbsec__hint">{est ? t.payback.hint : t.payback.noEnergy}</p>
+        )}
+      </div>
+    </section>
+  );
+}
+
 export function Report({ printOnly }: { printOnly?: boolean }) {
   const { t, c, locale } = useI18n();
   const p = project.value;
@@ -234,6 +263,8 @@ export function Report({ printOnly }: { printOnly?: boolean }) {
         <h4 class="dz-rsec__title">{t.summary.system}</h4>
         <Dashboard s={s} est={est} still={!!printOnly} />
       </section>
+
+      <PaybackSection s={s} est={est} printOnly={printOnly} />
 
       <section class="dz-rsec">
         <h4 class="dz-rsec__title">{t.summary.components}</h4>

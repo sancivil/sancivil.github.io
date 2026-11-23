@@ -73,7 +73,13 @@ const en = {
     trademark: 'Peimar and the Peimar logo are trademarks of Peimar S.r.l., used by its exclusive agent in Iraq.',
   },
   address: { street: 'Qasmlu Street', city: 'Sulaymaniyah', country: 'Iraq', place: 'Sulaymaniyah, Iraq' },
-  hours: `Saturday–Thursday ${keep('08:00–17:00')} · Friday closed`,
+  hours: `Saturday–Thursday ${keep('09:00–17:00')} · Friday closed`,
+  help: {
+    question: 'Need help?',
+    action: 'Chat on WhatsApp',
+    aria: 'Need help? Chat with Faraday on WhatsApp',
+    message: 'Hello Faraday, I need help choosing a solar system.',
+  },
   units: { panels: 'panels', inverters: 'inverters', panelsCount: (n: number): string => (n === 1 ? 'panel' : 'panels') },
 };
 
@@ -144,7 +150,13 @@ const ar: CommonStrings = {
     trademark: 'اسم Peimar وشعارها علامتان تجاريتان لشركة Peimar S.r.l.، يستخدمهما وكيلها الحصري في العراق.',
   },
   address: { street: 'شارع قاسملو', city: 'السليمانية', country: 'العراق', place: 'السليمانية، العراق' },
-  hours: `من السبت إلى الخميس ${ltr('08:00–17:00')} · الجمعة عطلة`,
+  hours: `من السبت إلى الخميس ${ltr('09:00–17:00')} · الجمعة عطلة`,
+  help: {
+    question: 'تحتاج مساعدة؟',
+    action: 'راسلنا على واتساب',
+    aria: 'تحتاج مساعدة؟ راسل Faraday على واتساب',
+    message: 'مرحبًا Faraday، أحتاج مساعدة في اختيار منظومة طاقة شمسية.',
+  },
   units: {
     panels: 'لوح',
     inverters: 'إنفرتر',
@@ -219,7 +231,13 @@ const ckb: CommonStrings = {
     trademark: 'ناو و لۆگۆی Peimar وەک نیشانەی بازرگانی دەگەڕێنەوە بۆ کۆمپانیای Peimar S.r.l.، و بریکارە تایبەتەکەی لە عێراق بەکاریان دەهێنێت.',
   },
   address: { street: 'شەقامی قاسملۆ', city: 'سلێمانی', country: 'عێراق', place: 'سلێمانی، عێراق' },
-  hours: `شەممە تا پێنجشەممە ${ltr('08:00–17:00')} · هەینی داخراوە`,
+  hours: `شەممە تا پێنجشەممە ${ltr('09:00–17:00')} · هەینی داخراوە`,
+  help: {
+    question: 'یارمەتیت پێویستە؟',
+    action: 'لە واتسئاپ پەیوەندیمان پێوە بکە',
+    aria: 'یارمەتیت پێویستە؟ لە واتسئاپ پەیوەندی بە Faraday ەوە بکە',
+    message: 'سڵاو Faraday، یارمەتیم پێویستە بۆ هەڵبژاردنی سیستەمێکی وزەی خۆر.',
+  },
   units: { panels: 'پانێڵ', inverters: 'ئینڤێرتەر', panelsCount: () => 'پانێڵ' },
 };
 

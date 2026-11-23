@@ -15,7 +15,7 @@ import { StepPanels } from './StepPanels.tsx';
 import { StepProject } from './StepProject.tsx';
 import { StepRail } from './StepRail.tsx';
 import { StepSummary } from './StepSummary.tsx';
-import { I18n, cityName, errors, goTo, mode, needs, notice, persist, project, reachable, restore, step, summary, useI18n } from './store.ts';
+import { I18n, cityName, errors, goTo, homeFinance, mode, needs, notice, persist, project, reachable, restore, step, summary, useI18n } from './store.ts';
 import { Icon } from './ui.tsx';
 import { panelLabel } from './labels.ts';
 
@@ -181,6 +181,7 @@ export default function DesignerApp({ locale }: { locale: Locale }) {
       void step.value;
       void mode.value;
       void needs.value;
+      void homeFinance.value;
       clearTimeout(timer);
       timer = window.setTimeout(persist, 250);
     });

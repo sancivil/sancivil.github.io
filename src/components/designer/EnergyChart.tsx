@@ -1,6 +1,6 @@
 import { fmt } from '../../lib/designer/format.ts';
 
-function niceMax(v: number): number {
+export function niceMax(v: number): number {
   if (!(v > 0)) return 1;
   const pow = 10 ** Math.floor(Math.log10(v));
   const step = [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10].find((m) => m * pow >= v) ?? 10;

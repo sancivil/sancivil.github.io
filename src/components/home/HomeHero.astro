@@ -3,7 +3,8 @@ import ModuleHero from '../three/ModuleHero.astro';
 import { home } from '../../i18n/home.ts';
 import { company } from '../../i18n/company.ts';
 import { localizePath, type Locale } from '../../i18n/config.ts';
-import { heroSpec, peakEfficiency, peimar, warranty } from '../company/facts.ts';
+import { heroSpec } from '../company/facts.ts';
+import { contact } from '../../data/site.ts';
 
 interface Props {
   locale: Locale;
@@ -12,6 +13,8 @@ interface Props {
 const { locale } = Astro.props;
 const t = home[locale].hero;
 const years = company[locale].years;
+/** Client-confirmed (2026-11-23): founded 2017, more than 4% of Iraq’s solar power, 100 distributors, 100 MW supplied and installed. */
+const experience = new Date().getFullYear() - contact.founded;
 ---
 
 <section class="hero theme-dark" aria-labelledby="hero-title" data-hero>
@@ -38,20 +41,20 @@ const years = company[locale].years;
 
     <dl class="hero__specs" aria-label={t.specsLabel}>
       <div class="hero__spec">
-        <dt>{t.specs.efficiency}</dt>
-        <dd><span class="num">{(peakEfficiency * 100).toFixed(2)}<span class="unit">%</span></span></dd>
+        <dt>{t.specs.experience}</dt>
+        <dd><span><span class="num">{experience}+</span><span class="unit">{years}</span></span></dd>
       </div>
       <div class="hero__spec">
-        <dt>{t.specs.warranty}</dt>
-        <dd><span><span class="num">{warranty.linearPowerYears}</span><span class="unit">{years}</span></span></dd>
+        <dt>{t.specs.share}</dt>
+        <dd><span class="num">+4<span class="unit">%</span></span></dd>
       </div>
       <div class="hero__spec">
-        <dt>{t.specs.capacity}</dt>
-        <dd><span class="num">+{peimar.capacityGw}<span class="unit">GW</span></span></dd>
+        <dt>{t.specs.distributors}</dt>
+        <dd><span class="num">100</span></dd>
       </div>
       <div class="hero__spec">
-        <dt>{t.specs.cells}</dt>
-        <dd><span class="num">N-type</span></dd>
+        <dt>{t.specs.installed}</dt>
+        <dd><span class="num">100<span class="unit">MW</span></span></dd>
       </div>
     </dl>
   </div>

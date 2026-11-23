@@ -20,6 +20,35 @@ function canvas(w: number, h: number) {
   return c;
 }
 
+/** Tangent-space normal map (OpenGL convention, +y up) from the red channel of a height map; edges wrap. */
+function toNormal(height: HTMLCanvasElement, strength: number): HTMLCanvasElement {
+  const w = height.width;
+  const h = height.height;
+  const src = height.getContext('2d', { willReadFrequently: true })!.getImageData(0, 0, w, h).data;
+  const out = canvas(w, h);
+  const ctx = out.getContext('2d')!;
+  const img = ctx.createImageData(w, h);
+  const d = img.data;
+  const k = strength / 255;
+  for (let y = 0; y < h; y++) {
+    const row = y * w;
+    const up = ((y + h - 1) % h) * w;
+    const down = ((y + 1) % h) * w;
+    for (let x = 0; x < w; x++) {
+      const dx = (src[(row + ((x + 1) % w)) * 4] - src[(row + ((x + w - 1) % w)) * 4]) * k;
+      const dy = (src[(down + x) * 4] - src[(up + x) * 4]) * k;
+      const n = 127.5 / Math.sqrt(dx * dx + dy * dy + 1);
+      const i = (row + x) * 4;
+      d[i] = 127.5 - dx * n;
+      d[i + 1] = 127.5 + dy * n;
+      d[i + 2] = 127.5 + n;
+      d[i + 3] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+  return out;
+}
+
 function cellPath(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, top: number, bottom: number) {
   ctx.beginPath();
   ctx.moveTo(x + top, y);
@@ -40,6 +69,8 @@ export interface CellSheet {
   surface: HTMLCanvasElement;
   /** Half-size height map: cells and ribbons raised, gaps low. Gives the backsheet its faint relief. */
   relief: HTMLCanvasElement;
+  /** Normal map of the cell side: cell edges, finger lines, round busbar wires, flat ribbons and the crystalline grain. */
+  normal: HTMLCanvasElement;
 }
 
 const sheets = new Map<string, CellSheet>();
@@ -54,10 +85,14 @@ export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): C
   const h = Math.round(L.lamH * s);
   const color = canvas(w, h);
   const surface = canvas(w, h);
+  const height = canvas(w, h);
   const c = color.getContext('2d')!;
   const m = surface.getContext('2d')!;
+  const z = height.getContext('2d', { willReadFrequently: true })!;
   m.fillStyle = 'rgb(0,150,0)';
   m.fillRect(0, 0, w, h);
+  z.fillStyle = 'rgb(70,70,70)';
+  z.fillRect(0, 0, w, h);
 
   const rand = seeded(`${spec.model}-${spec.cells}`);
   const poly = spec.cellType === 'poly';
@@ -66,52 +101,13 @@ export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): C
   const ch = L.cellH * s;
   const chamfer = poly ? 0 : cw * (L.cellW < 170 ? 0.07 : 0.035);
   const fingerStep = Math.max(2, 1.9 * s);
+  /** Finger relief only where the lines are at least 3 px apart; finer than that it would alias. */
+  const fingerRelief = fingerStep >= 3;
 
-  for (let r = 0; r < L.rows; r++) {
-    const y = rowTop(L, r) * s;
-    const top = spec.halfCut ? (r % 2 === 0 ? chamfer : 0) : chamfer;
-    const bottom = spec.halfCut ? (r % 2 === 1 ? chamfer : 0) : chamfer;
-    for (let k = 0; k < L.cols; k++) {
-      const x = colLeft(L, k) * s;
-      const light = poly ? 30 + (rand() - 0.5) * 6 : 6.2 + (rand() - 0.5) * 1.6;
-      const hue = poly ? 216 : 224;
-      const sat = poly ? 56 : 42;
-      const grad = c.createLinearGradient(x, y, x + cw * 0.3, y + ch);
-      grad.addColorStop(0, `hsl(${hue} ${sat}% ${light + 1.4}%)`);
-      grad.addColorStop(0.55, `hsl(${hue + 4} ${sat - 6}% ${light}%)`);
-      grad.addColorStop(1, `hsl(${hue} ${sat}% ${light - 0.8}%)`);
-      cellPath(c, x, y, cw, ch, top, bottom);
-      c.fillStyle = grad;
-      c.fill();
-      m.fillStyle = 'rgb(0,112,0)';
-      cellPath(m, x, y, cw, ch, top, bottom);
-      m.fill();
-
-      c.save();
-      cellPath(c, x, y, cw, ch, top, bottom);
-      c.clip();
-      if (poly) {
-        for (let f = 0; f < 26; f++) {
-          const fx = x + rand() * cw;
-          const fy = y + rand() * ch;
-          const size = (0.12 + rand() * 0.3) * cw;
-          c.beginPath();
-          c.moveTo(fx, fy);
-          for (let v = 0; v < 4; v++) c.lineTo(fx + (rand() - 0.5) * size, fy + (rand() - 0.5) * size);
-          c.closePath();
-          c.fillStyle = `hsl(${212 + rand() * 10} ${48 + rand() * 18}% ${light + (rand() - 0.5) * 12}% / 0.55)`;
-          c.fill();
-        }
-      }
-      c.fillStyle = poly ? 'rgb(225 230 240 / 0.1)' : dark ? 'rgb(120 130 150 / 0.03)' : 'rgb(170 180 205 / 0.05)';
-      for (let fy = y + fingerStep / 2; fy < y + ch; fy += fingerStep) c.fillRect(x, fy, cw, 0.6);
-      c.restore();
-    }
-  }
-
-  // Faint crystalline grain over the silicon only (source-atop keeps the gaps clear).
+  // Crystalline grain of mono silicon: faint in the colour, a little stronger in the relief.
+  let tile: HTMLCanvasElement | null = null;
   if (!poly) {
-    const tile = canvas(128, 128);
+    tile = canvas(128, 128);
     const t = tile.getContext('2d')!;
     const img = t.createImageData(128, 128);
     for (let i = 0; i < img.data.length; i += 4) {
@@ -120,6 +116,73 @@ export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): C
       img.data[i + 3] = Math.round(rand() * 255);
     }
     t.putImageData(img, 0, 0);
+  }
+  const grain = tile && z.createPattern(tile, 'repeat');
+
+  for (let r = 0; r < L.rows; r++) {
+    const y = rowTop(L, r) * s;
+    const top = spec.halfCut ? (r % 2 === 0 ? chamfer : 0) : chamfer;
+    const bottom = spec.halfCut ? (r % 2 === 1 ? chamfer : 0) : chamfer;
+    for (let k = 0; k < L.cols; k++) {
+      const x = colLeft(L, k) * s;
+      const light = poly ? 30 + (rand() - 0.5) * 6 : 11 + (rand() - 0.5) * 2;
+      const hue = poly ? 216 : 223;
+      const sat = poly ? 56 : 48;
+      const grad = c.createLinearGradient(x, y, x + cw * 0.3, y + ch);
+      grad.addColorStop(0, `hsl(${hue} ${sat}% ${light + 0.9}%)`);
+      grad.addColorStop(0.55, `hsl(${hue + 4} ${sat - 6}% ${light}%)`);
+      grad.addColorStop(1, `hsl(${hue} ${sat}% ${light - 0.6}%)`);
+      cellPath(c, x, y, cw, ch, top, bottom);
+      c.fillStyle = grad;
+      c.fill();
+      m.fillStyle = 'rgb(0,112,0)';
+      cellPath(m, x, y, cw, ch, top, bottom);
+      m.fill();
+      z.fillStyle = 'rgb(128,128,128)';
+      cellPath(z, x, y, cw, ch, top, bottom);
+      z.fill();
+
+      for (const g of [c, z]) {
+        g.save();
+        cellPath(g, x, y, cw, ch, top, bottom);
+        g.clip();
+      }
+      if (poly) {
+        for (let f = 0; f < 26; f++) {
+          const fx = x + rand() * cw;
+          const fy = y + rand() * ch;
+          const size = (0.12 + rand() * 0.3) * cw;
+          const facet = new Path2D();
+          facet.moveTo(fx, fy);
+          for (let v = 0; v < 4; v++) facet.lineTo(fx + (rand() - 0.5) * size, fy + (rand() - 0.5) * size);
+          facet.closePath();
+          c.fillStyle = `hsl(${212 + rand() * 10} ${48 + rand() * 18}% ${light + (rand() - 0.5) * 12}% / 0.55)`;
+          c.fill(facet);
+          // Each crystal grain sits a little higher or lower, so its edges catch the light.
+          const level = Math.round(118 + rand() * 20);
+          z.fillStyle = `rgb(${level} ${level} ${level} / 0.6)`;
+          z.fill(facet);
+        }
+      }
+      if (grain) {
+        z.globalAlpha = 0.12;
+        z.fillStyle = grain;
+        z.fillRect(x, y, cw, ch);
+        z.globalAlpha = 1;
+      }
+      c.fillStyle = poly ? 'rgb(225 230 240 / 0.1)' : dark ? 'rgb(120 130 150 / 0.03)' : 'rgb(170 180 205 / 0.05)';
+      z.fillStyle = 'rgb(176,176,176)';
+      for (let fy = y + fingerStep / 2; fy < y + ch; fy += fingerStep) {
+        c.fillRect(x, fy, cw, 0.6);
+        if (fingerRelief) z.fillRect(x, fy - 0.2, cw, 1);
+      }
+      c.restore();
+      z.restore();
+    }
+  }
+
+  // Colour grain over the silicon only: source-atop keeps the gaps clear.
+  if (tile) {
     c.save();
     c.globalCompositeOperation = 'source-atop';
     c.globalAlpha = 0.045;
@@ -137,13 +200,20 @@ export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): C
   const strip = Math.max(2, 4 * s);
   const perBlock = L.rows / L.blocks;
 
-  const ribbon = (x: number, y: number, rw: number, rh: number, alpha: number) => {
+  /** Ribbon or busbar; `round` wires get a soft shoulder in the height map so they catch light like a cylinder. */
+  const ribbon = (x: number, y: number, rw: number, rh: number, alpha: number, round = false) => {
     c.globalAlpha = alpha;
     c.fillStyle = ribbonColor;
     c.fillRect(x, y, rw, rh);
     c.globalAlpha = 1;
     m.fillStyle = ribbonSurface;
     m.fillRect(x, y, rw, rh);
+    if (round) {
+      z.fillStyle = 'rgb(170,170,170)';
+      z.fillRect(x - 1, y, rw + 2, rh);
+    }
+    z.fillStyle = round ? 'rgb(225,225,225)' : 'rgb(196,196,196)';
+    z.fillRect(x, y, rw, rh);
   };
 
   for (let b = 0; b < L.blocks; b++) {
@@ -151,7 +221,7 @@ export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): C
     const yBottom = (rowTop(L, (b + 1) * perBlock - 1) + L.cellH) * s + reach;
     for (let k = 0; k < L.cols; k++) {
       const x = colLeft(L, k) * s;
-      for (let i = 0; i < busbars; i++) ribbon(x + ((i + 0.5) * cw) / busbars - bw / 2, yTop, bw, yBottom - yTop, thin ? 0.3 : 0.9);
+      for (let i = 0; i < busbars; i++) ribbon(x + ((i + 0.5) * cw) / busbars - bw / 2, yTop, bw, yBottom - yTop, thin ? 0.3 : 0.9, thin);
     }
     const pairs = (from: number, y: number) => {
       for (let k = from; k + 1 < L.cols; k += 2) {
@@ -180,11 +250,31 @@ export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): C
   r.fillStyle = '#555';
   r.fillRect(0, 0, relief.width, relief.height);
 
-  const sheet = { color, surface, relief };
+  const sheet = { color, surface, relief, normal: toNormal(height, 3) };
   sheets.set(key, sheet);
   // Keep the two latest (hero and anatomy share one); model pickers would otherwise pile up ~20 MB per model.
   if (sheets.size > 2) sheets.delete(sheets.keys().next().value!);
   return sheet;
+}
+
+/** Satin-brushed aluminium as a 256 px normal tile: streaks run along v, the extrusion direction of the frame. */
+export function drawBrushed(): HTMLCanvasElement {
+  const size = 256;
+  const height = canvas(size, size);
+  const z = height.getContext('2d', { willReadFrequently: true })!;
+  const img = z.createImageData(size, size);
+  const rand = seeded('brushed');
+  const streaks = Array.from({ length: size }, () => rand());
+  for (let x = 0; x < size; x++) {
+    const across = (streaks[x] + streaks[(x + 1) % size]) / 2 - 0.5;
+    for (let y = 0; y < size; y++) {
+      const i = (y * size + x) * 4;
+      img.data[i] = 128 + across * 80 + (rand() - 0.5) * 10;
+      img.data[i + 3] = 255;
+    }
+  }
+  z.putImageData(img, 0, 0);
+  return toNormal(height, 1.5);
 }
 
 const fmt = (n: number) => String(Math.round(n * 100) / 100);

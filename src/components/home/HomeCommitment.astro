@@ -1,8 +1,7 @@
 ---
 import { home } from '../../i18n/home.ts';
-import { company } from '../../i18n/company.ts';
 import { localizePath, type Locale } from '../../i18n/config.ts';
-import { warranty } from '../company/facts.ts';
+import { peakEfficiency, peimar } from '../company/facts.ts';
 import { contact } from '../../data/site.ts';
 
 interface Props {
@@ -11,11 +10,9 @@ interface Props {
 
 /** Client-confirmed history (src/data/history.json): founded 2017, Peimar agent for all of Iraq since 2021, 100 MW supplied and installed by 2026. */
 const peimarAgentSince = 2021;
-const installedMw = 100;
 
 const { locale } = Astro.props;
 const t = home[locale].commitment;
-const years = company[locale].years;
 ---
 
 <section class="commit theme-light section" aria-labelledby="commit-title">
@@ -31,18 +28,21 @@ const years = company[locale].years;
 
     <dl class="commit__stats" aria-label={t.statsLabel}>
       <div class="commit__stat">
-        <dt>{t.stats.installed}</dt>
+        <dt>{t.stats.efficiency}</dt>
         <dd>
           <span class="num"
-            ><span data-reveal="count" data-to={installedMw}>{installedMw}</span><span class="unit">MW</span></span
+            ><span data-reveal="count" data-to={(peakEfficiency * 100).toFixed(2)} data-decimals="2"
+              >{(peakEfficiency * 100).toFixed(2)}</span
+            ><span class="unit">%</span></span
           >
         </dd>
       </div>
       <div class="commit__stat">
-        <dt>{t.stats.warranty}</dt>
+        <dt>{t.stats.capacity}</dt>
         <dd>
-          <span class="num" data-reveal="count" data-to={warranty.linearPowerYears}>{warranty.linearPowerYears}</span><span
-            class="unit">{years}</span
+          <span class="num"
+            >+<span data-reveal="count" data-to={peimar.capacityGw} data-decimals="1">{peimar.capacityGw.toFixed(1)}</span
+            ><span class="unit">GW</span></span
           >
         </dd>
       </div>

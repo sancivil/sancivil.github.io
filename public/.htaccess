@@ -12,6 +12,10 @@ ErrorDocument 404 /404.html
   RewriteCond %{HTTP_HOST} ^www\. [NC]
   RewriteRule ^ https://faradayiq.com%{REQUEST_URI} [L,R=301]
 
+  # Folders that hold product pages but are not pages themselves
+  RewriteRule ^((?:ar|ku)/)?products/inverters/?$ /$1products/ [L,R=301]
+  RewriteRule ^((?:ar|ku)/)?products/storage/?$ /$1products/hybrid/ [L,R=301]
+
   # Add the trailing slash to directory-style URLs (/about -> /about/)
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_URI} !\.[a-zA-Z0-9]{1,5}$
@@ -36,7 +40,7 @@ ErrorDocument 404 /404.html
   <FilesMatch "\.(html|xml|txt|webmanifest)$">
     Header set Cache-Control "public, max-age=0, must-revalidate"
   </FilesMatch>
-  <FilesMatch "\.(png|jpe?g|webp|avif|svg)$">
+  <FilesMatch "\.(png|jpe?g|webp|avif|svg|hdr)$">
     Header set Cache-Control "public, max-age=2592000"
   </FilesMatch>
   # Hashed build assets (/_astro/name.HASH.ext) never change
@@ -46,10 +50,12 @@ ErrorDocument 404 /404.html
 </IfModule>
 
 <IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml application/xml text/plain
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml application/xml text/plain image/vnd.radiance
 </IfModule>
 
 <IfModule mod_mime.c>
   AddType application/manifest+json .webmanifest
   AddType font/woff2 .woff2
+  # 3D studio reflections (Radiance HDR, /hdr/)
+  AddType image/vnd.radiance .hdr
 </IfModule>

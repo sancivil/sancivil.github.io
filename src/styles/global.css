@@ -651,3 +651,15 @@ html.motion:not(.motion-ready) [data-reveal='rule'] {
 [hidden] {
   display: none !important;
 }
+
+/* "Made in Italy": a slim tricolour line under the phrase (src/lib/italy.ts wraps it). */
+.mii {
+  --mii-white: #dcdcd6;
+  padding-bottom: 4px;
+  background: linear-gradient(90deg, #009246 0 33.34%, var(--mii-white) 33.34% 66.67%, #ce2b37 66.67% 100%) left bottom / 100% 3px no-repeat;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.theme-dark .mii {
+  --mii-white: #ffffff;
+}

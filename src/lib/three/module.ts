@@ -24,6 +24,7 @@ import {
   Path,
   PlaneGeometry,
   Quaternion,
+  RepeatWrapping,
   SRGBColorSpace,
   Shape,
   TubeGeometry,
@@ -34,7 +35,7 @@ import type { ColorSpace, Material, Object3D, Texture } from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { toCreasedNormals } from 'three/addons/utils/BufferGeometryUtils.js';
 import { FRAME_LIP, FRAME_WALL, cellLayout } from './layout.ts';
-import { drawCellSheet, drawLabel } from './textures.ts';
+import { drawBrushed, drawCellSheet, drawLabel } from './textures.ts';
 import type { ModuleSpec } from './types.ts';
 
 const MM = 0.001;
@@ -75,6 +76,8 @@ export interface PvModule {
   center(t: number | readonly number[]): number;
   /** Callout point on layer i in module space for an explode state; side picks the long edge (1 = +x). */
   anchor(i: number, t: number | readonly number[], side: number): Vector3;
+  /** Swaps the reflected studio on every material (strength = the scene's environment strength, rotation about y). */
+  setEnvironment(map: Texture, strength: number, rotation: number): void;
   dispose(): void;
 }
 
@@ -93,12 +96,12 @@ export interface BuildOptions {
 function clearGlass() {
   const m = new MeshPhysicalMaterial({
     color: 0x000000,
-    roughness: 0.07,
+    roughness: 0.1,
     metalness: 0,
     ior: 1.52,
     clearcoat: 1,
-    clearcoatRoughness: 0.02,
-    iridescence: 0.7,
+    clearcoatRoughness: 0.08,
+    iridescence: 0.45,
     iridescenceIOR: 1.32,
     iridescenceThicknessMinimum: 90,
     iridescenceThicknessMaximum: 125,
@@ -228,12 +231,17 @@ export function buildModule(spec: ModuleSpec, opts: BuildOptions): PvModule {
   const materials: Material[] = [];
   const textures: Texture[] = [];
   const geo = <T extends BufferGeometry>(g: T) => (geometries.push(g), g);
-  /** Registers a material and gives it the environment at `reflect` × the scene's strength. */
-  const mat = <T extends Material>(m: T, reflect = 1) => {
+  const reflectivity = new Map<MeshStandardMaterial, number>();
+  const reflect = (m: MeshStandardMaterial, map: Texture, strength: number, rotation: number) => {
+    m.envMap = map;
+    m.envMapIntensity = (reflectivity.get(m) ?? 1) * strength;
+    m.envMapRotation.set(0, rotation, 0);
+  };
+  /** Registers a material and gives it the environment at `share` × the scene's strength. */
+  const mat = <T extends Material>(m: T, share = 1) => {
     if (m instanceof MeshStandardMaterial) {
-      m.envMap = opts.envMap;
-      m.envMapIntensity = reflect * opts.envIntensity;
-      m.envMapRotation.set(0, opts.envRotation, 0);
+      reflectivity.set(m, share);
+      reflect(m, opts.envMap, opts.envIntensity, opts.envRotation);
     }
     materials.push(m);
     return m;
@@ -332,6 +340,8 @@ export function buildModule(spec: ModuleSpec, opts: BuildOptions): PvModule {
       map: cellMap,
       roughnessMap: cellSurface,
       metalnessMap: cellSurface,
+      normalMap: tex(new CanvasTexture(sheet.normal), NoColorSpace),
+      normalScale: new Vector2(0.45, 0.45),
       roughness: 1,
       metalness: 1,
       specularIntensity: 0.4,
@@ -402,13 +412,18 @@ export function buildModule(spec: ModuleSpec, opts: BuildOptions): PvModule {
   label.rotation.y = Math.PI;
   layers[4].add(label);
 
-  // 06 frame: four mitred hollow members, anodised aluminium
+  // 06 frame: four mitred hollow members, anodised aluminium with a satin brush along each member (uv in mm)
   const silver = spec.frame === 'silver';
+  const brushed = tex(new CanvasTexture(drawBrushed()), NoColorSpace);
+  brushed.wrapS = brushed.wrapT = RepeatWrapping;
+  brushed.repeat.set(1 / 128, 1 / 512);
   const frameMaterial = mat(
     new MeshPhysicalMaterial({
       color: FRAME_COLORS[spec.frame],
       metalness: spec.frame === 'black' || silver ? 1 : 0.6,
       roughness: silver ? 0.26 : 0.34,
+      normalMap: brushed,
+      normalScale: new Vector2(0.25, 0.25),
       anisotropy: 0.55,
       anisotropyRotation: Math.PI / 2,
       clearcoat: silver ? 0 : 0.3,
@@ -633,6 +648,9 @@ export function buildModule(spec: ModuleSpec, opts: BuildOptions): PvModule {
       }
       const x = i === 5 ? (side * W) / 2 : side * (lamW / 2) * 0.9;
       return new Vector3(x, (heights[i] * H) / 2, (i === 5 ? 0 : extents[i][1]) + dz);
+    },
+    setEnvironment(map, strength, rotation) {
+      reflectivity.forEach((_, m) => reflect(m, map, strength, rotation));
     },
     center(t) {
       let lo = Infinity;

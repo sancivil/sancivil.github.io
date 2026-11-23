@@ -1,12 +1,15 @@
 import type { CommonStrings } from '../../i18n/common.ts';
+import type { ComponentChildren } from 'preact';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { whatsappLink } from '../../data/site.ts';
 import { batteries, cities, inverters, panels } from '../../lib/designer/data.ts';
 import { fmt, fmtMax, kwRating, ltr, pct, unit } from '../../lib/designer/format.ts';
+import { AGEING, moduleTech, payback, priceFromBill, rate } from '../../lib/designer/payback.ts';
 import { encodeProject } from '../../lib/designer/share.ts';
 import { projectFromSizing, sizeFromNeeds, type Needs, type Sizing } from '../../lib/designer/sizing.ts';
-import type { Phase } from '../../lib/designer/types.ts';
-import { cityName, needs, project, step, mode, useI18n } from './store.ts';
+import type { Phase, Project } from '../../lib/designer/types.ts';
+import { FinanceFields, PaybackView, paybackLines } from './Payback.tsx';
+import { cityName, homeFinance, needs, project, step, mode, useI18n } from './store.ts';
 import { Field, Icon, Num, NumberInput, describedBy, useTouched } from './ui.tsx';
 
 const sizingData = { panels, inverters, cities, batteries };
@@ -52,16 +55,39 @@ export function NeedsWizard({ onContinue }: { onContinue: () => void }) {
   const kwErr = Number.isNaN(n.backupKw) || (n.backupKw >= 0 && n.backupKw <= 500) ? null : t.needs.errKw;
   const monthlyErr = n.monthlyKwh > 0 && n.monthlyKwh <= 200000 ? null : t.needs.errMonthly;
 
-  const shareFor = (s: Sizing) => {
-    const p = projectFromSizing(s, t.needs.projectName(cityName(s.city, locale)));
-    return `${location.origin}${location.pathname}#p=${encodeProject(p)}`;
-  };
+  const fin = homeFinance.value;
+  const byBill = fin.basis === 'bill';
+  const price = byBill ? priceFromBill(fin.bill, n.monthlyKwh) : fin.pricePerKwh;
+  const setFin = (patch: Partial<typeof fin>) => (homeFinance.value = { ...homeFinance.value, ...patch });
+  const prices = { currency: fin.currency, cost: fin.cost, pricePerKwh: price };
+  const result = outcome.ok
+    ? payback({
+        cost: fin.cost,
+        pricePerKwh: price,
+        annualKwh: outcome.sizing.productionKwh,
+        useKwh: outcome.sizing.annualKwh,
+        ageing: AGEING[moduleTech(outcome.sizing.panel)],
+      })
+    : null;
+
+  /** The design carries the payback inputs; a price from the bill is rounded as shown under the bill field. */
+  const projectFor = (s: Sizing): Project => ({
+    ...projectFromSizing(s, t.needs.projectName(cityName(s.city, locale))),
+    finance: {
+      currency: fin.currency,
+      cost: fin.cost,
+      pricePerKwh: byBill && Number.isFinite(price) ? Number(rate(price).replace(/,/g, '')) : price,
+      useKwh: s.annualKwh,
+    },
+  });
+
+  const shareFor = (s: Sizing) => `${location.origin}${location.pathname}#p=${encodeProject(projectFor(s))}`;
 
   const [confirming, setConfirming] = useState(false);
   useEffect(() => setConfirming(false), [n]);
 
   const go = (s: Sizing, replace = false) => {
-    const next = projectFromSizing(s, t.needs.projectName(cityName(s.city, locale)));
+    const next = projectFor(s);
     const current = project.value;
     const hasDesign = current.subArrays.some((x) => x.panelId) || current.inverters.some((b) => b.inverterId);
     if (!replace && hasDesign && encodeProject(current) !== encodeProject(next)) {
@@ -84,6 +110,7 @@ export function NeedsWizard({ onContinue }: { onContinue: () => void }) {
         panels: ltr(`${s.panelCount} × Peimar ${s.panel.model}`),
         inverter: ltr(`${s.inverterCount} × Peimar ${s.inverter.model}`),
         battery: batteryText(s) ? ltr(`${batteryText(s)} (${fmtMax(s.battery!.totalKwh)} kWh)`) : null,
+        payback: paybackLines(t, result, prices, byBill ? fin.bill : null),
         link: shareFor(s),
       }),
     );
@@ -142,6 +169,18 @@ export function NeedsWizard({ onContinue }: { onContinue: () => void }) {
               ))}
             </div>
           </fieldset>
+          <fieldset class="dz-fin-group">
+            <legend class="dz-fin-group__title">
+              {t.payback.title} <span class="dz-fin-group__opt">({t.payback.optional})</span>
+            </legend>
+            <p class="dz-help dz-fin-group__intro">{t.payback.intro}</p>
+            <FinanceFields
+              id="dz-n-pb"
+              value={fin}
+              onChange={setFin}
+              bill={{ basis: fin.basis, value: fin.bill, monthlyKwh: n.monthlyKwh, onBasis: (basis) => setFin({ basis }), onValue: (bill) => setFin({ bill }) }}
+            />
+          </fieldset>
         </form>
 
         <section class="dz-needs__result theme-dark" aria-live="polite" aria-labelledby="dz-n-result">
@@ -168,7 +207,13 @@ export function NeedsWizard({ onContinue }: { onContinue: () => void }) {
               confirm={confirming ? { name: `⁨${project.value.name || t.rail.untitled}⁩`, onReplace: () => go(outcome.sizing, true), onKeep: () => setConfirming(false) } : null}
               quoteHref={() => quote(outcome.sizing)}
               units={c.units}
-            />
+            >
+              {result ? (
+                <PaybackView r={result} cost={fin.cost} currency={fin.currency} tech={moduleTech(outcome.sizing.panel)} useKwh={outcome.sizing.annualKwh} />
+              ) : (
+                <p class="dz-sizing__pbhint small">{t.payback.hint}</p>
+              )}
+            </SizingView>
           )}
           {city && <p class="dz-needs__source small">{t.energy.source}</p>}
         </section>
@@ -179,7 +224,9 @@ export function NeedsWizard({ onContinue }: { onContinue: () => void }) {
 
 type Confirm = { name: string; onReplace: () => void; onKeep: () => void };
 
-function SizingView({ s, n, onContinue, confirm, quoteHref, units }: { s: Sizing; n: Needs; onContinue: () => void; confirm: Confirm | null; quoteHref: () => string; units: CommonStrings['units'] }) {
+type SizingProps = { s: Sizing; n: Needs; onContinue: () => void; confirm: Confirm | null; quoteHref: () => string; units: CommonStrings['units']; children: ComponentChildren };
+
+function SizingView({ s, n, onContinue, confirm, quoteHref, units, children }: SizingProps) {
   const { t, locale } = useI18n();
   const replaceBtn = useRef<HTMLButtonElement>(null);
   const continueBtn = useRef<HTMLButtonElement>(null);
@@ -296,6 +343,8 @@ function SizingView({ s, n, onContinue, confirm, quoteHref, units }: { s: Sizing
           </div>
         )}
       </dl>
+
+      <div class="dz-sizing__pb">{children}</div>
 
       <div class="dz-sizing__why">
         <p class="dz-sizing__why-title">{t.needs.why}</p>

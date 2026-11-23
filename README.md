@@ -48,3 +48,4 @@ Deployment to the SiteBunker cPanel hosting: see [DEPLOY.md](DEPLOY.md).
 - Solar data: PVGIS © European Union, 2001–2026.
 - Product names, datasheets and product images: Peimar S.r.l., used by its exclusive agent in Iraq.
 - Fonts: SIL Open Font License 1.1.
+- 3D studio reflections: "Studio Small 09" HDRI by Sergej Majboroda, Poly Haven (CC0), `public/hdr/`.

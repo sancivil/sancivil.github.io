@@ -1,8 +1,9 @@
 import { findInverter, findPanel, mpptGroups, summarize, tempsValid } from './calc.ts';
-import type { Catalog, GroupSel, InverterBlock, Panel, Project, SubArray, Temps } from './types.ts';
+import type { Catalog, Finance, GroupSel, InverterBlock, Panel, Project, SubArray, Temps } from './types.ts';
 
 export const PEIMAR_DEFAULT_TEMPS: Temps = { tmin: -10, tnom: 45, tmax: 70 };
 export const MAX_COUNT = 9999;
+export const emptyFinance = (): Finance => ({ currency: 'IQD', cost: NaN, pricePerKwh: NaN, useKwh: NaN });
 
 export function createProject(): Project {
   return {
@@ -16,6 +17,7 @@ export function createProject(): Project {
     subArrays: [{ id: 'a1', name: '', panelId: '', count: NaN }],
     customPanels: [],
     inverters: [{ id: 'i1', inverterId: '', count: 1, configKey: '', groups: [] }],
+    finance: emptyFinance(),
   };
 }
 

@@ -333,6 +333,7 @@ function randomProject(rnd: Rand, opts: { inverterPool?: Inverter[]; panelPool?:
     subArrays,
     customPanels,
     inverters: blocks,
+    finance: { currency: 'IQD', cost: NaN, pricePerKwh: NaN, useKwh: NaN },
   };
 }
 
@@ -470,6 +471,7 @@ test('property: the reference fixture agrees with the reference model and with t
     subArrays: [{ id: 'a1', name: '', panelId: panel.id, count: ref.panels }],
     customPanels: [],
     inverters: [{ id: 'i1', inverterId: inv.id, count: 1, configKey: '1,2', groups: [{ subArrayId: 'a1', series: 6, strings: 1 }, { subArrayId: 'a1', series: 6, strings: 1 }] }],
+    finance: { currency: 'IQD', cost: NaN, pricePerKwh: NaN, useKwh: NaN },
   };
   const all: [number, number][] = [];
   for (let s = 1; s <= 14; s++) for (let q = 1; q <= 5; q++) all.push([s, q]);

@@ -129,7 +129,7 @@ const en = {
       today: {
         label: 'Today',
         title: 'Exclusive Peimar agent in Iraq',
-        text: 'We supply the Peimar range, design each system and install it.',
+        text: 'Main agent with 100 distributors across Iraq, and more than 4% of the country’s total solar power.',
       },
     },
     services: {
@@ -195,7 +195,7 @@ const en = {
     meta: {
       title: 'Contact',
       description:
-        'Call, message on WhatsApp or visit Faraday on Qasmlu Street, Sulaymaniyah. Saturday to Thursday, 08:00–17:00.',
+        'Call, message on WhatsApp or visit Faraday on Qasmlu Street, Sulaymaniyah. Saturday to Thursday, 09:00–17:00.',
     },
     eyebrow: 'Contact',
     title: 'Tell us what you want to power.',
@@ -375,7 +375,7 @@ const ar: CompanyStrings = {
       today: {
         label: 'اليوم',
         title: 'الوكيل الحصري لـ\u00a0Peimar في العراق',
-        text: 'نجهّز منتجات Peimar، ونصمّم كل منظومة ثم نركّبها.',
+        text: 'الوكيل الرئيسي مع 100 موزّع في أنحاء العراق، وأكثر من 4% من مجمل الطاقة الشمسية في البلاد.',
       },
     },
     services: {
@@ -441,7 +441,7 @@ const ar: CompanyStrings = {
     meta: {
       title: 'اتصل بنا',
       description:
-        'اتصل بنا أو راسلنا على واتساب، أو زر مكتب Faraday في شارع قاسملو بالسليمانية. الدوام من السبت إلى الخميس، 08:00–17:00.',
+        'اتصل بنا أو راسلنا على واتساب، أو زر مكتب Faraday في شارع قاسملو بالسليمانية. الدوام من السبت إلى الخميس، 09:00–17:00.',
     },
     eyebrow: 'تواصل معنا',
     title: 'ماذا تريد أن تشغّل بالطاقة الشمسية؟',
@@ -617,7 +617,7 @@ const ckb: CompanyStrings = {
       today: {
         label: 'ئەمڕۆ',
         title: 'بریکاری تایبەتی Peimar لە عێراق',
-        text: 'بەرهەمەکانی Peimar دابین دەکەین، هەر سیستەمێک دیزاین دەکەین و خۆمان دایدەمەزرێنین.',
+        text: 'بریکاری سەرەکی لەگەڵ 100 دابەشکەر لە سەرانسەری عێراق، و زیاتر لە 4% لە کۆی وزەی خۆری وڵات.',
       },
     },
     services: {
@@ -683,7 +683,7 @@ const ckb: CompanyStrings = {
     meta: {
       title: 'پەیوەندی',
       description:
-        'تەلەفۆنمان بۆ بکە، لە واتسئاپ نامە بنێرە یان سەردانی نووسینگەی Faraday بکە لە شەقامی قاسملۆ لە سلێمانی. دەوام شەممە تا پێنجشەممە، 08:00–17:00.',
+        'تەلەفۆنمان بۆ بکە، لە واتسئاپ نامە بنێرە یان سەردانی نووسینگەی Faraday بکە لە شەقامی قاسملۆ لە سلێمانی. دەوام شەممە تا پێنجشەممە، 09:00–17:00.',
     },
     eyebrow: 'پەیوەندی',
     title: 'دەتەوێت چی بە وزەی خۆر کار پێ بکەیت؟',

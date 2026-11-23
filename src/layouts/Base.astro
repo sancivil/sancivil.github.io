@@ -10,6 +10,7 @@ import notoSansArabic from '@fontsource-variable/noto-sans-arabic/files/noto-san
 import notoKufiArabic from '@fontsource-variable/noto-kufi-arabic/files/noto-kufi-arabic-arabic-wght-normal.woff2?url';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import HelpButton from '../components/HelpButton.astro';
 import { contact } from '../data/site.ts';
 import { common, langHint } from '../i18n/common.ts';
 import { locales, localeMeta, localeFromPath, localizePath, stripLocale } from '../i18n/config.ts';
@@ -112,7 +113,7 @@ const organization = {
     {
       '@type': 'OpeningHoursSpecification',
       dayOfWeek: ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'],
-      opens: '08:00',
+      opens: '09:00',
       closes: '17:00',
     },
   ],
@@ -154,7 +155,7 @@ const organization = {
     <meta property="og:locale" content={meta.ogLocale} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:image" content={ogImage} />
     <meta name="twitter:card" content="summary_large_image" />
 
@@ -238,7 +239,9 @@ const organization = {
       <slot />
     </main>
     <Footer localized={!noindex} />
+    <HelpButton />
     <script>
+      import '../lib/italy.ts';
       import '../lib/motion/init.ts';
     </script>
   </body>

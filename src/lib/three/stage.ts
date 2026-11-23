@@ -12,18 +12,25 @@ import {
   Scene,
   WebGLRenderer,
 } from 'three';
-import type { BufferGeometry, Side, Texture, Vector3 } from 'three';
+import type { BufferGeometry, DataTexture, Side, Texture, Vector3 } from 'three';
+import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
 
-const shortSide = Math.min(screen.width, screen.height);
+const phone = Math.min(screen.width, screen.height) <= 720;
 const coarse = matchMedia('(pointer: coarse)').matches;
 
 export const device = {
   touch: coarse,
   /** DPR cap: 2 on desktop, 1.5 on touch devices (tablets and phones). */
   dpr: Math.min(window.devicePixelRatio || 1, coarse ? 1.5 : 2),
-  /** Longest texture side: 2048, or 1024 on phones. */
-  textureMax: shortSide <= 720 ? 1024 : 2048,
+  /** Longest texture side for scenes seen whole: 2048, or 1024 on phones. */
+  textureMax: phone ? 1024 : 2048,
 };
+
+/** Longest cell-texture side for close views (hero, viewer): 4096 on desktop GPUs that take it, 2048 on tablets, 1024 on phones. */
+export const detailTextureMax = (renderer: WebGLRenderer) =>
+  phone ? 1024 : coarse || renderer.capabilities.maxTextureSize < 8192 ? 2048 : 4096;
+
+export const maxAnisotropy = (renderer: WebGLRenderer) => renderer.capabilities.getMaxAnisotropy();
 
 export function createRenderer(canvas: HTMLCanvasElement) {
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
@@ -73,6 +80,54 @@ export function environment(renderer: WebGLRenderer, rtl = false): Texture {
   pmrem.dispose();
   owned.forEach((o) => o.dispose());
   return texture;
+}
+
+/**
+ * Photographed studio for reflections: Poly Haven "Studio Small 09" (Sergej Majboroda, CC0), a white
+ * infinity cove with two large octaboxes under a dark ceiling. `gain` matches its brightness to the
+ * procedural studio; `rotation` turns the room so the hero glass catches the cove as a soft gradient
+ * and the octaboxes (whose egg-crate grids would print as stripes) fall on the frame edges instead.
+ */
+const STUDIO = { url: '/hdr/studio_small_09_1k.hdr', gain: 0.45, rotation: (-100 * Math.PI) / 180 };
+const studios = new Map<boolean, Promise<DataTexture>>();
+
+/** Mirrors the room east–west (x → −x) for RTL, as `environment` does. */
+function mirror(t: DataTexture) {
+  const { data, width, height } = t.image as { data: Uint16Array; width: number; height: number };
+  const out = new Uint16Array(data.length);
+  for (let y = 0; y < height; y++) {
+    const row = y * width;
+    for (let x = 0; x < width; x++) {
+      const from = (row + ((((width >> 1) - 1 - x) % width) + width) % width) * 4;
+      out.set(data.subarray(from, from + 4), (row + x) * 4);
+    }
+  }
+  t.image.data = out;
+  t.needsUpdate = true;
+  return t;
+}
+
+/**
+ * Upgrades a scene to the photographed studio: call after its first frame. The 1.6 MB HDR loads once
+ * per page; phones keep the procedural studio. Resolves to null there or when loading fails.
+ */
+export async function studio(renderer: WebGLRenderer, rtl: boolean): Promise<{ texture: Texture; gain: number; rotation: number } | null> {
+  if (phone) return null;
+  let source = studios.get(rtl);
+  if (!source) {
+    source = new HDRLoader().loadAsync(STUDIO.url).then((t) => (rtl ? mirror(t) : t));
+    studios.set(rtl, source);
+  }
+  try {
+    const equirect = await source;
+    const pmrem = new PMREMGenerator(renderer);
+    const texture = pmrem.fromEquirectangular(equirect).texture;
+    pmrem.dispose();
+    equirect.dispose();
+    return { texture, gain: STUDIO.gain, rotation: rtl ? -STUDIO.rotation : STUDIO.rotation };
+  } catch {
+    return null;
+  }
 }
 
 /** Key light from the upper front on the reading-start side, warm rim from behind on the end side. */

@@ -28,12 +28,12 @@
     "youtube": null
   },
   "hours": [
-    { "days": "Saturday", "open": "08:00", "close": "17:00" },
-    { "days": "Sunday", "open": "08:00", "close": "17:00" },
-    { "days": "Monday", "open": "08:00", "close": "17:00" },
-    { "days": "Tuesday", "open": "08:00", "close": "17:00" },
-    { "days": "Wednesday", "open": "08:00", "close": "17:00" },
-    { "days": "Thursday", "open": "08:00", "close": "17:00" },
+    { "days": "Saturday", "open": "09:00", "close": "17:00" },
+    { "days": "Sunday", "open": "09:00", "close": "17:00" },
+    { "days": "Monday", "open": "09:00", "close": "17:00" },
+    { "days": "Tuesday", "open": "09:00", "close": "17:00" },
+    { "days": "Wednesday", "open": "09:00", "close": "17:00" },
+    { "days": "Thursday", "open": "09:00", "close": "17:00" },
     { "days": "Friday", "open": null, "close": null, "closed": true }
   ],
   "mapsQuery": "46001 Qasimlu Street, Sulaymaniyah",

@@ -51,6 +51,11 @@ Digits are always Western (0–9). Wrap codes, numbers and units in an element w
 | Next / Back | التالي / رجوع | دواتر / گەڕانەوە |
 | Summary | الملخّص | پوختە |
 | Estimate | تقدير | خەمڵاندن |
+| Payback (time to earn back the cost) | مدة استرداد الكلفة | ماوەی گەڕانەوەی پارە |
+| Project cost | تكلفة المشروع | تێچووی پڕۆژە |
+| Electricity price per kWh | سعر الكهرباء للكيلوواط ساعة | نرخی کارەبا بۆ هەر کیلۆوات کاتژمێرێک |
+| Monthly electricity bill | فاتورة الكهرباء الشهرية | پسوولەی مانگانەی کارەبا |
+| Savings | التوفير | پاشەکەوت |
 
 Tone in Arabic: Modern Standard Arabic, short sentences, no flowery marketing. Tone in Kurdish:
 standard Sorani orthography (ڕ ڵ ۆ ێ ە), plain and direct. Both translations need a native

@@ -9,16 +9,21 @@ import { catalog } from '../../lib/designer/data.ts';
 import { createProject, reachableStep, stepErrors, type StepNo } from '../../lib/designer/project.ts';
 import { fromCompact, toCompact } from '../../lib/designer/share.ts';
 import type { Needs } from '../../lib/designer/sizing.ts';
-import type { City, Project } from '../../lib/designer/types.ts';
+import type { City, Finance, Project } from '../../lib/designer/types.ts';
 
 export type Mode = 'design' | 'needs';
 
 export const emptyNeeds = (): Needs => ({ cityId: '', monthlyKwh: NaN, gridHours: NaN, backupKw: NaN, backupHours: NaN, phase: 'single_phase' });
 
+/** Payback inputs of the needs path: the monthly bill (basis 'bill') can stand in for the price per kWh. */
+export type HomeFinance = Omit<Finance, 'useKwh'> & { basis: 'kwh' | 'bill'; bill: number };
+const emptyHomeFinance = (): HomeFinance => ({ currency: 'IQD', cost: NaN, pricePerKwh: NaN, basis: 'kwh', bill: NaN });
+
 export const project = signal<Project>(createProject());
 export const step = signal<StepNo>(1);
 export const mode = signal<Mode>('design');
 export const needs = signal<Needs>(emptyNeeds());
+export const homeFinance = signal<HomeFinance>(emptyHomeFinance());
 export const notice = signal<string | null>(null);
 
 export const summary = computed(() => summarize(project.value, catalog));
@@ -50,9 +55,9 @@ export function restore(): boolean {
     project.value = p;
     mode.value = data.m === 'needs' ? 'needs' : 'design';
     step.value = Math.min(Number(data.s) || 1, reachable.value) as StepNo;
+    const num = (v: unknown) => (typeof v === 'number' ? v : NaN);
     if (data.n && typeof data.n === 'object') {
       const n = data.n;
-      const num = (v: unknown) => (typeof v === 'number' ? v : NaN);
       needs.value = {
         cityId: typeof n.cityId === 'string' ? n.cityId : '',
         monthlyKwh: num(n.monthlyKwh),
@@ -60,6 +65,16 @@ export function restore(): boolean {
         backupKw: num(n.backupKw),
         backupHours: num(n.backupHours),
         phase: n.phase === 'three_phase' ? 'three_phase' : 'single_phase',
+      };
+    }
+    if (data.f && typeof data.f === 'object') {
+      const f = data.f;
+      homeFinance.value = {
+        currency: f.currency === 'USD' ? 'USD' : 'IQD',
+        cost: num(f.cost),
+        pricePerKwh: num(f.pricePerKwh),
+        basis: f.basis === 'bill' ? 'bill' : 'kwh',
+        bill: num(f.bill),
       };
     }
     return true;
@@ -72,7 +87,7 @@ export function persist() {
   try {
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ p: toCompact(project.value), s: step.value, m: mode.value, n: needs.value }),
+      JSON.stringify({ p: toCompact(project.value), s: step.value, m: mode.value, n: needs.value, f: homeFinance.value }),
     );
   } catch {
     /* storage full or blocked: the design still works for this visit */

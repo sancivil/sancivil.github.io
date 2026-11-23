@@ -1,0 +1,117 @@
+---
+import { common } from '../i18n/common.ts';
+import { localeFromPath, stripLocale } from '../i18n/config.ts';
+import { whatsappLink } from '../data/site.ts';
+
+const path = Astro.url.pathname;
+const t = common[localeFromPath(path)].help;
+/* The Designer has its own quote button and a bottom sheet on phones. */
+const show = !stripLocale(path).startsWith('/designer/');
+---
+
+{
+  show && (
+    <a class="help" href={whatsappLink(t.message)} target="_blank" rel="noopener" aria-label={t.aria} data-help>
+      <span class="help__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
+          <path d="M4.5 19.5 5.6 16A8 8 0 1 1 8.3 18.6Z" />
+          <path d="M9.2 8.6c-.3.9.2 2.4 1.5 3.7 1.3 1.3 2.8 1.8 3.7 1.5l.9-1.3-1.6-1-.8.6c-.6-.2-1.4-1-1.7-1.6l.6-.8-1-1.6Z" fill="currentColor" stroke="none" />
+        </svg>
+      </span>
+      <span class="help__text">
+        <span class="help__q">{t.question}</span>
+        <span class="help__a">{t.action}</span>
+      </span>
+    </a>
+  )
+}
+
+<style>
+  .help {
+    position: fixed;
+    z-index: 90;
+    inset-inline-end: max(16px, env(safe-area-inset-right));
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-3);
+    min-height: 56px;
+    padding: 8px var(--s-5) 8px 8px;
+    border: 1px solid var(--line-inv-strong);
+    border-radius: 999px;
+    background: rgb(11 11 12 / 0.92);
+    color: var(--paper);
+    box-shadow: 0 10px 30px rgb(0 0 0 / 0.28);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    transition:
+      transform var(--dur-3) var(--ease-out-expo),
+      opacity var(--dur-2) var(--ease),
+      border-color var(--dur-2) var(--ease);
+  }
+  :global([dir='rtl']) .help {
+    padding: 8px 8px 8px var(--s-5);
+  }
+  .help:hover,
+  .help:focus-visible {
+    border-color: var(--sun);
+  }
+  .help.is-away {
+    opacity: 0;
+    transform: translateY(calc(100% + 24px));
+    pointer-events: none;
+  }
+  .help__icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #25d366;
+    color: #fff;
+  }
+  .help__icon svg {
+    width: 22px;
+    height: 22px;
+  }
+  .help__text {
+    display: grid;
+    line-height: 1.2;
+  }
+  .help__q {
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+  .help__a {
+    font-size: 0.75rem;
+    color: var(--muted-inv);
+  }
+  @media (max-width: 720px) {
+    .help {
+      padding: 8px;
+    }
+    :global([dir='rtl']) .help {
+      padding: 8px;
+    }
+    .help__text {
+      display: none;
+    }
+  }
+  @media print {
+    .help {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const help = document.querySelector<HTMLElement>('[data-help]');
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  if (help && hero) {
+    help.classList.add('is-away');
+    new IntersectionObserver(([entry]) => help.classList.toggle('is-away', entry.intersectionRatio > 0.35), {
+      threshold: [0, 0.35, 1],
+    }).observe(hero);
+  }
+</script>

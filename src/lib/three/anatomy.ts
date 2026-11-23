@@ -1,6 +1,6 @@
 import { Fog, Group, PerspectiveCamera, Scene, Vector3 } from 'three';
 import { buildModule } from './module.ts';
-import { addLights, createRenderer, deg, device, environment, fitDistance, isRtl, watchVisibility } from './stage.ts';
+import { addLights, createRenderer, deg, device, environment, fitDistance, isRtl, maxAnisotropy, studio, watchVisibility } from './stage.ts';
 import { anatomyAt, smooth } from './timeline.ts';
 import type { ModuleSpec } from './types.ts';
 
@@ -24,7 +24,7 @@ export function mountAnatomy(stage: HTMLElement, spec: ModuleSpec) {
 
   const renderer = createRenderer(canvas);
   const scene = new Scene();
-  const env = environment(renderer, side < 0);
+  let env = environment(renderer, side < 0);
   addLights(scene, side < 0, 1.7, 1.8);
   const fog = new Fog(0x0b0b0c, 1, 10);
   scene.fog = fog;
@@ -32,7 +32,7 @@ export function mountAnatomy(stage: HTMLElement, spec: ModuleSpec) {
 
   const pv = buildModule(spec, {
     textureMax: device.textureMax,
-    anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()),
+    anisotropy: maxAnisotropy(renderer),
     envMap: env,
     envIntensity: 0.9,
     envRotation: 0,
@@ -100,6 +100,17 @@ export function mountAnatomy(stage: HTMLElement, spec: ModuleSpec) {
   let visible = false;
   let dirty = true;
   let raf = 0;
+  let disposed = false;
+  /** After the first frame: reflections from the photographed studio (not on phones). */
+  const upgrade = async () => {
+    const s = await studio(renderer, side < 0);
+    if (!s) return;
+    if (disposed) return s.texture.dispose();
+    pv.setEnvironment(s.texture, 0.9 * s.gain, s.rotation);
+    env.dispose();
+    env = s.texture;
+    requestDraw();
+  };
   const draw = () => {
     raf = 0;
     if (!visible) return;
@@ -107,7 +118,10 @@ export function mountAnatomy(stage: HTMLElement, spec: ModuleSpec) {
     renderer.render(scene, camera);
     drawCallouts(s);
     dirty = false;
-    stage.classList.add('is-ready');
+    if (!stage.classList.contains('is-ready')) {
+      stage.classList.add('is-ready');
+      void upgrade();
+    }
   };
   const requestDraw = () => {
     dirty = true;
@@ -161,6 +175,7 @@ export function mountAnatomy(stage: HTMLElement, spec: ModuleSpec) {
       requestDraw();
     },
     dispose() {
+      disposed = true;
       cancelAnimationFrame(raf);
       stopWatching();
       ro.disconnect();
