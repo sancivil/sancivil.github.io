@@ -26,6 +26,10 @@ jobs:
       - uses: actions/configure-pages@v5
       - run: npm ci
       - run: npm run build
+        env:
+          # Preview copy: every page gets noindex so it never competes with faradayiq.com
+          # in search or AI answers (src/layouts/Base.astro). The cPanel build doesn't set it.
+          SITE_PREVIEW: "1"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
