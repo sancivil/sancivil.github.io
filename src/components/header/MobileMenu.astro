@@ -1,5 +1,6 @@
 ---
-import { nav, contact } from '../../data/site.ts';
+import { nav, contact, phones } from '../../data/site.ts';
+import { address, hoursText } from '../../content/index.ts';
 import { common } from '../../i18n/common.ts';
 import { locales, localeMeta, localizePath, type Locale } from '../../i18n/config.ts';
 import { menuCategories } from './menu.ts';
@@ -12,6 +13,7 @@ interface Props {
 
 const { locale, basePath, switchPath } = Astro.props;
 const t = common[locale];
+const office = address(locale);
 const href = (p: string) => localizePath(p, locale);
 const isCurrent = (p: string) => basePath.startsWith(p);
 const index = (i: number) => String(i + 1).padStart(2, '0');
@@ -49,10 +51,10 @@ const index = (i: number) => String(i + 1).padStart(2, '0');
                           <span class="mobile-menu__cat">
                             <span>{t.productNav[c.key]}</span>
                             <span class="mobile-menu__meta">
-                              {t.menu.count[c.count.key](c.count.n)}
+                              {c.count && t.menu.count[c.count.key](c.count.n)}
                               {c.range && (
                                 <>
-                                  {' · '}
+                                  {c.count && ' · '}
                                   <span class="num">{c.range}</span>
                                 </>
                               )}
@@ -132,15 +134,22 @@ const index = (i: number) => String(i + 1).padStart(2, '0');
       <dl class="mobile-menu__info">
         <div>
           <dt class="eyebrow">{t.menu.office}</dt>
-          <dd>{t.address.street}, {t.address.place}</dd>
+          <dd>{office.street}, {office.place}</dd>
         </div>
         <div>
           <dt class="eyebrow">{t.menu.hours}</dt>
-          <dd>{t.hours}</dd>
+          <dd>{hoursText(locale, 'short')}</dd>
         </div>
         <div>
           <dt class="eyebrow">{t.footer.contact}</dt>
-          <dd><span class="mono" dir="ltr">{contact.phoneDisplay}</span> · <span class="mono" dir="ltr">{contact.email}</span></dd>
+          <dd>
+            {phones.map((phone) => (
+              <>
+                <span class="mono" dir="ltr">{phone.display}</span> ·{' '}
+              </>
+            ))}
+            <span class="mono" dir="ltr">{contact.email}</span>
+          </dd>
         </div>
       </dl>
     </div>
@@ -230,8 +239,7 @@ const index = (i: number) => String(i + 1).padStart(2, '0');
     padding-block: var(--s-2);
   }
   .mobile-menu__thumb {
-    display: grid;
-    place-items: center;
+    display: block;
     flex: none;
     width: 56px;
     height: 56px;

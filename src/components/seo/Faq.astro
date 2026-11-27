@@ -15,8 +15,10 @@ interface Props {
   intro?: string;
   id?: string;
   theme?: 'light' | 'paper';
+  /** false where another page marks the same questions up: each question gets FAQPage markup on one page only. */
+  jsonLd?: boolean;
 }
-const { qas, heading, eyebrow, intro, id = 'faq', theme = 'light' } = Astro.props;
+const { qas, heading, eyebrow, intro, id = 'faq', theme = 'light', jsonLd = true } = Astro.props;
 const locale = localeFromPath(Astro.url.pathname);
 const url = new URL(Astro.url.pathname, Astro.site).toString();
 const hasHead = Boolean(heading || eyebrow || intro || Astro.slots.has('default'));
@@ -66,7 +68,7 @@ const hasHead = Boolean(heading || eyebrow || intro || Astro.slots.has('default'
       }
     </div>
   </div>
-  <JsonLd data={faqPage(qas, { url, locale })} />
+  {jsonLd && <JsonLd data={faqPage(qas, { url, locale })} />}
 </section>
 
 <style>

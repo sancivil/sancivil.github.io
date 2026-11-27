@@ -1,0 +1,180 @@
+# Builds the site on every push to main and production, and for the ERP's Preview (a dispatch on production with
+# publish_id and content_sha). Every build goes to the GitHub Pages preview, with noindex on every page. Production
+# builds also keep the faradayiq.com build as the site-live artifact for Go live (live.yml); go_live=yes deploys it
+# from this run. Failures are reported as contract §9 annotations, which the ERP reads.
+name: Build website
+run-name: ${{ inputs.publish_id != '' && format('Publish {0}', inputs.publish_id) || github.event.head_commit.message || 'Build website' }}
+
+on:
+  push:
+    branches: [main, production]
+  workflow_dispatch:
+    inputs:
+      publish_id:
+        description: ERP publish number (owner runs only)
+        type: string
+        default: ''
+      content_sha:
+        description: Commit of sancivil/faraday-site-content to build
+        type: string
+        default: ''
+      go_live:
+        description: yes deploys to faradayiq.com after the build
+        type: string
+        default: 'no'
+      allow_large_removal:
+        description: yes lets Go live remove more than 30% of the pages
+        type: string
+        default: 'no'
+
+permissions: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      CONTENT_DIR: ${{ (vars.CONTENT_SOURCE == 'repo' || inputs.content_sha != '') && '.content' || 'tests/fixtures/content-seed.v1' }}
+    steps:
+      - name: Check inputs
+        env:
+          ID: ${{ inputs.publish_id }}
+          SHA: ${{ inputs.content_sha }}
+          LIVE: ${{ inputs.go_live }}
+          BIG: ${{ inputs.allow_large_removal }}
+          REF: ${{ github.ref }}
+        run: |
+          fail() { echo "::error title=inputs::$1"; exit 1; }
+          [[ -z "$ID" || "$ID" =~ ^[0-9]{1,9}$ ]] || fail publish_id
+          [[ -z "$SHA" || "$SHA" =~ ^[0-9a-f]{40}$ ]] || fail content_sha
+          [[ -z "$LIVE" || "$LIVE" == yes || "$LIVE" == no ]] || fail go_live
+          [[ -z "$BIG" || "$BIG" == yes || "$BIG" == no ]] || fail allow_large_removal
+          if [[ -n "$ID" ]]; then [[ -n "$SHA" && "$REF" == refs/heads/production ]] || fail owner-run; fi
+          if [[ "$LIVE" == yes ]]; then [[ -n "$ID" ]] || fail go_live; fi
+
+      - name: Check out the code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Check out the content
+        if: env.CONTENT_DIR == '.content'
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          repository: sancivil/faraday-site-content
+          ref: ${{ inputs.content_sha != '' && inputs.content_sha || 'live' }}
+          path: .content
+          ssh-key: ${{ secrets.CONTENT_DEPLOY_KEY }}
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22.23.4
+          cache: npm
+
+      - name: Restore processed photos
+        if: env.CONTENT_DIR == '.content'
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: .cache/media
+          key: media-v1-${{ hashFiles('.content/snapshot.json') }}
+          restore-keys: media-v1-
+
+      - name: Install packages
+        run: npm ci
+
+      # The one import of this run: --ignore-scripts below skips the npm hooks that would import again and
+      # repeat its annotations.
+      - name: Import content
+        run: npm run content:import
+
+      - name: Test
+        run: npm test --ignore-scripts || { echo "::error title=build/test::${GITHUB_SHA::12}"; exit 1; }
+
+      - name: Type-check
+        run: npx astro check || { echo "::error title=build/astro-check::${GITHUB_SHA::12}"; exit 1; }
+
+      - name: Build the preview
+        env:
+          SITE_PREVIEW: '1'
+        run: |
+          npm run build --ignore-scripts || { echo "::error title=build/astro-build::${GITHUB_SHA::12}"; exit 1; }
+          npm run check:dist -- --preview
+
+      - name: Upload the preview
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
+        with:
+          path: dist
+
+      - name: Build for faradayiq.com
+        if: github.ref == 'refs/heads/production'
+        run: |
+          rm -rf dist
+          npm run build --ignore-scripts || { echo "::error title=build/astro-build::${GITHUB_SHA::12}"; exit 1; }
+          npm run check:dist
+          mv dist dist-live
+
+      - name: Keep the faradayiq.com build
+        if: github.ref == 'refs/heads/production'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: site-live
+          path: dist-live
+          include-hidden-files: true
+          retention-days: 90
+          if-no-files-found: error
+
+  pages:
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy the preview
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+  live:
+    needs: build
+    if: inputs.go_live == 'yes' && github.ref == 'refs/heads/production'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+    concurrency:
+      group: production
+      cancel-in-progress: false
+    environment: production
+    steps:
+      - name: Check out the deploy scripts
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          sparse-checkout: |
+            scripts/deploy
+            .github/actions
+          persist-credentials: false
+
+      - name: Deploy to faradayiq.com
+        uses: ./.github/actions/deploy-cpanel
+        with:
+          run-id: ${{ github.run_id }}
+          publish-id: ${{ inputs.publish_id }}
+          allow-large-removal: ${{ inputs.allow_large_removal }}
+          site-url: ${{ vars.SITE_URL }}
+          ftps-host: ${{ secrets.FTPS_HOST }}
+          ftps-user: ${{ secrets.FTPS_USER }}
+          ftps-password: ${{ secrets.FTPS_PASSWORD }}
+          ftps-port: ${{ secrets.FTPS_PORT }}

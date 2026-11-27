@@ -4,25 +4,27 @@ import PageHead from '../../../components/company/PageHead.astro';
 import ProjectMedia from '../../../components/company/ProjectMedia.astro';
 import CtaBand from '../../../components/company/CtaBand.astro';
 import { projectList, projectSpan } from '../../../components/company/facts.ts';
+import { projectsPage } from '../../../content/index.ts';
 import { localeFromParam, localeParams, localizePath } from '../../../i18n/config.ts';
-import { company, type ProjectSlug } from '../../../i18n/company.ts';
+import { company } from '../../../i18n/company.ts';
 
 export const getStaticPaths = () => localeParams();
 
 const locale = localeFromParam(Astro.params.locale);
 const c = company[locale];
 const t = c.projectsPage;
+const page = projectsPage(locale);
 ---
 
-<Base title={t.meta.title} description={t.meta.description}>
-  <PageHead eyebrow={t.eyebrow} title={t.title(projectSpan.min, projectSpan.max)} lead={t.lead} />
+<Base title={t.meta.title} description={page.metaDescription}>
+  <PageHead eyebrow={t.eyebrow} title={projectSpan ? t.title(projectSpan.min, projectSpan.max) : t.meta.title} lead={page.lead} />
 
   <section class="plist theme-light section" aria-label={t.listLabel}>
     <div class="container">
       <ol class="plist__rows" role="list">
         {
           projectList.map((p) => {
-            const copy = c.projects[p.slug as ProjectSlug];
+            const copy = p.text[locale];
             return (
               <li id={p.slug} class="plist__row">
                 <p class="plist__kwp"><span class="num">{p.kwp}<span class="unit">kWp</span></span></p>
@@ -32,7 +34,7 @@ const t = c.projectsPage;
                   <span class="tag">{c.categories[p.category]}</span>
                 </div>
                 <div class="plist__media">
-                  <ProjectMedia project={p} alt={copy.alt} />
+                  <ProjectMedia project={p} alt={p.alt?.[locale] ?? ''} />
                 </div>
               </li>
             );

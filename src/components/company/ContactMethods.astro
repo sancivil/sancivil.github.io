@@ -1,25 +1,32 @@
 ---
-import { contact, whatsappLink } from '../../data/site.ts';
-import { common } from '../../i18n/common.ts';
+import { contact, phones, whatsappLink } from '../../data/site.ts';
+import { address, hoursNote, openingHours } from '../../content/index.ts';
+import { hoursRows } from '../../content/hours.ts';
 import { company } from '../../i18n/company.ts';
 import type { Locale } from '../../i18n/config.ts';
-import { officeHours } from './facts.ts';
 
 interface Props {
   locale: Locale;
+  /** Shows the owner's note on the hours (Ramadan hours, holidays): the contact page passes it. */
+  note?: boolean;
 }
 
-const { locale } = Astro.props;
+const { locale, note = false } = Astro.props;
 const t = company[locale].methods;
-const address = common[locale].address;
+const office = address(locale);
+const hoursRemark = note ? hoursNote(locale) : undefined;
 ---
 
 <div class="cm">
   <dl class="cm__main">
-    <div class="cm__item">
-      <dt class="eyebrow">{t.phone}</dt>
-      <dd><a class="cm__link cm__phone num" dir="ltr" href={contact.phoneHref}>{contact.phoneDisplay}</a></dd>
-    </div>
+    {
+      phones.map((phone) => (
+        <div class="cm__item">
+          <dt class="eyebrow">{phone.label?.[locale] ?? t.phone}</dt>
+          <dd><a class="cm__link cm__phone num" dir="ltr" href={phone.href}>{phone.display}</a></dd>
+        </div>
+      ))
+    }
     <div class="cm__item">
       <dt class="eyebrow">{t.email}</dt>
       <dd><a class="cm__link cm__email mono" dir="ltr" href={`mailto:${contact.email}`}>{contact.email}</a></dd>
@@ -39,16 +46,24 @@ const address = common[locale].address;
       <dt class="eyebrow">{t.office}</dt>
       <dd class="cm__stack">
         <address class="cm__address">
-          {address.street}<br />{address.place}
+          {office.street}<br />{office.place}
         </address>
-        <a class="link-arrow cm__maps" href={contact.mapsHref} target="_blank" rel="noopener">{t.maps}</a>
+        {contact.mapsHref && <a class="link-arrow cm__maps" href={contact.mapsHref} target="_blank" rel="noopener">{t.maps}</a>}
       </dd>
     </div>
     <div class="cm__item">
       <dt class="eyebrow">{t.hours}</dt>
       <dd class="cm__hours">
-        <p><span>{t.days}</span> <span class="num">{officeHours}</span></p>
-        <p><span>{t.friday}</span> <span class="cm__closed">{t.closed}</span></p>
+        {
+          hoursRows(locale, openingHours).map((row) =>
+            row.time ? (
+              <p><span>{row.days}</span> <span class="num">{row.time}</span></p>
+            ) : (
+              <p><span>{row.days}</span> <span class="cm__closed">{t.closed}</span></p>
+            ),
+          )
+        }
+        {hoursRemark && <p class="cm__closed">{hoursRemark}</p>}
       </dd>
     </div>
   </dl>

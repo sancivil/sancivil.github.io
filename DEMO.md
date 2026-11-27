@@ -8,21 +8,17 @@ npm run build
 npm run preview        # open http://127.0.0.1:4321/
 ```
 
+The build shows the day-one content (the seed). To show the owner's latest content, run `npm run content:pull`
+first and build with `CONTENT_DIR=.content npm run build`.
+
 For iPad and phone views, open Chrome DevTools (F12), press Ctrl+Shift+M and pick "iPad Air" or
 "iPhone 14 Pro Max" from the device list. Reload after switching so the 3D scenes resize.
 
 ## Option B: a link the client opens on their own phone and iPad (free)
 
-Cloudflare Pages has a free plan that allows commercial sites.
-
-1. https://dash.cloudflare.com → Workers & Pages → Create → Pages → Connect to Git → pick
-   `sancivil/faraday-frontend`.
-2. Framework preset **Astro**, build command `npm run build`, output directory `dist`.
-3. Environment variable `NODE_VERSION` = `22.23.4` (Astro 7 needs it).
-4. Deploy, then share `https://faraday-frontend.pages.dev`.
-
-The preview is kept out of Google by `public/_headers`, so it cannot compete with faradayiq.com.
-Every push to `main` updates it.
+Share the GitHub Pages preview, https://sancivil.github.io/. Every push to `main` or `production` and every
+Preview from the ERP rebuilds it, so it shows whichever came last. Every page carries noindex and its `llms.txt` points to the
+live file, so the preview cannot compete with faradayiq.com.
 
 ## Option C: go live on faradayiq.com
 

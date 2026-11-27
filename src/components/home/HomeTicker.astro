@@ -1,6 +1,6 @@
 ---
-import catalog from '../../data/catalog.json';
 import { panels, inverters } from '../../lib/designer/data.ts';
+import { batteries, families, featured, modules } from '../../content/index.ts';
 import { home } from '../../i18n/home.ts';
 import type { Locale } from '../../i18n/config.ts';
 
@@ -13,69 +13,84 @@ const t = home[locale].ticker;
 
 type Item = { code: string; figs: string[]; kind?: string };
 
-const modules: Item[] = catalog.modules
-  .filter((m) => m.slug !== 'revamping-line')
-  .map((m) => panels.filter((p) => m.designerModels.includes(p.id)).reduce((a, b) => (b.power > a.power ? b : a)))
+const moduleItems: Item[] = modules
+  .filter((m) => m.curatedKey !== 'revamping-line')
+  .flatMap((m) => {
+    const list = panels.filter((p) => m.designerModels.includes(p.id));
+    return list.length ? [list.reduce((a, b) => (b.power > a.power ? b : a))] : [];
+  })
   .sort((a, b) => b.power - a.power)
   .map((p) => ({
     code: p.model,
     figs: p.efficiency ? [`${p.power} W`, `${(p.efficiency * 100).toFixed(2)}%`] : [`${p.power} W`],
   }));
 
-const inverter = (model: string, kind: string): Item => {
-  const inv = inverters.find((i) => i.model === model);
-  if (!inv) throw new Error(`${model} is missing from inverters.json`);
-  return { code: inv.model, figs: [`${inv.pnomAc / 1000} kW`], kind };
-};
-
-const battery = (name: string): Item => {
-  const b = catalog.batteries.find((x) => x.name === name);
-  const cap = b?.capacity as { nominalKwh?: number[]; totalKwh?: number | number[] } | null | undefined;
-  const kwh = cap?.nominalKwh ?? cap?.totalKwh;
-  if (!b || kwh === undefined) throw new Error(`${name} has no capacity in catalog.json`);
-  return { code: b.name, figs: [`${Array.isArray(kwh) ? kwh.join('–') : kwh} kWh`], kind: t.kinds.storage };
-};
-
-const others: Item[] = [
-  inverter('PSI-X1P6000-HY', t.kinds.hybrid),
-  battery('PSI-X-HS 3.6'),
-  inverter('PSI-X3S15000-HY', t.kinds.hybrid),
-  inverter('PSI-X3P125000-TPM', t.kinds.onGrid),
-  battery('PSI-X-5.8MST-V2'),
-  inverter('PSI-X3P30000-HYM', t.kinds.hybrid),
-  inverter('PSI-X1P1000-MIC', t.kinds.micro),
+/* The owner's picks, or this list; either way only what the site shows. */
+const tickerInverters = featured.tickerInverters ?? [
+  'psi-x1p6000-hy',
+  'psi-x3s15000-hy',
+  'psi-x3p125000-tpm',
+  'psi-x3p30000-hym',
+  'psi-x1p1000-mic',
 ];
+const tickerBatteries = featured.tickerBatteries ?? ['psi-x-hs-3-6', 'psi-x-5-8mst-v2'];
 
-const items = modules.flatMap((m, i) => (others[i] ? [m, others[i]] : [m])).concat(others.slice(modules.length));
+const kinds = { hybrid: t.kinds.hybrid, 'on-grid': t.kinds.onGrid, micro: t.kinds.micro };
+const shownInverters = new Set(Object.values(families).flatMap((list) => list.flatMap((f) => f.designerModels)));
+const inverterItems: Item[] = tickerInverters.flatMap((id) => {
+  const inv = shownInverters.has(id) && inverters.find((i) => i.id === id);
+  return inv ? [{ code: inv.model, figs: [`${inv.pnomAc / 1000} kW`], kind: kinds[inv.type] }] : [];
+});
+const batteryItems: Item[] = tickerBatteries.flatMap((slug) => {
+  const b = batteries.find((x) => x.slug === slug);
+  const kwh = b?.capacity?.nominalKwh ?? b?.capacity?.totalKwh;
+  return b && kwh !== undefined
+    ? [{ code: b.name, figs: [`${Array.isArray(kwh) ? kwh.join('–') : kwh} kWh`], kind: t.kinds.storage }]
+    : [];
+});
+
+/* Batteries spread evenly among the inverters: battery k follows inverter floor(k · inverters / batteries). */
+const others: Item[] = inverterItems.length
+  ? inverterItems.flatMap((inv, i) => [
+      inv,
+      ...batteryItems.filter((_, k) => Math.floor((k * inverterItems.length) / batteryItems.length) === i),
+    ])
+  : batteryItems;
+
+const items = moduleItems.flatMap((m, i) => (others[i] ? [m, others[i]] : [m])).concat(others.slice(moduleItems.length));
 ---
 
-<section class="tk theme-dark" aria-label={t.label} data-ticker>
-  <div class="tk__viewport">
-    <div class="tk__track">
-      {
-        [0, 1].map((copy) => (
-          <ul class="tk__list" role="list" aria-hidden={copy === 1 ? 'true' : undefined}>
-            {items.map((item) => (
-              <li class="tk__item">
-                <span class="tk__code mono" dir="ltr">{item.code}</span>
-                {item.figs.map((f) => (
-                  <span class="tk__fig num" dir="ltr">{f}</span>
+{
+  items.length > 0 && (
+    <section class="tk theme-dark" aria-label={t.label} data-ticker>
+      <div class="tk__viewport">
+        <div class="tk__track">
+          {
+            [0, 1].map((copy) => (
+              <ul class="tk__list" role="list" aria-hidden={copy === 1 ? 'true' : undefined}>
+                {items.map((item) => (
+                  <li class="tk__item">
+                    <span class="tk__code mono" dir="ltr">{item.code}</span>
+                    {item.figs.map((f) => (
+                      <span class="tk__fig num" dir="ltr">{f}</span>
+                    ))}
+                    {item.kind && <span class="tk__kind">{item.kind}</span>}
+                  </li>
                 ))}
-                {item.kind && <span class="tk__kind">{item.kind}</span>}
-              </li>
-            ))}
-          </ul>
-        ))
-      }
-    </div>
-  </div>
-  <button type="button" class="tk__toggle" aria-label={t.pause} data-label-pause={t.pause} data-label-play={t.play}>
-    <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
-      <path class="tk__icon-pause" d="M3 2v8M9 2v8"></path>
-      <path class="tk__icon-play" d="M3 1.5v9l7.5-4.5z"></path>
-    </svg>
-  </button>
-</section>
+              </ul>
+            ))
+          }
+        </div>
+      </div>
+      <button type="button" class="tk__toggle" aria-label={t.pause} data-label-pause={t.pause} data-label-play={t.play}>
+        <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
+          <path class="tk__icon-pause" d="M3 2v8M9 2v8"></path>
+          <path class="tk__icon-play" d="M3 1.5v9l7.5-4.5z"></path>
+        </svg>
+      </button>
+    </section>
+  )
+}
 
 <style>
   .tk {

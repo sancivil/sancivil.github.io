@@ -6,8 +6,9 @@ import JsonLd from '../../components/seo/JsonLd.astro';
 import Faq from '../../components/seo/Faq.astro';
 import { siteFaq } from '../../lib/seo/facts.ts';
 import { absolute, breadcrumbList, webPage } from '../../lib/seo/schema.ts';
-import { contact, whatsappLink } from '../../data/site.ts';
-import { common } from '../../i18n/common.ts';
+import { contact, phones, whatsappLink } from '../../data/site.ts';
+import { hoursText } from '../../content/index.ts';
+import { company } from '../../i18n/company.ts';
 import { faq } from '../../i18n/faq.ts';
 import { localeFromParam, localeParams, localizePath } from '../../i18n/config.ts';
 
@@ -15,7 +16,6 @@ export const getStaticPaths = () => localeParams();
 
 const locale = localeFromParam(Astro.params.locale);
 const t = faq[locale];
-const c = common[locale];
 const href = (path: string) => localizePath(path, locale);
 const qas = siteFaq(locale);
 
@@ -37,17 +37,21 @@ const graph = [
     <div class="ask">
       <p class="eyebrow">{t.aside.title}</p>
       <dl class="ask__list">
-        <div>
-          <dt>{t.aside.phone}</dt>
-          <dd><a class="mono" dir="ltr" href={contact.phoneHref}>{contact.phoneDisplay}</a></dd>
-        </div>
+        {
+          phones.map((phone) => (
+            <div>
+              <dt>{phone.label?.[locale] ?? (phone.whatsapp ? t.aside.phone : company[locale].methods.phone)}</dt>
+              <dd><a class="mono" dir="ltr" href={phone.href}>{phone.display}</a></dd>
+            </div>
+          ))
+        }
         <div>
           <dt>{t.aside.email}</dt>
           <dd><a class="mono" dir="ltr" href={`mailto:${contact.email}`}>{contact.email}</a></dd>
         </div>
         <div>
           <dt>{t.aside.hours}</dt>
-          <dd>{c.hours}</dd>
+          <dd>{hoursText(locale, 'short')}</dd>
         </div>
       </dl>
     </div>

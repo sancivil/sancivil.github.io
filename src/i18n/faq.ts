@@ -10,9 +10,14 @@ export interface SiteFacts {
   brescia: string;
   street: string;
   city: string;
-  postal: string;
-  open: string;
-  close: string;
+  country: string;
+  postal: string | null;
+  /** The open days with their times, and the closed days as one list ('' when open every day). */
+  hours: { open: { days: string; open: string; close: string }[]; closed: string };
+  /** Every phone number, and the WhatsApp numbers among them. */
+  phones: string[];
+  whatsapp: string[];
+  /** The number for quotes: the first WhatsApp number. */
   phone: string;
   email: string;
   sProduct: string;
@@ -33,11 +38,8 @@ export interface SiteFacts {
   singleKw: string;
   three: string[];
   threeKw: string;
-  storeMin: string;
-  storeMinName: string;
-  storeMax: string;
-  storeMaxName: string;
-  storeModules: string;
+  /** The smallest and largest Peimar storage on the site; null when none states a capacity. */
+  storage: { min: string; minName: string; max: string; maxName: string; modules: string } | null;
   sizeCity: string;
   sizeCityId: string;
   sizeY: string;
@@ -59,11 +61,14 @@ export interface SiteFacts {
   highY: string;
 }
 
+/** Whether every number takes WhatsApp, so one label covers them all. */
+const allWhatsapp = (f: SiteFacts) => f.whatsapp.length === f.phones.length;
+
 const en = {
   meta: {
     title: 'FAQ: Peimar solar systems in Iraq',
     description:
-      'Answers from Faraday Co., the exclusive Peimar agent in Iraq: warranty, modules for the heat, batteries for power cuts, panel counts, the free Designer and how to get a quote.',
+      'Answers from Faraday, the exclusive Peimar agent in Iraq: warranty, modules for the heat, batteries for power cuts, panel counts, the free Designer and quotes.',
   },
   crumb: 'FAQ',
   eyebrow: 'Questions and answers',
@@ -76,7 +81,16 @@ const en = {
   whatsappText: 'Hello Faraday, I have a question about a solar system.',
   cta: { title: 'Plan your system, then talk to us.', designer: 'Open the Designer', contact: 'Get a quote' },
   qas: (f: SiteFacts): Qa[] => {
-    const and = (xs: string[]) => `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`;
+    const and = (xs: string[]) => (xs.length > 1 ? `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}` : xs.join(''));
+    const open = f.hours.open.map((g) => `${g.days} from ${g.open} to ${g.close}`).join(', ');
+    const hours = open && ` It is open ${open}${f.hours.closed && ` and closed on ${f.hours.closed}`}.`;
+    const calls = allWhatsapp(f)
+      ? `Phone and WhatsApp: ${f.phones.join(', ')}.`
+      : `Phone: ${f.phones.join(', ')}. WhatsApp: ${f.whatsapp.join(', ')}.`;
+    const hybrid = [
+      f.single.length > 0 && `${and(f.single)} for single-phase homes (${f.singleKw} kW)`,
+      f.three.length > 0 && `${and(f.three)} for three-phase supplies (${f.threeKw} kW)`,
+    ].filter(Boolean);
     return [
       {
         q: 'Who is the official Peimar agent in Iraq?',
@@ -85,7 +99,7 @@ const en = {
       },
       {
         q: 'Where is Faraday and when is it open?',
-        a: `Faraday’s office is on ${f.street}, ${f.city} ${f.postal}, Iraq. It is open Saturday to Thursday from ${f.open} to ${f.close} and closed on Friday. Phone and WhatsApp: ${f.phone}.`,
+        a: `Faraday’s office is on ${f.street}, ${f.city}${f.postal ? ` ${f.postal}` : ''}, ${f.country}.${hours} ${calls}`,
         link: { label: 'Contact', href: '/contact/' },
       },
       {
@@ -105,7 +119,7 @@ const en = {
       },
       {
         q: 'Can a Peimar system keep my home running during power cuts?',
-        a: `Yes, with a hybrid inverter and batteries. Peimar’s hybrid families are ${and(f.single)} for single-phase homes (${f.singleKw} kW) and ${and(f.three)} for three-phase supplies (${f.threeKw} kW). Peimar LFP storage starts at ${f.storeMin} kWh (one ${f.storeMinName} module) and reaches ${f.storeMax} kWh (${f.storeModules} ${f.storeMaxName} modules), with a ${f.batteryYears}-year warranty. Faraday sizes the battery to the outage hours you want to cover.`,
+        a: `Yes, with a hybrid inverter and batteries.${hybrid.length ? ` Peimar’s hybrid families are ${hybrid.join(' and ')}.` : ''}${f.storage ? ` Peimar LFP storage starts at ${f.storage.min} kWh (one ${f.storage.minName} module) and reaches ${f.storage.max} kWh (${f.storage.modules} ${f.storage.maxName} modules), with a ${f.batteryYears}-year warranty.` : ''} Faraday sizes the battery to the outage hours you want to cover.`,
         link: { label: 'Hybrid inverters & storage', href: '/products/hybrid/' },
       },
       {
@@ -144,7 +158,7 @@ const ar: FaqStrings = {
   meta: {
     title: 'أسئلة شائعة عن منظومات Peimar الشمسية في العراق',
     description:
-      'تجيب Faraday، الوكيل الحصري لـ\u00a0Peimar في العراق، عن أكثر ما يسأل عنه الزبائن: الضمان، والألواح التي تتحمّل الحر، والبطاريات لساعات انقطاع الكهرباء، وعدد الألواح، وأداة التصميم المجانية، وطريقة طلب عرض سعر.',
+      'إجابات من Faraday، الوكيل الحصري لـ Peimar في العراق: الضمان، وألواح تتحمّل الحر، وبطاريات لانقطاع الكهرباء، وعدد الألواح، وأداة التصميم المجانية، وعرض السعر.',
   },
   crumb: 'الأسئلة الشائعة',
   eyebrow: 'أسئلة وأجوبة',
@@ -159,6 +173,16 @@ const ar: FaqStrings = {
   qas: (f: SiteFacts): Qa[] => {
     const and = (xs: string[]) => xs.map(ltr).join(' و');
     const years = (n: string) => `${ltr(n)} ${arNoun(n, 'سنوات', 'سنة')}`;
+    const open = f.hours.open.map((g) => `${g.days}، من ${ltr(g.open)} إلى ${ltr(g.close)}`).join('، و');
+    const hours = open && ` الدوام ${open}${f.hours.closed && `، و${f.hours.closed} عطلة`}.`;
+    const list = (xs: string[]) => xs.map(ltr).join('، ');
+    const calls = allWhatsapp(f)
+      ? `الهاتف وواتساب: ${list(f.phones)}.`
+      : `الهاتف: ${list(f.phones)}. واتساب: ${list(f.whatsapp)}.`;
+    const hybrid = [
+      f.single.length > 0 && `${and(f.single)} للبيوت أحادية الطور (${ltr(`${f.singleKw} kW`)})`,
+      f.three.length > 0 && `${and(f.three)} للتغذية ثلاثية الأطوار (${ltr(`${f.threeKw} kW`)})`,
+    ].filter(Boolean);
     return [
       {
         q: 'من هو الوكيل الرسمي لـ\u00a0Peimar في العراق؟',
@@ -167,7 +191,7 @@ const ar: FaqStrings = {
       },
       {
         q: 'أين مكتب Faraday، وما أوقات الدوام؟',
-        a: `مكتبنا في ${f.street}، ${f.city} ${ltr(f.postal)}، العراق. الدوام من السبت إلى الخميس، من ${ltr(f.open)} إلى ${ltr(f.close)}، والجمعة عطلة. الهاتف وواتساب: ${ltr(f.phone)}.`,
+        a: `مكتبنا في ${f.street}، ${f.city}${f.postal ? ` ${ltr(f.postal)}` : ''}، ${f.country}.${hours} ${calls}`,
         link: { label: 'اتصل بنا', href: '/contact/' },
       },
       {
@@ -187,7 +211,7 @@ const ar: FaqStrings = {
       },
       {
         q: 'هل يبقى بيتي مضاءً مع منظومة Peimar حين تنقطع الكهرباء؟',
-        a: `نعم، إذا ضمّت المنظومة إنفرترًا هجينًا وبطاريات. لدى Peimar إنفرترات ${and(f.single)} للبيوت أحادية الطور (${ltr(`${f.singleKw} kW`)})، و${and(f.three)} للتغذية ثلاثية الأطوار (${ltr(`${f.threeKw} kW`)}). وتبدأ بطاريات Peimar من نوع LFP بسعة ${ltr(`${f.storeMin} kWh`)} (وحدة ${ltr(f.storeMinName)} واحدة) وتصل إلى ${ltr(`${f.storeMax} kWh`)} (${ltr(f.storeModules)} ${arNoun(f.storeModules, 'وحدات', 'وحدة')} ${ltr(f.storeMaxName)})، بضمان ${years(f.batteryYears)}. ونحسب في Faraday حجم البطارية على عدد ساعات الانقطاع التي تريد تغطيتها.`,
+        a: `نعم، إذا ضمّت المنظومة إنفرترًا هجينًا وبطاريات.${hybrid.length ? ` لدى Peimar إنفرترات ${hybrid.join('، و')}.` : ''}${f.storage ? ` وتبدأ بطاريات Peimar من نوع LFP بسعة ${ltr(`${f.storage.min} kWh`)} (وحدة ${ltr(f.storage.minName)} واحدة) وتصل إلى ${ltr(`${f.storage.max} kWh`)} (${ltr(f.storage.modules)} ${arNoun(f.storage.modules, 'وحدات', 'وحدة')} ${ltr(f.storage.maxName)})، بضمان ${years(f.batteryYears)}.` : ''} ونحسب في Faraday حجم البطارية على عدد ساعات الانقطاع التي تريد تغطيتها.`,
         link: { label: 'الإنفرترات الهجينة والبطاريات', href: '/products/hybrid/' },
       },
       {
@@ -218,7 +242,7 @@ const ckb: FaqStrings = {
   meta: {
     title: 'پرسیارە باوەکان دەربارەی سیستەمی خۆری Peimar لە عێراق',
     description:
-      'Faraday، بریکاری تایبەتی Peimar لە عێراق، وەڵامی باوترین پرسیارەکان دەداتەوە: گەرەنتی، پانێڵی گونجاو بۆ گەرما، پاتری بۆ کاتی بڕانی کارەبا، ژمارەی پانێڵ، دیزاینەری بێبەرامبەر و چۆنیەتیی داوای نرخ.',
+      'وەڵامەکانی Faraday، بریکاری تایبەتی Peimar لە عێراق: گەرەنتی، پانێڵی گونجاو بۆ گەرما، پاتری بۆ بڕانی کارەبا، ژمارەی پانێڵ، دیزاینەری بێبەرامبەر و داوای نرخ.',
   },
   crumb: 'پرسیارە باوەکان',
   eyebrow: 'پرسیار و وەڵام',
@@ -233,8 +257,18 @@ const ckb: FaqStrings = {
   qas: (f: SiteFacts): Qa[] => {
     const and = (xs: string[]) => {
       const items = xs.map(ltr);
-      return `${items.slice(0, -1).join('، ')} و ${items[items.length - 1]}`;
+      return items.length > 1 ? `${items.slice(0, -1).join('، ')} و ${items[items.length - 1]}` : items.join('');
     };
+    const open = f.hours.open.map((g) => `${g.days} لە ${ltr(g.open)} تا ${ltr(g.close)}`).join(' و ');
+    const hours = open && ` ${open} کراوەین${f.hours.closed && ` و ${f.hours.closed} پشووە`}.`;
+    const list = (xs: string[]) => xs.map(ltr).join('، ');
+    const calls = allWhatsapp(f)
+      ? `تەلەفۆن و واتسئاپ: ${list(f.phones)}.`
+      : `تەلەفۆن: ${list(f.phones)}. واتسئاپ: ${list(f.whatsapp)}.`;
+    const single = f.single.length > 0 && `بۆ ماڵی تاک فاز بریتین لە ${and(f.single)} (${ltr(`${f.singleKw} kW`)})`;
+    const three =
+      f.three.length > 0 && `بۆ کارەبای سێ فاز ${single ? '' : 'بریتین لە '}${and(f.three)} (${ltr(`${f.threeKw} kW`)})`;
+    const hybrid = [single, three].filter(Boolean);
     return [
       {
         q: 'بریکاری فەرمیی Peimar لە عێراق کێیە؟',
@@ -243,7 +277,7 @@ const ckb: FaqStrings = {
       },
       {
         q: 'نووسینگەی Faraday لە کوێیە و کەی کراوەیە؟',
-        a: `نووسینگەکەمان دەکەوێتە ${f.street}، ${f.city} ${ltr(f.postal)}، عێراق. شەممە تا پێنجشەممە لە ${ltr(f.open)} تا ${ltr(f.close)} کراوەین و هەینی پشووە. تەلەفۆن و واتسئاپ: ${ltr(f.phone)}.`,
+        a: `نووسینگەکەمان دەکەوێتە ${f.street}، ${f.city}${f.postal ? ` ${ltr(f.postal)}` : ''}، ${f.country}.${hours} ${calls}`,
         link: { label: 'پەیوەندی', href: '/contact/' },
       },
       {
@@ -263,7 +297,7 @@ const ckb: FaqStrings = {
       },
       {
         q: 'کە کارەبا دەبڕێت، سیستەمی Peimar ماڵەکەم بە کارەبا دەهێڵێتەوە؟',
-        a: `بەڵێ، ئەگەر سیستەمەکە ئینڤێرتەری هایبرید و پاتریی تێدا بێت. ئینڤێرتەرە هایبریدەکانی Peimar بۆ ماڵی تاک فاز بریتین لە ${and(f.single)} (${ltr(`${f.singleKw} kW`)})، و بۆ کارەبای سێ فاز ${and(f.three)} (${ltr(`${f.threeKw} kW`)}). پاترییەکانی LFP ی Peimar لە ${ltr(`${f.storeMin} kWh`)} (یەک یەکەی ${ltr(f.storeMinName)}) دەست پێ دەکەن و دەگەنە ${ltr(`${f.storeMax} kWh`)} (${ltr(f.storeModules)} یەکەی ${ltr(f.storeMaxName)})، بە ${ltr(f.batteryYears)} ساڵ گەرەنتی. قەبارەی پاترییەکە بەپێی ئەو کاتژمێرانە دیاری دەکەین کە دەتەوێت لە کاتی بڕانی کارەبادا کارەبات هەبێت.`,
+        a: `بەڵێ، ئەگەر سیستەمەکە ئینڤێرتەری هایبرید و پاتریی تێدا بێت.${hybrid.length ? ` ئینڤێرتەرە هایبریدەکانی Peimar ${hybrid.join('، و ')}.` : ''}${f.storage ? ` پاترییەکانی LFP ی Peimar لە ${ltr(`${f.storage.min} kWh`)} (یەک یەکەی ${ltr(f.storage.minName)}) دەست پێ دەکەن و دەگەنە ${ltr(`${f.storage.max} kWh`)} (${ltr(f.storage.modules)} یەکەی ${ltr(f.storage.maxName)})، بە ${ltr(f.batteryYears)} ساڵ گەرەنتی.` : ''} قەبارەی پاترییەکە بەپێی ئەو کاتژمێرانە دیاری دەکەین کە دەتەوێت لە کاتی بڕانی کارەبادا کارەبات هەبێت.`,
         link: { label: 'ئینڤێرتەری هایبرید و پاتری', href: '/products/hybrid/' },
       },
       {

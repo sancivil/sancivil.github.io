@@ -7,7 +7,7 @@ import SpecList, { type SpecRow } from '../../../../components/products/SpecList
 import DocList from '../../../../components/products/DocList.astro';
 import BatteryList from '../../../../components/products/BatteryList.astro';
 import JsonLd from '../../../../components/seo/JsonLd.astro';
-import { absolute, breadcrumbList, product } from '../../../../lib/seo/schema.ts';
+import { absolute, breadcrumbList, product, productGroup } from '../../../../lib/seo/schema.ts';
 import {
   CAPACITY_KEYS,
   batteries,
@@ -15,10 +15,13 @@ import {
   capacityValue,
   categoryHref,
   categoryImage,
+  displayName,
   docItem,
   headlineCapacity,
+  productImage,
 } from '../../../../components/products/data.ts';
 import { whatsappLink } from '../../../../data/site.ts';
+import { paragraphs } from '../../../../content/index.ts';
 import { localeFromParam, localizePath, withLocales } from '../../../../i18n/config.ts';
 import { common } from '../../../../i18n/common.ts';
 import { products } from '../../../../i18n/products.ts';
@@ -28,14 +31,20 @@ export const getStaticPaths = () => withLocales(batteries.map((b) => ({ params: 
 
 const locale = localeFromParam(Astro.params.locale);
 const battery = batteryBySlug(Astro.params.slug!)!;
+const name = displayName(battery.name);
 const t = products[locale];
 const p = t.storagePage;
 const nav = common[locale];
 const text = storageText(locale, battery.slug);
 const capacity = headlineCapacity(battery);
+const photo = battery.photos[0];
+/** The owner's line name; on English pages Peimar's for a curated battery; never another language. */
+const family = text?.family ?? (locale === 'en' ? battery.family : null) ?? undefined;
+const sheetsOnly = battery.docs.every((doc) => doc.kind === 'datasheet');
 
 const rows: SpecRow[] = [
-  ...(text ? [{ label: p.fact.line, text: text.family }, { label: p.fact.type, text: text.role }] : []),
+  ...(text?.family ? [{ label: p.fact.line, text: text.family }] : []),
+  ...(text?.role ? [{ label: p.fact.type, text: displayName(text.role) }] : []),
   ...CAPACITY_KEYS.flatMap((key) => {
     const v = battery.capacity?.[key];
     return v === undefined ? [] : [{ label: p.fact[key], ...capacityValue(key, v) }];
@@ -44,32 +53,38 @@ const rows: SpecRow[] = [
 ];
 
 const others = batteries.filter((b) => b.slug !== battery.slug);
+/* Search results show about 160 characters of a description: the owner's line name joins it when it fits. */
+const withLine = p.description(battery.brand, name, family);
+const description = withLine.length > 160 ? p.description(battery.brand, name) : withLine;
 const pageUrl = absolute(localizePath(`/products/storage/${battery.slug}/`, locale));
+/* A name that groups models with " | " is one product sold in several models. */
+const models = battery.name.split(' | ');
+const about = {
+  name: `${battery.brand} ${name}`,
+  brand: battery.brand,
+  description: text?.description ?? `${name} · ${family ?? t.storage}`,
+  image: photo?.src ?? categoryImage.hybrid.src,
+  url: pageUrl,
+  category: family ?? t.storage,
+  additionalProperty: [
+    ...(capacity
+      ? [{ name: 'Capacity', value: capacity[0] === capacity[1] ? capacity[0] : `${capacity[0]}–${capacity[1]}`, unitCode: 'KWH' }]
+      : []),
+    ...(battery.chemistry ? [{ name: 'Chemistry', value: chemistryText('en', battery.chemistry) }] : []),
+    ...(battery.warrantyYears ? [{ name: 'Product warranty', value: battery.warrantyYears, unitText: 'years' }] : []),
+  ],
+};
 const schema = [
-  product({
-    name: `Peimar ${battery.name}`,
-    model: battery.name,
-    description: text?.description ?? `${battery.name} · ${battery.family}`,
-    image: categoryImage.hybrid.src,
-    url: pageUrl,
-    category: text?.family ?? battery.family,
-    additionalProperty: [
-      ...(capacity
-        ? [{ name: 'Capacity', value: capacity[0] === capacity[1] ? capacity[0] : `${capacity[0]}–${capacity[1]}`, unitCode: 'KWH' }]
-        : []),
-      ...(battery.chemistry ? [{ name: 'Chemistry', value: chemistryText('en', battery.chemistry) }] : []),
-      ...(battery.warrantyYears ? [{ name: 'Product warranty', value: battery.warrantyYears, unitText: 'years' }] : []),
-    ],
-  }),
+  models.length > 1 ? productGroup({ ...about, id: battery.slug, models }) : product({ ...about, model: battery.name }),
   breadcrumbList([
     { name: nav.nav.products, url: absolute(localizePath('/products/', locale)) },
     { name: nav.productNav.hybrid, url: absolute(localizePath(categoryHref('hybrid'), locale)) },
-    { name: battery.name, url: pageUrl },
+    { name, url: pageUrl },
   ]),
 ];
 ---
 
-<Base title={p.title(battery.name)} description={p.description(battery.name, text?.family ?? battery.family)}>
+<Base title={p.title(battery.brand, name)} description={description}>
   <JsonLd data={schema} />
   <section class="product theme-light">
     <div class="container">
@@ -78,29 +93,46 @@ const schema = [
         items={[
           { label: nav.nav.products, href: '/products/' },
           { label: nav.productNav.hybrid, href: categoryHref('hybrid') },
-          { label: battery.name },
+          { label: name },
         ]}
       />
 
       <div class="product__grid">
         <figure class="product__figure">
-          <ProductWell
-            src={categoryImage.hybrid.src}
-            size={categoryImage.hybrid.size}
-            alt={t.categoryAlt.hybrid}
-            label={battery.name}
-            sizes="(max-width: 900px) 100vw, 40vw"
-            eager
-            class="product__well"
-          />
-          <figcaption class="product__caption">{p.photo}</figcaption>
+          {
+            photo ? (
+              <ProductWell
+                image={photo}
+                alt={photo.alt[locale] ?? name}
+                label={name}
+                brand={battery.brand}
+                sizes="(max-width: 900px) 49vw, (max-width: 1440px) 29vw, 420px"
+                eager
+                priority
+                class="product__well"
+              />
+            ) : (
+              <>
+                <ProductWell
+                  image={productImage(categoryImage.hybrid.src, categoryImage.hybrid.size)}
+                  alt={t.categoryAlt.hybrid}
+                  label={name}
+                  sizes="(max-width: 900px) 49vw, (max-width: 1440px) 29vw, 420px"
+                  eager
+                  priority
+                  class="product__well"
+                />
+                <figcaption class="product__caption">{p.photo}</figcaption>
+              </>
+            )
+          }
         </figure>
 
         <div class="product__info">
           <header class="product__head">
-            <p class="eyebrow eyebrow--dot">{p.eyebrow}</p>
-            <h1 class="h1 product__title" data-reveal="lines">{battery.name}</h1>
-            {text && <p class="product__lead">{text.description}</p>}
+            <p class="eyebrow eyebrow--dot">{p.eyebrow(battery.brand)}</p>
+            <h1 class="h1 product__title" data-reveal="lines">{name}</h1>
+            {text?.description && paragraphs(text.description).map((para) => <p class="product__lead">{para}</p>)}
           </header>
 
           {
@@ -133,18 +165,21 @@ const schema = [
           </section>
 
           {
-            battery.datasheets.length > 0 && (
+            battery.docs.length > 0 && (
               <section class="product__facts" aria-labelledby="sheet-title">
                 <h2 id="sheet-title" class="product__label">
-                  {t.label.datasheet}
+                  {sheetsOnly ? t.label.datasheet : t.label.documents}
                 </h2>
-                <DocList locale={locale} items={battery.datasheets.map((doc) => docItem(doc))} />
+                <DocList
+                  locale={locale}
+                  items={battery.docs.map((doc) => (doc.kind === 'manual' ? docItem(doc, `${t.label.manual} · ${doc.label}`) : docItem(doc)))}
+                />
               </section>
             )
           }
 
           <div class="product__actions">
-            <a class="btn btn--sun" href={whatsappLink(t.quoteMessage(battery.name))} target="_blank" rel="noopener">
+            <a class="btn btn--sun" href={whatsappLink(t.quoteMessage(battery.brand, name))} target="_blank" rel="noopener">
               {t.quote}<span class="sr-only">{t.newTab}</span>
             </a>
             <a class="btn btn--line" href={localizePath(`${categoryHref('hybrid')}#storage`, locale)}>

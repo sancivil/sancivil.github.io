@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": [
+          "scripts/content/check-dist.ts"
+        ],
+        "createdAt": "2026-11-27T16:02:22.096Z",
+        "reason": "Claude: false positive - the flagged text is a regex in a build-check script that finds <img> tags without width/height in the built HTML, not markup"
+      }
+    ]
+  }
+}

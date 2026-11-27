@@ -1,5 +1,7 @@
 import solar from '../../data/iraq-solar.json';
-import { modules, seriesPanels, type Panel } from '../products/data.ts';
+import panelData from '../../data/designer/panels.json';
+import { curatedSeries } from '../../content/index.ts';
+import { modules, type Panel } from '../products/data.ts';
 import type { Locale } from '../../i18n/config.ts';
 
 export interface SolarCity {
@@ -66,14 +68,17 @@ export const nearest = (c: SolarCity, n = 4) =>
 
 /* ---------- sizing module ---------- */
 
-const or10h = modules.find((s) => s.slug === 'or-series-or10h')!;
+const or10h = curatedSeries.find((s) => s.key === 'or-series-or10h');
+if (!or10h) throw new Error('or-series-or10h is missing from src/data/technical/series.json');
 
-/** The most powerful OR10H N-type TOPCon double-glass module with full figures in panels.json. */
-export const flagship: Panel = seriesPanels(or10h)
-  .filter((p) => p.model.endsWith('MNDB'))
+/** The most powerful OR10H N-type TOPCon double-glass module, from Peimar's data whatever the owner shows. */
+export const flagship: Panel = (panelData as Panel[])
+  .filter((p) => or10h.panelIds.includes(p.id) && p.model.endsWith('MNDB'))
   .reduce((a, b) => (b.power > a.power ? b : a));
-export const flagshipSeries = or10h;
-export const flagshipDatasheet = or10h.datasheets.find((d) => d.label === flagship.model) ?? null;
+export const flagshipWarranty = or10h.warranty;
+/** The OR10H series page and the flagship's datasheet, only while the owner shows that series. */
+export const flagshipSeries = modules.find((s) => s.curatedKey === or10h.key) ?? null;
+export const flagshipDatasheet = flagshipSeries?.datasheets.find((d) => d.label === flagship.model) ?? null;
 /** Module area in m², from the datasheet outline. */
 const flagshipArea = (flagship.width * flagship.height) / 1e6;
 

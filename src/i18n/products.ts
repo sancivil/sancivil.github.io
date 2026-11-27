@@ -1,3 +1,4 @@
+import type { SpecKey } from '../content/contract.ts';
 import type { Locale } from './config.ts';
 
 type Phase = 'single_phase' | 'three_phase';
@@ -9,8 +10,9 @@ const arCount = (one: string, two: string, few: string, many: string) => (n: num
   return `${n} ${n % 100 >= 3 && n % 100 <= 10 ? few : many}`;
 };
 const enCount = (one: string, many: string) => (n: number) => `${n} ${n === 1 ? one : many}`;
-/** Arabic for 'years' after a figure: 3 to 10 take the plural, other counts the singular. */
-const arYears = (n: number) => (n >= 3 && n <= 10 ? 'سنوات' : 'سنة');
+const arPlural = new Intl.PluralRules('ar');
+/** Arabic for 'years' after a figure: the plural where Arabic counts take it (3–10, 103–110…), the singular otherwise. */
+const arYears = (n: number) => (arPlural.select(n) === 'few' ? 'سنوات' : 'سنة');
 
 const en = {
   crumbs: 'Breadcrumb',
@@ -19,7 +21,7 @@ const en = {
   yes: 'Yes',
   no: 'No',
   web: 'Web page',
-  docLang: { EN: 'English', IT: 'Italian', FR: 'French', AR: 'Arabic' },
+  docLang: { EN: 'English', IT: 'Italian', FR: 'French', AR: 'Arabic', KU: 'Kurdish', MULTI: 'Multilingual' },
   storage: 'Storage',
   phase: { single_phase: 'Single-phase', three_phase: 'Three-phase' } as Record<Phase, string>,
   kind: {
@@ -56,7 +58,7 @@ const en = {
     toScale: 'Largest model, drawn to scale',
   },
   quote: 'Request a quote',
-  quoteMessage: (product: string) => `Hello Faraday, I would like a quote for Peimar ${product}.`,
+  quoteMessage: (brand: string, product: string) => `Hello Faraday, I would like a quote for ${brand} ${product}.`,
   categoryAlt: {
     modules: 'Peimar modules with silver, black and red frames',
     hybrid: 'Peimar hybrid inverter beside stacked storage batteries',
@@ -64,7 +66,11 @@ const en = {
     micro: 'Peimar microinverter with its DC and AC cables',
     accessories: 'Peimar accessories: enclosures, a monitoring hub and a power optimizer',
   },
-  productAlt: (name: string, kind: string) => `Peimar ${name}, ${kind.toLowerCase()}`,
+  productAlt: (brand: string, name: string, kind: string) => `${brand} ${name}, ${kind.toLowerCase()}`,
+  emptyLine: {
+    text: 'No products in this range are listed right now. Ask us what we can supply.',
+    action: 'Contact us',
+  },
 
   index: {
     title: 'Peimar products in Iraq',
@@ -95,7 +101,7 @@ const en = {
   modulesPage: {
     title: 'Peimar photovoltaic modules',
     description:
-      'Peimar photovoltaic modules: the Made in Italy S Series, the half-cell OR Series with TOPCon bifacial double glass, and the DR Series. Specifications for every model from Faraday in Iraq.',
+      'Peimar photovoltaic modules: the Made in Italy S Series, the TOPCon bifacial OR Series and the DR Series. Specifications for every model from Faraday in Iraq.',
     eyebrow: 'Peimar · Photovoltaic modules',
     stat: { power: 'Power range', efficiency: 'Max. efficiency', warranty: 'Linear power warranty' },
     filterLegend: 'Show',
@@ -111,9 +117,9 @@ const en = {
     listTitle: 'Module series',
   },
   seriesPage: {
-    title: (name: string) => `Peimar ${name} modules`,
-    description: (name: string) =>
-      `Peimar ${name}: specifications and datasheets for every model, from Faraday, the exclusive Peimar agent in Iraq.`,
+    title: (brand: string, name: string) => `${brand} ${name} modules`,
+    description: (brand: string, name: string) =>
+      `${brand} ${name}: specifications and datasheets for every model, from Faraday, the exclusive Peimar agent in Iraq.`,
     viewer: (model: string) => `${model}, interactive 3D model`,
     figures: 'Key figures',
     cellsCaption: { half: 'Half-cut cells', full: 'Full-size cells' },
@@ -171,14 +177,14 @@ const en = {
   microPage: {
     title: 'Peimar microinverters',
     description: (models: string) =>
-      `Peimar single-phase microinverters with two MPPT inputs: ${models}. Supplied in Iraq by Faraday.`,
+      `Peimar single-phase microinverters with two MPPT inputs${models && `: ${models}`}. Supplied in Iraq by Faraday.`,
     eyebrow: 'Peimar · Microinverters',
     stat: { power: 'AC power', mppt: 'MPPT per unit', protection: 'Protection' },
   },
   inverterPage: {
-    title: (name: string, kind: string) => `Peimar ${name} · ${kind}`,
-    description: (name: string, kind: string) =>
-      `${kind}, Peimar ${name}: model comparison, datasheets and string sizing in the Designer, from Faraday, the exclusive Peimar agent in Iraq.`,
+    title: (brand: string, name: string, kind: string) => `${brand} ${name} · ${kind}`,
+    description: (brand: string, name: string, kind: string) =>
+      `${kind}, ${brand} ${name}: model comparison, datasheets and string sizing, from Faraday, the exclusive Peimar agent in Iraq.`,
     facts: 'Key data',
     fact: {
       phase: 'Phase',
@@ -195,7 +201,7 @@ const en = {
     },
     spd: 'Type 2, DC and AC side',
     tableTitle: 'Model comparison',
-    tableCaption: (name: string) => `Peimar ${name}, specifications per model`,
+    tableCaption: (brand: string, name: string) => `${brand} ${name}, specifications per model`,
     swipe: 'Scroll sideways to compare',
     col: {
       model: 'Model',
@@ -218,10 +224,10 @@ const en = {
     moreIn: 'More in this range',
   },
   storagePage: {
-    title: (name: string) => `Peimar ${name} · Energy storage`,
-    description: (name: string, family: string) =>
-      `Peimar ${name}, ${family}: capacity, chemistry, warranty and datasheet, from Faraday, the exclusive Peimar agent in Iraq.`,
-    eyebrow: 'Peimar · Storage',
+    title: (brand: string, name: string) => `${brand} ${name} · Energy storage`,
+    description: (brand: string, name: string, family?: string) =>
+      `${brand} ${name}${family ? `, ${family}` : ''}: capacity, chemistry, warranty and datasheet, from Faraday, the exclusive Peimar agent in Iraq.`,
+    eyebrow: (brand: string) => `${brand} · Storage`,
     photo: 'Peimar hybrid and storage range',
     specs: 'Specifications',
     fact: {
@@ -240,6 +246,30 @@ const en = {
     },
     moreTitle: 'Other storage products',
   },
+  itemList: 'Other products',
+  itemPage: {
+    title: (brand: string, name: string) => `${name} · ${brand}`,
+    description: (brand: string, name: string, line: string) =>
+      `${brand} ${name} (${line}): specifications and documents, from Faraday in Iraq.`,
+    specs: 'Specifications',
+  },
+  specKey: {
+    power: 'Power',
+    voltage: 'Voltage',
+    current: 'Current',
+    capacity: 'Capacity',
+    efficiency: 'Efficiency',
+    dimensions: 'Dimensions',
+    weight: 'Weight',
+    crossSection: 'Cross-section',
+    length: 'Length',
+    material: 'Material',
+    protection: 'Protection',
+    temperature: 'Temperature',
+    warranty: 'Warranty',
+    certification: 'Certification',
+    compatibility: 'Compatibility',
+  } as Record<Exclude<SpecKey, 'custom'>, string>,
   accessoriesPage: {
     title: 'Peimar accessories',
     description:
@@ -340,7 +370,7 @@ const en = {
     } as Record<string, string>,
     doubleGlassNote: 'Double-glass models have a glass rear in every finish.',
     compareModels: 'Compare the models',
-    compareModelsCaption: (name: string) => `Peimar ${name}, every model side by side`,
+    compareModelsCaption: (brand: string, name: string) => `${brand} ${name}, every model side by side`,
     selected: 'Selected',
     warrantyTitle: 'Power warranty',
     warrantyLead: (years: number) => `Minimum guaranteed output over ${years} years for the cell technologies in this series.`,
@@ -366,7 +396,7 @@ const ar: ProductStrings = {
   yes: 'نعم',
   no: 'لا',
   web: 'صفحة ويب',
-  docLang: { EN: 'الإنكليزية', IT: 'الإيطالية', FR: 'الفرنسية', AR: 'العربية' },
+  docLang: { EN: 'الإنكليزية', IT: 'الإيطالية', FR: 'الفرنسية', AR: 'العربية', KU: 'الكردية', MULTI: 'متعدد اللغات' },
   storage: 'منتجات التخزين',
   phase: { single_phase: 'أحادي الطور', three_phase: 'ثلاثي الأطوار' },
   kind: {
@@ -403,7 +433,7 @@ const ar: ProductStrings = {
     toScale: 'أكبر طراز، بمقياس رسم حقيقي',
   },
   quote: 'اطلب عرض سعر',
-  quoteMessage: (product: string) => `مرحبًا Faraday، أريد عرض سعر لـ\u00a0Peimar ${product}.`,
+  quoteMessage: (brand: string, product: string) => `مرحبًا Faraday، أريد عرض سعر لـ\u00a0${brand} ${product}.`,
   categoryAlt: {
     modules: 'ألواح Peimar الشمسية بإطارات فضية وسوداء وحمراء',
     hybrid: 'إنفرتر Peimar هجين وإلى جانبه بطاريات تخزين مرصوصة',
@@ -411,7 +441,11 @@ const ar: ProductStrings = {
     micro: 'مايكرو إنفرتر Peimar مع كابلات DC وAC',
     accessories: 'ملحقات Peimar، منها صناديق كهربائية ووحدة مراقبة ومحسّن قدرة',
   },
-  productAlt: (name: string, kind: string) => `Peimar ${name}، ${kind}`,
+  productAlt: (brand: string, name: string, kind: string) => `${brand} ${name}، ${kind}`,
+  emptyLine: {
+    text: 'لا توجد منتجات معروضة في هذه الفئة حاليًا. اسألنا عمّا يمكننا توفيره لك.',
+    action: 'تواصل معنا',
+  },
 
   index: {
     title: 'منتجات Peimar في العراق',
@@ -442,7 +476,7 @@ const ar: ProductStrings = {
   modulesPage: {
     title: 'ألواح Peimar الشمسية',
     description:
-      'ألواح Peimar الشمسية: سلسلة S المصنوعة في إيطاليا، وسلسلة OR بخلايا نصفية وتقنية TOPCon ثنائية الوجه وزجاج مزدوج، وسلسلة DR. اطّلع على مواصفات كل طراز لدى Faraday في العراق.',
+      'ألواح Peimar الشمسية: سلسلة S المصنوعة في إيطاليا، وسلسلة OR بتقنية TOPCon ثنائية الوجه، وسلسلة DR. اطّلع على مواصفات كل طراز لدى Faraday في العراق.',
     eyebrow: 'Peimar · الألواح الشمسية',
     stat: { power: 'نطاق القدرة', efficiency: 'أعلى كفاءة', warranty: 'ضمان القدرة الخطي' },
     filterLegend: 'تصفية السلاسل',
@@ -458,9 +492,9 @@ const ar: ProductStrings = {
     listTitle: 'سلاسل الألواح',
   },
   seriesPage: {
-    title: (name: string) => `ألواح Peimar ${name}`,
-    description: (name: string) =>
-      `مواصفات كل طراز من ألواح Peimar ${name} مع أوراق البيانات الفنية. تقدّمها Faraday، الوكيل الحصري لـ\u00a0Peimar في العراق.`,
+    title: (brand: string, name: string) => `ألواح ${brand} ${name}`,
+    description: (brand: string, name: string) =>
+      `مواصفات كل طراز من ألواح ${brand} ${name} مع أوراق البيانات الفنية. تقدّمها Faraday، الوكيل الحصري لـ\u00a0Peimar في العراق.`,
     viewer: (model: string) => `${model}، مجسّم تفاعلي ثلاثي الأبعاد`,
     figures: 'أهم الأرقام',
     cellsCaption: { half: 'خلايا نصفية', full: 'خلايا كاملة' },
@@ -518,14 +552,14 @@ const ar: ProductStrings = {
   microPage: {
     title: 'مايكرو إنفرترات Peimar',
     description: (models: string) =>
-      `مايكرو إنفرترات Peimar أحادية الطور بمدخلَي MPPT في كل جهاز، وهي ${models}. توفّرها في العراق شركة Faraday.`,
+      `مايكرو إنفرترات Peimar أحادية الطور بمدخلَي MPPT في كل جهاز${models && `، وهي ${models}`}. توفّرها في العراق شركة Faraday.`,
     eyebrow: 'Peimar · مايكرو إنفرتر',
     stat: { power: 'قدرة AC', mppt: 'مداخل MPPT في الجهاز', protection: 'درجة الحماية' },
   },
   inverterPage: {
-    title: (name: string, kind: string) => `${kind} Peimar ${name}`,
-    description: (name: string, kind: string) =>
-      `${kind} Peimar ${name}. قارن الطرازات، وحمّل أوراق البيانات الفنية، واحسب السلاسل في أداة التصميم. من Faraday، الوكيل الحصري لـ\u00a0Peimar في العراق.`,
+    title: (brand: string, name: string, kind: string) => `${kind} ${brand} ${name}`,
+    description: (brand: string, name: string, kind: string) =>
+      `${kind} ${brand} ${name}: مقارنة الطرازات وأوراق البيانات الفنية وحساب السلاسل، من Faraday وكيل Peimar الحصري في العراق.`,
     facts: 'أهم المواصفات',
     fact: {
       phase: 'الطور',
@@ -542,7 +576,7 @@ const ar: ProductStrings = {
     },
     spd: 'النوع 2 على جهتي DC وAC',
     tableTitle: 'مقارنة الطرازات',
-    tableCaption: (name: string) => `مواصفات كل طراز من Peimar ${name}`,
+    tableCaption: (brand: string, name: string) => `مواصفات كل طراز من ${brand} ${name}`,
     swipe: 'اسحب الجدول جانبًا للمقارنة',
     col: {
       model: 'الطراز',
@@ -565,10 +599,10 @@ const ar: ProductStrings = {
     moreIn: 'من الفئة نفسها',
   },
   storagePage: {
-    title: (name: string) => `Peimar ${name} · تخزين الطاقة`,
-    description: (name: string, family: string) =>
-      `Peimar ${name}، ${family}. اطّلع على السعة وكيمياء البطارية والضمان، وحمّل ورقة البيانات الفنية من Faraday، الوكيل الحصري لـ\u00a0Peimar في العراق.`,
-    eyebrow: 'Peimar · تخزين الطاقة',
+    title: (brand: string, name: string) => `${brand} ${name} · تخزين الطاقة`,
+    description: (brand: string, name: string, family?: string) =>
+      `${brand} ${name}${family ? `، ${family}` : ''}: السعة وكيمياء البطارية والضمان وورقة البيانات، من Faraday وكيل Peimar الحصري في العراق.`,
+    eyebrow: (brand: string) => `${brand} · تخزين الطاقة`,
     photo: 'إنفرترات Peimar الهجينة وبطاريات التخزين',
     specs: 'المواصفات',
     fact: {
@@ -587,10 +621,34 @@ const ar: ProductStrings = {
     },
     moreTitle: 'منتجات تخزين أخرى',
   },
+  itemList: 'منتجات أخرى',
+  itemPage: {
+    title: (brand: string, name: string) => `${name} · ${brand}`,
+    description: (brand: string, name: string, line: string) =>
+      `${brand} ${name} (${line}): المواصفات والمستندات، من Faraday في العراق.`,
+    specs: 'المواصفات',
+  },
+  specKey: {
+    power: 'القدرة',
+    voltage: 'الجهد',
+    current: 'التيار',
+    capacity: 'السعة',
+    efficiency: 'الكفاءة',
+    dimensions: 'الأبعاد',
+    weight: 'الوزن',
+    crossSection: 'مساحة المقطع',
+    length: 'الطول',
+    material: 'المادة',
+    protection: 'درجة الحماية',
+    temperature: 'درجة الحرارة',
+    warranty: 'الضمان',
+    certification: 'الشهادات',
+    compatibility: 'التوافق',
+  },
   accessoriesPage: {
     title: 'ملحقات Peimar',
     description:
-      'ملحقات Peimar مع أوراق بياناتها الفنية، من العدادات ووحدات Wi-Fi وLAN ومجمّع البيانات إلى محسّنات القدرة وشواحن السيارات الكهربائية وصناديق EPS ولوحات التوزيع. توفّرها في العراق شركة Faraday.',
+      'عدادات Peimar ووحدات Wi-Fi وLAN ومجمّع البيانات ومحسّنات القدرة وشواحن السيارات الكهربائية وصناديق EPS ولوحات التوزيع، مع أوراق بياناتها. من Faraday في العراق.',
     eyebrow: 'Peimar · الملحقات',
     variants: 'الطرازات المتوفرة',
     stat: { products: 'المنتجات', groups: 'المجموعات' },
@@ -687,7 +745,7 @@ const ar: ProductStrings = {
     },
     doubleGlassNote: 'الطرازات مزدوجة الزجاج ظهرها زجاجي في جميع الألوان.',
     compareModels: 'قارن بين الطرازات',
-    compareModelsCaption: (name: string) => `مقارنة بين كل طرازات Peimar ${name}`,
+    compareModelsCaption: (brand: string, name: string) => `مقارنة بين كل طرازات ${brand} ${name}`,
     selected: 'المختار',
     warrantyTitle: 'ضمان القدرة',
     warrantyLead: (years: number) => `أقل قدرة تضمنها Peimar على مدى ${years} ${arYears(years)}، حسب تقنية الخلايا في هذه السلسلة.`,
@@ -711,7 +769,7 @@ const ckb: ProductStrings = {
   yes: 'بەڵێ',
   no: 'نەخێر',
   web: 'پەڕەی وێب',
-  docLang: { EN: 'ئینگلیزی', IT: 'ئیتاڵی', FR: 'فەڕەنسی', AR: 'عەرەبی' },
+  docLang: { EN: 'ئینگلیزی', IT: 'ئیتاڵی', FR: 'فەڕەنسی', AR: 'عەرەبی', KU: 'کوردی', MULTI: 'فرەزمان' },
   storage: 'بەرهەمی هەڵگرتن',
   phase: { single_phase: 'تاک فاز', three_phase: 'سێ فاز' },
   kind: {
@@ -748,7 +806,7 @@ const ckb: ProductStrings = {
     toScale: 'گەورەترین مۆدێل، بە پێوەری ڕاستەقینە',
   },
   quote: 'داوای نرخ بکە',
-  quoteMessage: (product: string) => `سڵاو Faraday، دەمەوێت نرخی Peimar ${product} بزانم.`,
+  quoteMessage: (brand: string, product: string) => `سڵاو Faraday، دەمەوێت نرخی ${brand} ${product} بزانم.`,
   categoryAlt: {
     modules: 'پانێڵی خۆری Peimar بە چوارچێوەی زیوی، ڕەش و سوور',
     hybrid: 'ئینڤێرتەری هایبریدی Peimar و چەند پاترییەک کە لەسەر یەک دانراون',
@@ -756,7 +814,11 @@ const ckb: ProductStrings = {
     micro: 'مایکرۆ ئینڤێرتەری Peimar لەگەڵ کێبڵەکانی DC و AC',
     accessories: 'کەرەستە تەواوکەرەکانی Peimar، لەوانە سندوقی کارەبا، ناوەندی چاودێری و ئۆپتیمایزەر',
   },
-  productAlt: (name: string, kind: string) => `Peimar ${name}، ${kind}`,
+  productAlt: (brand: string, name: string, kind: string) => `${brand} ${name}، ${kind}`,
+  emptyLine: {
+    text: 'لە ئێستادا هیچ بەرهەمێک لەم بەشەدا نیشان نادرێت. لێمان بپرسە چی دەتوانین بۆت دابین بکەین.',
+    action: 'پەیوەندیمان پێوە بکە',
+  },
 
   index: {
     title: 'بەرهەمەکانی Peimar لە عێراق',
@@ -787,7 +849,7 @@ const ckb: ProductStrings = {
   modulesPage: {
     title: 'پانێڵە خۆرییەکانی Peimar',
     description:
-      'پانێڵە خۆرییەکانی Peimar: زنجیرەی S کە لە ئیتاڵیا دروست دەکرێت، زنجیرەی OR بە خانەی نیوەبڕاو و تەکنەلۆژیای TOPCon ی دوو ڕوو و شووشەی دووانە، و زنجیرەی DR. Faraday لە عێراق تایبەتمەندیی هەموو مۆدێلێکت پیشان دەدات.',
+      'پانێڵە خۆرییەکانی Peimar: زنجیرەی S کە لە ئیتاڵیا دروست دەکرێت، زنجیرەی OR بە TOPCon ی دوو ڕوو و زنجیرەی DR. تایبەتمەندیی هەموو مۆدێلێک لای Faraday لە عێراق.',
     eyebrow: 'Peimar · پانێڵی خۆر',
     stat: { power: 'مەودای توانا', efficiency: 'بەرزترین کارایی', warranty: 'گەرەنتیی هێڵیی توانا' },
     filterLegend: 'پاڵاوتنی زنجیرەکان',
@@ -803,9 +865,9 @@ const ckb: ProductStrings = {
     listTitle: 'زنجیرەکانی پانێڵ',
   },
   seriesPage: {
-    title: (name: string) => `پانێڵەکانی Peimar ${name}`,
-    description: (name: string) =>
-      `تایبەتمەندی و داتاشیتی هەموو مۆدێلێکی پانێڵی Peimar ${name}، لای Faraday، بریکاری تایبەتی Peimar لە عێراق.`,
+    title: (brand: string, name: string) => `پانێڵەکانی ${brand} ${name}`,
+    description: (brand: string, name: string) =>
+      `تایبەتمەندی و داتاشیتی هەموو مۆدێلێکی پانێڵی ${brand} ${name}، لای Faraday، بریکاری تایبەتی Peimar لە عێراق.`,
     viewer: (model: string) => `${model}، مۆدێلێکی سێ ڕەهەندی کە دەتوانیت بیسووڕێنیت`,
     figures: 'گرنگترین ژمارەکان',
     cellsCaption: { half: 'خانەی نیوەبڕاو', full: 'خانەی تەواو' },
@@ -863,14 +925,14 @@ const ckb: ProductStrings = {
   microPage: {
     title: 'مایکرۆ ئینڤێرتەرەکانی Peimar',
     description: (models: string) =>
-      `مایکرۆ ئینڤێرتەری تاک فازی Peimar، هەریەکەیان بە دوو MPPT: ${models}. Faraday لە عێراق دابینیان دەکات.`,
+      `مایکرۆ ئینڤێرتەری تاک فازی Peimar، هەریەکەیان بە دوو MPPT${models && `: ${models}`}. Faraday لە عێراق دابینیان دەکات.`,
     eyebrow: 'Peimar · مایکرۆ ئینڤێرتەر',
     stat: { power: 'توانای AC', mppt: 'ژمارەی MPPT لە هەر ئامێرێکدا', protection: 'پلەی پاراستن' },
   },
   inverterPage: {
-    title: (name: string, kind: string) => `${kind} Peimar ${name}`,
-    description: (name: string, kind: string) =>
-      `${kind} Peimar ${name}. مۆدێلەکان بەراورد بکە، داتاشیتەکان دابگرە و زنجیرەکان لە دیزاینەردا ڕێکبخە. لای Faraday، بریکاری تایبەتی Peimar لە عێراق.`,
+    title: (brand: string, name: string, kind: string) => `${kind} ${brand} ${name}`,
+    description: (brand: string, name: string, kind: string) =>
+      `${kind} ${brand} ${name}: بەراوردی مۆدێلەکان، داتاشیتەکان و ڕێکخستنی زنجیرەکان. لای Faraday، بریکاری تایبەتی Peimar لە عێراق.`,
     facts: 'گرنگترین تایبەتمەندییەکان',
     fact: {
       phase: 'فاز',
@@ -887,7 +949,7 @@ const ckb: ProductStrings = {
     },
     spd: 'جۆری 2، لای DC و لای AC',
     tableTitle: 'بەراوردی مۆدێلەکان',
-    tableCaption: (name: string) => `تایبەتمەندیی هەر مۆدێلێکی Peimar ${name}`,
+    tableCaption: (brand: string, name: string) => `تایبەتمەندیی هەر مۆدێلێکی ${brand} ${name}`,
     swipe: 'خشتەکە بە لادا ڕابکێشە بۆ بەراوردکردن',
     col: {
       model: 'مۆدێل',
@@ -910,10 +972,10 @@ const ckb: ProductStrings = {
     moreIn: 'زیاتر لە هەمان بەش',
   },
   storagePage: {
-    title: (name: string) => `Peimar ${name} · هەڵگرتنی وزە`,
-    description: (name: string, family: string) =>
-      `Peimar ${name}، ${family}. توانای هەڵگرتن، کیمیای پاتری و گەرەنتییەکەی ببینە و داتاشیتەکەی دابگرە. لای Faraday، بریکاری تایبەتی Peimar لە عێراق.`,
-    eyebrow: 'Peimar · هەڵگرتنی وزە',
+    title: (brand: string, name: string) => `${brand} ${name} · هەڵگرتنی وزە`,
+    description: (brand: string, name: string, family?: string) =>
+      `${brand} ${name}${family ? `، ${family}` : ''}: توانای هەڵگرتن، کیمیای پاتری، گەرەنتی و داتاشیت. لای Faraday، بریکاری تایبەتی Peimar لە عێراق.`,
+    eyebrow: (brand: string) => `${brand} · هەڵگرتنی وزە`,
     photo: 'ئینڤێرتەری هایبرید و پاترییەکانی Peimar',
     specs: 'تایبەتمەندییەکان',
     fact: {
@@ -932,10 +994,34 @@ const ckb: ProductStrings = {
     },
     moreTitle: 'بەرهەمەکانی تری هەڵگرتنی وزە',
   },
+  itemList: 'بەرهەمی تر',
+  itemPage: {
+    title: (brand: string, name: string) => `${name} · ${brand}`,
+    description: (brand: string, name: string, line: string) =>
+      `${brand} ${name} (${line}): تایبەتمەندی و بەڵگەنامەکان، لای Faraday لە عێراق.`,
+    specs: 'تایبەتمەندییەکان',
+  },
+  specKey: {
+    power: 'توانا',
+    voltage: 'ڤۆڵت',
+    current: 'تەزوو',
+    capacity: 'توانای هەڵگرتن',
+    efficiency: 'کارایی',
+    dimensions: 'پێوانەکان',
+    weight: 'کێش',
+    crossSection: 'ڕووبەری بڕگە',
+    length: 'درێژی',
+    material: 'کەرەستە',
+    protection: 'پلەی پاراستن',
+    temperature: 'پلەی گەرمی',
+    warranty: 'گەرەنتی',
+    certification: 'بڕوانامەکان',
+    compatibility: 'گونجان',
+  },
   accessoriesPage: {
     title: 'کەرەستە تەواوکەرەکانی Peimar',
     description:
-      'کەرەستە تەواوکەرەکانی Peimar لەگەڵ داتاشیتەکانیان، لە پێوەری کارەبا و دۆنگڵی Wi-Fi و LAN و ناوەندی داتاوە تا ئۆپتیمایزەر، بارگەکەری ئۆتۆمبێلی کارەبایی، سندوقی EPS و تابلۆی کارەبا. Faraday لە عێراق دابینیان دەکات.',
+      'پێوەری Peimar، دۆنگڵی Wi-Fi و LAN، ناوەندی داتا، ئۆپتیمایزەر، بارگەکەری ئۆتۆمبێلی کارەبایی، سندوقی EPS و تابلۆی کارەبا، لەگەڵ داتاشیت. لای Faraday لە عێراق.',
     eyebrow: 'Peimar · کەرەستە تەواوکەرەکان',
     variants: 'جۆرەکان',
     stat: { products: 'بەرهەمەکان', groups: 'گرووپەکان' },
@@ -1032,7 +1118,7 @@ const ckb: ProductStrings = {
     },
     doubleGlassNote: 'مۆدێلەکانی شووشەی دووانە لە هەموو ڕەنگەکاندا پشتیان شووشەیە.',
     compareModels: 'مۆدێلەکان بەراورد بکە',
-    compareModelsCaption: (name: string) => `بەراوردی هەموو مۆدێلەکانی Peimar ${name}`,
+    compareModelsCaption: (brand: string, name: string) => `بەراوردی هەموو مۆدێلەکانی ${brand} ${name}`,
     selected: 'هەڵبژێردراو',
     warrantyTitle: 'گەرەنتیی توانا',
     warrantyLead: (years: number) =>

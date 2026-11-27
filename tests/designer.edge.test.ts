@@ -3,9 +3,11 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { evaluateCell, groupContext, matrixBlockers, panelsUsed, summarize, tempsValid } from '../src/lib/designer/calc.ts';
+import { iraqDate, latinDigits, parseNumber } from '../src/lib/designer/format.ts';
 import {
   addSubArray,
   createProject,
+  hasWork,
   inverterErrors,
   normalizeProject,
   projectErrors,
@@ -17,7 +19,7 @@ import {
   setTemps,
   updateSubArray,
 } from '../src/lib/designer/project.ts';
-import { decodeProject, encodeProject, fromCompact, toCompact } from '../src/lib/designer/share.ts';
+import { decodeProject, encodeProject, fromCompact, shareCode, shareMove, toCompact, type Saved } from '../src/lib/designer/share.ts';
 import { projectFromSizing, sizeFromNeeds, type Needs } from '../src/lib/designer/sizing.ts';
 import type { Battery, Catalog, City, Inverter, Panel, Project } from '../src/lib/designer/types.ts';
 
@@ -25,7 +27,7 @@ const json = (path: string) => JSON.parse(readFileSync(new URL(path, import.meta
 const panels: Panel[] = json('../src/data/designer/panels.json');
 const inverters: Inverter[] = json('../src/data/designer/inverters.json');
 const cities: City[] = json('../src/data/iraq-solar.json').cities;
-const batteries: Battery[] = json('../src/data/catalog.json').batteries;
+const batteries: Battery[] = json('../src/data/technical/batteries.json');
 const catalog: Catalog = { panels, inverters };
 const data = { panels, inverters, cities, batteries };
 
@@ -100,6 +102,100 @@ test('share links: truncated, corrupted and foreign codes never throw and fall b
   }
   assert.equal(decodeProject(code.slice(0, code.length - 3)), null);
   assert.ok(decoded < tries.length);
+});
+
+test('share links in a hash: an encoded "=", line breaks and punctuation glued to the end are tolerated', () => {
+  const code = encodeProject(home());
+  const forms = [`#p=${code}`, `#p=${code}.`, `#p=${code})`, `#p=${code},`, `#p%3D${code}`, `#p%3d${code}`, `#p=${code.slice(0, 40)}%0A${code.slice(40)}`, `#p=${code.slice(0, 40)} ${code.slice(40)}`];
+  for (const hash of forms) assert.equal(shareCode(hash), code, hash.slice(-16));
+  assert.equal(shareCode('#p=Ab_-.'), 'Ab_-');
+  assert.equal(shareCode('#p=Ab_-)'), 'Ab_-');
+  assert.equal(shareCode('#p%3DAb_-'), 'Ab_-');
+  assert.equal(shareCode('#p=%E0%A4%A'), '', 'a stray % sign: still a share link, with nothing to open');
+  for (const hash of ['', '#', '#designer', '#main', '#pp=Ab', '#P=Ab', '#xp=Ab']) assert.equal(shareCode(hash), null, hash);
+  assert.equal(decodeProject(shareCode(`#p=${code.slice(0, -12)}`)!, catalog), null, 'a cut link is a share link that cannot open');
+});
+
+test('a share link never drops work that exists only on this device', () => {
+  const mine = { ...home(), name: 'Mine' };
+  const theirs = { ...home(), name: 'Theirs' };
+  const third = { ...home(), name: 'Third' };
+  const own = (p: Project): Saved => ({ project: p, from: '' });
+  const opened = (p: Project): Saved => ({ project: p, from: encodeProject(p) });
+  /** Step 1 filled in for a customer, nothing chosen yet. */
+  const typed = { ...createProject(), client: 'Ahmed Karim', notes: 'Roof faces south' };
+  /** What a city page's link to the Designer leaves in the project. */
+  const cityOnly = setTemps({ ...createProject(), cityId: 'erbil' }, { tmin: -12, tnom: 57, tmax: 77 });
+  assert.equal(hasWork(createProject()), false);
+  assert.equal(hasWork(cityOnly), false);
+  assert.equal(hasWork({ ...createProject(), name: '  ' }), false);
+  for (const field of ['name', 'number', 'client', 'address', 'notes'] as const) assert.equal(hasWork({ ...createProject(), [field]: 'x' }), true, field);
+  assert.equal(hasWork(updateSubArray(createProject(), 'a1', { name: 'East roof' })), true);
+  assert.equal(hasWork(updateSubArray(createProject(), 'a1', { panelId: 'or10h610mndb' })), true);
+  assert.equal(hasWork(setInverterModel(createProject(), catalog, 'i1', 'psi-x1p6000-hy')), true);
+
+  assert.equal(shareMove(own(createProject()), null, theirs), 'open', 'nothing entered yet');
+  assert.equal(shareMove(own(cityOnly), null, theirs), 'open', 'a city alone is not work');
+  assert.equal(shareMove(own(theirs), own(mine), theirs), 'open', 'the same project is already open');
+  assert.equal(shareMove(opened(theirs), own(mine), third), 'open', 'an unchanged shared project lives on in its link');
+  assert.equal(shareMove(opened(theirs), null, third), 'keep', 'a free slot keeps even an unchanged shared project');
+  assert.equal(shareMove(opened(theirs), opened(mine), third), 'keep', 'both in their links: the newer one stays');
+  assert.equal(shareMove(own(mine), null, theirs), 'keep', 'own work becomes the other project');
+  assert.equal(shareMove(own(typed), null, theirs), 'keep', 'typed project data is work too');
+  assert.equal(shareMove(own(mine), own(createProject()), theirs), 'keep', 'the other slot holds no work');
+  assert.equal(shareMove(own(mine), own(typed), theirs), 'ask', 'the other slot holds typed project data');
+  assert.equal(shareMove(own(mine), opened(third), theirs), 'keep', 'the other project lives on in its link');
+  assert.equal(shareMove(own(mine), own(mine), theirs), 'keep', 'the other project is a copy of the open one');
+  assert.equal(shareMove(own(mine), own(theirs), theirs), 'keep', 'the other project is the shared one');
+  const edited: Saved = { project: { ...theirs, notes: 'changed after opening' }, from: encodeProject(theirs) };
+  assert.equal(shareMove(edited, own(mine), third), 'ask', 'two projects that exist only here');
+  assert.equal(shareMove(own(third), own(mine), theirs), 'ask');
+});
+
+test('share links and the saved project keep the 200-character project number the field accepts', () => {
+  const p = { ...home(), number: 'N'.repeat(195) + '-2026' };
+  assert.equal(fromCompact(toCompact(p))!.number, p.number);
+  assert.equal(decodeProject(encodeProject(p), catalog)!.number, p.number);
+  assert.equal(fromCompact(toCompact({ ...p, number: 'N'.repeat(260) }))!.number.length, 200);
+});
+
+test('typed numbers: decimal commas, thousands separators, Arabic-Indic and Persian digits', () => {
+  const cases: [string, number][] = [
+    ['0,12', 0.12],
+    ['4,5', 4.5],
+    ['-4,5', -4.5],
+    ['−4,5', -4.5],
+    ['41,5', 41.5],
+    ['0,048', 0.048],
+    ['0,123', 0.123],
+    ['12,3456', 12.3456],
+    ['١,٥', 1.5],
+    ['٠٫١٢', 0.12],
+    ['۰٫۱۲', 0.12],
+    ['9,000,000', 9_000_000],
+    ['٩٬٠٠٠٬٠٠٠', 9_000_000],
+    ['1,234.5', 1234.5],
+    ['1,500', 1500],
+    ['9 000', 9000],
+    ['1 234,5', 1234.5],
+    ['۶۱۰', 610],
+    ['\u2066150\u2069', 150],
+    ['\u200f42', 42],
+    ['.5', 0.5],
+    [',5', 0.5],
+    ['5,', 5],
+    ['0.12', 0.12],
+  ];
+  for (const [text, value] of cases) assert.equal(parseNumber(text), value, text);
+  for (const text of ['', ' ', '-', ',', '1,2,3', '1.234,5', '١٬٥', '150 IQD', '1e3', '+5', '1.5.5']) assert.ok(Number.isNaN(parseNumber(text)), text);
+  assert.equal(latinDigits('OR10H٦١٠ ۶۱۰ ٢٣٫٦١'), 'OR10H610 610 23٫61');
+});
+
+test('the report date is the calendar day in Iraq, whatever the time zone of the device', () => {
+  assert.equal(iraqDate(new Date('2026-11-23T22:30:00Z')), '2026-11-24', '01:30 in Baghdad');
+  assert.equal(iraqDate(new Date('2026-11-23T20:59:59Z')), '2026-11-23', '23:59:59 in Baghdad');
+  assert.equal(iraqDate(new Date('2026-11-24T12:00:00Z')), '2026-11-24');
+  assert.equal(iraqDate(new Date('2026-12-31T21:00:00Z')), '2027-01-01', 'new year in Baghdad');
 });
 
 test('share links: fractional or absurd series and strings are dropped, not trusted', () => {
@@ -267,11 +363,22 @@ test('needs sizing extremes give a result or a clear reason, never a broken proj
     assert.ok(hugeThree.sizing.inverter.pnomAc * hugeThree.sizing.inverterCount >= 60000);
   }
 
-  // Backup load above any single Peimar hybrid: the energy need fits, the load does not.
-  for (const n of [{ backupKw: 40, backupHours: 4 }, { backupKw: 500, backupHours: 2 }, { backupKw: 90, backupHours: 4, phase: 'three_phase' as const }]) {
+  // The energy need fits, the backup load does not: above six of the largest hybrids of the phase (36 kW single-phase,
+  // 180 kW three-phase), or carried only by inverters that need more PV than this need.
+  const loads: [Partial<Needs>, string, number | undefined][] = [
+    [{ backupKw: 40, backupHours: 4 }, 'backupLoad', 36],
+    [{ backupKw: 500, backupHours: 2 }, 'backupLoad', 36],
+    [{ backupKw: 200, backupHours: 4, phase: 'three_phase' }, 'backupLoad', 180],
+    [{ backupKw: 90, backupHours: 4, phase: 'three_phase' }, 'backupPv', undefined],
+    [{ monthlyKwh: 200, backupKw: 5, backupHours: 4 }, 'backupPv', undefined],
+    [{ monthlyKwh: 200, backupKw: 5 }, 'backupPv', undefined],
+  ];
+  for (const [n, limit, maxLoadKw] of loads) {
     const out = ask(n);
-    assert.equal(!out.ok && out.limit, 'backup', JSON.stringify(n));
+    assert.deepEqual(out.ok ? null : [out.reason, out.limit, out.maxLoadKw], ['noFit', limit, maxLoadKw], JSON.stringify(n));
   }
+  // 5 kW single-phase hybrids exist, so 200 kWh with a 5 kW load is a PV limit, not a load the inverters cannot carry.
+  assert.ok(inverters.some((i) => i.type === 'hybrid' && i.phase === 'single_phase' && i.pnomAc >= 5000));
 
   assert.deepEqual(ask({ monthlyKwh: NaN }), { ok: false, reason: 'input' });
   assert.deepEqual(ask({ monthlyKwh: -5 }), { ok: false, reason: 'input' });

@@ -1,0 +1,3333 @@
+{
+  "catalog": {
+    "accessories": [
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x-hpab-s",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X-HPAB-S",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-HPAB-S.pdf"
+          }
+        ],
+        "group": "Adapter Box",
+        "name": "PSI-X-HPAB-S",
+        "photos": [],
+        "slug": "psi-x-hpab-s",
+        "text": {},
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x-1pmeter-zi",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X-1PMETER-ZI",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-1PMETER-ZI.pdf"
+          }
+        ],
+        "group": "Meter",
+        "name": "PSI-X-1PMETER-ZI",
+        "photos": [],
+        "slug": "psi-x-1pmeter-zi",
+        "text": {
+          "ar": {
+            "line": "عداد أحادي الطور لسلسلة PSI-X"
+          },
+          "ckb": {
+            "line": "پێوەری تاک فاز بۆ زنجیرەی PSI-X"
+          },
+          "en": {
+            "line": "Single-phase meter for the PSI-X Series"
+          }
+        },
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x-3pmeter-hy",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X-3PMETER-HY",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-3PMETER-HY.pdf"
+          }
+        ],
+        "group": "Meter",
+        "name": "PSI-X-3PMETER-HY",
+        "photos": [],
+        "slug": "psi-x-3pmeter-hy",
+        "text": {
+          "ar": {
+            "line": "عداد ثلاثي الأطوار لسلسلة PSI-X"
+          },
+          "ckb": {
+            "line": "پێوەری سێ فاز بۆ زنجیرەی PSI-X"
+          },
+          "en": {
+            "line": "Three-phase meter for the PSI-X Series"
+          }
+        },
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x-3pmeter-hy-ta",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X-3PMETER-HY-TA",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-3PMETER-HY-TA.pdf"
+          }
+        ],
+        "group": "Meter",
+        "name": "PSI-X-3PMETER-HY-TA",
+        "photos": [],
+        "slug": "psi-x-3pmeter-hy-ta",
+        "text": {
+          "ar": {
+            "line": "عداد ثلاثي الأطوار مع محوّل تيار (CT) لسلسلة PSI-X"
+          },
+          "ckb": {
+            "line": "پێوەری سێ فاز لەگەڵ گۆڕەری تەزوو (CT) بۆ زنجیرەی PSI-X"
+          },
+          "en": {
+            "line": "Three-phase meter for the PSI-X Series, with CT"
+          }
+        },
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x-1smeter-ta",
+        "docs": [],
+        "group": "Meter",
+        "name": "PSI-X-1SMETER-TA",
+        "photos": [],
+        "slug": "psi-x-1smeter-ta",
+        "text": {
+          "ar": {
+            "line": "عداد أحادي الطور مع محوّل تيار (CT) لسلسلة PSI-X"
+          },
+          "ckb": {
+            "line": "پێوەری تاک فاز لەگەڵ گۆڕەری تەزوو (CT) بۆ زنجیرەی PSI-X"
+          },
+          "en": {
+            "line": "Single-phase meter for the PSI-X Series, with CT"
+          }
+        },
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x-3smeter-no-ta-psi-x-3smeter-ta-100a",
+        "docs": [],
+        "group": "Meter",
+        "name": "PSI-X-3SMETER-NO-TA | PSI-X-3SMETER-TA-100A",
+        "photos": [],
+        "slug": "psi-x-3smeter-no-ta-psi-x-3smeter-ta-100a",
+        "text": {
+          "ar": {
+            "line": "عداد ثلاثي الأطوار لسلسلة PSI-X، بمحوّل تيار (CT) أو من دونه"
+          },
+          "ckb": {
+            "line": "پێوەری سێ فاز بۆ زنجیرەی PSI-X، بە گۆڕەری تەزوو (CT) یان بەبێ ئەو"
+          },
+          "en": {
+            "line": "Three-phase meter for the PSI-X Series, with or without CT"
+          }
+        },
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x-3smeter-tad",
+        "docs": [],
+        "group": "Meter",
+        "name": "PSI-X-3SMETER-TAD",
+        "photos": [],
+        "slug": "psi-x-3smeter-tad",
+        "text": {
+          "ar": {
+            "line": "عداد ثلاثي الأطوار لسلسلة PSI-X، طراز DUAL"
+          },
+          "ckb": {
+            "line": "پێوەری سێ فاز بۆ زنجیرەی PSI-X، مۆدێلی DUAL"
+          },
+          "en": {
+            "line": "Three-phase meter for the PSI-X Series, DUAL model"
+          }
+        },
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-a-3pmeter-hy",
+        "docs": [],
+        "group": "Meter",
+        "name": "PSI-A-3PMETER-HY",
+        "photos": [],
+        "slug": "psi-a-3pmeter-hy",
+        "text": {
+          "ar": {
+            "line": "عداد ثلاثي الأطوار لسلسلة PSI-A"
+          },
+          "ckb": {
+            "line": "پێوەری سێ فاز بۆ زنجیرەی PSI-A"
+          },
+          "en": {
+            "line": "Three-phase meter for the PSI-A Series"
+          }
+        },
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-a-3pmeter-hy-ta",
+        "docs": [],
+        "group": "Meter",
+        "name": "PSI-A-3PMETER-HY-TA",
+        "photos": [],
+        "slug": "psi-a-3pmeter-hy-ta",
+        "text": {
+          "ar": {
+            "line": "عداد ثلاثي الأطوار مع محوّل تيار (CT) لسلسلة PSI-A"
+          },
+          "ckb": {
+            "line": "پێوەری سێ فاز لەگەڵ گۆڕەری تەزوو (CT) بۆ زنجیرەی PSI-A"
+          },
+          "en": {
+            "line": "Three-phase meter for the PSI-A Series, with CT"
+          }
+        },
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x-dh1000",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X-DH1000",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-DH1000.pdf"
+          }
+        ],
+        "group": "Data hub",
+        "name": "PSI-X-DH1000",
+        "photos": [],
+        "slug": "psi-x-dh1000",
+        "text": {
+          "ar": {
+            "line": "مجمّع بيانات لإنفرترات سلسلة PSI-X"
+          },
+          "ckb": {
+            "line": "ناوەندی داتا بۆ ئینڤێرتەرەکانی زنجیرەی PSI-X"
+          },
+          "en": {
+            "line": "Data hub for PSI-X Series inverters"
+          }
+        },
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x-h-wifi-3-0",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X-H-WIFI-3.0",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-H-WIFI-3.0.pdf"
+          }
+        ],
+        "group": "Wi-Fi & LAN dongle",
+        "name": "PSI-X-H-WIFI-3.0",
+        "photos": [],
+        "slug": "psi-x-h-wifi-3-0",
+        "text": {
+          "ar": {
+            "line": "وحدة اتصال Wi-Fi لإنفرترات سلسلة PSI-X"
+          },
+          "ckb": {
+            "line": "دۆنگڵی Wi-Fi بۆ ئینڤێرتەرەکانی زنجیرەی PSI-X"
+          },
+          "en": {
+            "line": "Wi-Fi dongle for PSI-X Series inverters"
+          }
+        },
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x-h-eth-3-0",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X-H-ETH-3.0",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-H-ETH-3.0.pdf"
+          }
+        ],
+        "group": "Wi-Fi & LAN dongle",
+        "name": "PSI-X-H-ETH-3.0",
+        "photos": [],
+        "slug": "psi-x-h-eth-3-0",
+        "text": {
+          "ar": {
+            "line": "وحدة اتصال LAN لإنفرترات سلسلة PSI-X"
+          },
+          "ckb": {
+            "line": "دۆنگڵی LAN بۆ ئینڤێرتەرەکانی زنجیرەی PSI-X"
+          },
+          "en": {
+            "line": "LAN dongle for PSI-X Series inverters"
+          }
+        },
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x-h-wifi-eth",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X-H-WIFI-ETH",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-H-WIFI-ETH.pdf"
+          }
+        ],
+        "group": "Wi-Fi & LAN dongle",
+        "name": "PSI-X-H-WIFI-ETH",
+        "photos": [],
+        "slug": "psi-x-h-wifi-eth",
+        "text": {
+          "ar": {
+            "line": "وحدة اتصال Wi-Fi وLAN لإنفرترات سلسلة PSI-X"
+          },
+          "ckb": {
+            "line": "دۆنگڵی Wi-Fi و LAN بۆ ئینڤێرتەرەکانی زنجیرەی PSI-X"
+          },
+          "en": {
+            "line": "Wi-Fi and LAN dongle for PSI-X Series inverters"
+          }
+        },
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-op650-psi-opsw-psi-opbe",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-OP650 | PSI-OPSW | PSI-OPBE",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_POWER-OPTIMIZERS.pdf"
+          }
+        ],
+        "group": "Power optimizers",
+        "name": "PSI-OP650 | PSI-OPSW | PSI-OPBE",
+        "photos": [],
+        "slug": "psi-op650-psi-opsw-psi-opbe",
+        "text": {},
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x1-mtb",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X1-MTB",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X1-MTB.pdf"
+          }
+        ],
+        "group": "External electrical panel",
+        "name": "PSI-X1-MTB",
+        "photos": [],
+        "slug": "psi-x1-mtb",
+        "text": {
+          "ar": {
+            "line": "لوحة أحادية الطور تجمع خطوط DC وAC وخط الاحتياط الكامل (Full Backup)"
+          },
+          "ckb": {
+            "line": "تابلۆی تاک فاز کە هێڵەکانی DC و AC و هێڵی پاڵپشتی تەواو (Full Backup) لە یەک شوێندا کۆ دەکاتەوە"
+          },
+          "en": {
+            "line": "Single-phase panel that centralises the DC, AC and Full Backup lines"
+          }
+        },
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x3-mtb",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X3-MTB",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X3-MTB.pdf"
+          }
+        ],
+        "group": "External electrical panel",
+        "name": "PSI-X3-MTB",
+        "photos": [],
+        "slug": "psi-x3-mtb",
+        "text": {
+          "ar": {
+            "line": "لوحة ثلاثية الأطوار تجمع خطوط DC وAC وخط الاحتياط الكامل (Full Backup)"
+          },
+          "ckb": {
+            "line": "تابلۆی سێ فاز کە هێڵەکانی DC و AC و هێڵی پاڵپشتی تەواو (Full Backup) لە یەک شوێندا کۆ دەکاتەوە"
+          },
+          "en": {
+            "line": "Three-phase panel that centralises the DC, AC and Full Backup lines"
+          }
+        },
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x1-evc",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X1-EVC",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X1-EVC7.2.pdf"
+          }
+        ],
+        "group": "EV Charger",
+        "name": "PSI-X1-EVC",
+        "photos": [],
+        "slug": "psi-x1-evc",
+        "text": {},
+        "variants": [
+          "PSI-X1-EVC7.2-SXC",
+          "PSI-X1-EVC7.2-PXC",
+          "PSI-X1-EVC7.2-SLC",
+          "PSI-X1-EVC7.2-PLC"
+        ]
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x3-evc",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X3-EVC",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X3-EVC22.pdf"
+          }
+        ],
+        "group": "EV Charger",
+        "name": "PSI-X3-EVC",
+        "photos": [],
+        "slug": "psi-x3-evc",
+        "text": {},
+        "variants": [
+          "PSI-X3-EVC22-SXC",
+          "PSI-X3-EVC22-PXC",
+          "PSI-X3-EVC22-SLC",
+          "PSI-X3-EVC22-PLC"
+        ]
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x1-bu-epsbox",
+        "docs": [],
+        "group": "EPS Box",
+        "name": "PSI-X1-BU-EPSBOX",
+        "photos": [],
+        "slug": "psi-x1-bu-epsbox",
+        "text": {
+          "ar": {
+            "line": "صندوق EPS أحادي الطور لسلسلة PSI-X"
+          },
+          "ckb": {
+            "line": "سندوقی EPS ی تاک فاز بۆ زنجیرەی PSI-X"
+          },
+          "en": {
+            "line": "Single-phase EPS box for the PSI-X Series"
+          }
+        },
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x3-bu-epsbox",
+        "docs": [],
+        "group": "EPS Box",
+        "name": "PSI-X3-BU-EPSBOX",
+        "photos": [],
+        "slug": "psi-x3-bu-epsbox",
+        "text": {
+          "ar": {
+            "line": "صندوق EPS ثلاثي الأطوار لسلسلة PSI-X"
+          },
+          "ckb": {
+            "line": "سندوقی EPS ی سێ فاز بۆ زنجیرەی PSI-X"
+          },
+          "en": {
+            "line": "Three-phase EPS box for the PSI-X Series"
+          }
+        },
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x-ems-pr1000",
+        "docs": [],
+        "group": "EMS – Energy Management System",
+        "name": "PSI-X-EMS-PR1000",
+        "photos": [],
+        "slug": "psi-x-ems-pr1000",
+        "text": {},
+        "variants": null
+      }
+    ],
+    "accessoryGroups": [
+      {
+        "key": "Adapter Box",
+        "name": {
+          "ar": "صندوق المحوّل",
+          "ckb": "سندوقی ئەداپتەر",
+          "en": "Adapter box"
+        }
+      },
+      {
+        "key": "Meter",
+        "name": {
+          "ar": "العدادات",
+          "ckb": "پێوەری کارەبا",
+          "en": "Meters"
+        }
+      },
+      {
+        "key": "Data hub",
+        "name": {
+          "ar": "مجمّع البيانات",
+          "ckb": "ناوەندی داتا",
+          "en": "Data hub"
+        }
+      },
+      {
+        "key": "Wi-Fi & LAN dongle",
+        "name": {
+          "ar": "وحدات اتصال Wi-Fi وLAN",
+          "ckb": "دۆنگڵی Wi-Fi و LAN",
+          "en": "Wi-Fi and LAN dongles"
+        }
+      },
+      {
+        "key": "Power optimizers",
+        "name": {
+          "ar": "محسّنات القدرة",
+          "ckb": "ئۆپتیمایزەر",
+          "en": "Power optimizers"
+        }
+      },
+      {
+        "key": "External electrical panel",
+        "name": {
+          "ar": "لوحات توزيع خارجية",
+          "ckb": "تابلۆی کارەبای دەرەکی",
+          "en": "External electrical panels"
+        }
+      },
+      {
+        "key": "EV Charger",
+        "name": {
+          "ar": "شواحن السيارات الكهربائية",
+          "ckb": "بارگەکەری ئۆتۆمبێلی کارەبایی",
+          "en": "EV chargers"
+        }
+      },
+      {
+        "key": "EPS Box",
+        "name": {
+          "ar": "صناديق EPS",
+          "ckb": "سندوقی EPS",
+          "en": "EPS boxes"
+        }
+      },
+      {
+        "key": "EMS – Energy Management System",
+        "name": {
+          "ar": "نظام إدارة الطاقة (EMS)",
+          "ckb": "سیستەمی بەڕێوەبردنی وزە (EMS)",
+          "en": "EMS, energy management system"
+        }
+      }
+    ],
+    "batteries": [
+      {
+        "brand": "Peimar",
+        "capacity": {
+          "totalKwh": 5.8,
+          "usableKwh": 5.1
+        },
+        "chemistry": "Li-ion (LFP)",
+        "curatedKey": "psi-x-5-8mst-v2",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X-5.8MST-V2",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-5.8MST-V2.pdf"
+          }
+        ],
+        "name": "PSI-X-5.8MST-V2",
+        "photos": [],
+        "slug": "psi-x-5-8mst-v2",
+        "text": {
+          "ar": {
+            "description": "بطارية تخزين عالية الجهد، وهي الوحدة الرئيسية في سلسلة PSI-X-BT. تركيبها سهل، وفيها مؤشرات LED تبيّن حالتها والشحن المتبقي.",
+            "family": "سلسلة PSI-X-BT · بطاريات تخزين عالية الجهد",
+            "role": "الوحدة الرئيسية (Master)"
+          },
+          "ckb": {
+            "description": "پاتریی ڤۆڵتی بەرز و یەکەی سەرەکیی زنجیرەی PSI-X-BT. بە ئاسانی دادەمەزرێت و گڵۆپی LED ی هەیە کە دۆخی پاترییەکە و بارگەی ماوە پیشان دەدات.",
+            "family": "زنجیرەی PSI-X-BT · پاتریی ڤۆڵتی بەرز",
+            "role": "یەکەی سەرەکی (Master)"
+          },
+          "en": {
+            "description": "High-voltage storage battery, the master unit of the PSI-X-BT Series. Simple installation, with LEDs for status and remaining charge.",
+            "family": "PSI-X-BT Series · HV storage batteries",
+            "role": "Master unit"
+          }
+        },
+        "warrantyYears": 10
+      },
+      {
+        "brand": "Peimar",
+        "capacity": {
+          "depthOfDischarge": 0.9,
+          "ratedKwh": 5.8
+        },
+        "chemistry": "LiFePO4",
+        "curatedKey": "psi-x-5-8slv-v2",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X-5.8SLV-V2",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-5.8SLV-V2.pdf"
+          }
+        ],
+        "name": "PSI-X-5.8SLV-V2",
+        "photos": [],
+        "slug": "psi-x-5-8slv-v2",
+        "text": {
+          "ar": {
+            "description": "بطارية تخزين عالية الجهد، وهي الوحدة التابعة في سلسلة PSI-X-BT. تعمل مع إنفرترات Peimar الهجينة PSI-X1P-HY أحادية الطور وPSI-X3S-HY ثلاثية الأطوار.",
+            "family": "سلسلة PSI-X-BT · بطاريات تخزين عالية الجهد",
+            "role": "الوحدة التابعة (Slave)"
+          },
+          "ckb": {
+            "description": "پاتریی ڤۆڵتی بەرز و یەکەی پاشکۆی زنجیرەی PSI-X-BT. لەگەڵ ئینڤێرتەرە هایبریدەکانی Peimar کار دەکات: PSI-X1P-HY ی تاک فاز و PSI-X3S-HY ی سێ فاز.",
+            "family": "زنجیرەی PSI-X-BT · پاتریی ڤۆڵتی بەرز",
+            "role": "یەکەی پاشکۆ (Slave)"
+          },
+          "en": {
+            "description": "High-voltage storage battery, the slave unit of the PSI-X-BT Series. Compatible with the Peimar PSI-X1P-HY single-phase and PSI-X3S-HY three-phase hybrid inverters.",
+            "family": "PSI-X-BT Series · HV storage batteries",
+            "role": "Slave unit"
+          }
+        },
+        "warrantyYears": 10
+      },
+      {
+        "brand": "Peimar",
+        "capacity": {
+          "depthOfDischarge": 0.9,
+          "moduleKwh": 2.5,
+          "modules": [
+            2,
+            13
+          ],
+          "nominalKwh": [
+            5.1,
+            33.2
+          ],
+          "usableKwh": [
+            4.6,
+            29.9
+          ]
+        },
+        "chemistry": "Lithium-ion (LiFePO4)",
+        "curatedKey": "psi-x-hs-2-5",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X-HS 2.5",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-HS_2.5.pdf"
+          }
+        ],
+        "name": "PSI-X-HS 2.5",
+        "photos": [],
+        "slug": "psi-x-hs-2-5",
+        "text": {
+          "ar": {
+            "description": "بطاريات تخزين عالية الجهد تُبنى من 2 إلى 13 وحدة PSI-X-2.5HS، ويمكن مراقبتها عن بُعد عبر Peimar X Portal.",
+            "family": "PSI-X-HS · بطاريات تخزين عالية الجهد",
+            "role": "تصميم معياري: PSI-X-BMS-HS + PSI-X-2.5HS + PSI-X-SBOX-HS"
+          },
+          "ckb": {
+            "description": "پاتریی ڤۆڵتی بەرز کە لە 2 تا 13 مۆدیوڵی PSI-X-2.5HS پێک دێت. لە ڕێگەی Peimar X Portal لە دوورەوە چاودێری دەکرێت.",
+            "family": "PSI-X-HS · پاتریی ڤۆڵتی بەرز",
+            "role": "مۆدیوڵار: PSI-X-BMS-HS + PSI-X-2.5HS + PSI-X-SBOX-HS"
+          },
+          "en": {
+            "description": "High-voltage storage batteries built from 2 to 13 PSI-X-2.5HS modules. Remote monitoring through the Peimar X Portal.",
+            "family": "PSI-X-HS · HV storage batteries",
+            "role": "Modular: PSI-X-BMS-HS + PSI-X-2.5HS + PSI-X-SBOX-HS"
+          }
+        },
+        "warrantyYears": 10
+      },
+      {
+        "brand": "Peimar",
+        "capacity": {
+          "depthOfDischarge": 0.9,
+          "moduleKwh": 3.6,
+          "modules": [
+            2,
+            13
+          ],
+          "nominalKwh": [
+            7.3,
+            47.9
+          ],
+          "usableKwh": [
+            6.5,
+            43.1
+          ]
+        },
+        "chemistry": "Lithium-ion (LiFePO4)",
+        "curatedKey": "psi-x-hs-3-6",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X-HS 3.6",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-HS_3.6.pdf"
+          }
+        ],
+        "name": "PSI-X-HS 3.6",
+        "photos": [],
+        "slug": "psi-x-hs-3-6",
+        "text": {
+          "ar": {
+            "description": "بطاريات تخزين عالية الجهد تُبنى من 2 إلى 13 وحدة PSI-X-3.6HS، ويمكن مراقبتها عن بُعد عبر Peimar X Portal.",
+            "family": "PSI-X-HS · بطاريات تخزين عالية الجهد",
+            "role": "تصميم معياري: PSI-X-BMS-HS + PSI-X-3.6HS + PSI-X-SBOX-HS"
+          },
+          "ckb": {
+            "description": "پاتریی ڤۆڵتی بەرز کە لە 2 تا 13 مۆدیوڵی PSI-X-3.6HS پێک دێت. لە ڕێگەی Peimar X Portal لە دوورەوە چاودێری دەکرێت.",
+            "family": "PSI-X-HS · پاتریی ڤۆڵتی بەرز",
+            "role": "مۆدیوڵار: PSI-X-BMS-HS + PSI-X-3.6HS + PSI-X-SBOX-HS"
+          },
+          "en": {
+            "description": "High-voltage storage batteries built from 2 to 13 PSI-X-3.6HS modules. Remote monitoring through the Peimar X Portal.",
+            "family": "PSI-X-HS · HV storage batteries",
+            "role": "Modular: PSI-X-BMS-HS + PSI-X-3.6HS + PSI-X-SBOX-HS"
+          }
+        },
+        "warrantyYears": 10
+      },
+      {
+        "brand": "Peimar",
+        "capacity": {
+          "depthOfDischarge": 0.95,
+          "moduleKwh": 3.8,
+          "modules": [
+            1,
+            6
+          ],
+          "totalKwh": [
+            3.8,
+            22.8
+          ],
+          "usableKwhPerModule": 3.648
+        },
+        "chemistry": "LFP (LiFePO4)",
+        "curatedKey": "psi-a-bt3-8s",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-A-BT3.8S",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-A-BT3.8S.pdf"
+          }
+        ],
+        "name": "PSI-A-BT3.8S",
+        "photos": [],
+        "slug": "psi-a-bt3-8s",
+        "text": {
+          "ar": {
+            "description": "وحدة بطارية لأنظمة PSI-A أحادية الطور وثلاثية الأطوار، مخصصة للبيوت. تُربط منها من 1 إلى 6 وحدات على التوالي.",
+            "family": "سلسلة PSI-A",
+            "role": "وحدة بطارية لأنظمة PSI-A من نوع All-in-One",
+            "warrantyNote": "لا يسري ضمان 10 سنوات إلا بعد تسجيل المنتج على البوابة وتفعيل خدمة المراقبة."
+          },
+          "ckb": {
+            "description": "مۆدیوڵی پاتری بۆ سیستەمەکانی PSI-A ی تاک فاز و سێ فاز، بۆ ماڵان. لە 1 تا 6 مۆدیوڵ بە زنجیرە دەبەسترێن.",
+            "family": "زنجیرەی PSI-A",
+            "role": "مۆدیوڵی پاتری بۆ سیستەمەکانی All-in-One ی PSI-A",
+            "warrantyNote": "گەرەنتیی 10 ساڵە تەنها کاتێک کار دەکات کە بەرهەمەکە لە پۆرتاڵەکەدا تۆمار بکرێت و خزمەتگوزاریی چاودێری چالاک بکرێت."
+          },
+          "en": {
+            "description": "Battery module for PSI-A single-phase and three-phase systems, for residential use. From 1 to 6 modules in series.",
+            "family": "PSI-A Series",
+            "role": "Battery module for PSI-A All-in-One systems",
+            "warrantyNote": "The 10-year warranty is valid only after the product is registered on the portal and the monitoring service is activated."
+          }
+        },
+        "warrantyYears": 10
+      },
+      {
+        "brand": "Peimar",
+        "capacity": null,
+        "chemistry": null,
+        "curatedKey": "psi-x-prl-bms",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X-PRL-BMS",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-PRL-BMS.pdf"
+          }
+        ],
+        "name": "PSI-X-PRL-BMS",
+        "photos": [],
+        "slug": "psi-x-prl-bms",
+        "text": {
+          "ar": {
+            "description": "نظام إدارة بطاريات (BMS) خارجي يربط البطاريات على التوازي لزيادة سعة التخزين.",
+            "family": "سلسلة PSI-X-PRL",
+            "role": "BMS خارجي للربط على التوازي"
+          },
+          "ckb": {
+            "description": "سیستەمی بەڕێوەبردنی پاتری (BMS) ی دەرەکی کە پاترییەکان بە هاوتەریب دەبەستێت بۆ زیادکردنی توانای هەڵگرتن.",
+            "family": "زنجیرەی PSI-X-PRL",
+            "role": "BMS ی دەرەکی بۆ بەستنی هاوتەریب"
+          },
+          "en": {
+            "description": "External parallel BMS for increased storage capacity.",
+            "family": "PSI-X-PRL Series",
+            "role": "External parallel BMS"
+          }
+        },
+        "warrantyYears": null
+      },
+      {
+        "brand": "Peimar",
+        "capacity": null,
+        "chemistry": null,
+        "curatedKey": "psi-xcab-pcs100-b215",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-XCAB-PCS100-B215",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-XCAB-PCS100-B215.pdf"
+          }
+        ],
+        "name": "PSI-XCAB-PCS100-B215",
+        "photos": [],
+        "slug": "psi-xcab-pcs100-b215",
+        "text": {
+          "ar": {
+            "description": "خزانة تخزين للمشاريع التجارية والصناعية (C&I).",
+            "family": "PSI-XCAB · خزائن للمشاريع التجارية والصناعية",
+            "role": "PSI-XCAB-PCS100 | PSI-X-14.3CAB"
+          },
+          "ckb": {
+            "description": "کابینەی هەڵگرتنی وزە بۆ پڕۆژە بازرگانی و پیشەسازییەکان (C&I).",
+            "family": "PSI-XCAB · کابینە بۆ پڕۆژەی بازرگانی و پیشەسازی",
+            "role": "PSI-XCAB-PCS100 | PSI-X-14.3CAB"
+          },
+          "en": {
+            "description": "Storage cabinet for commercial and industrial (C&I) installations.",
+            "family": "PSI-XCAB · Cabinets for C&I",
+            "role": "PSI-XCAB-PCS100 | PSI-X-14.3CAB"
+          }
+        },
+        "warrantyYears": null
+      },
+      {
+        "brand": "Peimar",
+        "capacity": null,
+        "chemistry": null,
+        "curatedKey": "psi-xcab-x3p50",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-XCAB-X3P50-B100 | B200",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-XCAB-X3P50-B100-PSI-XCAB-X3P50-B200.pdf"
+          }
+        ],
+        "name": "PSI-XCAB-X3P50-B100 | PSI-XCAB-X3P50-B200",
+        "photos": [],
+        "slug": "psi-xcab-x3p50",
+        "text": {
+          "ar": {
+            "description": "خزانة تخزين للمشاريع التجارية والصناعية (C&I).",
+            "family": "PSI-XCAB · خزائن للمشاريع التجارية والصناعية",
+            "role": "PSI-XCAB-X3P50 | PSI-X-14.3CAB"
+          },
+          "ckb": {
+            "description": "کابینەی هەڵگرتنی وزە بۆ پڕۆژە بازرگانی و پیشەسازییەکان (C&I).",
+            "family": "PSI-XCAB · کابینە بۆ پڕۆژەی بازرگانی و پیشەسازی",
+            "role": "PSI-XCAB-X3P50 | PSI-X-14.3CAB"
+          },
+          "en": {
+            "description": "Storage cabinet for commercial and industrial (C&I) installations.",
+            "family": "PSI-XCAB · Cabinets for C&I",
+            "role": "PSI-XCAB-X3P50 | PSI-X-14.3CAB"
+          }
+        },
+        "warrantyYears": null
+      }
+    ],
+    "families": [
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x1p-tl",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X1P2500-TL | PSI-X1P3000-TL",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X1P2500-3000-TL.pdf"
+          },
+          {
+            "kind": "manual",
+            "label": "PSI-X1P TL",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar_EN_user-manual_PSI-X1P-TL-TLM.pdf"
+          }
+        ],
+        "group": "onGrid",
+        "models": [
+          {
+            "name": "PSI-X1P1100-TL",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1P1500-TL",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1P2000-TL",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1P2500-TL",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1P3000-TL",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-X1P TL",
+        "phase": "single_phase",
+        "photos": [],
+        "powerRange": [
+          1100,
+          3000
+        ],
+        "slug": "psi-x1p-tl",
+        "text": {}
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x1p-tlm",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X1P3000/4200/5000/6000-TLM",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X1P3000-4200-5000-6000-TLM.pdf"
+          },
+          {
+            "kind": "manual",
+            "label": "PSI-X1P TLM",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar_EN_user-manual_PSI-X1P-TL-TLM.pdf"
+          }
+        ],
+        "group": "onGrid",
+        "models": [
+          {
+            "name": "PSI-X1P3000-TLM",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1P4200-TLM",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1P5000-TLM",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1P6000-TLM",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-X1P TLM",
+        "phase": "single_phase",
+        "photos": [],
+        "powerRange": [
+          3000,
+          6000
+        ],
+        "slug": "psi-x1p-tlm",
+        "text": {}
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x1s-tl",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X1S1100–3000-TL",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X1S-1100-1500-2000-2500-3000-TL.pdf"
+          },
+          {
+            "kind": "manual",
+            "label": "PSI-X1S TL",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar_EN_user-manual_PSI-X1S-TL.pdf"
+          }
+        ],
+        "group": "onGrid",
+        "models": [
+          {
+            "name": "PSI-X1S1100-TL",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1S1500-TL",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1S2000-TL",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1S2500-TL",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1S3000-TL",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-X1S TL",
+        "phase": "single_phase",
+        "photos": [],
+        "powerRange": [
+          1100,
+          2500
+        ],
+        "slug": "psi-x1s-tl",
+        "text": {}
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x1s-tlm",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X1S3000/4200/5000/6000-TLM",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X1S3000-4200-5000-6000-TLM.pdf"
+          },
+          {
+            "kind": "manual",
+            "label": "PSI-X1S TLM",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar_EN_user-manual_PSI-X1S-TLM.pdf"
+          }
+        ],
+        "group": "onGrid",
+        "models": [
+          {
+            "name": "PSI-X1S3000-TLM",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1S4200-TLM",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1S5000-TLM",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1S6000-TLM",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-X1S TLM",
+        "phase": "single_phase",
+        "photos": [],
+        "powerRange": [
+          3000,
+          6000
+        ],
+        "slug": "psi-x1s-tlm",
+        "text": {}
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x3p-tp",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X3P6000/8000/10000-TP",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X3P6000-8000-10000-TP.pdf"
+          },
+          {
+            "kind": "manual",
+            "label": "PSI-X3P TP",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar_EN_user-manual_PSI-X3P6000-8000-10000-TP.pdf"
+          }
+        ],
+        "group": "onGrid",
+        "models": [
+          {
+            "name": "PSI-X3P6000-TP",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X3P8000-TP",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X3P10000-TP",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-X3P TP",
+        "phase": "three_phase",
+        "photos": [],
+        "powerRange": [
+          6000,
+          10000
+        ],
+        "slug": "psi-x3p-tp",
+        "text": {}
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x3p-tpm",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X3P15000/20000/30000-TPM",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X3P15000-20000-30000-TPM.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "PSI-X3P40000/50000/60000-TPM",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X3P40000-50000-60000-TPM.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "PSI-X3P100000-TPM",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X3P100000-TPM.pdf"
+          }
+        ],
+        "group": "onGrid",
+        "models": [
+          {
+            "name": "PSI-X3P15000-TPM",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X3P20000-TPM",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X3P30000-TPM",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X3P40000-TPM",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X3P50000-TPM",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X3P60000-TPM",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X3P100000-TPM",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X3P125000-TPM",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-X3P TPM",
+        "phase": "three_phase",
+        "photos": [],
+        "powerRange": [
+          15000,
+          125000
+        ],
+        "slug": "psi-x3p-tpm",
+        "text": {}
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-j-mirus-line",
+        "docs": [
+          {
+            "kind": "manual",
+            "label": "PSI-J Mirus Line",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar_UserManual_1-6.pdf"
+          }
+        ],
+        "group": "onGrid",
+        "models": [
+          {
+            "name": "PSI-J1000-TL",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J1500-TL",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-J Mirus Line",
+        "phase": "single_phase",
+        "photos": [],
+        "powerRange": [
+          1000,
+          1500
+        ],
+        "slug": "psi-j-mirus-line",
+        "text": {}
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-j-unicus-line",
+        "docs": [
+          {
+            "kind": "manual",
+            "label": "PSI-J Unicus Line",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar_UserManual_1-6.pdf"
+          }
+        ],
+        "group": "onGrid",
+        "models": [
+          {
+            "name": "PSI-J2000-TL",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J2500-TL",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J3000-TL",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-J Unicus Line",
+        "phase": "single_phase",
+        "photos": [],
+        "powerRange": [
+          2000,
+          3000
+        ],
+        "slug": "psi-j-unicus-line",
+        "text": {}
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-j-geminus-line",
+        "docs": [
+          {
+            "kind": "manual",
+            "label": "PSI-J Geminus Line",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar_UserManual_1-6.pdf"
+          }
+        ],
+        "group": "onGrid",
+        "models": [
+          {
+            "name": "PSI-J3000-TLM",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J4000-TLM",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J5000-TLM",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J6000-TLM",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-J Geminus Line",
+        "phase": "single_phase",
+        "photos": [],
+        "powerRange": [
+          3000,
+          6000
+        ],
+        "slug": "psi-j-geminus-line",
+        "text": {}
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-j-virtus-line",
+        "docs": [
+          {
+            "kind": "manual",
+            "label": "PSI-J Virtus Line",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar_UserManual_4-10.pdf"
+          }
+        ],
+        "group": "onGrid",
+        "models": [
+          {
+            "name": "PSI-J4000-TP",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J5000-TP",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J6000-TP",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J8000-TP",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J10000-TP",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-J Virtus Line",
+        "phase": "three_phase",
+        "photos": [],
+        "powerRange": [
+          4000,
+          10000
+        ],
+        "slug": "psi-j-virtus-line",
+        "text": {}
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-j-editus-line",
+        "docs": [
+          {
+            "kind": "manual",
+            "label": "PSI-J Editus Line",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar_UserManual_12-60.pdf"
+          }
+        ],
+        "group": "onGrid",
+        "models": [
+          {
+            "name": "PSI-J12000-TP",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J15000-TP",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J17000-TP",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J20000-TP",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-J Editus Line",
+        "phase": "three_phase",
+        "photos": [],
+        "powerRange": [
+          12000,
+          20000
+        ],
+        "slug": "psi-j-editus-line",
+        "text": {}
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-j-magnus-line",
+        "docs": [
+          {
+            "kind": "manual",
+            "label": "PSI-J Magnus Line",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar_UserManual_12-60.pdf"
+          }
+        ],
+        "group": "onGrid",
+        "models": [
+          {
+            "name": "PSI-J25000-TP",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J33000-TP",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J40000-TP",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J50000-TP",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J60000-TP",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-J Magnus Line",
+        "phase": "three_phase",
+        "photos": [],
+        "powerRange": [
+          25000,
+          60000
+        ],
+        "slug": "psi-j-magnus-line",
+        "text": {}
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x1p-hy",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X1P3000-HY | PSI-X1P6000-HY",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X1P3000-6000-HY.pdf"
+          },
+          {
+            "kind": "manual",
+            "label": "PSI-X1P HY",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar_EN_user-manual_PSI-X1P3000-5000-6000-HY.pdf"
+          }
+        ],
+        "group": "hybrid",
+        "models": [
+          {
+            "name": "PSI-X1P3000-HY",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1P5000-HY",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1P6000-HY",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-X1P HY",
+        "phase": "single_phase",
+        "photos": [],
+        "powerRange": [
+          3000,
+          6000
+        ],
+        "slug": "psi-x1p-hy",
+        "text": {}
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x3s-hy",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X3S6000/8000/10000/15000-HY",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X3S6000-8000-10000-15000-HY.pdf"
+          },
+          {
+            "kind": "manual",
+            "label": "PSI-X3S HY",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar_EN_user-manual_PSI-X3S6000-8000-10000-15000-HY.pdf"
+          }
+        ],
+        "group": "hybrid",
+        "models": [
+          {
+            "name": "PSI-X3S6000-HY",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X3S8000-HY",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X3S10000-HY",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X3S15000-HY",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-X3S HY",
+        "phase": "three_phase",
+        "photos": [],
+        "powerRange": [
+          6000,
+          15000
+        ],
+        "slug": "psi-x3s-hy",
+        "text": {}
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x3p-hym",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X3P20000-HYM | PSI-X3P30000-HYM",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X3P20000-30000-HYM.pdf"
+          },
+          {
+            "kind": "manual",
+            "label": "PSI-X3P HYM",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar_EN_user-manual_PSI-X3P-HYM.pdf"
+          }
+        ],
+        "group": "hybrid",
+        "models": [
+          {
+            "name": "PSI-X3P20000-HYM",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X3P30000-HYM",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-X3P HYM",
+        "phase": "three_phase",
+        "photos": [],
+        "powerRange": [
+          20000,
+          30000
+        ],
+        "slug": "psi-x3p-hym",
+        "text": {}
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-a1p",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-A1P Series",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-A1P%20Series.pdf"
+          }
+        ],
+        "group": "hybrid",
+        "models": [
+          {
+            "name": "PSI-A1P3600-HY",
+            "techRef": null
+          },
+          {
+            "name": "PSI-A1P6000-HY",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-A1P",
+        "phase": "single_phase",
+        "photos": [],
+        "powerRange": [
+          3680,
+          6000
+        ],
+        "slug": "psi-a1p",
+        "text": {
+          "ar": {
+            "note": "نظام All-in-One يعمل مع بطارية PSI-A-BT3.8S."
+          },
+          "ckb": {
+            "note": "سیستەمی All-in-One کە لەگەڵ پاتریی PSI-A-BT3.8S کار دەکات."
+          },
+          "en": {
+            "note": "All-in-One system with the PSI-A-BT3.8S battery."
+          }
+        }
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-a3p",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-A3P Series",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-A3P%20Series.pdf"
+          }
+        ],
+        "group": "hybrid",
+        "models": [
+          {
+            "name": "PSI-A3P10000-HY",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-A3P",
+        "phase": "three_phase",
+        "photos": [],
+        "powerRange": null,
+        "slug": "psi-a3p",
+        "text": {
+          "ar": {
+            "note": "نظام All-in-One يعمل مع بطارية PSI-A-BT3.8S."
+          },
+          "ckb": {
+            "note": "سیستەمی All-in-One کە لەگەڵ پاتریی PSI-A-BT3.8S کار دەکات."
+          },
+          "en": {
+            "note": "All-in-One system with the PSI-A-BT3.8S battery."
+          }
+        }
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-j-hy",
+        "docs": [
+          {
+            "kind": "manual",
+            "label": "PSI-J HY",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar-user-manual_PSI-J3000-4000-5000-6000-HY.pdf"
+          }
+        ],
+        "group": "hybrid",
+        "models": [
+          {
+            "name": "PSI-J3000-HY",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J4000-HY",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J5000-HY",
+            "techRef": null
+          },
+          {
+            "name": "PSI-J6000-HY",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-J HY",
+        "phase": "single_phase",
+        "photos": [],
+        "powerRange": [
+          3000,
+          6000
+        ],
+        "slug": "psi-j-hy",
+        "text": {}
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-j-rf",
+        "docs": [
+          {
+            "kind": "manual",
+            "label": "PSI-J RF",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar-user-manual_PSI-J3000-RF_2021_10_00.pdf"
+          }
+        ],
+        "group": "hybrid",
+        "models": [
+          {
+            "name": "PSI-J3000-RF",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-J RF",
+        "phase": "single_phase",
+        "photos": [],
+        "powerRange": null,
+        "slug": "psi-j-rf",
+        "text": {
+          "ar": {
+            "note": "إنفرتر Retrofit يضيف تخزين الطاقة إلى منظومة قائمة."
+          },
+          "ckb": {
+            "note": "ئینڤێرتەری Retrofit کە هەڵگرتنی وزە بۆ سیستەمێکی پێشتر دامەزراو زیاد دەکات."
+          },
+          "en": {
+            "note": "Retrofit inverter with energy storage, for existing systems."
+          }
+        }
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x3p-hy",
+        "docs": [],
+        "group": "hybrid",
+        "models": [
+          {
+            "name": "PSI-X3P6000-HY",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X3P8000-HY",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X3P10000-HY",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-X3P HY",
+        "phase": "three_phase",
+        "photos": [],
+        "powerRange": [
+          6000,
+          10000
+        ],
+        "slug": "psi-x3p-hy",
+        "text": {}
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x1p-mic",
+        "docs": [],
+        "group": "micro",
+        "models": [
+          {
+            "name": "PSI-X1P800-MIC",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1P1000-MIC",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-X1P MIC",
+        "phase": "single_phase",
+        "photos": [],
+        "powerRange": [
+          800,
+          1000
+        ],
+        "slug": "psi-x1p-mic",
+        "text": {}
+      }
+    ],
+    "items": [],
+    "series": [
+      {
+        "brand": "Peimar",
+        "curatedKey": "s-series-sa",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "SA450M (FB)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_SA450M%28FB%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SA455M (BF)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_SA455M(BF).pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SA460M (BF)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_SA460M%28BF%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SA480MN (FB)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_SA480MN%28FB%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SA485MN (BF)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_SA485MN%28BF%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SA500M (BF)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_SA500M(BF).pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SA500M (FB)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_SA500M(FB).pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SA505M (BF)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_SA505M%28BF%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SA535MN (BF)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_SA535MN%28BF%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SA545M (B)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_SA545M%28B%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SA545M",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_SA545M.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SA550M (B)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_SA550M%28B%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SA585MN",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_SA585MN.pdf"
+          }
+        ],
+        "models": [
+          {
+            "name": "SA450M (FB)",
+            "techRef": null
+          },
+          {
+            "name": "SA455M (BF)",
+            "techRef": null
+          },
+          {
+            "name": "SA460M (BF)",
+            "techRef": null
+          },
+          {
+            "name": "SA480MN (FB)",
+            "techRef": null
+          },
+          {
+            "name": "SA485MN (BF)",
+            "techRef": null
+          },
+          {
+            "name": "SA500M (BF)",
+            "techRef": null
+          },
+          {
+            "name": "SA500M (FB)",
+            "techRef": null
+          },
+          {
+            "name": "SA505M (BF)",
+            "techRef": null
+          },
+          {
+            "name": "SA535MN (BF)",
+            "techRef": null
+          },
+          {
+            "name": "SA545M (B)",
+            "techRef": null
+          },
+          {
+            "name": "SA545M",
+            "techRef": null
+          },
+          {
+            "name": "SA550M (B)",
+            "techRef": null
+          },
+          {
+            "name": "SA585MN",
+            "techRef": null
+          }
+        ],
+        "name": "S Series SA",
+        "photos": [],
+        "slug": "s-series-sa",
+        "text": {
+          "ar": {
+            "description": "يُصنع في مصنع Peimar في إيطاليا. زجاجه مضاد للانعكاس، وإطاره مدمج ومتين ويمكن تثبيته من الجهة القصيرة أيضًا.",
+            "tagline": "صناعة إيطالية",
+            "technology": [
+              "أحادي البلورة M10",
+              "PERC أحادي الوجه",
+              "PERC ثنائي الوجه",
+              "TOPCon من النوع N"
+            ]
+          },
+          "ckb": {
+            "description": "لە ئیتاڵیا، لە کارگەی Peimar دروست دەکرێت. شووشەکەی دژە ڕەنگدانەوەیە و چوارچێوەکەی تۆکمە و بەهێزە، لە لای کورتیشەوە دەکرێت جێگیر بکرێت.",
+            "tagline": "دروستکراوی ئیتاڵیا",
+            "technology": [
+              "تاک کریستاڵ M10",
+              "PERC یەک ڕوو",
+              "PERC دوو ڕوو",
+              "TOPCon جۆری N"
+            ]
+          },
+          "en": {
+            "description": "Made in Italy, manufactured in Peimar's production factory. Anti-reflective glass and a compact, sturdy frame that can also be anchored on the short side.",
+            "tagline": "Made in Italy module",
+            "technology": [
+              "Monocrystalline M10",
+              "PERC monofacial",
+              "PERC bifacial",
+              "TOPCon N-type"
+            ]
+          }
+        }
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "s-series-sf",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "SF350M (BF) (EN-CA)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN-CA_SF350M%28BF%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SF350M (FB) (EN-CA)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN-CA_SF350M%28FB%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SF360M (FG)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_SF360M%28FG%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SF360M (FR)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_SF360M(FR).pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SF365M (BF) (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SF365M%28BF%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SF400M (BF) (FR)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_FR_SF400M(BF).pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SF400M (FB) (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SF400M%28FB%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SF410M (BF)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_SF410M%28BF%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SF415M (BF) (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SF415M%28BF%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SF440M (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SF440M.pdf"
+          }
+        ],
+        "models": [
+          {
+            "name": "SF350M (BF)",
+            "techRef": null
+          },
+          {
+            "name": "SF350M (FB)",
+            "techRef": null
+          },
+          {
+            "name": "SF360M (FG)",
+            "techRef": null
+          },
+          {
+            "name": "SF360M (FR)",
+            "techRef": null
+          },
+          {
+            "name": "SF365M (BF)",
+            "techRef": null
+          },
+          {
+            "name": "SF400M (BF)",
+            "techRef": null
+          },
+          {
+            "name": "SF400M (FB)",
+            "techRef": null
+          },
+          {
+            "name": "SF410M (BF)",
+            "techRef": null
+          },
+          {
+            "name": "SF415M (BF)",
+            "techRef": null
+          },
+          {
+            "name": "SF440M",
+            "techRef": null
+          }
+        ],
+        "name": "S Series SF",
+        "photos": [],
+        "slug": "s-series-sf",
+        "text": {
+          "ar": {
+            "description": "يُصنع في مصنع Peimar في إيطاليا، ويتوفر أيضًا بزجاج ملوّن ضمن Green Line (FG) وRed Line (FR) للأماكن التي تشترط الحفاظ على المظهر العام.",
+            "tagline": "صناعة إيطالية",
+            "technology": [
+              "PERC أحادي البلورة"
+            ]
+          },
+          "ckb": {
+            "description": "لە ئیتاڵیا، لە کارگەی Peimar دروست دەکرێت. بە شووشەی ڕەنگکراویش هەیە، بە ناوی Green Line (FG) و Red Line (FR)، بۆ ئەو شوێنانەی کە دەبێت دیمەنی گشتییان بپارێزرێت.",
+            "tagline": "دروستکراوی ئیتاڵیا",
+            "technology": [
+              "تاک کریستاڵ PERC"
+            ]
+          },
+          "en": {
+            "description": "Made in Italy, manufactured in Peimar's production factory. Also available with coloured glass as Green Line (FG) and Red Line (FR), for sites with landscape constraints.",
+            "tagline": "Made in Italy module",
+            "technology": [
+              "Monocrystalline PERC"
+            ]
+          }
+        }
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "revamping-line",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "SG205P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG205P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG210P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG210P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG215P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG215P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG220P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG220P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG225P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG225P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG230P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG230P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG235P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG235P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG240P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG240P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG245P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG245P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG250P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG250P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG255P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG255P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG260P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG260P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG265P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG265P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG270P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG270P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG275P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG275P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG280P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG280P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG285P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG285P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG290P (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG290P.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG300M (BF) (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG300M(BF).pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG310M (BF) (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG310M(BF).pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG310M (FB) (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG310M(FB).pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SG315M (BF) (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SG315M(BF).pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SM330M (BF) (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SM330M(BF).pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SM330M (FB) (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SM330M(FB).pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SM335M (BF) (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SM335M(BF).pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SM340M (BF) (EN-CA)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN-CA_SM340M%28BF%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SM390M (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SM390M.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SM395M (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SM395M.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SM400M (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SM400M.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "SM405M (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_SM405M.pdf"
+          }
+        ],
+        "models": [
+          {
+            "name": "SG205P",
+            "techRef": null
+          },
+          {
+            "name": "SG210P",
+            "techRef": null
+          },
+          {
+            "name": "SG215P",
+            "techRef": null
+          },
+          {
+            "name": "SG220P",
+            "techRef": null
+          },
+          {
+            "name": "SG225P",
+            "techRef": null
+          },
+          {
+            "name": "SG230P",
+            "techRef": null
+          },
+          {
+            "name": "SG235P",
+            "techRef": null
+          },
+          {
+            "name": "SG240P",
+            "techRef": null
+          },
+          {
+            "name": "SG245P",
+            "techRef": null
+          },
+          {
+            "name": "SG250P",
+            "techRef": null
+          },
+          {
+            "name": "SG255P",
+            "techRef": null
+          },
+          {
+            "name": "SG260P",
+            "techRef": null
+          },
+          {
+            "name": "SG265P",
+            "techRef": null
+          },
+          {
+            "name": "SG270P",
+            "techRef": null
+          },
+          {
+            "name": "SG275P",
+            "techRef": null
+          },
+          {
+            "name": "SG280P",
+            "techRef": null
+          },
+          {
+            "name": "SG285P",
+            "techRef": null
+          },
+          {
+            "name": "SG290P",
+            "techRef": null
+          },
+          {
+            "name": "SG300M (BF)",
+            "techRef": null
+          },
+          {
+            "name": "SG310M (BF)",
+            "techRef": null
+          },
+          {
+            "name": "SG310M (FB)",
+            "techRef": null
+          },
+          {
+            "name": "SG315M (BF)",
+            "techRef": null
+          },
+          {
+            "name": "SM330M (BF)",
+            "techRef": null
+          },
+          {
+            "name": "SM330M (FB)",
+            "techRef": null
+          },
+          {
+            "name": "SM335M (BF)",
+            "techRef": null
+          },
+          {
+            "name": "SM340M (BF)",
+            "techRef": null
+          },
+          {
+            "name": "SM390M",
+            "techRef": null
+          },
+          {
+            "name": "SM395M",
+            "techRef": null
+          },
+          {
+            "name": "SM400M",
+            "techRef": null
+          },
+          {
+            "name": "SM405M",
+            "techRef": null
+          }
+        ],
+        "name": "Revamping Line",
+        "photos": [],
+        "slug": "revamping-line",
+        "text": {
+          "ar": {
+            "description": "ألواح مصنوعة في إيطاليا بمقاسات 54 و60 و72 خلية، منها متعددة البلورات (SGxxxP) وأحادية البلورة (SGxxxM وSMxxxM).",
+            "tagline": "Revamping Line · صناعة إيطالية",
+            "technology": [
+              "متعدد البلورات",
+              "أحادي البلورة"
+            ]
+          },
+          "ckb": {
+            "description": "پانێڵی دروستکراوی ئیتاڵیا بە قەبارەی 54، 60 و 72 خانە، هەم فرە کریستاڵ (SGxxxP) هەم تاک کریستاڵ (SGxxxM و SMxxxM).",
+            "tagline": "Revamping Line · دروستکراوی ئیتاڵیا",
+            "technology": [
+              "فرە کریستاڵ",
+              "تاک کریستاڵ"
+            ]
+          },
+          "en": {
+            "description": "Made in Italy modules in 54, 60 and 72-cell formats, polycrystalline (SGxxxP) and monocrystalline (SGxxxM, SMxxxM).",
+            "tagline": "Revamping Line · Made in Italy",
+            "technology": [
+              "Polycrystalline",
+              "Monocrystalline"
+            ]
+          }
+        }
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "or-series-or10e",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "OR10E460MNDB (BF)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10E460MNDB%28BF%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10E460MNDB (FB)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10E460MNDB%28FB%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10E640MNDB",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10E640MNDB.pdf"
+          }
+        ],
+        "models": [
+          {
+            "name": "OR10E460MNDB (BF)",
+            "techRef": null
+          },
+          {
+            "name": "OR10E460MNDB (FB)",
+            "techRef": null
+          },
+          {
+            "name": "OR10E640MNDB",
+            "techRef": null
+          }
+        ],
+        "name": "OR Series OR10E",
+        "photos": [],
+        "slug": "or-series-or10e",
+        "text": {
+          "ar": {
+            "description": "يُصنع في مصنع Peimar بتقنية TOPCon ثنائية الوجه وزجاج مزدوج مضاد للانعكاس، داخل إطار مدمج ومتين.",
+            "tagline": "لوح بخلايا نصفية",
+            "technology": [
+              "أحادي البلورة M10 من النوع N",
+              "TOPCon ثنائي الوجه",
+              "زجاج مزدوج"
+            ]
+          },
+          "ckb": {
+            "description": "لە کارگەی Peimar دروست دەکرێت. تەکنەلۆژیای TOPCon ی دوو ڕوو و شووشەی دووانەی دژە ڕەنگدانەوەی هەیە، لە چوارچێوەیەکی تۆکمە و بەهێزدا.",
+            "tagline": "پانێڵی خانە نیوەبڕاو",
+            "technology": [
+              "تاک کریستاڵ M10 جۆری N",
+              "TOPCon دوو ڕوو",
+              "شووشەی دووانە"
+            ]
+          },
+          "en": {
+            "description": "Manufactured in Peimar's production factory. TOPCon bifacial technology with anti-reflective double glass, in a compact and sturdy frame.",
+            "tagline": "Half-cell module",
+            "technology": [
+              "Monocrystalline M10 N-type",
+              "TOPCon bifacial",
+              "Double glass"
+            ]
+          }
+        }
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "or-series-or10h",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "OR10H375M (FR)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H375M%28FR%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H400MN (FR)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H400MN%28FR%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H425MNDB (FB)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H425MNDB%28FB%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H430MNDB (FB)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H430MNDB%28FB%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H440MN (BF)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H440MN%28BF%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H440MN (FB)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H440MN%28FB%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H440MNDB (BF)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H440MNDB(BF).pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H440MNDB (FB)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H440MNDB%28FB%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H440MNDB (SF)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H440MNDB(SF).pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H450M (EN-IN)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN-IN_OR10H450M.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H450MNDB (BF)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H450MNDB%28BF%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H450MNDB (FB)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H450MNDB%28FB%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H500M (FB)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H500M(FB).pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H500MNDB (BF)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H500MNDB%28BF%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H500MNDB (FB)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H500MNDB%28FB%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H510MNDB (BF)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H510MNDB%28BF%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H510MNDB (FB)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H510MNDB%28FB%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H545M (EN-IN)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN-IN_OR10H545M.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H560M",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H560M.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H595MNDB",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H595MNDB.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H610MNDB",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H610MNDB.pdf"
+          }
+        ],
+        "models": [
+          {
+            "name": "OR10H375M (FR)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H400MN (FR)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H425MNDB (FB)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H430MNDB (FB)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H440MN (BF)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H440MN (FB)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H440MNDB (BF)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H440MNDB (FB)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H440MNDB (SF)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H450M",
+            "techRef": null
+          },
+          {
+            "name": "OR10H450MNDB (BF)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H450MNDB (FB)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H500M (FB)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H500MNDB (BF)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H500MNDB (FB)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H510MNDB (BF)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H510MNDB (FB)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H545M",
+            "techRef": null
+          },
+          {
+            "name": "OR10H560M",
+            "techRef": null
+          },
+          {
+            "name": "OR10H595MNDB",
+            "techRef": null
+          },
+          {
+            "name": "OR10H610MNDB",
+            "techRef": null
+          }
+        ],
+        "name": "OR Series OR10H",
+        "photos": [],
+        "slug": "or-series-or10h",
+        "text": {
+          "ar": {
+            "description": "يُصنع في مصنع Peimar بخلايا M10 نصفية، ويتوفر بنسخة PERC أحادية الوجه ونسخة TOPCon ثنائية الوجه بزجاج مزدوج (MNDB).",
+            "tagline": "لوح بخلايا نصفية",
+            "technology": [
+              "أحادي البلورة M10 بخلايا نصفية",
+              "PERC أحادي الوجه",
+              "TOPCon ثنائي الوجه من النوع N",
+              "زجاج مزدوج"
+            ]
+          },
+          "ckb": {
+            "description": "لە کارگەی Peimar دروست دەکرێت، بە خانەی M10 ی نیوەبڕاو. دوو جۆری هەیە: PERC ی یەک ڕوو و TOPCon ی دوو ڕوو بە شووشەی دووانە (MNDB).",
+            "tagline": "پانێڵی خانە نیوەبڕاو",
+            "technology": [
+              "تاک کریستاڵ M10 نیوەبڕاو",
+              "PERC یەک ڕوو",
+              "TOPCon دوو ڕوو جۆری N",
+              "شووشەی دووانە"
+            ]
+          },
+          "en": {
+            "description": "Manufactured in Peimar's production factory. Half-cut M10 cells, in PERC monofacial versions and TOPCon bifacial versions with double glass (MNDB).",
+            "tagline": "Half-cell module",
+            "technology": [
+              "Monocrystalline M10 half-cut",
+              "PERC monofacial",
+              "TOPCon bifacial N-type",
+              "Double glass"
+            ]
+          }
+        }
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "or-series-or12h",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "OR12H635MNDB",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR12H635MNDB.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR12H670M",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR12H670M.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR12H715MNDB",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR12H715MNDB.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR12H725MNDB",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR12H725MNDB.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR12H735MNDB (IT)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_IT_OR12H735MNDB.pdf"
+          }
+        ],
+        "models": [
+          {
+            "name": "OR12H635MNDB",
+            "techRef": null
+          },
+          {
+            "name": "OR12H670M",
+            "techRef": null
+          },
+          {
+            "name": "OR12H715MNDB",
+            "techRef": null
+          },
+          {
+            "name": "OR12H725MNDB",
+            "techRef": null
+          },
+          {
+            "name": "OR12H735MNDB",
+            "techRef": null
+          }
+        ],
+        "name": "OR Series OR12H",
+        "photos": [],
+        "slug": "or-series-or12h",
+        "text": {
+          "ar": {
+            "description": "يُصنع في مصنع Peimar بخلايا M12 نصفية من النوع N، وتقنية TOPCon ثنائية الوجه، وزجاج مزدوج مضاد للانعكاس.",
+            "tagline": "لوح بخلايا نصفية",
+            "technology": [
+              "أحادي البلورة M12 بخلايا نصفية من النوع N",
+              "TOPCon ثنائي الوجه",
+              "زجاج مزدوج"
+            ]
+          },
+          "ckb": {
+            "description": "لە کارگەی Peimar دروست دەکرێت، بە خانەی M12 ی نیوەبڕاوی جۆری N، تەکنەلۆژیای TOPCon ی دوو ڕوو و شووشەی دووانەی دژە ڕەنگدانەوە.",
+            "tagline": "پانێڵی خانە نیوەبڕاو",
+            "technology": [
+              "تاک کریستاڵ M12 نیوەبڕاوی جۆری N",
+              "TOPCon دوو ڕوو",
+              "شووشەی دووانە"
+            ]
+          },
+          "en": {
+            "description": "Manufactured in Peimar's production factory. Half-cut M12 N-type cells with TOPCon bifacial technology and anti-reflective double glass.",
+            "tagline": "Half-cell module",
+            "technology": [
+              "Monocrystalline M12 half-cut N-type",
+              "TOPCon bifacial",
+              "Double glass"
+            ]
+          }
+        }
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "dr-series-dr10h",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "DR10H450M (FB) (US)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_USA_DR10H450M(FB).pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "DR10H500M (FB) (US)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_USA_DR10H500M%28FB%29.pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "DR10H550MB (US)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_USA_DR10H550MB.pdf"
+          }
+        ],
+        "models": [
+          {
+            "name": "DR10H450M (FB)",
+            "techRef": null
+          },
+          {
+            "name": "DR10H500M (FB)",
+            "techRef": null
+          },
+          {
+            "name": "DR10H550MB",
+            "techRef": null
+          }
+        ],
+        "name": "DR Series DR10H",
+        "photos": [],
+        "slug": "dr-series-dr10h",
+        "text": {
+          "ar": {
+            "description": "ألواح أحادية البلورة بخلايا نصفية، بمقاسات 120 و132 و144 خلية.",
+            "tagline": "لوح أحادي البلورة بخلايا نصفية",
+            "technology": [
+              "أحادي البلورة",
+              "خلايا نصفية"
+            ]
+          },
+          "ckb": {
+            "description": "پانێڵی تاک کریستاڵ بە خانەی نیوەبڕاو، بە قەبارەی 120، 132 و 144 خانە.",
+            "tagline": "پانێڵی تاک کریستاڵی خانە نیوەبڕاو",
+            "technology": [
+              "تاک کریستاڵ",
+              "خانەی نیوەبڕاو"
+            ]
+          },
+          "en": {
+            "description": "Monocrystalline modules with half-cut cells, in 120, 132 and 144-cell formats.",
+            "tagline": "Half-cut monocrystalline module",
+            "technology": [
+              "Monocrystalline",
+              "Half-cut cells"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "company": {
+    "address": {
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=46001%20Qasimlu%20Street%2C%20Sulaymaniyah%2C%20Iraq",
+      "postalCode": "46001",
+      "text": {
+        "ar": {
+          "city": "السليمانية",
+          "country": "العراق",
+          "street": "شارع قاسملو"
+        },
+        "ckb": {
+          "city": "سلێمانی",
+          "country": "عێراق",
+          "street": "شەقامی قاسملۆ"
+        },
+        "en": {
+          "city": "Sulaymaniyah",
+          "country": "Iraq",
+          "street": "Qasmlu Street"
+        }
+      }
+    },
+    "email": "info@faradayiq.com",
+    "foundedYear": 2017,
+    "hours": [
+      {
+        "close": "17:00",
+        "day": "sat",
+        "open": "09:00"
+      },
+      {
+        "close": "17:00",
+        "day": "sun",
+        "open": "09:00"
+      },
+      {
+        "close": "17:00",
+        "day": "mon",
+        "open": "09:00"
+      },
+      {
+        "close": "17:00",
+        "day": "tue",
+        "open": "09:00"
+      },
+      {
+        "close": "17:00",
+        "day": "wed",
+        "open": "09:00"
+      },
+      {
+        "close": "17:00",
+        "day": "thu",
+        "open": "09:00"
+      },
+      {
+        "close": null,
+        "day": "fri",
+        "open": null
+      }
+    ],
+    "hoursNote": {},
+    "name": "Faraday Co.",
+    "phones": [
+      {
+        "display": "+964 773 698 9694",
+        "e164": "+9647736989694",
+        "label": null,
+        "primary": true,
+        "whatsapp": true
+      }
+    ],
+    "socials": [
+      {
+        "network": "facebook",
+        "url": "https://www.facebook.com/102574992430776"
+      }
+    ]
+  },
+  "contentHash": "322b9589dda084d87bf4b18348604d34ab35f0b6d8d607bdcce27b9fd2422526",
+  "history": {
+    "milestones": [
+      {
+        "key": "founded",
+        "text": {
+          "ar": {
+            "text": "بدأت الشركة عملها في السليمانية، وتخصصت في الطاقة الشمسية.",
+            "title": "تأسيس Faraday"
+          },
+          "ckb": {
+            "text": "کۆمپانیاکە لە سلێمانی دەستی بە کار کرد، لە بواری وزەی خۆردا.",
+            "title": "دامەزرانی Faraday"
+          },
+          "en": {
+            "text": "The company starts out in Sulaymaniyah, working in solar energy.",
+            "title": "Faraday is founded"
+          }
+        },
+        "year": 2017
+      },
+      {
+        "key": "projects",
+        "text": {
+          "ar": {
+            "text": "بدأت Faraday تنفيذ أولى مشاريعها في الطاقة الشمسية.",
+            "title": "أولى مشاريع الطاقة الشمسية"
+          },
+          "ckb": {
+            "text": "Faraday دەستی بە جێبەجێکردنی یەکەم پڕۆژەکانی وزەی خۆر کرد.",
+            "title": "یەکەم پڕۆژەکانی وزەی خۆر"
+          },
+          "en": {
+            "text": "Faraday begins its first solar projects.",
+            "title": "First solar projects"
+          }
+        },
+        "year": 2018
+      },
+      {
+        "key": "peimar",
+        "text": {
+          "ar": {
+            "text": "اعتمدت Peimar الإيطالية شركة Faraday وكيلًا رسميًا لها في عموم العراق.",
+            "title": "وكالة Peimar لعموم العراق"
+          },
+          "ckb": {
+            "text": "کۆمپانیای ئیتاڵیی Peimar بریکارنامەی فەرمیی بۆ هەموو عێراق دا بە Faraday.",
+            "title": "بریکاری Peimar بۆ هەموو عێراق"
+          },
+          "en": {
+            "text": "Peimar, the Italian manufacturer, appoints Faraday as its agent for the whole country.",
+            "title": "Peimar agent for all of Iraq"
+          }
+        },
+        "year": 2021
+      },
+      {
+        "key": "renewal",
+        "text": {
+          "ar": {
+            "text": "جدّدت Peimar عقد وكالتها مع Faraday لعشر سنوات.",
+            "title": "تجديد الوكالة عشر سنوات"
+          },
+          "ckb": {
+            "text": "Peimar بۆ 10 ساڵ بریکارنامەکەی نوێ کردەوە.",
+            "title": "نوێکردنەوەی بریکارنامە بۆ 10 ساڵ"
+          },
+          "en": {
+            "text": "Peimar renews its agency agreement with Faraday for ten years.",
+            "title": "Agency renewed for ten years"
+          }
+        },
+        "year": 2025
+      },
+      {
+        "key": "capacity",
+        "text": {
+          "ar": {
+            "text": "بلغ مجموع ما ورّدته Faraday وركّبته من منظومات الطاقة الشمسية 100 MW.",
+            "title": "100 MW وُرّدت ورُكّبت"
+          },
+          "ckb": {
+            "text": "Faraday گەیشتە دابینکردن و دامەزراندنی 100 MW وزەی خۆر.",
+            "title": "گەیشتن بە 100 MW"
+          },
+          "en": {
+            "text": "Faraday reaches 100 MW of solar capacity supplied and installed.",
+            "title": "100 MW supplied and installed"
+          }
+        },
+        "year": 2026
+      }
+    ],
+    "today": {
+      "ar": {
+        "label": "اليوم",
+        "text": "الوكيل الرئيسي مع 100 موزّع في أنحاء العراق، وأكثر من 4% من مجمل الطاقة الشمسية في البلاد.",
+        "title": "الوكيل الحصري لـ Peimar في العراق"
+      },
+      "ckb": {
+        "label": "ئەمڕۆ",
+        "text": "بریکاری سەرەکی لەگەڵ 100 دابەشکەر لە سەرانسەری عێراق، و زیاتر لە 4% لە کۆی وزەی خۆری وڵات.",
+        "title": "بریکاری تایبەتی Peimar لە عێراق"
+      },
+      "en": {
+        "label": "Today",
+        "text": "Main agent with 100 distributors across Iraq, and more than 4% of the country’s total solar power.",
+        "title": "Exclusive Peimar agent in Iraq"
+      }
+    }
+  },
+  "media": [],
+  "minor": 0,
+  "projects": [
+    {
+      "category": "public",
+      "cover": {
+        "alt": {
+          "ar": "ألواح شمسية مثبّتة على الأرض قرب مباني محطة مياه",
+          "ckb": "پانێڵی خۆری سەر زەوی لە تەنیشت بیناکانی وێستگەیەکی ئاو",
+          "en": "Ground-mounted solar modules beside the buildings of a water station"
+        },
+        "sitePath": "/images/legacy/project-3kwp-emergency-water-station.jpg"
+      },
+      "sizeKwp": 3,
+      "slug": "3-kwp-for-emergency-power-water-station",
+      "text": {
+        "ar": {
+          "line": "ألواح مثبّتة على الأرض تشغّل المحطة عند انقطاع الكهرباء.",
+          "title": "طاقة احتياطية لمحطة مياه"
+        },
+        "ckb": {
+          "line": "کە کارەبا دەبڕێت، پانێڵەکانی سەر زەوی وێستگەکە کار پێ دەکەن.",
+          "title": "کارەبای یەدەگ بۆ وێستگەی ئاو"
+        },
+        "en": {
+          "line": "Ground-mounted modules that supply emergency power.",
+          "title": "Emergency power for a water station"
+        }
+      },
+      "year": null
+    },
+    {
+      "category": "residential",
+      "cover": {
+        "alt": {
+          "ar": "صف طويل من الألواح الشمسية المائلة على هياكل حديدية فوق سطح مفروش بالحصى",
+          "ckb": "ڕیزێکی درێژ لە پانێڵی خۆری لار، لەسەر چوارچێوەی پۆڵا و بانێکی چەوڕێژ",
+          "en": "A long tilted solar array on steel frames over a gravel rooftop"
+        },
+        "sitePath": "/images/legacy/project-12kwp-apartments-1.jpg"
+      },
+      "sizeKwp": 12,
+      "slug": "12kwp-for-apartments",
+      "text": {
+        "ar": {
+          "line": "صف طويل من الألواح المائلة فوق سطح مفروش بالحصى.",
+          "title": "عمارة سكنية"
+        },
+        "ckb": {
+          "line": "ڕیزێکی درێژ لە پانێڵی لار، لەسەر بانێکی چەوڕێژ.",
+          "title": "باڵەخانەی شوقە"
+        },
+        "en": {
+          "line": "A long tilted array on a gravel rooftop.",
+          "title": "Apartments"
+        }
+      },
+      "year": null
+    },
+    {
+      "category": "residential",
+      "cover": {
+        "alt": {
+          "ar": "ألواح شمسية مائلة فوق سطح منزل، وخلفها أبراج سكنية وتلال",
+          "ckb": "پانێڵی خۆری لار لەسەر بانی خانوویەک، تاوەرە بەرزەکان و گردەکانیش لە پشتەوەن",
+          "en": "A tilted solar array on a flat house roof, with high-rise towers and hills behind"
+        },
+        "sitePath": "/images/legacy/project-3-6kwp-house.jpg"
+      },
+      "sizeKwp": 3.6,
+      "slug": "3-6-kwp-for-a-house",
+      "text": {
+        "ar": {
+          "line": "ألواح مائلة فوق سطح منزل.",
+          "title": "منزل"
+        },
+        "ckb": {
+          "line": "پانێڵی لار لەسەر بانی خانوویەک.",
+          "title": "خانوو"
+        },
+        "en": {
+          "line": "A tilted array on a flat house roof.",
+          "title": "A house"
+        }
+      },
+      "year": null
+    },
+    {
+      "category": "advertising",
+      "cover": {
+        "alt": {
+          "ar": "أربعة ألواح شمسية على هيكل فوق أحد الأسطح، وخلفها أفق المدينة",
+          "ckb": "چوار پانێڵی خۆر لەسەر چوارچێوەیەک لە سەربانێک، ئاسۆی شاریش لە پشتەوەیە",
+          "en": "Four solar modules on a rooftop frame against the city skyline"
+        },
+        "sitePath": "/images/legacy/project-1-8kwp-advertising-board.jpg"
+      },
+      "sizeKwp": 1.8,
+      "slug": "1-8-kwp-for-advertising-board",
+      "text": {
+        "ar": {
+          "line": "أربعة ألواح تشغّل لوحة إعلانية.",
+          "title": "لوحة إعلانية"
+        },
+        "ckb": {
+          "line": "چوار پانێڵ کارەبای تابلۆیەکی ڕیکلام دابین دەکەن.",
+          "title": "تابلۆی ڕیکلام"
+        },
+        "en": {
+          "line": "Four modules that power an advertising board.",
+          "title": "Advertising board"
+        }
+      },
+      "year": null
+    },
+    {
+      "category": "commercial",
+      "cover": {
+        "alt": {
+          "ar": "صفوف من الألواح الشمسية على سقف معدني واسع، وخلفها المدينة والتلال",
+          "ckb": "ڕیزی پانێڵی خۆر لەسەر بانێکی کانزایی فراوان، شار و گردەکانیش لە پشتەوەن",
+          "en": "Rows of solar modules across a large metal roof, with the city and hills behind"
+        },
+        "sitePath": "/images/legacy/project-30kwp-big-company.jpg"
+      },
+      "sizeKwp": 30,
+      "slug": "30-kwp-for-a-big-company",
+      "text": {
+        "ar": {
+          "line": "صفوف من الألواح تغطي سقفًا معدنيًا واسعًا.",
+          "title": "شركة كبيرة"
+        },
+        "ckb": {
+          "line": "ڕیزەکانی پانێڵ بانێکی کانزایی گەورەیان داپۆشیوە.",
+          "title": "کۆمپانیایەکی گەورە"
+        },
+        "en": {
+          "line": "Rows of modules across a large metal roof.",
+          "title": "A large company"
+        }
+      },
+      "year": null
+    },
+    {
+      "category": "agriculture",
+      "cover": null,
+      "sizeKwp": 50,
+      "slug": "50-kwp-for-agriculture-land",
+      "text": {
+        "ar": {
+          "line": "منظومة شمسية تخدم أرضًا زراعية.",
+          "title": "أرض زراعية"
+        },
+        "ckb": {
+          "line": "سیستەمی وزەی خۆر بۆ زەوییەکی کشتوکاڵی.",
+          "title": "زەویی کشتوکاڵی"
+        },
+        "en": {
+          "line": "Solar power for agricultural land.",
+          "title": "Agricultural land"
+        }
+      },
+      "year": null
+    }
+  ],
+  "publishId": 0,
+  "publishedAt": "2026-11-23T17:35:22Z",
+  "redirects": [],
+  "schema": "faraday.site-snapshot",
+  "site": {
+    "categoryText": {
+      "accessories": {
+        "ar": "أجهزة ومكوّنات لإدارة المنظومة الشمسية وتحسين أدائها وربط أجزائها ببعض.",
+        "ckb": "ئامێر و پارچە بۆ بەڕێوەبردنی سیستەمی وزەی خۆر، باشترکردنی کارەکەی و پێکەوەبەستنی بەشەکانی.",
+        "en": "Devices and components for the management, optimization and integration of the photovoltaic system."
+      },
+      "hybrid": {
+        "ar": "أنظمة تدير الكهرباء التي تنتجها الألواح وتخزّنها، لتستخدمها بكفاءة أكبر.",
+        "ckb": "سیستەمێک کە ئەو کارەبایەی پانێڵەکان بەرهەمی دەهێنن بەڕێوە دەبات و هەڵیدەگرێت، تا باشتر بەکاری بهێنیت.",
+        "en": "Systems for managing and storing generated energy, for more efficient use."
+      },
+      "micro": {
+        "ar": "مايكرو إنفرترات أحادية الطور بمدخلَي MPPT.",
+        "ckb": "مایکرۆ ئینڤێرتەری تاک فاز، هەریەکەیان بە دوو MPPT.",
+        "en": "Single-phase microinverters with two MPPT inputs."
+      },
+      "modules": {
+        "ar": "ألواح عالية الكفاءة بتقنيات مختلفة، تجد بينها ما يناسب أي نوع من التركيب.",
+        "ckb": "پانێڵی کارایی بەرز بە چەند تەکنەلۆژیایەکی جیاواز، بۆ هەر جۆرە دامەزراندنێک.",
+        "en": "High-efficiency modules, available in different technologies for every type of installation."
+      },
+      "onGrid": {
+        "ar": "إنفرترات أحادية الطور وثلاثية الأطوار تدير طاقة منظومتك بكفاءة.",
+        "ckb": "ئینڤێرتەری تاک فاز و سێ فاز کە وزەی سیستەمەکەت بە کارایی بەڕێوە دەبەن.",
+        "en": "Single-phase and three-phase inverters for efficient energy management."
+      }
+    },
+    "featured": {
+      "heroPanel": null,
+      "productsHeroSeries": null,
+      "tickerBatteries": null,
+      "tickerInverters": null
+    },
+    "figures": {
+      "distributors": 100,
+      "installedMw": 100,
+      "iraqSharePct": 4,
+      "peimarAgentSince": 2021
+    },
+    "organization": {
+      "areaServed": [
+        "sulaymaniyah",
+        "erbil",
+        "duhok",
+        "kirkuk",
+        "baghdad",
+        "basra",
+        "mosul"
+      ],
+      "description": "Exclusive agent of Peimar in Iraq: Peimar photovoltaic modules, hybrid and on-grid inverters, batteries and accessories, with system design and installation from Sulaymaniyah.",
+      "slogan": "Renewable energy for everyone"
+    },
+    "pages": {
+      "projects": {
+        "lead": {
+          "ar": "في منازل وعمارات سكنية، وفي شركة ومحطة مياه، وعلى لوحة إعلانية وأرض زراعية.",
+          "ckb": "بۆ خانوو و شوقە، بۆ کۆمپانیا و وێستگەی ئاو، بۆ تابلۆی ڕیکلام و زەویی کشتوکاڵی.",
+          "en": "Homes, apartments, a company, a water station, an advertising board and agricultural land."
+        },
+        "metaDescription": {
+          "ar": "ست من المنظومات الشمسية بمنتجات Peimar التي ركّبتها Faraday، من لوحة إعلانية بقدرة 1.8 kWp إلى أرض زراعية بقدرة 50 kWp.",
+          "ckb": "شەش لەو سیستەمە خۆرییانەی Faraday بە بەرهەمی Peimar دایمەزراندوون، لە تابلۆیەکی ڕیکلامی 1.8 kWp ەوە تا زەوییەکی کشتوکاڵیی 50 kWp.",
+          "en": "Six of the Peimar solar systems Faraday has installed, from a 1.8 kWp advertising board to 50 kWp for agricultural land."
+        }
+      }
+    }
+  },
+  "version": 1
+}

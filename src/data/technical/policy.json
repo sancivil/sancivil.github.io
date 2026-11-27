@@ -1,0 +1,43 @@
+{
+  "linkHosts": [
+    "peimar.com",
+    "www.peimar.com"
+  ],
+  "mapsHosts": [
+    "www.google.com",
+    "google.com",
+    "maps.google.com",
+    "maps.app.goo.gl"
+  ],
+  "socialHosts": {
+    "facebook": [
+      "www.facebook.com",
+      "facebook.com",
+      "m.facebook.com"
+    ],
+    "instagram": [
+      "www.instagram.com",
+      "instagram.com"
+    ],
+    "tiktok": [
+      "www.tiktok.com",
+      "tiktok.com"
+    ],
+    "youtube": [
+      "www.youtube.com",
+      "youtube.com",
+      "youtu.be"
+    ],
+    "linkedin": [
+      "www.linkedin.com",
+      "linkedin.com"
+    ],
+    "telegram": [
+      "t.me"
+    ],
+    "x": [
+      "x.com",
+      "twitter.com"
+    ]
+  }
+}

@@ -1,6 +1,7 @@
 ---
-import history from '../../data/history.json';
-import { company, type MilestoneKey } from '../../i18n/company.ts';
+import { contact } from '../../data/site.ts';
+import { historyToday, milestones as milestoneList } from '../../content/index.ts';
+import { company } from '../../i18n/company.ts';
 import type { Locale } from '../../i18n/config.ts';
 
 interface Props {
@@ -10,20 +11,15 @@ interface Props {
 const { locale } = Astro.props;
 const t = company[locale].about.history;
 
-const milestones = [...history]
-  .sort((a, b) => a.year - b.year)
-  .map(({ year, key }) => {
-    const copy = t.milestones[key as MilestoneKey];
-    if (!copy) throw new Error(`src/data/history.json: "${key}" needs about.history.milestones strings in src/i18n/company.ts`);
-    return { year, ...copy };
-  });
+const milestones = milestoneList.map(({ year, text }) => ({ year, ...text[locale] }));
+const today = historyToday(locale);
 ---
 
 <section class="hist theme-paper section" aria-labelledby="hist-title" data-history style={`--n: ${milestones.length + 1}`}>
   <div class="container">
     <div class="hist__head">
       <p class="eyebrow eyebrow--dot">{t.eyebrow}</p>
-      <h2 id="hist-title" class="h2">{t.title(milestones[0].year)}</h2>
+      <h2 id="hist-title" class="h2">{t.title(milestones[0]?.year ?? contact.founded)}</h2>
     </div>
     <ol class="hist__list" role="list">
       {
@@ -41,12 +37,12 @@ const milestones = [...history]
         ))
       }
       <li class="hist__item hist__item--now" style={`--i: ${milestones.length}`}>
-        <p class="hist__year"><span class="hist__now">{t.today.label}</span></p>
+        <p class="hist__year"><span class="hist__now">{today.label}</span></p>
         <span class="hist__rail" aria-hidden="true">
           <span class="hist__mark" />
         </span>
-        <h3 class="hist__title">{t.today.title}</h3>
-        <p class="hist__text">{t.today.text}</p>
+        <h3 class="hist__title">{today.title}</h3>
+        <p class="hist__text">{today.text}</p>
       </li>
     </ol>
   </div>

@@ -378,6 +378,7 @@ const glyphs = (c: (typeof cells)[number]) =>
   }
 
   .dz__readouts {
+    container-type: inline-size;
     display: grid;
     padding-block: var(--s-4) 0;
     border-top: 1px solid var(--line-inv);
@@ -459,6 +460,9 @@ const glyphs = (c: (typeof cells)[number]) =>
     border-bottom: 1px solid var(--line-inv);
     font-size: 0.8125rem;
     color: var(--muted-inv);
+  }
+  .dz__checks .num {
+    white-space: nowrap;
   }
   .dz__checks li > .num {
     font-size: 0.875rem;
@@ -549,6 +553,30 @@ const glyphs = (c: (typeof cells)[number]) =>
     }
   }
 
+  /* The checks need about 32rem of readout to sit beside the diagram. Narrower readouts (phones, small tablets, and
+     the two-column layout up to about 1180px wide) put them under it, at full width. */
+  @container (width < 32rem) {
+    .dz__readout {
+      grid-template-columns: 6.5rem minmax(0, 1fr);
+      gap: var(--s-3) var(--s-4);
+    }
+    .dz__ro-body {
+      display: contents;
+    }
+    .dz__string {
+      grid-row: 1;
+    }
+    .dz__ro-head {
+      grid-column: 2;
+      grid-row: 1;
+      gap: var(--s-2) var(--s-4);
+    }
+    .dz__checks,
+    .dz__verdict {
+      grid-column: 1 / -1;
+    }
+  }
+
   @media (max-width: 520px) {
     .dz__figure {
       padding: var(--s-4);
@@ -566,27 +594,8 @@ const glyphs = (c: (typeof cells)[number]) =>
     .mx__head {
       font-size: 0.75rem;
     }
-    .dz__readout {
-      grid-template-columns: 6.5rem minmax(0, 1fr);
-      gap: var(--s-3) var(--s-4);
-    }
-    .dz__ro-body {
-      display: contents;
-    }
-    .dz__string {
-      grid-row: 1;
-    }
-    .dz__ro-head {
-      grid-column: 2;
-      grid-row: 1;
-      gap: var(--s-2) var(--s-4);
-    }
     .dz__ro-big {
       font-size: 1.0625rem;
-    }
-    .dz__checks,
-    .dz__verdict {
-      grid-column: 1 / -1;
     }
     .dz__checks li {
       grid-template-columns: minmax(0, 1fr) auto;

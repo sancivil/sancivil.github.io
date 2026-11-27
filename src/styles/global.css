@@ -541,15 +541,29 @@ bdi {
   text-align: match-parent;
 }
 
+/* On Latin pages the language switchers (header, mobile menu, footer) carry the only Arabic script. Their two names
+   (العربية, کوردی) come from a subset of Noto Sans Arabic with just their letters, so these pages never load the whole
+   face. Made with fontTools: pyftsubset noto-sans-arabic-arabic-wght-normal.woff2 --unicodes=<the unicode-range below>
+   --layout-features='*' --name-IDs='*' --flavor=woff2 */
+@font-face {
+  font-family: 'Noto Sans Arabic Language Names';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('./fonts/noto-sans-arabic-language-names.woff2') format('woff2-variations');
+  unicode-range: U+0627-0629, U+062F, U+0631, U+0639, U+0644, U+0648, U+064A, U+06A9, U+06CC;
+}
+:root[dir='ltr'] a[data-lang-link]:is([lang='ar'], [lang='ckb']) {
+  font-family: 'DM Sans Variable', 'Noto Sans Arabic Language Names', 'Noto Sans Arabic Variable', ui-sans-serif, system-ui, sans-serif;
+}
+
 /* ---------- page transitions ----------
    Cross-document View Transitions, pure CSS: the header holds still while the page below it
    settles in, moving in the reading direction (reversed on back). Without support, or with
-   reduced motion, pages simply load. */
+   reduced motion, pages simply load. The opt-in (@view-transition) is inline at the top of
+   Base.astro's head: Chrome can decide on the transition before this stylesheet has loaded. */
 
 @media (prefers-reduced-motion: no-preference) {
-  @view-transition {
-    navigation: auto;
-  }
   .site-header {
     view-transition-name: site-header;
   }
@@ -597,53 +611,56 @@ bdi {
 
 /* ---------- logo intro: first page of a session only (flag set in Base.astro) ---------- */
 
-.logo-intro .site-header__logo .logo__peak {
-  stroke-dasharray: 1 2;
-  animation: logo-peak 560ms cubic-bezier(0.65, 0, 0.35, 1) 100ms both;
+.logo-intro .site-header__logo .logo {
+  animation: logo-in 600ms var(--ease-out-expo) 100ms both;
 }
-.logo-intro .site-header__logo .logo__core {
-  animation: logo-core 300ms var(--ease-out-expo) 600ms both;
-}
-@keyframes logo-peak {
+@keyframes logo-in {
   from {
-    stroke-dashoffset: 1.001;
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
   }
   to {
-    stroke-dashoffset: 0;
-  }
-}
-@keyframes logo-core {
-  from {
-    clip-path: inset(100% 0 0 0);
-  }
-  to {
+    opacity: 1;
     clip-path: inset(0 0 0 0);
   }
 }
 
-/* ---------- reveal initial states (only when JS + motion allowed) ---------- */
+/* ---------- reveals (src/lib/motion/init.ts) ---------- */
 
-html.motion:not(.motion-ready) [data-reveal='lines'],
-html.motion:not(.motion-ready) [data-reveal='count'] {
-  visibility: hidden;
-}
-html.motion:not(.motion-ready) [data-reveal='clip'] {
-  clip-path: inset(100% 0 0 0);
-}
-html.motion:not(.motion-ready) [data-reveal='rule'] {
-  transform: scaleX(0);
-}
 .split-line {
   padding-bottom: 0.06em;
 }
+/* A count-up runs its digits over the real figure, which stays in the DOM (transparent) so that screen readers,
+   search engines and print only ever get the real value. */
+.count-up {
+  display: inline-grid;
+}
+.count-up > * {
+  grid-area: 1 / 1;
+}
+.count-up > :first-child {
+  color: transparent;
+}
+.count-up > :last-child {
+  justify-self: end;
+}
+/* Print does not wait for a reveal: what has not scrolled in yet prints as it will look. */
+@media print {
+  [data-reveal],
+  .split-line {
+    clip-path: none !important;
+    transform: none !important;
+  }
+}
 
+/* Transitions take no time at all (not 0.01ms): a panel that turns visible must be focusable at once. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: 0s !important;
     scroll-behavior: auto !important;
   }
 }

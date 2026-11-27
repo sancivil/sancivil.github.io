@@ -1,8 +1,8 @@
-/* The site FAQ, with every figure read from src/data so the answers follow the catalog. */
-import company from '../../data/company.json';
+/* The site FAQ, with every figure read from the content and the technical layer so the answers follow the catalog. */
 import panelData from '../../data/designer/panels.json';
-import { insurance } from '../../data/catalog.json';
-import { contact } from '../../data/site.ts';
+import programme from '../../data/technical/programme.json';
+import { contact, phones } from '../../data/site.ts';
+import { address, hoursParts } from '../../content/index.ts';
 import { batteries, families, headlineCapacity, warranty, type Panel } from '../../components/products/data.ts';
 import { peimar } from '../../components/company/facts.ts';
 import {
@@ -17,7 +17,6 @@ import {
   sizing,
 } from '../../components/solar/data.ts';
 import { fmt } from '../designer/format.ts';
-import { common } from '../../i18n/common.ts';
 import { faq } from '../../i18n/faq.ts';
 import { localizePath, type Locale } from '../../i18n/config.ts';
 import type { Qa } from '../../i18n/solar.ts';
@@ -31,60 +30,75 @@ function coefficient(group: Panel[]): number {
   return [...values][0];
 }
 
-const coefficients = {
+export const coefficients = {
   topcon: coefficient(panels.filter((p) => p.model.endsWith('MNDB'))),
   /** Mono and poly modules of the Revamping Line (SM… and SG…P). */
   mono: coefficient(panels.filter((p) => /^SM\d/.test(p.model))),
   poly: coefficient(panels.filter((p) => p.cellType === 'poly')),
 };
 
+const range = ([from, to]: number[]) => `${fmt(from)}–${fmt(to)}`;
+
+/** Peimar hybrid families shown on the site for one phase, with their power span in kW. */
 function hybridFamilies(phase: 'single_phase' | 'three_phase') {
-  const list = families.hybrid.filter((f) => f.phase === phase && f.powerRange);
+  const list = families.hybrid.flatMap((f) =>
+    f.brand === 'Peimar' && f.phase === phase && f.powerRange ? [{ name: f.name, power: f.powerRange }] : [],
+  );
+  const kw = list.length ? range([Math.min(...list.map((f) => f.power[0])) / 1000, Math.max(...list.map((f) => f.power[1])) / 1000]) : '';
+  return { names: list.map((f) => f.name), kw };
+}
+export const hybrid = { single: hybridFamilies('single_phase'), three: hybridFamilies('three_phase') };
+
+/** The smallest and largest Peimar storage shown on the site, by headline capacity; null when none states one. */
+function storageFacts() {
+  const sized = batteries.flatMap((b) => {
+    const cap = b.brand === 'Peimar' && headlineCapacity(b);
+    return cap ? [{ b, min: Number(cap[0]), max: Number(cap[1]) }] : [];
+  });
+  if (!sized.length) return null;
+  const smallest = sized.reduce((a, x) => (x.min < a.min ? x : a));
+  const largest = sized.reduce((a, x) => (x.max > a.max ? x : a));
+  const modules = largest.b.capacity?.modules;
   return {
-    names: list.map((f) => f.name),
-    kw: [Math.min(...list.map((f) => f.powerRange![0])) / 1000, Math.max(...list.map((f) => f.powerRange![1])) / 1000],
+    min: fmt(smallest.min, 1),
+    minName: smallest.b.name,
+    max: fmt(largest.max, 1),
+    maxName: largest.b.name,
+    modules: String(Array.isArray(modules) ? modules[1] : ''),
   };
 }
-const hybrid = { single: hybridFamilies('single_phase'), three: hybridFamilies('three_phase') };
-
-const sized = batteries.flatMap((b) => {
-  const cap = headlineCapacity(b);
-  return cap ? [{ b, min: Number(cap[0]), max: Number(cap[1]) }] : [];
-});
-const smallest = sized.reduce((a, x) => (x.min < a.min ? x : a));
-const largest = sized.reduce((a, x) => (x.max > a.max ? x : a));
-const largestModules = largest.b.capacity?.modules;
-const batteryYears = Math.min(...sized.map((x) => x.b.warrantyYears ?? Infinity));
-
-const workday = company.hours.find((h) => h.open)!;
+export const storage = storageFacts();
 
 /* Worked examples use Baghdad. */
 const baghdad = cityById('baghdad')!;
 const example = sizing(baghdad, 1000);
 const summerCell = baghdad.design.tnom;
 const listed = ['erbil', 'sulaymaniyah', 'duhok', 'mosul', 'kirkuk', 'baghdad', 'karbala', 'najaf'];
-const range = ([from, to]: number[]) => `${fmt(from)}–${fmt(to)}`;
+/** Quotes go to the WhatsApp number, which also takes calls. */
+const quotePhone = (phones.find((p) => p.whatsapp) ?? phones[0]).display;
 
 /** The ten site-wide questions and answers for a locale, with localized links. */
 export function siteFaq(locale: Locale): Qa[] {
   const name = (id: string) => cityName(cityById(id)!, locale);
-  const address = common[locale].address;
+  const office = address(locale);
   const qas = faq[locale].qas({
     founded: String(peimar.founded),
     brescia: String(peimar.bresciaSince),
-    street: address.street,
-    city: address.city,
+    street: office.street,
+    city: office.city,
+    country: office.country,
     postal: contact.postalCode,
-    open: workday.open!,
-    close: workday.close!,
-    phone: contact.phoneDisplay,
+    hours: hoursParts(locale),
+    phones: phones.map((p) => p.display),
+    whatsapp: phones.filter((p) => p.whatsapp).map((p) => p.display),
+    phone: quotePhone,
     email: contact.email,
     sProduct: String(warranty.modules['S Series'].product),
     sPower: String(warranty.modules['S Series'].power),
     orProduct: String(warranty.modules['OR Series'].product),
     orPower: String(warranty.modules['OR Series'].power),
-    insurer: insurance.provider,
-    batteryYears: String(batteryYears),
+    insurer: programme.insurance.provider,
+    batteryYears: String(warranty.batteries.years),
     ctTopcon: fmt(coefficients.topcon, 2),
     ctMono: fmt(coefficients.mono, 2),
     ctPoly: fmt(coefficients.poly, 2),
@@ -94,14 +108,10 @@ export function siteFaq(locale: Locale): Qa[] {
     lossMono: fmt(heatLoss(summerCell, coefficients.mono), 1),
     lossPoly: fmt(heatLoss(summerCell, coefficients.poly), 1),
     single: hybrid.single.names,
-    singleKw: range(hybrid.single.kw),
+    singleKw: hybrid.single.kw,
     three: hybrid.three.names,
-    threeKw: range(hybrid.three.kw),
-    storeMin: fmt(smallest.min, 1),
-    storeMinName: smallest.b.name,
-    storeMax: fmt(largest.max, 1),
-    storeMaxName: largest.b.name,
-    storeModules: String(Array.isArray(largestModules) ? largestModules[1] : ''),
+    threeKw: hybrid.three.kw,
+    storage,
     sizeCity: name('baghdad'),
     sizeCityId: baghdad.id,
     sizeY: fmt(baghdad.yieldAnnual, 1),

@@ -4,6 +4,7 @@ import { common } from '../../i18n/common.ts';
 import { localizePath, type Locale } from '../../i18n/config.ts';
 import type { ProductNavKey } from '../../data/site.ts';
 import { formatPower, peakEfficiency, rangeRows } from '../company/facts.ts';
+import { productImage } from '../products/images.ts';
 
 interface Props {
   locale: Locale;
@@ -14,12 +15,18 @@ const t = home[locale].range;
 const names = common[locale].productNav;
 const pad = (n: number) => String(n).padStart(2, '0');
 
-const images: Record<ProductNavKey, { src: string; width: number; height: number }> = {
-  hybrid: { src: '/images/products/peimar-hybrid-inverters-batteries.png', width: 1024, height: 1024 },
-  modules: { src: '/images/products/modules/or-series-or10h.webp', width: 658, height: 1400 },
-  onGrid: { src: '/images/products/inverters/psi-x3p30000-tpm.png', width: 720, height: 720 },
-  micro: { src: '/images/products/inverters/psi-x1p1000-mic.png', width: 720, height: 720 },
-  accessories: { src: '/images/products/peimar-accessories.png', width: 1600, height: 1600 },
+/*
+  The width each image is drawn at, for srcset: a square one fills the well's width; the portrait module render fills
+  its height, which in the pinned showcase is the screen's height less the header and the card text.
+*/
+const SQUARE = '(max-width: 720px) 67vw, (max-width: 900px) 276px, (max-width: 1520px) 20vw, 304px';
+const PORTRAIT = '(max-width: 720px) 31vw, (max-width: 900px) 130px, (max-width: 1180px) calc(46.5vh - 258px), calc(46.5vh - 228px)';
+const images: Record<ProductNavKey, ReturnType<typeof productImage> & { sizes: string }> = {
+  hybrid: { ...productImage('/images/products/peimar-hybrid-inverters-batteries.png', [1024, 1024]), sizes: SQUARE },
+  modules: { ...productImage('/images/products/modules/or-series-or10h.webp', [658, 1400]), sizes: PORTRAIT },
+  onGrid: { ...productImage('/images/products/inverters/psi-x3p30000-tpm.png', [720, 720]), sizes: SQUARE },
+  micro: { ...productImage('/images/products/inverters/psi-x1p1000-mic.png', [720, 720]), sizes: SQUARE },
+  accessories: { ...productImage('/images/products/peimar-accessories.png', [1600, 1600]), sizes: SQUARE },
 };
 ---
 
@@ -44,9 +51,7 @@ const images: Record<ProductNavKey, { src: string; width: number; height: number
                   <div class="rg__well" data-reveal="clip">
                     <img
                       class="rg__img"
-                      src={img.src}
-                      width={img.width}
-                      height={img.height}
+                      {...img}
                       alt=""
                       loading="lazy"
                       decoding="async"
@@ -63,12 +68,14 @@ const images: Record<ProductNavKey, { src: string; width: number; height: number
                     </h3>
                     <p class="rg__desc">{t.items[row.key]}</p>
                     <dl class="rg__figs">
-                      <div>
-                        <dt>{power ? t.figures.lines : t.figures.products}</dt>
-                        <dd>
-                          <span class="num">{row.lines}</span>
-                        </dd>
-                      </div>
+                      {row.lines > 0 && (
+                        <div>
+                          <dt>{power ? t.figures.lines : t.figures.products}</dt>
+                          <dd>
+                            <span class="num">{row.lines}</span>
+                          </dd>
+                        </div>
+                      )}
                       {power && (
                         <div>
                           <dt>{t.figures.power}</dt>
@@ -155,7 +162,7 @@ const images: Record<ProductNavKey, { src: string; width: number; height: number
   }
   .rg__well {
     display: grid;
-    place-items: center;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     aspect-ratio: 1 / 1;
     padding: clamp(var(--s-5), 3vw, var(--s-7));
     overflow: hidden;
@@ -276,7 +283,7 @@ const images: Record<ProductNavKey, { src: string; width: number; height: number
     }
   }
 
-  /* Pinned horizontal showcase (desktop and iPad landscape, motion allowed): set by the script below. */
+  /* Pinned horizontal showcase (screens from 901 × 720 px, motion allowed): set by the script below. */
   .rg.is-pinned {
     padding-block: 0;
   }
@@ -318,10 +325,8 @@ const images: Record<ProductNavKey, { src: string; width: number; height: number
   }
   .rg.is-pinned .rg__well {
     aspect-ratio: auto;
-    min-height: 0;
   }
   .rg.is-pinned .rg__img {
-    max-height: 100%;
     will-change: transform;
   }
   .rg.is-pinned .rg__foot {
@@ -439,7 +444,9 @@ const images: Record<ProductNavKey, { src: string; width: number; height: number
     const rtl = document.documentElement.dir === 'rtl';
     const mm = gsap.matchMedia();
 
-    mm.add('(min-width: 901px) and (min-height: 600px)', () => {
+    /* A pinned card is as tall as the screen and its text keeps its height, so on a shorter screen the product left
+       above the text shrinks to a sliver (Arabic and Kurdish text is the tallest); there the cards stay a grid. */
+    mm.add('(min-width: 901px) and (min-height: 720px)', () => {
       section.classList.add('is-pinned');
       const imgs = cards.map((c) => c.querySelector<HTMLElement>('.rg__img'));
       const setters = imgs.map((img) => (img ? gsap.quickSetter(img, 'x', 'px') : null));

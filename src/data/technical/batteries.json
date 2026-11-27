@@ -1,0 +1,106 @@
+[
+  {
+    "key": "psi-x-5-8mst-v2",
+    "name": "PSI-X-5.8MST-V2",
+    "family": "PSI-X-BT Series - HV storage batteries",
+    "role": "Master",
+    "capacity": {
+      "totalKwh": 5.8,
+      "usableKwh": 5.1
+    }
+  },
+  {
+    "key": "psi-x-5-8slv-v2",
+    "name": "PSI-X-5.8SLV-V2",
+    "family": "PSI-X-BT Series - HV storage batteries",
+    "role": "Slave",
+    "capacity": {
+      "ratedKwh": 5.8,
+      "depthOfDischarge": 0.9
+    }
+  },
+  {
+    "key": "psi-x-hs-2-5",
+    "name": "PSI-X-HS 2.5",
+    "family": "PSI-X-HS - HV storage batteries",
+    "role": "Modular: PSI-X-BMS-HS + PSI-X-2.5HS modules + PSI-X-SBOX-HS",
+    "capacity": {
+      "moduleKwh": 2.5,
+      "modules": [
+        2,
+        13
+      ],
+      "nominalKwh": [
+        5.1,
+        33.2
+      ],
+      "usableKwh": [
+        4.6,
+        29.9
+      ],
+      "depthOfDischarge": 0.9
+    }
+  },
+  {
+    "key": "psi-x-hs-3-6",
+    "name": "PSI-X-HS 3.6",
+    "family": "PSI-X-HS - HV storage batteries",
+    "role": "Modular: PSI-X-BMS-HS + PSI-X-3.6HS modules + PSI-X-SBOX-HS",
+    "capacity": {
+      "moduleKwh": 3.6,
+      "modules": [
+        2,
+        13
+      ],
+      "nominalKwh": [
+        7.3,
+        47.9
+      ],
+      "usableKwh": [
+        6.5,
+        43.1
+      ],
+      "depthOfDischarge": 0.9
+    }
+  },
+  {
+    "key": "psi-a-bt3-8s",
+    "name": "PSI-A-BT3.8S",
+    "family": "PSI-A Series",
+    "role": "Battery module for PSI-A All-in-One systems",
+    "capacity": {
+      "moduleKwh": 3.8,
+      "usableKwhPerModule": 3.648,
+      "modules": [
+        1,
+        6
+      ],
+      "totalKwh": [
+        3.8,
+        22.8
+      ],
+      "depthOfDischarge": 0.95
+    }
+  },
+  {
+    "key": "psi-x-prl-bms",
+    "name": "PSI-X-PRL-BMS",
+    "family": "PSI-X-PRL Series",
+    "role": "External parallel BMS",
+    "capacity": null
+  },
+  {
+    "key": "psi-xcab-pcs100-b215",
+    "name": "PSI-XCAB-PCS100-B215",
+    "family": "PSI-XCAB - Cabinets for C&I",
+    "role": "PSI-XCAB-PCS100 | PSI-X-14.3CAB",
+    "capacity": null
+  },
+  {
+    "key": "psi-xcab-x3p50",
+    "name": "PSI-XCAB-X3P50-B100 | PSI-XCAB-X3P50-B200",
+    "family": "PSI-XCAB - Cabinets for C&I",
+    "role": "PSI-XCAB-X3P50 | PSI-X-14.3CAB",
+    "capacity": null
+  }
+]

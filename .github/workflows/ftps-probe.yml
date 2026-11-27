@@ -1,0 +1,41 @@
+# Temporary (phase 0, step W5): proves FTPS from a GitHub runner before the first Go live. Run it from the Actions
+# tab on production once the production environment has its FTPS secrets, then delete this file.
+name: FTPS probe
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    concurrency:
+      group: production
+      cancel-in-progress: false
+    environment: production
+    steps:
+      - name: Check out the deploy scripts
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          sparse-checkout: scripts/deploy
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22.23.4
+
+      - name: Install the FTPS client
+        run: npm ci --ignore-scripts --no-audit --no-fund --prefix scripts/deploy
+
+      - name: Connect, write, rename and delete in .deploy/
+        env:
+          FTPS_HOST: ${{ secrets.FTPS_HOST }}
+          FTPS_USER: ${{ secrets.FTPS_USER }}
+          FTPS_PASSWORD: ${{ secrets.FTPS_PASSWORD }}
+          FTPS_PORT: ${{ secrets.FTPS_PORT }}
+        run: node scripts/deploy/probe.mjs

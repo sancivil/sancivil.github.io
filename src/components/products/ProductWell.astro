@@ -1,34 +1,42 @@
 ---
+import type { WebImage } from '../../content/index.ts';
+
 interface Props {
-  src: string | null;
+  /** An uploaded photo, or a product image with its WebP versions (productImage). */
+  image: Omit<WebImage, 'alt'> | null;
   alt: string;
-  /** Model code set as a typographic tile when there is no photo. */
+  /** Model code set as a typographic tile when there is no image. */
   label: string;
-  size?: [number, number];
+  /** The brand set above the model code on the tile. */
+  brand?: string;
+  /** In the first screen: loaded at once instead of lazily. */
   eager?: boolean;
-  /** Width hint for the browser, e.g. "(max-width: 900px) 40vw, 320px". */
-  sizes?: string;
+  /** The page's largest image (its LCP): fetched ahead of other images. */
+  priority?: boolean;
+  /** The width the image is drawn at, for srcset: e.g. "(max-width: 900px) 40vw, 320px". */
+  sizes: string;
   class?: string;
 }
-const { src, alt, label, size = [720, 720], eager = false, sizes, class: className } = Astro.props;
+const { image, alt, label, brand = 'Peimar', eager = false, priority = false, sizes, class: className } = Astro.props;
 ---
 
-<div class:list={['well', { 'well--tile': !src }, className]} data-reveal="clip">
+<div class:list={['well', { 'well--tile': !image }, className]} data-reveal="clip">
   {
-    src ? (
+    image ? (
       <img
-        src={src}
+        src={image.src}
+        srcset={image.srcset ?? undefined}
         alt={alt}
-        width={size[0]}
-        height={size[1]}
+        width={image.width}
+        height={image.height}
         sizes={sizes}
         loading={eager ? 'eager' : 'lazy'}
         decoding="async"
-        fetchpriority={eager ? 'high' : undefined}
+        fetchpriority={priority ? 'high' : undefined}
       />
     ) : (
       <span class="tile" role="img" aria-label={alt}>
-        <span class="tile__brand">Peimar</span>
+        <span class="tile__brand">{brand}</span>
         <span class="tile__code" dir="ltr">
           {label}
         </span>

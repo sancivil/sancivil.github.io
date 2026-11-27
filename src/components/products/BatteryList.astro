@@ -1,6 +1,6 @@
 ---
 import Figure from './Figure.astro';
-import { headlineCapacity, pad2, type Battery } from './data.ts';
+import { displayName, headlineCapacity, pad2, type Battery } from './data.ts';
 import { localizePath } from '../../i18n/config.ts';
 import type { Locale } from '../../i18n/config.ts';
 import { products } from '../../i18n/products.ts';
@@ -29,10 +29,10 @@ const rows = batteries.map((b) => ({
         <div class="battery__main">
           <h3 class="h3 battery__name">
             <a class="battery__link" href={row.href}>
-              <bdi>{row.b.name}</bdi>
+              <bdi>{displayName(row.b.name)}</bdi>
             </a>
           </h3>
-          {row.text && <p class="battery__family">{row.text.family}</p>}
+          {row.text?.family && <p class="battery__family">{row.text.family}</p>}
         </div>
         <dl class="battery__facts">
           {row.capacity && (

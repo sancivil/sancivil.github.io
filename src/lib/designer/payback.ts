@@ -63,9 +63,13 @@ export type Payback = {
 
 const positive = (v: number | undefined): v is number => typeof v === 'number' && Number.isFinite(v) && v > 0;
 
-/** Savings at a constant price per kWh. Null unless cost, price and production are positive numbers. */
+/** Largest cost, price or bill the tool accepts, in either currency; anything above it is a typing slip. */
+export const MAX_AMOUNT = 1e12;
+export const amountOk = (v: number) => positive(v) && v <= MAX_AMOUNT;
+
+/** Savings at a constant price per kWh. Null unless cost and price are amounts (amountOk) and production is positive. */
 export function payback({ cost, pricePerKwh, annualKwh, useKwh, ageing }: PaybackInput): Payback | null {
-  if (!positive(cost) || !positive(pricePerKwh) || !positive(annualKwh)) return null;
+  if (!amountOk(cost) || !amountOk(pricePerKwh) || !positive(annualKwh)) return null;
   const cap = positive(useKwh) ? useKwh : Infinity;
   const cumulative = [0];
   let crossing: number | null = null;
@@ -88,9 +92,9 @@ export function payback({ cost, pricePerKwh, annualKwh, useKwh, ageing }: Paybac
   };
 }
 
-/** Monthly bill ÷ monthly consumption, or NaN until both are positive. */
+/** Monthly bill ÷ monthly consumption, or NaN until the bill is an amount (amountOk) and the consumption positive. */
 export function priceFromBill(bill: number, monthlyKwh: number): number {
-  return positive(bill) && positive(monthlyKwh) ? bill / monthlyKwh : NaN;
+  return amountOk(bill) && positive(monthlyKwh) ? bill / monthlyKwh : NaN;
 }
 
 export const yearsMonths = (months: number) => ({ years: Math.floor(months / 12), months: months % 12 });

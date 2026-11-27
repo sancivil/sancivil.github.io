@@ -1,5 +1,6 @@
 import { colLeft, rowTop } from './layout.ts';
 import type { CellLayout } from './layout.ts';
+import { pace } from './stage.ts';
 import type { ModuleSpec } from './types.ts';
 
 export function seeded(text: string) {
@@ -20,8 +21,8 @@ function canvas(w: number, h: number) {
   return c;
 }
 
-/** Tangent-space normal map (OpenGL convention, +y up) from the red channel of a height map; edges wrap. */
-function toNormal(height: HTMLCanvasElement, strength: number): HTMLCanvasElement {
+/** Tangent-space normal map (OpenGL convention, +y up) from the red channel of a height map; edges wrap. Yields between rows. */
+async function toNormal(height: HTMLCanvasElement, strength: number): Promise<HTMLCanvasElement> {
   const w = height.width;
   const h = height.height;
   const src = height.getContext('2d', { willReadFrequently: true })!.getImageData(0, 0, w, h).data;
@@ -31,6 +32,7 @@ function toNormal(height: HTMLCanvasElement, strength: number): HTMLCanvasElemen
   const d = img.data;
   const k = strength / 255;
   for (let y = 0; y < h; y++) {
+    await pace();
     const row = y * w;
     const up = ((y + h - 1) % h) * w;
     const down = ((y + 1) % h) * w;
@@ -73,13 +75,22 @@ export interface CellSheet {
   normal: HTMLCanvasElement;
 }
 
-const sheets = new Map<string, CellSheet>();
+const sheets = new Map<string, Promise<CellSheet>>();
 
-export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): CellSheet {
+/** Paints the cell sheet a slice at a time (see `pace`): a 4096 px sheet is over 0.1 s of main-thread work. */
+export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): Promise<CellSheet> {
   const key = [spec.model, spec.width, spec.height, spec.cells, spec.halfCut, spec.back, spec.cellType, maxPx].join('|');
-  const cached = sheets.get(key);
-  if (cached) return cached;
+  let sheet = sheets.get(key);
+  if (!sheet) {
+    sheet = paintCellSheet(spec, L, maxPx);
+    sheets.set(key, sheet);
+    // Keep the two latest (hero and anatomy share one); model pickers would otherwise pile up ~20 MB per model.
+    if (sheets.size > 2) sheets.delete(sheets.keys().next().value!);
+  }
+  return sheet;
+}
 
+async function paintCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): Promise<CellSheet> {
   const s = maxPx / Math.max(L.lamW, L.lamH);
   const w = Math.round(L.lamW * s);
   const h = Math.round(L.lamH * s);
@@ -93,6 +104,11 @@ export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): C
   m.fillRect(0, 0, w, h);
   z.fillStyle = 'rgb(70,70,70)';
   z.fillRect(0, 0, w, h);
+  /** The height map rasterises on the CPU when it is read: reading one pixel keeps that work inside the current slice. */
+  const slice = () => {
+    z.getImageData(0, 0, 1, 1);
+    return pace();
+  };
 
   const rand = seeded(`${spec.model}-${spec.cells}`);
   const poly = spec.cellType === 'poly';
@@ -104,20 +120,23 @@ export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): C
   /** Finger relief only where the lines are at least 3 px apart; finer than that it would alias. */
   const fingerRelief = fingerStep >= 3;
 
-  // Crystalline grain of mono silicon: faint in the colour, a little stronger in the relief.
-  let tile: HTMLCanvasElement | null = null;
+  // Crystalline grain of mono silicon: faint in the colour, a little stronger in the relief. Each canvas takes it from
+  // a tile backed like itself (GPU or CPU memory); a pattern that crosses over makes the main thread wait for the GPU.
+  let grain: { color: CanvasPattern; relief: CanvasPattern } | null = null;
   if (!poly) {
-    tile = canvas(128, 128);
-    const t = tile.getContext('2d')!;
-    const img = t.createImageData(128, 128);
+    const img = new ImageData(128, 128);
     for (let i = 0; i < img.data.length; i += 4) {
       const v = rand() < 0.5 ? 0 : 255;
       img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
       img.data[i + 3] = Math.round(rand() * 255);
     }
-    t.putImageData(img, 0, 0);
+    const tile = (target: CanvasRenderingContext2D, settings?: CanvasRenderingContext2DSettings) => {
+      const t = canvas(128, 128);
+      t.getContext('2d', settings)!.putImageData(img, 0, 0);
+      return target.createPattern(t, 'repeat')!;
+    };
+    grain = { color: tile(c), relief: tile(z, { willReadFrequently: true }) };
   }
-  const grain = tile && z.createPattern(tile, 'repeat');
 
   for (let r = 0; r < L.rows; r++) {
     const y = rowTop(L, r) * s;
@@ -166,7 +185,7 @@ export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): C
       }
       if (grain) {
         z.globalAlpha = 0.12;
-        z.fillStyle = grain;
+        z.fillStyle = grain.relief;
         z.fillRect(x, y, cw, ch);
         z.globalAlpha = 1;
       }
@@ -179,14 +198,15 @@ export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): C
       c.restore();
       z.restore();
     }
+    await slice();
   }
 
   // Colour grain over the silicon only: source-atop keeps the gaps clear.
-  if (tile) {
+  if (grain) {
     c.save();
     c.globalCompositeOperation = 'source-atop';
     c.globalAlpha = 0.045;
-    c.fillStyle = c.createPattern(tile, 'repeat')!;
+    c.fillStyle = grain.color;
     c.fillRect(0, 0, w, h);
     c.restore();
   }
@@ -222,6 +242,7 @@ export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): C
     for (let k = 0; k < L.cols; k++) {
       const x = colLeft(L, k) * s;
       for (let i = 0; i < busbars; i++) ribbon(x + ((i + 0.5) * cw) / busbars - bw / 2, yTop, bw, yBottom - yTop, thin ? 0.3 : 0.9, thin);
+      await slice();
     }
     const pairs = (from: number, y: number) => {
       for (let k = from; k + 1 < L.cols; k += 2) {
@@ -250,15 +271,11 @@ export function drawCellSheet(spec: ModuleSpec, L: CellLayout, maxPx: number): C
   r.fillStyle = '#555';
   r.fillRect(0, 0, relief.width, relief.height);
 
-  const sheet = { color, surface, relief, normal: toNormal(height, 3) };
-  sheets.set(key, sheet);
-  // Keep the two latest (hero and anatomy share one); model pickers would otherwise pile up ~20 MB per model.
-  if (sheets.size > 2) sheets.delete(sheets.keys().next().value!);
-  return sheet;
+  return { color, surface, relief, normal: await toNormal(height, 3) };
 }
 
 /** Satin-brushed aluminium as a 256 px normal tile: streaks run along v, the extrusion direction of the frame. */
-export function drawBrushed(): HTMLCanvasElement {
+export function drawBrushed(): Promise<HTMLCanvasElement> {
   const size = 256;
   const height = canvas(size, size);
   const z = height.getContext('2d', { willReadFrequently: true })!;
@@ -310,7 +327,7 @@ export function drawLabel(spec: ModuleSpec, standards: boolean): HTMLCanvasEleme
           ...(r.fuse ? ([['Maximum series fuse', `${r.fuse} A`]] as [string, string][]) : []),
         ] as [string, string][])
       : []),
-    ['Dimensions', `${spec.width} × ${spec.height} × ${spec.depth} mm`],
+    ['Dimensions', `${spec.height} × ${spec.width} × ${spec.depth} mm`],
   ];
   const top = 168;
   const step = Math.min(52, 380 / rows.length);

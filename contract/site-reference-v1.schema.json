@@ -1,0 +1,593 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "accepts": {
+      "properties": {
+        "maxMinor": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "snapshotVersion": {
+          "const": 1,
+          "type": "number"
+        }
+      },
+      "required": [
+        "snapshotVersion",
+        "maxMinor"
+      ],
+      "type": "object"
+    },
+    "builtAt": {
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+      "type": "string"
+    },
+    "cities": {
+      "items": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "properties": {
+              "ar": {
+                "type": "string"
+              },
+              "ckb": {
+                "type": "string"
+              },
+              "en": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "en",
+              "ckb",
+              "ar"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "codeCommit": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "contentCommit": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "curated": {
+      "properties": {
+        "batteries": {
+          "items": {
+            "properties": {
+              "key": {
+                "maxLength": 80,
+                "minLength": 2,
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "key"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "families": {
+          "items": {
+            "properties": {
+              "group": {
+                "enum": [
+                  "onGrid",
+                  "hybrid",
+                  "micro"
+                ],
+                "type": "string"
+              },
+              "inverterIds": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "key": {
+                "maxLength": 80,
+                "minLength": 2,
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "group",
+              "inverterIds"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "series": {
+          "items": {
+            "properties": {
+              "cells": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "efficiencyMax": {
+                "type": "number"
+              },
+              "finishes": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "key": {
+                "maxLength": 80,
+                "minLength": 2,
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "panelIds": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "powerRange": {
+                "items": false,
+                "maxItems": 2,
+                "minItems": 2,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              "render": {
+                "anyOf": [
+                  {
+                    "properties": {
+                      "height": {
+                        "maximum": 9007199254740991,
+                        "minimum": -9007199254740991,
+                        "type": "integer"
+                      },
+                      "src": {
+                        "type": "string"
+                      },
+                      "width": {
+                        "maximum": 9007199254740991,
+                        "minimum": -9007199254740991,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "src",
+                      "width",
+                      "height"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "seriesFamily": {
+                "enum": [
+                  "S Series",
+                  "OR Series",
+                  "DR Series"
+                ],
+                "type": "string"
+              },
+              "warranty": {
+                "properties": {
+                  "power": {
+                    "type": "number"
+                  },
+                  "product": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "product",
+                  "power"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "key",
+              "name",
+              "seriesFamily",
+              "warranty",
+              "powerRange",
+              "efficiencyMax",
+              "cells",
+              "finishes",
+              "panelIds",
+              "render"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "series",
+        "families",
+        "batteries"
+      ],
+      "type": "object"
+    },
+    "inverters": {
+      "items": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "phase": {
+            "enum": [
+              "single_phase",
+              "three_phase"
+            ],
+            "type": "string"
+          },
+          "pnomAc": {
+            "type": "number"
+          },
+          "type": {
+            "enum": [
+              "hybrid",
+              "on-grid",
+              "micro"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "model",
+          "type",
+          "phase",
+          "pnomAc"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "panels": {
+      "items": {
+        "properties": {
+          "bifacial": {
+            "type": "boolean"
+          },
+          "finish": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "power": {
+            "type": "number"
+          },
+          "series": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "model",
+          "finish",
+          "series",
+          "power",
+          "bifacial"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "policy": {
+      "properties": {
+        "linkHosts": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "mapsHosts": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "socialHosts": {
+          "properties": {
+            "facebook": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "instagram": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "linkedin": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "telegram": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "tiktok": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "x": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "youtube": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "facebook",
+            "instagram",
+            "tiktok",
+            "youtube",
+            "linkedin",
+            "telegram",
+            "x"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "linkHosts",
+        "mapsHosts",
+        "socialHosts"
+      ],
+      "type": "object"
+    },
+    "publishId": {
+      "anyOf": [
+        {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "routes": {
+      "properties": {
+        "accessories": {
+          "type": "string"
+        },
+        "battery": {
+          "type": "string"
+        },
+        "family": {
+          "type": "string"
+        },
+        "item": {
+          "type": "string"
+        },
+        "line": {
+          "properties": {
+            "accessories": {
+              "type": "string"
+            },
+            "hybrid": {
+              "type": "string"
+            },
+            "micro": {
+              "type": "string"
+            },
+            "modules": {
+              "type": "string"
+            },
+            "onGrid": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "modules",
+            "hybrid",
+            "onGrid",
+            "micro",
+            "accessories"
+          ],
+          "type": "object"
+        },
+        "localePrefix": {
+          "properties": {
+            "ar": {
+              "type": "string"
+            },
+            "ckb": {
+              "type": "string"
+            },
+            "en": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "en",
+            "ckb",
+            "ar"
+          ],
+          "type": "object"
+        },
+        "projects": {
+          "type": "string"
+        },
+        "series": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "localePrefix",
+        "series",
+        "family",
+        "battery",
+        "item",
+        "accessories",
+        "projects",
+        "line"
+      ],
+      "type": "object"
+    },
+    "schema": {
+      "const": "faraday.site-reference",
+      "type": "string"
+    },
+    "sitePaths": {
+      "items": {
+        "properties": {
+          "height": {
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "width": {
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "width",
+          "height"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "version": {
+      "const": 1,
+      "type": "number"
+    },
+    "vocab": {
+      "properties": {
+        "capacityKeys": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "chemistries": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "docLangs": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "socialNetworks": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "specKeys": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "chemistries",
+        "capacityKeys",
+        "specKeys",
+        "docLangs",
+        "socialNetworks"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema",
+    "version",
+    "builtAt",
+    "codeCommit",
+    "contentCommit",
+    "publishId",
+    "accepts",
+    "routes",
+    "curated",
+    "panels",
+    "inverters",
+    "cities",
+    "vocab",
+    "policy",
+    "sitePaths"
+  ],
+  "type": "object"
+}

@@ -13,38 +13,6 @@ const en = {
     commercial: 'Commercial',
     agriculture: 'Agriculture',
   },
-  projects: {
-    '50-kwp-for-agriculture-land': {
-      title: 'Agricultural land',
-      line: 'Solar power for agricultural land.',
-      alt: '',
-    },
-    '30-kwp-for-a-big-company': {
-      title: 'A large company',
-      line: 'Rows of modules across a large metal roof.',
-      alt: 'Rows of solar modules across a large metal roof, with the city and hills behind',
-    },
-    '12kwp-for-apartments': {
-      title: 'Apartments',
-      line: 'A long tilted array on a gravel rooftop.',
-      alt: 'A long tilted solar array on steel frames over a gravel rooftop',
-    },
-    '3-6-kwp-for-a-house': {
-      title: 'A house',
-      line: 'A tilted array on a flat house roof.',
-      alt: 'A tilted solar array on a flat house roof, with high-rise towers and hills behind',
-    },
-    '3-kwp-for-emergency-power-water-station': {
-      title: 'Emergency power for a water station',
-      line: 'Ground-mounted modules that supply emergency power.',
-      alt: 'Ground-mounted solar modules beside the buildings of a water station',
-    },
-    '1-8-kwp-for-advertising-board': {
-      title: 'Advertising board',
-      line: 'Four modules that power an advertising board.',
-      alt: 'Four solar modules on a rooftop frame against the city skyline',
-    },
-  },
   methods: {
     phone: 'Phone',
     email: 'Email',
@@ -54,8 +22,6 @@ const en = {
     office: 'Office',
     maps: 'Open in Google Maps',
     hours: 'Hours',
-    days: 'Saturday–Thursday',
-    friday: 'Friday',
     closed: 'Closed',
   },
   peimar: {
@@ -104,33 +70,6 @@ const en = {
     history: {
       eyebrow: 'Our story',
       title: (year: number) => `From ${year} to today.`,
-      milestones: {
-        founded: {
-          title: 'Faraday is founded',
-          text: 'The company starts out in Sulaymaniyah, working in solar energy.',
-        },
-        projects: {
-          title: 'First solar projects',
-          text: 'Faraday begins its first solar projects.',
-        },
-        peimar: {
-          title: 'Peimar agent for all of Iraq',
-          text: 'Peimar, the Italian manufacturer, appoints Faraday as its agent for the whole country.',
-        },
-        renewal: {
-          title: 'Agency renewed for ten years',
-          text: 'Peimar renews its agency agreement with Faraday for ten years.',
-        },
-        capacity: {
-          title: '100 MW supplied and installed',
-          text: 'Faraday reaches 100 MW of solar capacity supplied and installed.',
-        },
-      },
-      today: {
-        label: 'Today',
-        title: 'Exclusive Peimar agent in Iraq',
-        text: 'Main agent with 100 distributors across Iraq, and more than 4% of the country’s total solar power.',
-      },
     },
     services: {
       eyebrow: 'Services',
@@ -178,12 +117,9 @@ const en = {
   projectsPage: {
     meta: {
       title: 'Projects',
-      description:
-        'Six Peimar solar systems installed by Faraday, from a 1.8 kWp advertising board to 50 kWp for agricultural land.',
     },
     eyebrow: 'Projects',
-    title: (min: number, max: number) => `Systems we installed, from ${min} to ${max} kWp.`,
-    lead: 'Homes, apartments, a company, a water station, an advertising board and agricultural land.',
+    title: (min: number, max: number) => `Some of the systems we installed, from ${min} to ${max} kWp.`,
     listLabel: 'Installed systems',
     cta: {
       title: 'Planning a system of your own?',
@@ -194,8 +130,8 @@ const en = {
   contactPage: {
     meta: {
       title: 'Contact',
-      description:
-        'Call, message on WhatsApp or visit Faraday on Qasmlu Street, Sulaymaniyah. Saturday to Thursday, 09:00–17:00.',
+      description: (street: string, city: string, hours: string) =>
+        `Call, message on WhatsApp or visit Faraday on ${street}, ${city}.${hours && ` ${hours}.`}`,
     },
     eyebrow: 'Contact',
     title: 'Tell us what you want to power.',
@@ -246,8 +182,6 @@ const en = {
 };
 
 export type CompanyStrings = typeof en;
-export type ProjectSlug = keyof CompanyStrings['projects'];
-export type MilestoneKey = keyof CompanyStrings['about']['history']['milestones'];
 
 const ar: CompanyStrings = {
   years: 'سنة',
@@ -259,38 +193,6 @@ const ar: CompanyStrings = {
     commercial: 'تجاري',
     agriculture: 'زراعي',
   },
-  projects: {
-    '50-kwp-for-agriculture-land': {
-      title: 'أرض زراعية',
-      line: 'منظومة شمسية تخدم أرضًا زراعية.',
-      alt: '',
-    },
-    '30-kwp-for-a-big-company': {
-      title: 'شركة كبيرة',
-      line: 'صفوف من الألواح تغطي سقفًا معدنيًا واسعًا.',
-      alt: 'صفوف من الألواح الشمسية على سقف معدني واسع، وخلفها المدينة والتلال',
-    },
-    '12kwp-for-apartments': {
-      title: 'عمارة سكنية',
-      line: 'صف طويل من الألواح المائلة فوق سطح مفروش بالحصى.',
-      alt: 'صف طويل من الألواح الشمسية المائلة على هياكل حديدية فوق سطح مفروش بالحصى',
-    },
-    '3-6-kwp-for-a-house': {
-      title: 'منزل',
-      line: 'ألواح مائلة فوق سطح منزل.',
-      alt: 'ألواح شمسية مائلة فوق سطح منزل، وخلفها أبراج سكنية وتلال',
-    },
-    '3-kwp-for-emergency-power-water-station': {
-      title: 'طاقة احتياطية لمحطة مياه',
-      line: 'ألواح مثبّتة على الأرض تشغّل المحطة عند انقطاع الكهرباء.',
-      alt: 'ألواح شمسية مثبّتة على الأرض قرب مباني محطة مياه',
-    },
-    '1-8-kwp-for-advertising-board': {
-      title: 'لوحة إعلانية',
-      line: 'أربعة ألواح تشغّل لوحة إعلانية.',
-      alt: 'أربعة ألواح شمسية على هيكل فوق أحد الأسطح، وخلفها أفق المدينة',
-    },
-  },
   methods: {
     phone: 'الهاتف',
     email: 'البريد الإلكتروني',
@@ -300,8 +202,6 @@ const ar: CompanyStrings = {
     office: 'المكتب',
     maps: 'افتح الموقع في خرائط Google',
     hours: 'أوقات الدوام',
-    days: 'من السبت إلى الخميس',
-    friday: 'الجمعة',
     closed: 'عطلة',
   },
   peimar: {
@@ -350,33 +250,6 @@ const ar: CompanyStrings = {
     history: {
       eyebrow: 'مسيرتنا',
       title: (year: number) => `من ${year} حتى اليوم.`,
-      milestones: {
-        founded: {
-          title: 'تأسيس Faraday',
-          text: 'بدأت الشركة عملها في السليمانية، وتخصصت في الطاقة الشمسية.',
-        },
-        projects: {
-          title: 'أولى مشاريع الطاقة الشمسية',
-          text: 'بدأت Faraday تنفيذ أولى مشاريعها في الطاقة الشمسية.',
-        },
-        peimar: {
-          title: 'وكالة Peimar لعموم العراق',
-          text: 'اعتمدت Peimar الإيطالية شركة Faraday وكيلًا رسميًا لها في عموم العراق.',
-        },
-        renewal: {
-          title: 'تجديد الوكالة عشر سنوات',
-          text: 'جدّدت Peimar عقد وكالتها مع Faraday لعشر سنوات.',
-        },
-        capacity: {
-          title: '100 MW وُرّدت ورُكّبت',
-          text: 'بلغ مجموع ما ورّدته Faraday وركّبته من منظومات الطاقة الشمسية 100 MW.',
-        },
-      },
-      today: {
-        label: 'اليوم',
-        title: 'الوكيل الحصري لـ\u00a0Peimar في العراق',
-        text: 'الوكيل الرئيسي مع 100 موزّع في أنحاء العراق، وأكثر من 4% من مجمل الطاقة الشمسية في البلاد.',
-      },
     },
     services: {
       eyebrow: 'خدماتنا',
@@ -424,12 +297,9 @@ const ar: CompanyStrings = {
   projectsPage: {
     meta: {
       title: 'مشاريعنا',
-      description:
-        'ست منظومات شمسية بمنتجات Peimar ركّبتها Faraday، من لوحة إعلانية بقدرة 1.8 kWp إلى أرض زراعية بقدرة 50 kWp.',
     },
     eyebrow: 'مشاريعنا',
-    title: (min: number, max: number) => `ركّبنا منظومات من ${min} إلى ${ltr(`${max} kWp`)}.`,
-    lead: 'في منازل وعمارات سكنية، وفي شركة ومحطة مياه، وعلى لوحة إعلانية وأرض زراعية.',
+    title: (min: number, max: number) => `بعض المنظومات التي ركّبناها، من ${min} إلى ${ltr(`${max} kWp`)}.`,
     listLabel: 'المنظومات التي ركّبناها',
     cta: {
       title: 'تريد منظومة مثلها؟',
@@ -440,8 +310,8 @@ const ar: CompanyStrings = {
   contactPage: {
     meta: {
       title: 'اتصل بنا',
-      description:
-        'اتصل بنا أو راسلنا على واتساب، أو زر مكتب Faraday في شارع قاسملو بالسليمانية. الدوام من السبت إلى الخميس، 09:00–17:00.',
+      description: (street: string, city: string, hours: string) =>
+        `اتصل بنا أو راسلنا على واتساب، أو زر مكتب Faraday في ${street} ب${city}.${hours && ` الدوام ${hours}.`}`,
     },
     eyebrow: 'تواصل معنا',
     title: 'ماذا تريد أن تشغّل بالطاقة الشمسية؟',
@@ -501,38 +371,6 @@ const ckb: CompanyStrings = {
     commercial: 'بازرگانی',
     agriculture: 'کشتوکاڵ',
   },
-  projects: {
-    '50-kwp-for-agriculture-land': {
-      title: 'زەویی کشتوکاڵی',
-      line: 'سیستەمی وزەی خۆر بۆ زەوییەکی کشتوکاڵی.',
-      alt: '',
-    },
-    '30-kwp-for-a-big-company': {
-      title: 'کۆمپانیایەکی گەورە',
-      line: 'ڕیزەکانی پانێڵ بانێکی کانزایی گەورەیان داپۆشیوە.',
-      alt: 'ڕیزی پانێڵی خۆر لەسەر بانێکی کانزایی فراوان، شار و گردەکانیش لە پشتەوەن',
-    },
-    '12kwp-for-apartments': {
-      title: 'باڵەخانەی شوقە',
-      line: 'ڕیزێکی درێژ لە پانێڵی لار، لەسەر بانێکی چەوڕێژ.',
-      alt: 'ڕیزێکی درێژ لە پانێڵی خۆری لار، لەسەر چوارچێوەی پۆڵا و بانێکی چەوڕێژ',
-    },
-    '3-6-kwp-for-a-house': {
-      title: 'خانوو',
-      line: 'پانێڵی لار لەسەر بانی خانوویەک.',
-      alt: 'پانێڵی خۆری لار لەسەر بانی خانوویەک، تاوەرە بەرزەکان و گردەکانیش لە پشتەوەن',
-    },
-    '3-kwp-for-emergency-power-water-station': {
-      title: 'کارەبای یەدەگ بۆ وێستگەی ئاو',
-      line: 'کە کارەبا دەبڕێت، پانێڵەکانی سەر زەوی وێستگەکە کار پێ دەکەن.',
-      alt: 'پانێڵی خۆری سەر زەوی لە تەنیشت بیناکانی وێستگەیەکی ئاو',
-    },
-    '1-8-kwp-for-advertising-board': {
-      title: 'تابلۆی ڕیکلام',
-      line: 'چوار پانێڵ کارەبای تابلۆیەکی ڕیکلام دابین دەکەن.',
-      alt: 'چوار پانێڵی خۆر لەسەر چوارچێوەیەک لە سەربانێک، ئاسۆی شاریش لە پشتەوەیە',
-    },
-  },
   methods: {
     phone: 'تەلەفۆن',
     email: 'ئیمەیڵ',
@@ -542,8 +380,6 @@ const ckb: CompanyStrings = {
     office: 'نووسینگە',
     maps: 'شوێنەکە لە Google Maps ببینە',
     hours: 'کاتی دەوام',
-    days: 'شەممە تا پێنجشەممە',
-    friday: 'هەینی',
     closed: 'پشوو',
   },
   peimar: {
@@ -592,33 +428,6 @@ const ckb: CompanyStrings = {
     history: {
       eyebrow: 'چیرۆکی ئێمە',
       title: (year: number) => `لە ${year}ەوە تا ئەمڕۆ.`,
-      milestones: {
-        founded: {
-          title: 'دامەزرانی Faraday',
-          text: 'کۆمپانیاکە لە سلێمانی دەستی بە کار کرد، لە بواری وزەی خۆردا.',
-        },
-        projects: {
-          title: 'یەکەم پڕۆژەکانی وزەی خۆر',
-          text: 'Faraday دەستی بە جێبەجێکردنی یەکەم پڕۆژەکانی وزەی خۆر کرد.',
-        },
-        peimar: {
-          title: 'بریکاری Peimar بۆ هەموو عێراق',
-          text: 'کۆمپانیای ئیتاڵیی Peimar بریکارنامەی فەرمیی بۆ هەموو عێراق دا بە Faraday.',
-        },
-        renewal: {
-          title: 'نوێکردنەوەی بریکارنامە بۆ 10 ساڵ',
-          text: 'Peimar بۆ 10 ساڵ بریکارنامەکەی نوێ کردەوە.',
-        },
-        capacity: {
-          title: 'گەیشتن بە 100 MW',
-          text: 'Faraday گەیشتە دابینکردن و دامەزراندنی 100 MW وزەی خۆر.',
-        },
-      },
-      today: {
-        label: 'ئەمڕۆ',
-        title: 'بریکاری تایبەتی Peimar لە عێراق',
-        text: 'بریکاری سەرەکی لەگەڵ 100 دابەشکەر لە سەرانسەری عێراق، و زیاتر لە 4% لە کۆی وزەی خۆری وڵات.',
-      },
     },
     services: {
       eyebrow: 'خزمەتگوزارییەکانمان',
@@ -666,12 +475,9 @@ const ckb: CompanyStrings = {
   projectsPage: {
     meta: {
       title: 'پڕۆژەکان',
-      description:
-        'Faraday شەش سیستەمی خۆری Peimar ی دامەزراندووە، لە تابلۆیەکی ڕیکلامی 1.8 kWp ەوە تا زەوییەکی کشتوکاڵیی 50 kWp.',
     },
     eyebrow: 'پڕۆژەکان',
-    title: (min: number, max: number) => `لە ${min} تا ${ltr(`${max} kWp`)} سیستەممان دامەزراندووە.`,
-    lead: 'بۆ خانوو و شوقە، بۆ کۆمپانیا و وێستگەی ئاو، بۆ تابلۆی ڕیکلام و زەویی کشتوکاڵی.',
+    title: (min: number, max: number) => `هەندێک لەو سیستەمانەی دامانمەزراندوون، لە ${min} تا ${ltr(`${max} kWp`)}.`,
     listLabel: 'ئەو سیستەمانەی دامانمەزراندوون',
     cta: {
       title: 'سیستەمێکی وەک ئەمانەت دەوێت؟',
@@ -682,8 +488,8 @@ const ckb: CompanyStrings = {
   contactPage: {
     meta: {
       title: 'پەیوەندی',
-      description:
-        'تەلەفۆنمان بۆ بکە، لە واتسئاپ نامە بنێرە یان سەردانی نووسینگەی Faraday بکە لە شەقامی قاسملۆ لە سلێمانی. دەوام شەممە تا پێنجشەممە، 09:00–17:00.',
+      description: (street: string, city: string, hours: string) =>
+        `تەلەفۆنمان بۆ بکە، لە واتسئاپ نامە بنێرە یان سەردانی نووسینگەی Faraday بکە لە ${street} لە ${city}.${hours && ` دەوام ${hours}.`}`,
     },
     eyebrow: 'پەیوەندی',
     title: 'دەتەوێت چی بە وزەی خۆر کار پێ بکەیت؟',

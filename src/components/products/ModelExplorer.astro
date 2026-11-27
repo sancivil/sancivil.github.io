@@ -81,7 +81,7 @@ const models = panels.map((p) => ({
   k: values(p),
   spec: specFromPanel(p),
   designer: localizePath(`/designer/?module=${encodeURIComponent(p.id)}`, locale),
-  quote: whatsappLink(t.quoteMessage(panelName(p))),
+  quote: whatsappLink(t.quoteMessage(series.brand, panelName(p))),
 }));
 
 const sheets = panels.flatMap((p) =>

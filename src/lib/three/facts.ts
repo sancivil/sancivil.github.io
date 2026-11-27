@@ -4,7 +4,7 @@ export type CellTech = 'topcon' | 'perc' | 'poly' | 'mono';
 
 /**
  * What the anatomy captions may say about a module. Every rule follows research/peimar-notes.md
- * and src/data/catalog.json: MNDB = TOPCon bifacial double glass, …MN = N-type TOPCon,
+ * and src/data/technical/series.json: MNDB = TOPCon bifacial double glass, …MN = N-type TOPCon,
  * SA/SF/OR10H without MN = PERC, SG…P = polycrystalline, OR10/SA = M10 cells, OR12 = M12.
  */
 export interface ModuleFacts {

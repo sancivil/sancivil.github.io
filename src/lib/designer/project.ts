@@ -21,6 +21,15 @@ export function createProject(): Project {
   };
 }
 
+/**
+ * Project data typed in, or a module or inverter chosen: replacing the project would lose work. A city alone (a city
+ * page links to the Designer with one) is not work.
+ */
+export const hasWork = (p: Project) =>
+  [p.name, p.number, p.client, p.address, p.notes].some((v) => v.trim() !== '') ||
+  p.subArrays.some((s) => s.panelId || s.name.trim() !== '') ||
+  p.inverters.some((b) => b.inverterId);
+
 function nextId(prefix: string, ids: string[]): string {
   const max = ids.reduce((m, id) => Math.max(m, Number(id.slice(prefix.length)) || 0), 0);
   return `${prefix}${max + 1}`;

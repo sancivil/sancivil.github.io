@@ -1,11 +1,13 @@
 ---
 import ProductWell from './ProductWell.astro';
+import { productImage } from './data.ts';
 
 interface Props {
   id: string;
   title: string;
   lead?: string;
   meta?: string;
+  /** A product image of public/images/products. */
   image?: { src: string; size: [number, number]; alt: string };
 }
 const { id, title, lead, meta, image } = Astro.props;
@@ -20,12 +22,12 @@ const { id, title, lead, meta, image } = Astro.props;
   {
     image && (
       <ProductWell
-        src={image.src}
-        size={image.size}
+        image={productImage(image.src, image.size)}
         alt={image.alt}
         label={title}
         eager
-        sizes="(max-width: 900px) 100vw, 50vw"
+        priority
+        sizes="(max-width: 900px) 60vw, (max-width: 1440px) 28vw, 400px"
         class="head__well"
       />
     )

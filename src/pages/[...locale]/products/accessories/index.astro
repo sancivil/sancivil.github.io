@@ -3,11 +3,13 @@ import Base from '../../../../layouts/Base.astro';
 import PageIntro from '../../../../components/products/PageIntro.astro';
 import Stats from '../../../../components/products/Stats.astro';
 import ProductWell from '../../../../components/products/ProductWell.astro';
-import { accessories, categoryImage, docInfo } from '../../../../components/products/data.ts';
-import { localeFromParam, localeParams } from '../../../../i18n/config.ts';
+import ItemList from '../../../../components/products/ItemList.astro';
+import { accessories, categoryImage, displayName, docInfo, productImage } from '../../../../components/products/data.ts';
+import { accessoryGroups, categoryText, itemsByLine } from '../../../../content/index.ts';
+import { localeFromParam, localeParams, localizePath } from '../../../../i18n/config.ts';
 import { common } from '../../../../i18n/common.ts';
 import { products } from '../../../../i18n/products.ts';
-import { accessoryGroup, accessoryText, catalogText } from '../../../../i18n/catalog-text.ts';
+import { accessoryText } from '../../../../i18n/catalog-text.ts';
 
 export const getStaticPaths = () => localeParams();
 const locale = localeFromParam(Astro.params.locale);
@@ -15,18 +17,25 @@ const t = products[locale];
 const p = t.accessoriesPage;
 const nav = common[locale];
 
-const groups = [...new Set(accessories.map((a) => a.group))].map((group, i) => ({
-  id: `group-${i + 1}`,
-  name: accessoryGroup(locale, group),
-  items: accessories
-    .filter((a) => a.group === group)
-    .map((a) => ({
+/* Groups in the owner's order; a group with nothing in it is left out. */
+const groups = accessoryGroups
+  .map((group) => ({ group, list: accessories.filter((a) => a.group === group.key) }))
+  .filter(({ list }) => list.length > 0)
+  .map(({ group, list }, i) => ({
+    id: `group-${i + 1}`,
+    name: group.name[locale],
+    items: list.map((a) => ({
       a,
+      name: displayName(a.name),
       text: accessoryText(locale, a.slug),
-      variants: a.description?.includes(' | ') ? a.description.split(' | ') : null,
       sheet: a.datasheets[0] ? { url: a.datasheets[0].url, ...docInfo(a.datasheets[0]) } : null,
     })),
-}));
+  }));
+const productCount = accessories.length + itemsByLine('accessories').length;
+/* Thumbnails come with the owner's photos; their styles are written only then, so pages without photos stay as they were. */
+const thumbs = accessories.some((a) => a.photos.length > 0);
+const thumbCss =
+  '.item__thumb{display:block;width:72px;aspect-ratio:1;margin-bottom:var(--s-2);object-fit:contain;border-radius:var(--r-2);background:var(--paper-2)}';
 ---
 
 <Base title={p.title} description={p.description}>
@@ -35,91 +44,122 @@ const groups = [...new Set(accessories.map((a) => a.group))].map((group, i) => (
     crumbs={[{ label: nav.nav.products, href: '/products/' }, { label: nav.productNav.accessories }]}
     eyebrow={p.eyebrow}
     title={nav.productNav.accessories}
-    lead={catalogText[locale].categories.accessories}
+    lead={categoryText(locale, 'accessories')}
     display
   >
     <Stats
       items={[
-        { label: p.stat.products, value: String(accessories.length), count: true },
-        { label: p.stat.groups, value: String(groups.length), count: true },
+        { label: p.stat.products, value: String(productCount), count: true },
+        ...(groups.length ? [{ label: p.stat.groups, value: String(groups.length), count: true }] : []),
       ]}
     />
   </PageIntro>
 
-  <section class="section acc">
-    <div class="container acc__grid">
-      <div class="acc__aside">
-        <ProductWell
-          src={categoryImage.accessories.src}
-          size={categoryImage.accessories.size}
-          alt={t.categoryAlt.accessories}
-          label={nav.productNav.accessories}
-          sizes="(max-width: 900px) 100vw, 30vw"
-          eager
-          class="acc__well"
-        />
-        <ul role="list" class="acc__index">
-          {
-            groups.map((g, i) => (
-              <li>
-                <a href={`#${g.id}`}>
-                  <span class="mono">{String(i + 1).padStart(2, '0')}</span>
-                  {g.name}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-
-      <div class="acc__groups">
-        {
-          groups.map((g, i) => (
-            <section class="group" aria-labelledby={g.id}>
-              <h2 id={g.id} class="group__title">
-                <span class="group__index mono">{String(i + 1).padStart(2, '0')}</span>
-                {g.name}
-              </h2>
-              <ul role="list" class="group__list">
-                {g.items.map((item) => (
-                  <li class="item">
-                    <p class="item__code" dir="ltr">
-                      {item.a.name}
-                    </p>
-                    <div class="item__text">
-                      {item.text && <p>{item.text}</p>}
-                      {item.variants && (
-                        <p class="item__variants">
-                          <span class="item__label">{p.variants}</span>
-                          <span class="mono" dir="ltr">
-                            {item.variants.join(' · ')}
-                          </span>
-                        </p>
-                      )}
-                    </div>
-                    {item.sheet && (
-                      <a class="item__sheet" href={item.sheet.url} target="_blank" rel="noopener">
-                        <span>{t.label.datasheet}</span>
-                        <span class="item__meta">
-                          PDF{item.sheet.lang && ` · ${t.docLang[item.sheet.lang]}`}
-                        </span>
-                        <span class="item__arrow" aria-hidden="true">
-                          ↗
-                        </span>
-                        <span class="sr-only">
-                          {item.a.name} {t.newTab}
-                        </span>
-                      </a>
-                    )}
+  {
+    accessories.length > 0 && (
+      <section class="section acc">
+        {thumbs && <style is:inline set:html={thumbCss} />}
+        <div class="container acc__grid">
+          <div class="acc__aside">
+            <ProductWell
+              image={productImage(categoryImage.accessories.src, categoryImage.accessories.size)}
+              alt={t.categoryAlt.accessories}
+              label={nav.productNav.accessories}
+              sizes="(max-width: 720px) 55vw, (max-width: 900px) 38vw, (max-width: 1440px) 26vw, 364px"
+              eager
+              priority
+              class="acc__well"
+            />
+            <ul role="list" class="acc__index">
+              {
+                groups.map((g, i) => (
+                  <li>
+                    <a href={`#${g.id}`}>
+                      <span class="mono">{String(i + 1).padStart(2, '0')}</span>
+                      {g.name}
+                    </a>
                   </li>
-                ))}
-              </ul>
-            </section>
-          ))
-        }
-      </div>
-    </div>
-  </section>
+                ))
+              }
+            </ul>
+          </div>
+
+          <div class="acc__groups">
+            {
+              groups.map((g, i) => (
+                <section class="group" aria-labelledby={g.id}>
+                  <h2 id={g.id} class="group__title">
+                    <span class="group__index mono">{String(i + 1).padStart(2, '0')}</span>
+                    {g.name}
+                  </h2>
+                  <ul role="list" class="group__list">
+                    {g.items.map((item) => (
+                      <li class="item">
+                        <p class="item__code" dir="ltr">
+                          {item.a.photos[0] && (
+                            <img
+                              class="item__thumb"
+                              src={item.a.photos[0].src}
+                              srcset={item.a.photos[0].srcset ?? undefined}
+                              sizes="72px"
+                              width={item.a.photos[0].width}
+                              height={item.a.photos[0].height}
+                              alt={item.a.photos[0].alt[locale] ?? item.name}
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          )}
+                          {item.name}
+                        </p>
+                        <div class="item__text">
+                          {item.text && <p>{item.text}</p>}
+                          {item.a.variants && (
+                            <p class="item__variants">
+                              <span class="item__label">{p.variants}</span>
+                              <span class="mono" dir="ltr">
+                                {item.a.variants.join(' · ')}
+                              </span>
+                            </p>
+                          )}
+                        </div>
+                        {item.sheet && (
+                          <a class="item__sheet" href={item.sheet.url} target="_blank" rel="noopener">
+                            <span>{t.label.datasheet}</span>
+                            <span class="item__meta">
+                              PDF{item.sheet.lang && ` · ${t.docLang[item.sheet.lang]}`}
+                            </span>
+                            <span class="item__arrow" aria-hidden="true">
+                              ↗
+                            </span>
+                            <span class="sr-only">
+                              {item.name} {t.newTab}
+                            </span>
+                          </a>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <ItemList locale={locale} items={itemsByLine('accessories')} />
+
+  {
+    productCount === 0 && (
+      <section class="section">
+        <div class="container prose">
+          <p class="lead measure">{t.emptyLine.text}</p>
+          <p><a class="btn btn--sun" href={localizePath('/contact/', locale)}>{t.emptyLine.action}</a></p>
+        </div>
+      </section>
+    )
+  }
 </Base>
 
 <style>

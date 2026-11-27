@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   AGEING,
+  MAX_AMOUNT,
   PAYBACK_YEARS,
+  amountOk,
   designTech,
   money,
   moduleTech,
@@ -23,7 +25,7 @@ const json = (path: string) => JSON.parse(readFileSync(new URL(path, import.meta
 const panels: Panel[] = json('../src/data/designer/panels.json');
 const inverters: Inverter[] = json('../src/data/designer/inverters.json');
 const cities: City[] = json('../src/data/iraq-solar.json').cities;
-const batteries: Battery[] = json('../src/data/catalog.json').batteries;
+const batteries: Battery[] = json('../src/data/technical/batteries.json');
 const catalog: Catalog = { panels, inverters };
 
 const flat = { firstYear: 0, perYear: 0 };
@@ -96,6 +98,17 @@ test('empty, zero, negative and absurd inputs give no result instead of NaN or I
     assert.ok([r.yearly, r.monthly, r.total, ...r.cumulative].every(Number.isFinite));
     if (r.months !== null) assert.ok(r.months >= 1 && r.months <= PAYBACK_YEARS * 12 && Number.isInteger(r.months));
   }
+});
+
+test('amounts above MAX_AMOUNT are typing slips: no payback and no price from the bill', () => {
+  const ok = { cost: 9_000_000, pricePerKwh: 150, annualKwh: 12_000, ageing: AGEING.perc };
+  assert.ok(amountOk(MAX_AMOUNT) && amountOk(0.01));
+  for (const bad of [MAX_AMOUNT + 1, 1e20, 0, -5, NaN, Infinity]) assert.equal(amountOk(bad), false, `${bad}`);
+  assert.ok(payback({ ...ok, cost: MAX_AMOUNT }));
+  assert.equal(payback({ ...ok, cost: MAX_AMOUNT + 1 }), null);
+  assert.equal(payback({ ...ok, pricePerKwh: 1e20 }), null);
+  assert.ok(Number.isNaN(priceFromBill(MAX_AMOUNT + 1, 1000)));
+  assert.equal(priceFromBill(MAX_AMOUNT, 1e6), 1e6);
 });
 
 test('the monthly bill becomes a price per kWh only when bill and consumption are positive', () => {

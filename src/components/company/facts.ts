@@ -1,9 +1,8 @@
-import catalog from '../../data/catalog.json';
-import company from '../../data/company.json';
+import programme from '../../data/technical/programme.json';
 import panels from '../../data/designer/panels.json';
-import projects from '../../data/projects.json';
 import iraq from '../../data/iraq-solar.json';
 import { productNav, type ProductNavKey } from '../../data/site.ts';
+import { accessories, curatedSeries, families, featured, itemsByLine, modules, projects } from '../../content/index.ts';
 import { localeMeta, type Locale } from '../../i18n/config.ts';
 import { specFromPanel, type PanelRecord } from '../../lib/three/types.ts';
 
@@ -14,23 +13,29 @@ export const peimar = {
   capacityGw: 1.5,
 };
 
-const currentModels = new Set(catalog.modules.flatMap((m) => m.designerModels));
-
-const heroPanel: PanelRecord = panels
-  .filter(
+/** OR10H TOPCon double-glass modules with a black frame among the given Designer ids: the home hero's choice. */
+const heroCandidates = (ids: Set<string>) =>
+  panels.filter(
     (p) =>
-      currentModels.has(p.id) &&
+      ids.has(p.id) &&
       p.series === 'OR10H' &&
       p.model.endsWith('MNDB') &&
       (p.finish?.code === 'BF' || p.finish?.code === 'FB'),
-  )
-  .reduce((best, p) => (p.power > best.power ? p : best));
+  );
+const strongest = (list: typeof panels) => list.reduce((best, p) => (p.power > best.power ? p : best));
+const shown = new Set(modules.flatMap((m) => m.designerModels));
+const shownCandidates = heroCandidates(shown);
+
+/** The owner's pick when it is shown, else the most powerful candidate shown, else the same over every curated panel. */
+const heroPanel: PanelRecord =
+  panels.find((p) => p.id === featured.heroPanel && shown.has(p.id)) ??
+  strongest(shownCandidates.length ? shownCandidates : heroCandidates(new Set(curatedSeries.flatMap((s) => s.panelIds))));
 
 export const heroSpec = specFromPanel(heroPanel);
 
-export const peakEfficiency = Math.max(...catalog.modules.map((m) => m.efficiencyMax));
+export const peakEfficiency = Math.max(...modules.map((m) => m.efficiencyMax));
 
-const moduleWarranty = catalog.warranty.modules;
+const moduleWarranty = programme.warranty.modules;
 export const warranty = {
   linearPowerYears: Math.min(...Object.values(moduleWarranty).map((w) => w.power)),
   sSeries: moduleWarranty['S Series'],
@@ -39,9 +44,9 @@ export const warranty = {
 
 type Span = [number, number];
 
-function span(ranges: (number[] | null)[]): Span {
+function span(ranges: (number[] | null)[]): Span | null {
   const values = ranges.flatMap((r) => r ?? []);
-  return [Math.min(...values), Math.max(...values)];
+  return values.length ? [Math.min(...values), Math.max(...values)] : null;
 }
 
 export function formatPower([min, max]: Span) {
@@ -60,16 +65,16 @@ const hrefOf = (key: ProductNavKey) => productNav.find((p) => p.key === key)?.hr
 
 function rangeRow(key: ProductNavKey, lines: number, power: Span | null) {
   const [width, height] = categoryImageSize[key];
-  return { key, href: hrefOf(key), image: { src: catalog.categories[key].image, width, height }, lines, power };
+  return { key, href: hrefOf(key), image: { src: programme.categories[key].image, width, height }, lines, power };
 }
 
 /** Hybrid first: storage is what keeps a house supplied through grid outages. */
 export const rangeRows = [
-  rangeRow('hybrid', catalog.inverters.hybrid.length, span(catalog.inverters.hybrid.map((i) => i.powerRange))),
-  rangeRow('modules', catalog.modules.length, span(catalog.modules.map((m) => m.powerRange))),
-  rangeRow('onGrid', catalog.inverters.onGrid.length, span(catalog.inverters.onGrid.map((i) => i.powerRange))),
-  rangeRow('micro', catalog.inverters.micro.length, span(catalog.inverters.micro.map((i) => i.powerRange))),
-  rangeRow('accessories', catalog.accessories.length, null),
+  rangeRow('hybrid', families.hybrid.length, span(families.hybrid.map((i) => i.powerRange))),
+  rangeRow('modules', modules.length, span(modules.map((m) => m.powerRange))),
+  rangeRow('onGrid', families.onGrid.length, span(families.onGrid.map((i) => i.powerRange))),
+  rangeRow('micro', families.micro.length, span(families.micro.map((i) => i.powerRange))),
+  rangeRow('accessories', accessories.length + itemsByLine('accessories').length, null),
 ];
 
 const referencePanel = panels.find((p) => p.model === 'OR10H560M');
@@ -90,32 +95,21 @@ export const stringMatrix = {
   mppts: 2,
 };
 
-const photoSize: Record<string, [number, number]> = {
-  '/images/legacy/project-3kwp-emergency-water-station.jpg': [1024, 803],
-  '/images/legacy/project-12kwp-apartments-1.jpg': [1024, 768],
-  '/images/legacy/project-3-6kwp-house.jpg': [1024, 1024],
-  '/images/legacy/project-1-8kwp-advertising-board.jpg': [1024, 755],
-  '/images/legacy/project-30kwp-big-company.jpg': [1024, 768],
-};
-
-type ProjectCategory = 'public' | 'residential' | 'advertising' | 'commercial' | 'agriculture';
-
-/** A stockReason means the archived cover does not show that installation, so it gets a typographic tile. */
-export const projectList = [...projects]
-  .sort((a, b) => b.sizeKwp - a.sizeKwp)
-  .map((p) => {
-    const size = photoSize[p.cover];
-    const photo = !p.likelyStock && !p.stockReason && size ? { src: p.cover, width: size[0], height: size[1] } : null;
-    return { slug: p.slug, kwp: p.sizeKwp, category: p.category as ProjectCategory, photo };
-  });
+/** Projects, largest first, each with its cover photo or null for a typographic tile. */
+export const projectList = projects.map((p) => ({
+  slug: p.slug,
+  kwp: p.sizeKwp,
+  category: p.category,
+  photo: p.cover && { src: p.cover.src, srcset: p.cover.srcset, width: p.cover.width, height: p.cover.height },
+  text: p.text,
+  alt: p.cover?.alt,
+}));
 
 export type Project = (typeof projectList)[number];
 
 const kwps = projectList.map((p) => p.kwp);
-export const projectSpan = { count: projectList.length, min: Math.min(...kwps), max: Math.max(...kwps) };
-
-const openDay = company.hours.find((d) => d.open && d.close);
-export const officeHours = openDay ? `${openDay.open}–${openDay.close}` : '';
+/** Null when there are no projects to sum up. */
+export const projectSpan = kwps.length ? { count: kwps.length, min: Math.min(...kwps), max: Math.max(...kwps) } : null;
 
 export const cityCount = iraq.cities.length;
 

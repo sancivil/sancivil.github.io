@@ -55,7 +55,7 @@
    'Faraday Arabic' and 'Faraday Kufi' are size-adjusted aliases of the Noto faces, declared in Base.astro. */
 html:lang(ar),
 html:lang(ckb) {
-  --font-sans: 'DM Sans Variable', 'Faraday Arabic', 'Noto Sans Arabic Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'DM Sans Variable', 'Faraday Kufi', 'Noto Kufi Arabic Variable', ui-sans-serif, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'Faraday Arabic', 'Noto Sans Arabic Variable', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --font-sans: 'DM Sans Variable', 'Faraday Arabic', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'DM Sans Variable', 'Faraday Kufi', ui-sans-serif, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Faraday Arabic', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 }

@@ -126,8 +126,8 @@ export function batteryPlan(inv: Inverter, inverterCount: number, backupKw: numb
   });
   const family = batteryFamily(inv);
   if (family === 'x-bt') {
-    const master = batteries.find((x) => x.slug === 'psi-x-5-8mst-v2');
-    const slave = batteries.find((x) => x.slug === 'psi-x-5-8slv-v2');
+    const master = batteries.find((x) => x.key === 'psi-x-5-8mst-v2');
+    const slave = batteries.find((x) => x.key === 'psi-x-5-8slv-v2');
     const unit = capacityOf(master);
     if (master && slave && unit > 0) {
       const units = Math.max(1, Math.ceil(perInverter / unit - 1e-9));
@@ -137,7 +137,7 @@ export function batteryPlan(inv: Inverter, inverterCount: number, backupKw: numb
     }
   }
   if (family === 'a-bt') {
-    const mod = batteries.find((x) => x.slug === 'psi-a-bt3-8s');
+    const mod = batteries.find((x) => x.key === 'psi-a-bt3-8s');
     const unit = capacityOf(mod);
     const maxModules = mod?.capacity?.modules?.[1] ?? 6;
     if (mod && unit > 0) {
@@ -169,15 +169,16 @@ export type Sizing = {
 export type SizingData = { panels: Panel[]; inverters: Inverter[]; cities: City[]; batteries: Battery[] };
 
 /**
- * Why nothing fits (reason 'noFit'): 'backup' = the energy need fits, but no inverter set that carries the backup load
- * stays green; 'small' = below the smallest green hybrid of this phase (minKwp); 'large' = above six of the largest
+ * Why nothing fits (reason 'noFit'). The energy need fits, but the backup load does not: 'backupLoad' = it is above what
+ * six of the largest hybrids of this phase carry (maxLoadKw); 'backupPv' = inverters that carry it need more PV than this
+ * need. Otherwise 'small' = below the smallest green hybrid of this phase (minKwp); 'large' = above six of the largest
  * (maxKwp).
  */
-export type NoFitLimit = 'backup' | 'small' | 'large';
+export type NoFitLimit = 'backupLoad' | 'backupPv' | 'small' | 'large';
 
 export type SizingOutcome =
   | { ok: true; sizing: Sizing }
-  | { ok: false; reason: 'input' | 'noFit'; targetKwp?: number; limit?: NoFitLimit; minKwp?: number; maxKwp?: number };
+  | { ok: false; reason: 'input' | 'noFit'; targetKwp?: number; limit?: NoFitLimit; minKwp?: number; maxKwp?: number; maxLoadKw?: number };
 
 export function needsValid(n: Needs): boolean {
   const hours = (v: number) => Number.isNaN(v) || (v >= 0 && v <= 24);
@@ -247,7 +248,12 @@ export function sizeFromNeeds(needs: Needs, data: SizingData): SizingOutcome {
       };
     }
   }
-  if (loadW > 0 && search(hybrids, 0)) return { ok: false, reason: 'noFit', targetKwp, limit: 'backup' };
+  if (loadW > 0 && search(hybrids, 0)) {
+    const maxLoadW = MAX_INVERTERS * Math.max(...hybrids.map((i) => i.pnomAc));
+    return loadW > maxLoadW
+      ? { ok: false, reason: 'noFit', targetKwp, limit: 'backupLoad', maxLoadKw: maxLoadW / 1000 }
+      : { ok: false, reason: 'noFit', targetKwp, limit: 'backupPv' };
+  }
   const greenW = (inv: Inverter, ratio: number) => inv.pnomDc / ratio;
   const minKwp = hybrids.length ? Math.min(...hybrids.map((i) => greenW(i, i.percPminCc))) / 1000 : undefined;
   const maxKwp = hybrids.length ? (MAX_INVERTERS * Math.max(...hybrids.map((i) => greenW(i, i.percPmaxCc)))) / 1000 : undefined;

@@ -3,12 +3,14 @@ import ProductWell from './ProductWell.astro';
 import Figure from './Figure.astro';
 import {
   INVERTER_IMAGE_SIZE,
+  displayName,
   extent,
   familyImage,
   familyInverters,
   familyPower,
   pad2,
   powerParts,
+  productImage,
   type Family,
   type GroupKey,
 } from './data.ts';
@@ -39,11 +41,15 @@ const rows = families.map((family) => {
   const power = familyPower(family);
   const mppt = models.length ? extent(models.map((m) => m.numMppt)) : null;
   const kind = t.kind[group][family.phase];
+  const photo = family.photos[0];
+  const image = familyImage(family);
   return {
     family,
+    name: displayName(family.name),
     kind,
     note: familyNote(locale, family.slug),
-    image: familyImage(family),
+    photo,
+    image: photo ?? (image && productImage(image, INVERTER_IMAGE_SIZE)),
     power: power && powerParts(power),
     bar: power && [scale(power[0]), scale(power[1])].map((n) => n.toFixed(3)),
     mppt: mppt && ([String(mppt[0]), String(mppt[1])] as [string, string]),
@@ -57,18 +63,18 @@ const rows = families.map((family) => {
     rows.map((row, i) => (
       <li class="family">
         <ProductWell
-          src={row.image}
-          alt={t.productAlt(row.family.name, row.kind)}
+          image={row.image}
+          alt={row.photo?.alt[locale] ?? t.productAlt(row.family.brand, row.name, row.kind)}
           label={row.family.models[0]}
-          size={INVERTER_IMAGE_SIZE}
-          sizes="(max-width: 720px) 96px, (max-width: 1080px) 22vw, 240px"
+          brand={row.family.brand}
+          sizes="(max-width: 720px) 85px, (max-width: 1080px) 18vw, (max-width: 1440px) 13vw, 185px"
           class="family__well"
         />
         <div class="family__main">
           <span class="family__index mono">{pad2(start + i)}</span>
           <Heading class="h3 family__name">
             <a class="family__link" href={row.href} dir="ltr">
-              {row.family.name}
+              {row.name}
             </a>
           </Heading>
           <p class="family__kind">

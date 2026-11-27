@@ -1,7 +1,7 @@
 import { Color, Group, MeshStandardMaterial, PerspectiveCamera, Scene, Vector3 } from 'three';
 import type { Mesh } from 'three';
 import { buildModule } from './module.ts';
-import { addLights, createRenderer, deg, detailTextureMax, device, environment, isRtl, maxAnisotropy, studio, watchVisibility } from './stage.ts';
+import { addLights, deg, detailTextureMax, device, isRtl, prepare, setUp, watchVisibility } from './stage.ts';
 import type { SunPosition } from './sun.ts';
 import { smooth } from './timeline.ts';
 import type { ModuleSpec } from './types.ts';
@@ -91,22 +91,24 @@ function framing(w: number, h: number) {
   };
 }
 
-export function mountHero(host: HTMLElement, spec: ModuleSpec, sun: SunPosition) {
+/** Builds the scene a slice at a time; resolves once its first frame is ready to draw (see `prepare`). */
+export async function mountHero(host: HTMLElement, spec: ModuleSpec, sun: SunPosition) {
   const canvas = host.querySelector('canvas')!;
   const rtl = isRtl(host);
   const side = rtl ? -1 : 1;
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const phone = matchMedia('(max-width: 720px)');
 
-  const renderer = createRenderer(canvas);
+  const setup = await setUp(canvas, rtl);
+  const { renderer, anisotropy, photo } = setup;
   const scene = new Scene();
-  let env = environment(renderer, rtl);
+  let env = setup.env;
   const lights = addLights(scene, rtl, 1.9, 1.6);
   const camera = new PerspectiveCamera(FOV, 1, 0.05, 60);
 
-  const pv = buildModule(spec, {
+  const pv = await buildModule(spec, {
     textureMax: detailTextureMax(renderer),
-    anisotropy: maxAnisotropy(renderer),
+    anisotropy,
     envMap: env,
     envIntensity: 1,
     envRotation: 0,
@@ -151,7 +153,7 @@ export function mountHero(host: HTMLElement, spec: ModuleSpec, sun: SunPosition)
   let disposed = false;
   /** After the first frame: reflections from the photographed studio (not on phones). */
   const upgrade = async () => {
-    const s = await studio(renderer, rtl);
+    const s = await photo();
     if (!s) return;
     if (disposed) return s.texture.dispose();
     pv.setEnvironment(s.texture, s.gain, s.rotation);
@@ -266,6 +268,7 @@ export function mountHero(host: HTMLElement, spec: ModuleSpec, sun: SunPosition)
     camera.updateProjectionMatrix();
     render(performance.now());
   };
+  await prepare(renderer, scene, camera, scene, pv.textures);
   const ro = new ResizeObserver(resize);
   ro.observe(host);
 

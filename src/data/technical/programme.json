@@ -1,0 +1,114 @@
+{
+  "source": "https://peimar.com/ww-en/ (modules, on-grid-inverters, hybrid-inverters-batteries, peimar-accessories, products-services, download pages; EN datasheets; Products Flyer EN_2026_02_00); designerModels from Peimar Designer guest API",
+  "fetched": "2026-11-20",
+  "categories": {
+    "modules": {
+      "title": "Photovoltaic modules",
+      "description": "High-efficiency modules, available in different technologies for every type of installation.",
+      "image": "/images/products/peimar-modules.png",
+      "source": "https://peimar.com/ww-en/products-services/"
+    },
+    "onGrid": {
+      "title": "On-grid inverters",
+      "description": "Single-phase and three-phase inverters for efficient energy management.",
+      "image": "/images/products/peimar-on-grid-inverters.png",
+      "source": "https://peimar.com/ww-en/products-services/"
+    },
+    "hybrid": {
+      "title": "Hybrid inverters and storage",
+      "description": "Systems for managing and storing generated energy, for more efficient use.",
+      "image": "/images/products/peimar-hybrid-inverters-batteries.png",
+      "source": "https://peimar.com/ww-en/products-services/"
+    },
+    "micro": {
+      "title": "Microinverters",
+      "description": "Single-phase and three-phase",
+      "image": "/images/products/peimar-microinverters.webp",
+      "source": "https://peimar.com/ww-en/download/"
+    },
+    "accessories": {
+      "title": "Optimizers, EV chargers and accessories",
+      "description": "Devices and components for the management, optimization and integration of the photovoltaic system.",
+      "image": "/images/products/peimar-accessories.png",
+      "source": "https://peimar.com/ww-en/products-services/"
+    }
+  },
+  "warranty": {
+    "modules": {
+      "S Series": {
+        "product": 30,
+        "power": 30
+      },
+      "OR Series": {
+        "product": 25,
+        "power": 30
+      },
+      "DR Series": {
+        "product": 25,
+        "power": 30
+      }
+    },
+    "powerOutput": {
+      "polycrystalline": "2% in the first year, thereafter 0,41% per year, ending with 86,11% in the 30th year",
+      "monoPerc": "3% in the first year, thereafter 0,41% per year, ending with 85,11% in the 30th year",
+      "monoTopcon": "1% in the first year, thereafter 0,3% per year, ending with 90,30% in the 30th year"
+    },
+    "batteries": {
+      "years": 10,
+      "note": "Per PSI-X-BT, PSI-X-HS and PSI-A-BT3.8S datasheets; PSI-A requires product registration and monitoring activation."
+    },
+    "documents": [
+      {
+        "label": "PV modules warranty 2026 (EN)",
+        "url": "https://peimar.com/documents/Peimar_EN_WARRANTY-PV-MODULES_2026.pdf"
+      },
+      {
+        "label": "PSI-X Series inverter warranty (EN)",
+        "url": "https://peimar.com/documents/Peimar_EN_PSI-X-SERIES-INVERTER-WARRANTY.pdf"
+      },
+      {
+        "label": "PSI-X storage warranty 2026 (IT)",
+        "url": "https://peimar.com/documents/Garanzia%20storage%20Peimar%20serie%20PSI-X_2026.pdf"
+      },
+      {
+        "label": "PSI-A Series warranty conditions (IT)",
+        "url": "https://peimar.com/certificate/Condizioni%20di%20garanzia%20prodotti%20Peimar%20serie%20PSI-A.pdf"
+      },
+      {
+        "label": "Warranty registration",
+        "url": "https://registrazionegaranzia.peimar.com/"
+      }
+    ],
+    "source": [
+      "https://peimar.com/ww-en/products-services/",
+      "https://peimar.com/documents/Peimar_EN_WARRANTY-PV-MODULES_2026.pdf"
+    ]
+  },
+  "insurance": {
+    "provider": "QBE Insurance Group",
+    "headline": "Peimar products are covered by QBE Insurance",
+    "text": "A comprehensive policy, taken out with QBE Insurance Group, one of the world's leading insurers and reinsurers, protects customers against third-party damage caused by product defects.",
+    "coverages": [
+      {
+        "name": "Third Party Liability",
+        "text": "Covers unintentional damage to third parties caused by the insured, including property damage and bodily injury."
+      },
+      {
+        "name": "Product Liability",
+        "text": "Covers damage caused by defects in products manufactured, sold or distributed by the insured."
+      },
+      {
+        "name": "Employer's Liability",
+        "text": "Covers compensation for injuries suffered by employees in the work environment."
+      }
+    ],
+    "source": "https://peimar.com/ww-en/products-services/"
+  },
+  "documents": {
+    "installationManual": "https://peimar.com/documents/Peimar_EN_Installation-Manual.pdf",
+    "installationManualAR": "https://peimar.com/documents/Peimar_AR_Installation-Manual.pdf",
+    "productsFlyer": "https://peimar.com/documents/Peimar_EN_Products%20Flyer.pdf",
+    "companyBrochure": "https://peimar.com/documents/Peimar_WW_Company%20Brochure.pdf",
+    "companyPresentation": "https://peimar.com/documents/Peimar_EN_CompanyBrochure_Presentation.pdf"
+  }
+}

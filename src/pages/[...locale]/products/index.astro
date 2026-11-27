@@ -15,6 +15,7 @@ import {
   batteries,
   categoryHref,
   categoryImage,
+  displayName,
   docInfo,
   docItem,
   documents,
@@ -30,13 +31,15 @@ import {
   pad2,
   pct,
   powerParts,
-  seriesBySlug,
+  productImage,
   seriesFinishes,
   seriesGlass,
   seriesRender,
   warranty,
   type CategoryKey,
+  type Render,
 } from '../../../components/products/data.ts';
+import { categoryText, featured, itemsByLine } from '../../../content/index.ts';
 import { localeFromParam, localeParams, localizePath } from '../../../i18n/config.ts';
 import { common } from '../../../i18n/common.ts';
 import { products } from '../../../i18n/products.ts';
@@ -50,11 +53,55 @@ const ct = catalogText[locale];
 const nav = common[locale].productNav;
 
 const powerYears = Math.min(...Object.values(warranty.modules).map((w) => w.power));
-const inverterPower = powerParts(extent(GROUPS.flatMap(groupPower)));
-const hero = seriesRender(seriesBySlug('or-series-or10h')!)!;
+const inverterSpans = GROUPS.flatMap((group) => groupPower(group) ?? []);
+const inverterPower = inverterSpans.length ? powerParts(extent(inverterSpans)) : null;
+
+/* The owner's pick, else the OR10H render, else the first series with one, else the modules photo. */
+const renders = modules.flatMap((series) => {
+  const render = seriesRender(series);
+  return render ? [{ series, render }] : [];
+});
+const heroRender: Render | undefined = (
+  renders.find((r) => r.series.curatedKey === featured.productsHeroSeries) ??
+  renders.find((r) => r.series.curatedKey === 'or-series-or10h') ??
+  renders[0]
+)?.render;
+const { src: modulesSrc, size: modulesSize } = categoryImage.modules;
+const hero = heroRender ?? { src: modulesSrc, size: modulesSize, srcset: productImage(modulesSrc, modulesSize).srcset };
+/*
+  The hero images are as tall as a share of the stage (.hero__stage block-size, clamped per breakpoint): their width,
+  for srcset. Either one is the page's LCP, depending on the language and the screen, so both are fetched first.
+*/
+const stageSizes = (share: number) => {
+  const of = (n: number, unit: string) => `${Math.ceil(n * share)}${unit}`;
+  return [
+    `(max-width: 357px) ${of(300, 'px')}`,
+    `(max-width: 500px) ${of(84, 'vw')}`,
+    `(max-width: 720px) ${of(420, 'px')}`,
+    `(max-width: 903px) ${of(62, 'vw')}`,
+    `(max-width: 1080px) ${of(560, 'px')}`,
+    `(max-width: 1478px) ${of(46, 'vw')}`,
+    of(680, 'px'),
+  ].join(', ');
+};
+const system = productImage(categoryImage.hybrid.src, categoryImage.hybrid.size);
+/* Category images are square, drawn at 82% of a 4:3 well's height: modules and hybrid span three of six columns. */
+const lineSizes: Record<CategoryKey, string> = {
+  modules: '(max-width: 560px) 57vw, (max-width: 1440px) 28vw, 400px',
+  hybrid: '(max-width: 560px) 57vw, (max-width: 1440px) 28vw, 400px',
+  onGrid: '(max-width: 560px) 57vw, (max-width: 900px) 28vw, (max-width: 1440px) 18vw, 260px',
+  micro: '(max-width: 560px) 57vw, (max-width: 900px) 28vw, (max-width: 1440px) 18vw, 260px',
+  accessories: '(max-width: 560px) 57vw, (max-width: 900px) 33vw, (max-width: 1440px) 18vw, 260px',
+};
 
 type Fact = { label: string; value: string | [string, string]; unit?: string; word?: string };
-const onGridEff = Math.max(...groupInverters('onGrid').map((r) => r.efficiencyMax ?? 0));
+/** The AC power fact of an inverter line, left out while none of its families states a power. */
+const acPower = (group: (typeof GROUPS)[number]): Fact[] => {
+  const power = groupPower(group);
+  return power ? [{ label: t.label.acPower, ...powerParts(power) }] : [];
+};
+const onGrid = groupInverters('onGrid');
+const accessoryCount = accessories.length + itemsByLine('accessories').length;
 const lines: { key: CategoryKey; facts: Fact[] }[] = [
   {
     key: 'modules',
@@ -67,7 +114,7 @@ const lines: { key: CategoryKey; facts: Fact[] }[] = [
   {
     key: 'hybrid',
     facts: [
-      { label: t.label.acPower, ...powerParts(groupPower('hybrid')) },
+      ...acPower('hybrid'),
       { label: t.label.models, value: String(groupModels('hybrid')) },
       { label: t.storage, value: String(batteries.length) },
     ],
@@ -75,32 +122,32 @@ const lines: { key: CategoryKey; facts: Fact[] }[] = [
   {
     key: 'onGrid',
     facts: [
-      { label: t.label.acPower, ...powerParts(groupPower('onGrid')) },
-      { label: t.label.maxEfficiency, value: pct(onGridEff, 1), unit: '%' },
+      ...acPower('onGrid'),
+      ...(onGrid.length
+        ? [{ label: t.label.maxEfficiency, value: pct(Math.max(...onGrid.map((r) => r.efficiencyMax ?? 0)), 1), unit: '%' }]
+        : []),
       { label: t.label.models, value: String(groupModels('onGrid')) },
     ],
   },
   {
     key: 'micro',
-    facts: [
-      { label: t.label.acPower, ...powerParts(groupPower('micro')) },
-      { label: t.label.models, value: String(groupModels('micro')) },
-    ],
+    facts: [...acPower('micro'), { label: t.label.models, value: String(groupModels('micro')) }],
   },
   {
     key: 'accessories',
     facts: [
-      { label: t.accessoriesPage.stat.products, value: String(accessories.length) },
+      { label: t.accessoriesPage.stat.products, value: String(accessoryCount) },
       { label: t.accessoriesPage.stat.groups, value: String(new Set(accessories.map((a) => a.group)).size) },
     ],
   },
 ];
 
 const topcon = outputTerms('monoTopcon');
-const halfCells = extent(modules.filter((s) => s.cells.some((n) => n >= 96)).flatMap((s) => s.cells.filter((n) => n >= 96)));
-const tech: { key: keyof typeof d.tech; fact: Fact }[] = [
+const halfCellCounts = modules.flatMap((s) => s.cells.filter((n) => n >= 96));
+const halfCells = halfCellCounts.length ? extent(halfCellCounts) : null;
+const tech: { key: keyof typeof d.tech; fact?: Fact }[] = [
   { key: 'topcon', fact: { label: d.tech.topcon.fact, value: `−${topcon.yearly}`, unit: '%' } },
-  { key: 'halfcut', fact: { label: d.tech.halfcut.fact, value: [String(halfCells[0]), String(halfCells[1])] } },
+  { key: 'halfcut', fact: halfCells ? { label: d.tech.halfcut.fact, value: [String(halfCells[0]), String(halfCells[1])] } : undefined },
   { key: 'bifacial', fact: { label: d.tech.bifacial.fact, value: GLASS_MM.rear, unit: 'mm' } },
   { key: 'arc', fact: { label: d.tech.arc.fact, value: GLASS_MM.front, unit: 'mm' } },
   { key: 'pid', fact: { label: d.tech.pid.fact, value: 'IEC TS 62804-1' } },
@@ -145,10 +192,14 @@ const docs = [
               <dt>{t.index.stat.modules}</dt>
               <dd><Figure value={[String(modulePower[0]), String(modulePower[1])]} unit="W" /></dd>
             </div>
-            <div>
-              <dt>{t.index.stat.inverters}</dt>
-              <dd><Figure value={inverterPower.value} unit={inverterPower.unit} /></dd>
-            </div>
+            {
+              inverterPower && (
+                <div>
+                  <dt>{t.index.stat.inverters}</dt>
+                  <dd><Figure value={inverterPower.value} unit={inverterPower.unit} /></dd>
+                </div>
+              )
+            }
             <div>
               <dt>{t.index.stat.warranty}</dt>
               <dd><Figure value={String(powerYears)} word={t.years(powerYears)} count /></dd>
@@ -159,6 +210,8 @@ const docs = [
           <img
             class="hero__module"
             src={hero.src}
+            srcset={hero.srcset ?? undefined}
+            sizes={stageSizes(hero.size[0] / hero.size[1])}
             width={hero.size[0]}
             height={hero.size[1]}
             alt=""
@@ -167,10 +220,13 @@ const docs = [
           />
           <img
             class="hero__system"
-            src={categoryImage.hybrid.src}
-            width={categoryImage.hybrid.size[0]}
-            height={categoryImage.hybrid.size[1]}
+            src={system.src}
+            srcset={system.srcset}
+            sizes={stageSizes(0.64)}
+            width={system.width}
+            height={system.height}
             alt=""
+            fetchpriority="high"
             decoding="async"
           />
         </div>
@@ -187,11 +243,10 @@ const docs = [
             <li class:list={['line', `line--${row.key}`]}>
               <div class="line__well" data-reveal="clip">
                 <img
-                  src={categoryImage[row.key].src}
-                  width={categoryImage[row.key].size[0]}
-                  height={categoryImage[row.key].size[1]}
+                  {...productImage(categoryImage[row.key].src, categoryImage[row.key].size)}
+                  sizes={lineSizes[row.key]}
                   alt={t.categoryAlt[row.key]}
-                  loading={i < 2 ? 'eager' : 'lazy'}
+                  loading="lazy"
                   decoding="async"
                 />
               </div>
@@ -202,7 +257,7 @@ const docs = [
                     {nav[row.key]}
                   </a>
                 </h3>
-                <p class="line__desc">{ct.categories[row.key]}</p>
+                <p class="line__desc">{categoryText(locale, row.key)}</p>
                 <dl class="line__facts">
                   {row.facts.map((f) => (
                     <div>
@@ -237,12 +292,14 @@ const docs = [
               </div>
               <h3 class="tech__name">{d.tech[item.key].name}</h3>
               <p class="tech__text">{d.tech[item.key].text}</p>
-              <p class="tech__fact">
-                <span class="tech__fact-label">{item.fact.label}</span>
-                <span class="tech__fact-value">
-                  {item.key === 'pid' ? <span class="mono" dir="ltr">{item.fact.value}</span> : <Figure value={item.fact.value} unit={item.fact.unit} />}
-                </span>
-              </p>
+              {item.fact && (
+                <p class="tech__fact">
+                  <span class="tech__fact-label">{item.fact.label}</span>
+                  <span class="tech__fact-value">
+                    {item.key === 'pid' ? <span class="mono" dir="ltr">{item.fact.value}</span> : <Figure value={item.fact.value} unit={item.fact.unit} />}
+                  </span>
+                </p>
+              )}
             </li>
           ))
         }
@@ -259,9 +316,9 @@ const docs = [
         </div>
         <p class="compare__swipe small">{t.inverterPage.swipe}</p>
       </div>
-      <div class="compare__scroll" tabindex="0" role="region" aria-labelledby="compare-title">
+      <div class="compare__scroll" tabindex="0" role="region" aria-labelledby="compare-caption">
         <table class="compare__table">
-          <caption class="sr-only">{d.compareCaption}</caption>
+          <caption id="compare-caption" class="sr-only">{d.compareCaption}</caption>
           <thead>
             <tr>
               <th scope="col">{d.col.series}</th>
@@ -284,11 +341,22 @@ const docs = [
                   <tr>
                     <th scope="row">
                       <a class="compare__series" href={localizePath(`/products/modules/${s.slug}/`, locale)}>
-                        {img && <img src={img.src} width={img.size[0]} height={img.size[1]} alt="" loading="lazy" decoding="async" />}
-                        <bdi>{s.name}</bdi>
+                        {img && (
+                          <img
+                            src={img.src}
+                            srcset={img.srcset ?? undefined}
+                            sizes={`${Math.ceil((56 * img.size[0]) / img.size[1])}px`}
+                            width={img.size[0]}
+                            height={img.size[1]}
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        )}
+                        <bdi>{displayName(s.name)}</bdi>
                       </a>
                     </th>
-                    <td class="compare__tech">{(text?.technology ?? s.technology).join(' · ') || t.notStated}</td>
+                    <td class="compare__tech">{text?.technology?.join(' · ') || t.notStated}</td>
                     <td class="compare__num">
                       <Figure value={[String(s.powerRange[0]), String(s.powerRange[1])]} unit="W" />
                     </td>

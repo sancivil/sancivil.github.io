@@ -58,20 +58,41 @@ function revealRule(el: HTMLElement) {
   );
 }
 
+/** Counts from data-from (0 when absent) up to the figure as it scrolls in; the figure itself never changes (.count-up). */
 function revealCount(el: HTMLElement) {
-  const to = Number(el.dataset.to ?? el.textContent);
+  const figure = el.textContent ?? '';
+  const from = Number(el.dataset.from ?? 0);
+  const to = Number(el.dataset.to ?? figure);
   const decimals = Number(el.dataset.decimals ?? 0);
-  if (!Number.isFinite(to)) return;
-  const state = { v: 0 };
-  const fmt = (v: number) => v.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
-  el.textContent = fmt(0);
-  gsap.to(state, {
-    v: to,
-    duration: 1.6,
-    ease: 'power3.out',
-    scrollTrigger: once(el, 'top bottom'),
-    onUpdate: () => {
-      el.textContent = fmt(state.v);
+  if (!Number.isFinite(from) || !Number.isFinite(to)) return;
+  const fmt = (v: number) =>
+    v.toLocaleString('en-US', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+      useGrouping: figure.includes(','),
+    });
+  ScrollTrigger.create({
+    ...once(el, 'top bottom'),
+    onEnter: () => {
+      const real = document.createElement('span');
+      const running = document.createElement('span');
+      const box = document.createElement('span');
+      real.textContent = figure;
+      running.textContent = fmt(from);
+      running.setAttribute('aria-hidden', 'true');
+      box.className = 'count-up';
+      box.append(real, running);
+      el.replaceChildren(box);
+      const state = { v: from };
+      gsap.to(state, {
+        v: to,
+        duration: 1.6,
+        ease: 'power3.out',
+        onUpdate: () => {
+          running.textContent = fmt(state.v);
+        },
+        onComplete: () => el.replaceChildren(figure),
+      });
     },
   });
 }
@@ -84,7 +105,10 @@ function initReveals() {
     rule: revealRule,
     count: revealCount,
   };
+  // The first paint shows every element as it is. Only what is still below the fold can be hidden now and
+  // revealed as it scrolls in; anything already on screen stays put rather than vanish and replay.
   document.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el) => {
+    if (el.getBoundingClientRect().top < window.innerHeight) return;
     handlers[el.dataset.reveal ?? '']?.(el);
   });
 }

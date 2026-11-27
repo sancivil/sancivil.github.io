@@ -2,8 +2,6 @@
 import '@fontsource-variable/dm-sans';
 import '@fontsource/ibm-plex-mono/400.css';
 import '@fontsource/ibm-plex-mono/500.css';
-import '@fontsource-variable/noto-sans-arabic';
-import '@fontsource-variable/noto-kufi-arabic';
 import '../styles/global.css';
 import dmSansLatin from '@fontsource-variable/dm-sans/files/dm-sans-latin-wght-normal.woff2?url';
 import notoSansArabic from '@fontsource-variable/noto-sans-arabic/files/noto-sans-arabic-arabic-wght-normal.woff2?url';
@@ -11,7 +9,10 @@ import notoKufiArabic from '@fontsource-variable/noto-kufi-arabic/files/noto-kuf
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import HelpButton from '../components/HelpButton.astro';
-import { contact } from '../data/site.ts';
+import JsonLd from '../components/seo/JsonLd.astro';
+import { contact, phones } from '../data/site.ts';
+import iraq from '../data/iraq-solar.json';
+import { openingHoursSchema, organization as org, socials } from '../content/index.ts';
 import { common, langHint } from '../i18n/common.ts';
 import { locales, localeMeta, localeFromPath, localizePath, stripLocale } from '../i18n/config.ts';
 import { website } from '../lib/seo/schema.ts';
@@ -19,32 +20,44 @@ import { website } from '../lib/seo/schema.ts';
 interface Props {
   title: string;
   description: string;
+  /** Open Graph image path. Without it, the default card, with its size and description (og:image:width/height/alt). */
   image?: string;
   /** Single-URL pages (404, dev): no canonical or hreflang, and the language switcher goes to each language's home. */
   noindex?: boolean;
 }
 
-const { title, description, image = '/brand/og-default.png', noindex = false } = Astro.props;
+const { title, description, image, noindex = false } = Astro.props;
 const locale = localeFromPath(Astro.url.pathname);
 const meta = localeMeta[locale];
 const basePath = stripLocale(Astro.url.pathname);
-const fullTitle = title.includes('Faraday') ? title : `${title} · Faraday`;
+/* Search results show about 65 characters of a title: the brand follows the page's own title when both fit. */
+const branded = `${title} · Faraday`;
+const fullTitle = title.includes('Faraday') || branded.length > 65 ? title : branded;
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const ogImage = new URL(image, Astro.site);
+const ogImage = new URL(image ?? '/brand/og-default.png', Astro.site);
+/* What the default card (1200 × 630) says, for link previews read aloud. */
+const ogDefaultAlt = `Faraday · ${common[locale].footer.eyebrow}`;
 const rtl = meta.dir === 'rtl';
 const showLangHint = locale === 'en' && !noindex;
 /** GitHub Pages preview build (SITE_PREVIEW=1, set in .github/workflows): keep the copy out of search results. */
 const preview = import.meta.env.SITE_PREVIEW === '1';
 const hintLocales = ['ar', 'ckb'] as const;
 
-/* Arabic script reads smaller than DM Sans at the same size. These aliases of the Noto faces carry
-   size-adjust for Arabic code points only, so Latin brand names, codes and digits keep their size. */
+/* Arabic script reads smaller than DM Sans at the same size. On Arabic and Kurdish pages these aliases of the Noto
+   faces carry size-adjust for Arabic code points only, so Latin brand names, codes and digits keep their size. Latin
+   pages show Arabic script only in the language hint and on the 404 page, in Noto Sans Arabic at its own size (the
+   language names have their own subset, global.css). Only the Arabic files are declared: arrows such as → are in no
+   font here, so a face that claimed them would be downloaded for nothing before the system font draws them. */
 const arabicRange =
   'U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC';
-const arabicFaces = [
-  ['Faraday Arabic', notoSansArabic, '107%'],
-  ['Faraday Kufi', notoKufiArabic, '103%'],
-]
+const arabicFaces = (
+  rtl
+    ? [
+        ['Faraday Arabic', notoSansArabic, '107%'],
+        ['Faraday Kufi', notoKufiArabic, '103%'],
+      ]
+    : [['Noto Sans Arabic Variable', notoSansArabic, '100%']]
+)
   .map(
     ([family, src, size]) =>
       `@font-face{font-family:'${family}';font-style:normal;font-display:swap;font-weight:100 900;src:url(${src}) format('woff2-variations');unicode-range:${arabicRange};size-adjust:${size}}`,
@@ -56,16 +69,24 @@ const alternates = locales.map((l) => ({
   href: new URL(localizePath(basePath, l), Astro.site).toString(),
 }));
 
+/* One ContactPoint object for a single phone, an array for several; the label names a labelled one. */
+const contactPoints = phones.map((phone) => ({
+  '@type': 'ContactPoint',
+  contactType: phone.label?.en ?? 'sales',
+  telephone: phone.e164,
+  email: contact.email,
+  availableLanguage: ['English', 'Arabic', 'Kurdish'],
+  areaServed: 'IQ',
+}));
 const organization = {
   '@context': 'https://schema.org',
   '@type': ['LocalBusiness', 'Store'],
   '@id': `${Astro.site}#business`,
-  name: 'Faraday Co.',
+  name: contact.company,
   alternateName: ['Faraday', 'Faraday Iraq', 'فاراداي', 'فارادەی'],
-  description:
-    'Exclusive agent of Peimar in Iraq: Peimar photovoltaic modules, hybrid and on-grid inverters, batteries and accessories, with system design and installation from Sulaymaniyah.',
-  slogan: 'Renewable energy for everyone',
-  foundingDate: '2017',
+  description: org.description,
+  slogan: org.slogan,
+  foundingDate: String(contact.founded),
   foundingLocation: { '@type': 'Place', name: 'Sulaymaniyah, Iraq' },
   url: Astro.site?.toString(),
   brand: { '@type': 'Brand', name: 'Peimar', url: 'https://peimar.com/' },
@@ -83,23 +104,10 @@ const organization = {
   areaServed: [
     { '@type': 'Country', name: 'Iraq' },
     { '@type': 'AdministrativeArea', name: 'Kurdistan Region' },
-    { '@type': 'City', name: 'Sulaymaniyah' },
-    { '@type': 'City', name: 'Erbil' },
-    { '@type': 'City', name: 'Duhok' },
-    { '@type': 'City', name: 'Kirkuk' },
-    { '@type': 'City', name: 'Baghdad' },
-    { '@type': 'City', name: 'Basra' },
-    { '@type': 'City', name: 'Mosul' },
+    ...org.areaServed.flatMap((id) => iraq.cities.filter((c) => c.id === id).map((c) => ({ '@type': 'City', name: c.name }))),
   ],
-  hasMap: contact.mapsHref,
-  contactPoint: {
-    '@type': 'ContactPoint',
-    contactType: 'sales',
-    telephone: contact.phoneHref.replace('tel:', ''),
-    email: contact.email,
-    availableLanguage: ['English', 'Arabic', 'Kurdish'],
-    areaServed: 'IQ',
-  },
+  ...(contact.mapsHref && { hasMap: contact.mapsHref }),
+  contactPoint: contactPoints.length === 1 ? contactPoints[0] : contactPoints,
   logo: new URL('/brand/icon-512.png', Astro.site).toString(),
   image: new URL('/brand/og-default.png', Astro.site).toString(),
   telephone: contact.phoneHref.replace('tel:', ''),
@@ -108,18 +116,11 @@ const organization = {
     '@type': 'PostalAddress',
     streetAddress: contact.street,
     addressLocality: contact.city,
-    postalCode: contact.postalCode,
+    ...(contact.postalCode && { postalCode: contact.postalCode }),
     addressCountry: 'IQ',
   },
-  openingHoursSpecification: [
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'],
-      opens: '09:00',
-      closes: '17:00',
-    },
-  ],
-  sameAs: ['https://www.facebook.com/102574992430776'],
+  ...(openingHoursSchema.length > 0 && { openingHoursSpecification: openingHoursSchema }),
+  ...(socials.length > 0 && { sameAs: socials.map((s) => s.url) }),
 };
 ---
 
@@ -128,6 +129,14 @@ const organization = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    {/* The view-transition opt-in comes before any stylesheet (see "page transitions" in global.css). */}
+    <style is:inline>
+      @media (prefers-reduced-motion: no-preference) {
+        @view-transition {
+          navigation: auto;
+        }
+      }
+    </style>
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     {
@@ -144,23 +153,36 @@ const organization = {
     }
     <link rel="preload" href={dmSansLatin} as="font" type="font/woff2" crossorigin />
     {rtl && <link rel="preload" href={notoSansArabic} as="font" type="font/woff2" crossorigin />}
-    {rtl && <style is:inline set:html={arabicFaces} />}
+    <style is:inline set:html={arabicFaces} />
     <meta name="theme-color" content="#0b0b0c" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <script type="application/ld+json" set:html={JSON.stringify(organization)} />
-    {!noindex && <script type="application/ld+json" set:html={JSON.stringify(website(locale))} />}
+    <JsonLd data={noindex ? organization : [organization, website(locale)]} />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Faraday" />
     <meta property="og:locale" content={meta.ogLocale} />
+    {
+      !noindex &&
+        locales.filter((l) => l !== locale).map((l) => <meta property="og:locale:alternate" content={localeMeta[l].ogLocale} />)
+    }
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:image" content={ogImage} />
+    {
+      !image && (
+        <>
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:alt" content={ogDefaultAlt} />
+        </>
+      )
+    }
     <meta name="twitter:card" content="summary_large_image" />
+    {!image && <meta name="twitter:image:alt" content={ogDefaultAlt} />}
 
     <script is:inline>
       (function () {

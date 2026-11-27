@@ -17,6 +17,7 @@ import {
   flagship,
   flagshipDatasheet,
   flagshipSeries,
+  flagshipWarranty,
   heatLoss,
   lowMonth,
   nearest,
@@ -107,7 +108,7 @@ const moduleRows = [
   { label: t.sizing.module.coefficient, value: ct, unit: '%/°C' },
   {
     label: t.sizing.module.warranty,
-    text: t.sizing.module.warrantyText(flagshipSeries.warranty.product, flagshipSeries.warranty.power),
+    text: t.sizing.module.warrantyText(flagshipWarranty.product, flagshipWarranty.power),
   },
 ];
 
@@ -268,7 +269,7 @@ const graph = [
           </figure>
           <SpecList rows={moduleRows} class="module__spec" />
           <div class="module__links">
-            <a class="link-arrow" href={href(`/products/modules/${flagshipSeries.slug}/`)}>{t.sizing.module.link}</a>
+            {flagshipSeries && <a class="link-arrow" href={href(`/products/modules/${flagshipSeries.slug}/`)}>{t.sizing.module.link}</a>}
             {
               flagshipDatasheet && (
                 <a class="link-arrow" href={flagshipDatasheet.url} rel="noopener" target="_blank">
@@ -851,7 +852,9 @@ const graph = [
     .cell-sub {
       font-size: 0.6875rem;
     }
+    /* The yield (kWh/kWp) is the widest figure: it takes its own width, distance and difference share the rest. */
     .nearby__facts {
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
       column-gap: var(--s-4);
     }
     .nearby__facts dd {

@@ -1,0 +1,2346 @@
+{
+  "accepts": {
+    "maxMinor": 0,
+    "snapshotVersion": 1
+  },
+  "builtAt": "2026-11-23T17:35:22Z",
+  "cities": [
+    {
+      "id": "zakho",
+      "name": {
+        "ar": "زاخو",
+        "ckb": "زاخۆ",
+        "en": "Zakho"
+      }
+    },
+    {
+      "id": "duhok",
+      "name": {
+        "ar": "دهوك",
+        "ckb": "دهۆک",
+        "en": "Duhok"
+      }
+    },
+    {
+      "id": "mosul",
+      "name": {
+        "ar": "الموصل",
+        "ckb": "مووسڵ",
+        "en": "Mosul"
+      }
+    },
+    {
+      "id": "erbil",
+      "name": {
+        "ar": "أربيل",
+        "ckb": "هەولێر",
+        "en": "Erbil"
+      }
+    },
+    {
+      "id": "sulaymaniyah",
+      "name": {
+        "ar": "السليمانية",
+        "ckb": "سلێمانی",
+        "en": "Sulaymaniyah"
+      }
+    },
+    {
+      "id": "kirkuk",
+      "name": {
+        "ar": "كركوك",
+        "ckb": "کەرکووک",
+        "en": "Kirkuk"
+      }
+    },
+    {
+      "id": "halabja",
+      "name": {
+        "ar": "حلبجة",
+        "ckb": "هەڵەبجە",
+        "en": "Halabja"
+      }
+    },
+    {
+      "id": "tikrit",
+      "name": {
+        "ar": "تكريت",
+        "ckb": "تکریت",
+        "en": "Tikrit"
+      }
+    },
+    {
+      "id": "samarra",
+      "name": {
+        "ar": "سامراء",
+        "ckb": "سامەڕا",
+        "en": "Samarra"
+      }
+    },
+    {
+      "id": "baqubah",
+      "name": {
+        "ar": "بعقوبة",
+        "ckb": "بەعقووبە",
+        "en": "Baqubah"
+      }
+    },
+    {
+      "id": "ramadi",
+      "name": {
+        "ar": "الرمادي",
+        "ckb": "ڕەمادی",
+        "en": "Ramadi"
+      }
+    },
+    {
+      "id": "fallujah",
+      "name": {
+        "ar": "الفلوجة",
+        "ckb": "فەللووجە",
+        "en": "Fallujah"
+      }
+    },
+    {
+      "id": "baghdad",
+      "name": {
+        "ar": "بغداد",
+        "ckb": "بەغدا",
+        "en": "Baghdad"
+      }
+    },
+    {
+      "id": "karbala",
+      "name": {
+        "ar": "كربلاء",
+        "ckb": "کەربەلا",
+        "en": "Karbala"
+      }
+    },
+    {
+      "id": "kut",
+      "name": {
+        "ar": "الكوت",
+        "ckb": "کووت",
+        "en": "Kut"
+      }
+    },
+    {
+      "id": "hillah",
+      "name": {
+        "ar": "الحلة",
+        "ckb": "حیللە",
+        "en": "Hillah"
+      }
+    },
+    {
+      "id": "najaf",
+      "name": {
+        "ar": "النجف",
+        "ckb": "نەجەف",
+        "en": "Najaf"
+      }
+    },
+    {
+      "id": "diwaniyah",
+      "name": {
+        "ar": "الديوانية",
+        "ckb": "دیوانییە",
+        "en": "Diwaniyah"
+      }
+    },
+    {
+      "id": "amarah",
+      "name": {
+        "ar": "العمارة",
+        "ckb": "عەمارە",
+        "en": "Amarah"
+      }
+    },
+    {
+      "id": "samawah",
+      "name": {
+        "ar": "السماوة",
+        "ckb": "سەماوە",
+        "en": "Samawah"
+      }
+    },
+    {
+      "id": "nasiriyah",
+      "name": {
+        "ar": "الناصرية",
+        "ckb": "ناسرییە",
+        "en": "Nasiriyah"
+      }
+    },
+    {
+      "id": "basra",
+      "name": {
+        "ar": "البصرة",
+        "ckb": "بەسرە",
+        "en": "Basra"
+      }
+    }
+  ],
+  "codeCommit": "5577180d7c39ccc2bdc59273e586d27621085ab3",
+  "contentCommit": null,
+  "curated": {
+    "batteries": [
+      {
+        "key": "psi-x-5-8mst-v2"
+      },
+      {
+        "key": "psi-x-5-8slv-v2"
+      },
+      {
+        "key": "psi-x-hs-2-5"
+      },
+      {
+        "key": "psi-x-hs-3-6"
+      },
+      {
+        "key": "psi-a-bt3-8s"
+      },
+      {
+        "key": "psi-x-prl-bms"
+      },
+      {
+        "key": "psi-xcab-pcs100-b215"
+      },
+      {
+        "key": "psi-xcab-x3p50"
+      }
+    ],
+    "families": [
+      {
+        "group": "onGrid",
+        "inverterIds": [
+          "psi-x1p1100-tl",
+          "psi-x1p1500-tl",
+          "psi-x1p2000-tl",
+          "psi-x1p2500-tl",
+          "psi-x1p3000-tl"
+        ],
+        "key": "psi-x1p-tl"
+      },
+      {
+        "group": "onGrid",
+        "inverterIds": [
+          "psi-x1p3000-tlm",
+          "psi-x1p4200-tlm",
+          "psi-x1p5000-tlm",
+          "psi-x1p6000-tlm"
+        ],
+        "key": "psi-x1p-tlm"
+      },
+      {
+        "group": "onGrid",
+        "inverterIds": [
+          "psi-x1s1100-tl",
+          "psi-x1s1500-tl",
+          "psi-x1s2000-tl",
+          "psi-x1s2500-tl"
+        ],
+        "key": "psi-x1s-tl"
+      },
+      {
+        "group": "onGrid",
+        "inverterIds": [
+          "psi-x1s3000-tlm",
+          "psi-x1s4200-tlm",
+          "psi-x1s5000-tlm",
+          "psi-x1s6000-tlm"
+        ],
+        "key": "psi-x1s-tlm"
+      },
+      {
+        "group": "onGrid",
+        "inverterIds": [
+          "psi-x3p6000-tp",
+          "psi-x3p8000-tp",
+          "psi-x3p10000-tp"
+        ],
+        "key": "psi-x3p-tp"
+      },
+      {
+        "group": "onGrid",
+        "inverterIds": [
+          "psi-x3p15000-tpm",
+          "psi-x3p20000-tpm",
+          "psi-x3p30000-tpm",
+          "psi-x3p40000-tpm",
+          "psi-x3p50000-tpm",
+          "psi-x3p60000-tpm",
+          "psi-x3p100000-tpm",
+          "psi-x3p125000-tpm"
+        ],
+        "key": "psi-x3p-tpm"
+      },
+      {
+        "group": "onGrid",
+        "inverterIds": [
+          "psi-j1000-tl",
+          "psi-j1500-tl"
+        ],
+        "key": "psi-j-mirus-line"
+      },
+      {
+        "group": "onGrid",
+        "inverterIds": [
+          "psi-j2000-tl",
+          "psi-j2500-tl",
+          "psi-j3000-tl"
+        ],
+        "key": "psi-j-unicus-line"
+      },
+      {
+        "group": "onGrid",
+        "inverterIds": [
+          "psi-j3000-tlm",
+          "psi-j4000-tlm",
+          "psi-j5000-tlm",
+          "psi-j6000-tlm"
+        ],
+        "key": "psi-j-geminus-line"
+      },
+      {
+        "group": "onGrid",
+        "inverterIds": [
+          "psi-j4000-tp",
+          "psi-j5000-tp",
+          "psi-j6000-tp",
+          "psi-j8000-tp",
+          "psi-j10000-tp"
+        ],
+        "key": "psi-j-virtus-line"
+      },
+      {
+        "group": "onGrid",
+        "inverterIds": [
+          "psi-j12000-tp",
+          "psi-j15000-tp",
+          "psi-j17000-tp",
+          "psi-j20000-tp"
+        ],
+        "key": "psi-j-editus-line"
+      },
+      {
+        "group": "onGrid",
+        "inverterIds": [
+          "psi-j25000-tp",
+          "psi-j33000-tp",
+          "psi-j40000-tp",
+          "psi-j50000-tp",
+          "psi-j60000-tp"
+        ],
+        "key": "psi-j-magnus-line"
+      },
+      {
+        "group": "hybrid",
+        "inverterIds": [
+          "psi-x1p3000-hy",
+          "psi-x1p5000-hy",
+          "psi-x1p6000-hy"
+        ],
+        "key": "psi-x1p-hy"
+      },
+      {
+        "group": "hybrid",
+        "inverterIds": [
+          "psi-x3s6000-hy",
+          "psi-x3s8000-hy",
+          "psi-x3s10000-hy",
+          "psi-x3s15000-hy"
+        ],
+        "key": "psi-x3s-hy"
+      },
+      {
+        "group": "hybrid",
+        "inverterIds": [
+          "psi-x3p20000-hym",
+          "psi-x3p30000-hym"
+        ],
+        "key": "psi-x3p-hym"
+      },
+      {
+        "group": "hybrid",
+        "inverterIds": [
+          "psi-a1p3600-hy",
+          "psi-a1p6000-hy"
+        ],
+        "key": "psi-a1p"
+      },
+      {
+        "group": "hybrid",
+        "inverterIds": [],
+        "key": "psi-a3p"
+      },
+      {
+        "group": "hybrid",
+        "inverterIds": [
+          "psi-j3000-hy",
+          "psi-j4000-hy",
+          "psi-j5000-hy",
+          "psi-j6000-hy"
+        ],
+        "key": "psi-j-hy"
+      },
+      {
+        "group": "hybrid",
+        "inverterIds": [],
+        "key": "psi-j-rf"
+      },
+      {
+        "group": "hybrid",
+        "inverterIds": [
+          "psi-x3p6000-hy",
+          "psi-x3p8000-hy",
+          "psi-x3p10000-hy"
+        ],
+        "key": "psi-x3p-hy"
+      },
+      {
+        "group": "micro",
+        "inverterIds": [
+          "psi-x1p800-mic",
+          "psi-x1p1000-mic"
+        ],
+        "key": "psi-x1p-mic"
+      }
+    ],
+    "series": [
+      {
+        "cells": [
+          60,
+          66,
+          72
+        ],
+        "efficiencyMax": 0.2155,
+        "finishes": [
+          "FB",
+          "BF",
+          "B"
+        ],
+        "key": "s-series-sa",
+        "name": "S Series SA",
+        "panelIds": [
+          "sa450m-fb",
+          "sa455m-bf",
+          "sa460m-bf",
+          "sa500m-bf",
+          "sa500m-fb",
+          "sa505m-bf",
+          "sa545m-b",
+          "sa545m",
+          "sa550m-b"
+        ],
+        "powerRange": [
+          450,
+          585
+        ],
+        "render": {
+          "height": 1400,
+          "src": "/images/products/modules/s-series-sa.webp",
+          "width": 666
+        },
+        "seriesFamily": "S Series",
+        "warranty": {
+          "power": 30,
+          "product": 30
+        }
+      },
+      {
+        "cells": [
+          60,
+          66,
+          72
+        ],
+        "efficiencyMax": 0.2084,
+        "finishes": [
+          "BF",
+          "FB",
+          "FG",
+          "FR"
+        ],
+        "key": "s-series-sf",
+        "name": "S Series SF",
+        "panelIds": [
+          "sf350m-bf",
+          "sf350m-fb",
+          "sf360m-fg",
+          "sf360m-fr",
+          "sf365m-bf",
+          "sf400m-bf",
+          "sf400m-fb",
+          "sf410m-bf",
+          "sf415m-bf",
+          "sf440m"
+        ],
+        "powerRange": [
+          350,
+          440
+        ],
+        "render": {
+          "height": 1400,
+          "src": "/images/products/modules/s-series-sf.webp",
+          "width": 670
+        },
+        "seriesFamily": "S Series",
+        "warranty": {
+          "power": 30,
+          "product": 30
+        }
+      },
+      {
+        "cells": [
+          54,
+          60,
+          72
+        ],
+        "efficiencyMax": 0.2042,
+        "finishes": [
+          "BF",
+          "FB"
+        ],
+        "key": "revamping-line",
+        "name": "Revamping Line",
+        "panelIds": [
+          "sg205p",
+          "sg210p",
+          "sg215p",
+          "sg220p",
+          "sg225p",
+          "sg230p",
+          "sg235p",
+          "sg240p",
+          "sg245p",
+          "sg250p",
+          "sg255p",
+          "sg260p",
+          "sg265p",
+          "sg270p",
+          "sg275p",
+          "sg280p",
+          "sg285p",
+          "sg290p",
+          "sg300m-bf",
+          "sg310m-bf",
+          "sg310m-fb",
+          "sg315m-bf",
+          "sm330m-bf",
+          "sm330m-fb",
+          "sm335m-bf",
+          "sm340m-bf",
+          "sm390m",
+          "sm395m",
+          "sm400m",
+          "sm405m"
+        ],
+        "powerRange": [
+          205,
+          405
+        ],
+        "render": {
+          "height": 1400,
+          "src": "/images/products/modules/revamping-line.webp",
+          "width": 670
+        },
+        "seriesFamily": "S Series",
+        "warranty": {
+          "power": 30,
+          "product": 30
+        }
+      },
+      {
+        "cells": [
+          96
+        ],
+        "efficiencyMax": 0.2302,
+        "finishes": [
+          "BF",
+          "FB"
+        ],
+        "key": "or-series-or10e",
+        "name": "OR Series OR10E",
+        "panelIds": [
+          "or10e460mndb-bf",
+          "or10e460mndb-fb"
+        ],
+        "powerRange": [
+          460,
+          640
+        ],
+        "render": {
+          "height": 1400,
+          "src": "/images/products/modules/or-series-or10e.webp",
+          "width": 810
+        },
+        "seriesFamily": "OR Series",
+        "warranty": {
+          "power": 30,
+          "product": 25
+        }
+      },
+      {
+        "cells": [
+          108,
+          120,
+          132,
+          144
+        ],
+        "efficiencyMax": 0.2363,
+        "finishes": [
+          "FR",
+          "FB",
+          "BF",
+          "SF"
+        ],
+        "key": "or-series-or10h",
+        "name": "OR Series OR10H",
+        "panelIds": [
+          "or10h375m-fr",
+          "or10h425mndb-fb",
+          "or10h430mndb-fb",
+          "or10h440mn-bf",
+          "or10h440mn-fb",
+          "or10h440mndb-bf",
+          "or10h440mndb-fb",
+          "or10h440mndb-sf",
+          "or10h450m",
+          "or10h450mndb-bf",
+          "or10h450mndb-fb",
+          "or10h500m-fb",
+          "or10h500mndb-bf",
+          "or10h500mndb-fb",
+          "or10h510mndb-bf",
+          "or10h545m",
+          "or10h560m",
+          "or10h595mndb",
+          "or10h610mndb"
+        ],
+        "powerRange": [
+          375,
+          610
+        ],
+        "render": {
+          "height": 1400,
+          "src": "/images/products/modules/or-series-or10h.webp",
+          "width": 658
+        },
+        "seriesFamily": "OR Series",
+        "warranty": {
+          "power": 30,
+          "product": 25
+        }
+      },
+      {
+        "cells": [
+          120,
+          132
+        ],
+        "efficiencyMax": 0.2302,
+        "finishes": [],
+        "key": "or-series-or12h",
+        "name": "OR Series OR12H",
+        "panelIds": [
+          "or12h635mndb",
+          "or12h670m",
+          "or12h715mndb"
+        ],
+        "powerRange": [
+          635,
+          735
+        ],
+        "render": {
+          "height": 1400,
+          "src": "/images/products/modules/or-series-or12h.webp",
+          "width": 708
+        },
+        "seriesFamily": "OR Series",
+        "warranty": {
+          "power": 30,
+          "product": 25
+        }
+      },
+      {
+        "cells": [
+          120,
+          132,
+          144
+        ],
+        "efficiencyMax": 0.2128,
+        "finishes": [
+          "FB"
+        ],
+        "key": "dr-series-dr10h",
+        "name": "DR Series DR10H",
+        "panelIds": [
+          "dr10h450m-fb",
+          "dr10h500m-fb",
+          "dr10h550mb"
+        ],
+        "powerRange": [
+          450,
+          550
+        ],
+        "render": {
+          "height": 1400,
+          "src": "/images/products/modules/dr-series-dr10h.webp",
+          "width": 658
+        },
+        "seriesFamily": "DR Series",
+        "warranty": {
+          "power": 30,
+          "product": 25
+        }
+      }
+    ]
+  },
+  "inverters": [
+    {
+      "id": "psi-a1p3600-hy",
+      "model": "PSI-A1P3600-HY",
+      "phase": "single_phase",
+      "pnomAc": 3680,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-a1p6000-hy",
+      "model": "PSI-A1P6000-HY",
+      "phase": "single_phase",
+      "pnomAc": 6000,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-j3000-hy",
+      "model": "PSI-J3000-HY",
+      "phase": "single_phase",
+      "pnomAc": 3000,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-j4000-hy",
+      "model": "PSI-J4000-HY",
+      "phase": "single_phase",
+      "pnomAc": 4000,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-j5000-hy",
+      "model": "PSI-J5000-HY",
+      "phase": "single_phase",
+      "pnomAc": 5000,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-j6000-hy",
+      "model": "PSI-J6000-HY",
+      "phase": "single_phase",
+      "pnomAc": 6000,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-x1p3000-hy",
+      "model": "PSI-X1P3000-HY",
+      "phase": "single_phase",
+      "pnomAc": 3000,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-x1p5000-hy",
+      "model": "PSI-X1P5000-HY",
+      "phase": "single_phase",
+      "pnomAc": 5000,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-x1p6000-hy",
+      "model": "PSI-X1P6000-HY",
+      "phase": "single_phase",
+      "pnomAc": 6000,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-x3p6000-hy",
+      "model": "PSI-X3P6000-HY",
+      "phase": "three_phase",
+      "pnomAc": 6000,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-x3p8000-hy",
+      "model": "PSI-X3P8000-HY",
+      "phase": "three_phase",
+      "pnomAc": 8000,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-x3p10000-hy",
+      "model": "PSI-X3P10000-HY",
+      "phase": "three_phase",
+      "pnomAc": 10000,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-x3p20000-hym",
+      "model": "PSI-X3P20000-HYM",
+      "phase": "three_phase",
+      "pnomAc": 20000,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-x3p30000-hym",
+      "model": "PSI-X3P30000-HYM",
+      "phase": "three_phase",
+      "pnomAc": 30000,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-x3s6000-hy",
+      "model": "PSI-X3S6000-HY",
+      "phase": "three_phase",
+      "pnomAc": 6000,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-x3s8000-hy",
+      "model": "PSI-X3S8000-HY",
+      "phase": "three_phase",
+      "pnomAc": 8000,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-x3s10000-hy",
+      "model": "PSI-X3S10000-HY",
+      "phase": "three_phase",
+      "pnomAc": 10000,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-x3s15000-hy",
+      "model": "PSI-X3S15000-HY",
+      "phase": "three_phase",
+      "pnomAc": 15000,
+      "type": "hybrid"
+    },
+    {
+      "id": "psi-x1p800-mic",
+      "model": "PSI-X1P800-MIC",
+      "phase": "single_phase",
+      "pnomAc": 800,
+      "type": "micro"
+    },
+    {
+      "id": "psi-x1p1000-mic",
+      "model": "PSI-X1P1000-MIC",
+      "phase": "single_phase",
+      "pnomAc": 1000,
+      "type": "micro"
+    },
+    {
+      "id": "psi-j1000-tl",
+      "model": "PSI-J1000-TL",
+      "phase": "single_phase",
+      "pnomAc": 1000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j1500-tl",
+      "model": "PSI-J1500-TL",
+      "phase": "single_phase",
+      "pnomAc": 1500,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j2000-tl",
+      "model": "PSI-J2000-TL",
+      "phase": "single_phase",
+      "pnomAc": 2000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j2500-tl",
+      "model": "PSI-J2500-TL",
+      "phase": "single_phase",
+      "pnomAc": 2500,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j3000-tl",
+      "model": "PSI-J3000-TL",
+      "phase": "single_phase",
+      "pnomAc": 3000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j3000-tlm",
+      "model": "PSI-J3000-TLM",
+      "phase": "single_phase",
+      "pnomAc": 3000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j4000-tlm",
+      "model": "PSI-J4000-TLM",
+      "phase": "single_phase",
+      "pnomAc": 4000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j5000-tlm",
+      "model": "PSI-J5000-TLM",
+      "phase": "single_phase",
+      "pnomAc": 5000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j6000-tlm",
+      "model": "PSI-J6000-TLM",
+      "phase": "single_phase",
+      "pnomAc": 6000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x1p1100-tl",
+      "model": "PSI-X1P1100-TL",
+      "phase": "single_phase",
+      "pnomAc": 1100,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x1p1500-tl",
+      "model": "PSI-X1P1500-TL",
+      "phase": "single_phase",
+      "pnomAc": 1500,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x1p2000-tl",
+      "model": "PSI-X1P2000-TL",
+      "phase": "single_phase",
+      "pnomAc": 2000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x1p2500-tl",
+      "model": "PSI-X1P2500-TL",
+      "phase": "single_phase",
+      "pnomAc": 2500,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x1p3000-tl",
+      "model": "PSI-X1P3000-TL",
+      "phase": "single_phase",
+      "pnomAc": 3000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x1p3000-tlm",
+      "model": "PSI-X1P3000-TLM",
+      "phase": "single_phase",
+      "pnomAc": 3000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x1p4200-tlm",
+      "model": "PSI-X1P4200-TLM",
+      "phase": "single_phase",
+      "pnomAc": 4200,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x1p5000-tlm",
+      "model": "PSI-X1P5000-TLM",
+      "phase": "single_phase",
+      "pnomAc": 5000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x1p6000-tlm",
+      "model": "PSI-X1P6000-TLM",
+      "phase": "single_phase",
+      "pnomAc": 6000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x1s1100-tl",
+      "model": "PSI-X1S1100-TL",
+      "phase": "single_phase",
+      "pnomAc": 1100,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x1s1500-tl",
+      "model": "PSI-X1S1500-TL",
+      "phase": "single_phase",
+      "pnomAc": 1500,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x1s2000-tl",
+      "model": "PSI-X1S2000-TL",
+      "phase": "single_phase",
+      "pnomAc": 2000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x1s2500-tl",
+      "model": "PSI-X1S2500-TL",
+      "phase": "single_phase",
+      "pnomAc": 2500,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x1s3000-tlm",
+      "model": "PSI-X1S3000-TLM",
+      "phase": "single_phase",
+      "pnomAc": 3000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x1s4200-tlm",
+      "model": "PSI-X1S4200-TLM",
+      "phase": "single_phase",
+      "pnomAc": 4200,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x1s5000-tlm",
+      "model": "PSI-X1S5000-TLM",
+      "phase": "single_phase",
+      "pnomAc": 5000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x1s6000-tlm",
+      "model": "PSI-X1S6000-TLM",
+      "phase": "single_phase",
+      "pnomAc": 6000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j4000-tp",
+      "model": "PSI-J4000-TP",
+      "phase": "three_phase",
+      "pnomAc": 4000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j5000-tp",
+      "model": "PSI-J5000-TP",
+      "phase": "three_phase",
+      "pnomAc": 5000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j6000-tp",
+      "model": "PSI-J6000-TP",
+      "phase": "three_phase",
+      "pnomAc": 6000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j8000-tp",
+      "model": "PSI-J8000-TP",
+      "phase": "three_phase",
+      "pnomAc": 8000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j10000-tp",
+      "model": "PSI-J10000-TP",
+      "phase": "three_phase",
+      "pnomAc": 10000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j12000-tp",
+      "model": "PSI-J12000-TP",
+      "phase": "three_phase",
+      "pnomAc": 12000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j15000-tp",
+      "model": "PSI-J15000-TP",
+      "phase": "three_phase",
+      "pnomAc": 15000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j17000-tp",
+      "model": "PSI-J17000-TP",
+      "phase": "three_phase",
+      "pnomAc": 17000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j20000-tp",
+      "model": "PSI-J20000-TP",
+      "phase": "three_phase",
+      "pnomAc": 20000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j25000-tp",
+      "model": "PSI-J25000-TP",
+      "phase": "three_phase",
+      "pnomAc": 25000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j33000-tp",
+      "model": "PSI-J33000-TP",
+      "phase": "three_phase",
+      "pnomAc": 30000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j40000-tp",
+      "model": "PSI-J40000-TP",
+      "phase": "three_phase",
+      "pnomAc": 40000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j50000-tp",
+      "model": "PSI-J50000-TP",
+      "phase": "three_phase",
+      "pnomAc": 50000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-j60000-tp",
+      "model": "PSI-J60000-TP",
+      "phase": "three_phase",
+      "pnomAc": 60000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x3p6000-tp",
+      "model": "PSI-X3P6000-TP",
+      "phase": "three_phase",
+      "pnomAc": 6000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x3p8000-tp",
+      "model": "PSI-X3P8000-TP",
+      "phase": "three_phase",
+      "pnomAc": 8000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x3p10000-tp",
+      "model": "PSI-X3P10000-TP",
+      "phase": "three_phase",
+      "pnomAc": 10000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x3p15000-tpm",
+      "model": "PSI-X3P15000-TPM",
+      "phase": "three_phase",
+      "pnomAc": 15000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x3p20000-tpm",
+      "model": "PSI-X3P20000-TPM",
+      "phase": "three_phase",
+      "pnomAc": 20000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x3p30000-tpm",
+      "model": "PSI-X3P30000-TPM",
+      "phase": "three_phase",
+      "pnomAc": 30000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x3p40000-tpm",
+      "model": "PSI-X3P40000-TPM",
+      "phase": "three_phase",
+      "pnomAc": 40000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x3p50000-tpm",
+      "model": "PSI-X3P50000-TPM",
+      "phase": "three_phase",
+      "pnomAc": 50000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x3p60000-tpm",
+      "model": "PSI-X3P60000-TPM",
+      "phase": "three_phase",
+      "pnomAc": 60000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x3p100000-tpm",
+      "model": "PSI-X3P100000-TPM",
+      "phase": "three_phase",
+      "pnomAc": 100000,
+      "type": "on-grid"
+    },
+    {
+      "id": "psi-x3p125000-tpm",
+      "model": "PSI-X3P125000-TPM",
+      "phase": "three_phase",
+      "pnomAc": 125000,
+      "type": "on-grid"
+    }
+  ],
+  "panels": [
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "dr10h450m-fb",
+      "model": "DR10H450M",
+      "power": 450,
+      "series": "DR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "dr10h500m-fb",
+      "model": "DR10H500M",
+      "power": 500,
+      "series": "DR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "dr10h550mb",
+      "model": "DR10H550MB",
+      "power": 550,
+      "series": "DR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "oh335m-bf",
+      "model": "OH335M",
+      "power": 335,
+      "series": "OH"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "ol370m-bf",
+      "model": "OL370M",
+      "power": 370,
+      "series": "OL"
+    },
+    {
+      "bifacial": true,
+      "finish": "BF",
+      "id": "or10e460mndb-bf",
+      "model": "OR10E460MNDB",
+      "power": 460,
+      "series": "OR10E"
+    },
+    {
+      "bifacial": true,
+      "finish": "FB",
+      "id": "or10e460mndb-fb",
+      "model": "OR10E460MNDB",
+      "power": 460,
+      "series": "OR10E"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "or10h375m-fb",
+      "model": "OR10H375M",
+      "power": 375,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": "FR",
+      "id": "or10h375m-fr",
+      "model": "OR10H375M",
+      "power": 375,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "or10h400m-fb",
+      "model": "OR10H400M",
+      "power": 400,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "or10h410m-bf",
+      "model": "OR10H410M",
+      "power": 410,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "or10h415m-bf",
+      "model": "OR10H415M",
+      "power": 415,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "or10h420m-fb",
+      "model": "OR10H420M",
+      "power": 420,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "or10h425m-bf",
+      "model": "OR10H425M",
+      "power": 425,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": true,
+      "finish": "FB",
+      "id": "or10h425mndb-fb",
+      "model": "OR10H425MNDB",
+      "power": 425,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": true,
+      "finish": "FB",
+      "id": "or10h430mndb-fb",
+      "model": "OR10H430MNDB",
+      "power": 430,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "or10h440mn-bf",
+      "model": "OR10H440MN",
+      "power": 440,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "or10h440mn-fb",
+      "model": "OR10H440MN",
+      "power": 440,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": true,
+      "finish": "BF",
+      "id": "or10h440mndb-bf",
+      "model": "OR10H440MNDB",
+      "power": 440,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": true,
+      "finish": "FB",
+      "id": "or10h440mndb-fb",
+      "model": "OR10H440MNDB",
+      "power": 440,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": true,
+      "finish": "SF",
+      "id": "or10h440mndb-sf",
+      "model": "OR10H440MNDB",
+      "power": 440,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "or10h450m",
+      "model": "OR10H450M",
+      "power": 450,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "or10h450m-bf",
+      "model": "OR10H450M",
+      "power": 450,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": true,
+      "finish": "BF",
+      "id": "or10h450mndb-bf",
+      "model": "OR10H450MNDB",
+      "power": 450,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": true,
+      "finish": "FB",
+      "id": "or10h450mndb-fb",
+      "model": "OR10H450MNDB",
+      "power": 450,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "or10h460m",
+      "model": "OR10H460M",
+      "power": 460,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "or10h470m",
+      "model": "OR10H470M",
+      "power": 470,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "or10h500m-fb",
+      "model": "OR10H500M",
+      "power": 500,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": true,
+      "finish": "BF",
+      "id": "or10h500mndb-bf",
+      "model": "OR10H500MNDB",
+      "power": 500,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": true,
+      "finish": "FB",
+      "id": "or10h500mndb-fb",
+      "model": "OR10H500MNDB",
+      "power": 500,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "or10h505m-bf",
+      "model": "OR10H505M",
+      "power": 505,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": true,
+      "finish": "BF",
+      "id": "or10h510mndb-bf",
+      "model": "OR10H510MNDB",
+      "power": 510,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "or10h540m",
+      "model": "OR10H540M",
+      "power": 540,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "or10h545m",
+      "model": "OR10H545M",
+      "power": 545,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "or10h550m",
+      "model": "OR10H550M",
+      "power": 550,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "or10h560m",
+      "model": "OR10H560M",
+      "power": 560,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": true,
+      "finish": null,
+      "id": "or10h580mndb",
+      "model": "OR10H580MNDB",
+      "power": 580,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": true,
+      "finish": null,
+      "id": "or10h590mndb",
+      "model": "OR10H590MNDB",
+      "power": 590,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": true,
+      "finish": null,
+      "id": "or10h595mndb",
+      "model": "OR10H595MNDB",
+      "power": 595,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": true,
+      "finish": null,
+      "id": "or10h610mndb",
+      "model": "OR10H610MNDB",
+      "power": 610,
+      "series": "OR10H"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "or10l460mn-bf",
+      "model": "OR10L460MN",
+      "power": 460,
+      "series": "OR10L"
+    },
+    {
+      "bifacial": true,
+      "finish": null,
+      "id": "or12h635mndb",
+      "model": "OR12H635MNDB",
+      "power": 635,
+      "series": "OR12H"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "or12h670m",
+      "model": "OR12H670M",
+      "power": 670,
+      "series": "OR12H"
+    },
+    {
+      "bifacial": true,
+      "finish": null,
+      "id": "or12h700mndb",
+      "model": "OR12H700MNDB",
+      "power": 700,
+      "series": "OR12H"
+    },
+    {
+      "bifacial": true,
+      "finish": null,
+      "id": "or12h705mndb",
+      "model": "OR12H705MNDB",
+      "power": 705,
+      "series": "OR12H"
+    },
+    {
+      "bifacial": true,
+      "finish": null,
+      "id": "or12h715mndb",
+      "model": "OR12H715MNDB",
+      "power": 715,
+      "series": "OR12H"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "or2h335m-bf",
+      "model": "OR2H335M",
+      "power": 335,
+      "series": "OR2H"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "or2h340m-bf",
+      "model": "OR2H340M",
+      "power": 340,
+      "series": "OR2H"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "or6h370m-bf",
+      "model": "OR6H370M",
+      "power": 370,
+      "series": "OR6H"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "or6h370m-fb",
+      "model": "OR6H370M",
+      "power": 370,
+      "series": "OR6H"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "or6h375m-bf",
+      "model": "OR6H375M",
+      "power": 375,
+      "series": "OR6H"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "or6h375m-fb",
+      "model": "OR6H375M",
+      "power": 375,
+      "series": "OR6H"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "or6h380m-bf",
+      "model": "OR6H380M",
+      "power": 380,
+      "series": "OR6H"
+    },
+    {
+      "bifacial": false,
+      "finish": "SF",
+      "id": "or6h380m-sf",
+      "model": "OR6H380M",
+      "power": 380,
+      "series": "OR6H"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "or6h450m",
+      "model": "OR6H450M",
+      "power": 450,
+      "series": "OR6H"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "or6h460m",
+      "model": "OR6H460M",
+      "power": 460,
+      "series": "OR6H"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "os300m-fb",
+      "model": "OS300M",
+      "power": 300,
+      "series": "OS"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "sa450m-fb",
+      "model": "SA450M",
+      "power": 450,
+      "series": "SA"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sa455m-bf",
+      "model": "SA455M",
+      "power": 455,
+      "series": "SA"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sa460m-bf",
+      "model": "SA460M",
+      "power": 460,
+      "series": "SA"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sa500m-bf",
+      "model": "SA500M",
+      "power": 500,
+      "series": "SA"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "sa500m-fb",
+      "model": "SA500M",
+      "power": 500,
+      "series": "SA"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sa505m-bf",
+      "model": "SA505M",
+      "power": 505,
+      "series": "SA"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sa545m",
+      "model": "SA545M",
+      "power": 545,
+      "series": "SA"
+    },
+    {
+      "bifacial": false,
+      "finish": "B",
+      "id": "sa545m-b",
+      "model": "SA545M",
+      "power": 545,
+      "series": "SA"
+    },
+    {
+      "bifacial": false,
+      "finish": "B",
+      "id": "sa550m-b",
+      "model": "SA550M",
+      "power": 550,
+      "series": "SA"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "sf345m-fb",
+      "model": "SF345M",
+      "power": 345,
+      "series": "SF"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sf350m-bf",
+      "model": "SF350M",
+      "power": 350,
+      "series": "SF"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "sf350m-fb",
+      "model": "SF350M",
+      "power": 350,
+      "series": "SF"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sf360m-bf",
+      "model": "SF360M",
+      "power": 360,
+      "series": "SF"
+    },
+    {
+      "bifacial": false,
+      "finish": "FG",
+      "id": "sf360m-fg",
+      "model": "SF360M",
+      "power": 360,
+      "series": "SF"
+    },
+    {
+      "bifacial": false,
+      "finish": "FR",
+      "id": "sf360m-fr",
+      "model": "SF360M",
+      "power": 360,
+      "series": "SF"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sf365m-bf",
+      "model": "SF365M",
+      "power": 365,
+      "series": "SF"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "sf390m-fb",
+      "model": "SF390M",
+      "power": 390,
+      "series": "SF"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sf400m",
+      "model": "SF400M",
+      "power": 400,
+      "series": "SF"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sf400m-bf",
+      "model": "SF400M",
+      "power": 400,
+      "series": "SF"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "sf400m-fb",
+      "model": "SF400M",
+      "power": 400,
+      "series": "SF"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sf405m-bf",
+      "model": "SF405M",
+      "power": 405,
+      "series": "SF"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sf410m-bf",
+      "model": "SF410M",
+      "power": 410,
+      "series": "SF"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sf415m-bf",
+      "model": "SF415M",
+      "power": 415,
+      "series": "SF"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sf420m",
+      "model": "SF420M",
+      "power": 420,
+      "series": "SF"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sf430m",
+      "model": "SF430M",
+      "power": 430,
+      "series": "SF"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sf440m",
+      "model": "SF440M",
+      "power": 440,
+      "series": "SF"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg205p",
+      "model": "SG205P",
+      "power": 205,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg210p",
+      "model": "SG210P",
+      "power": 210,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg215p",
+      "model": "SG215P",
+      "power": 215,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg220p",
+      "model": "SG220P",
+      "power": 220,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg225p",
+      "model": "SG225P",
+      "power": 225,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg230p",
+      "model": "SG230P",
+      "power": 230,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg235p",
+      "model": "SG235P",
+      "power": 235,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg240p",
+      "model": "SG240P",
+      "power": 240,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg245p",
+      "model": "SG245P",
+      "power": 245,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg250p",
+      "model": "SG250P",
+      "power": 250,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg255p",
+      "model": "SG255P",
+      "power": 255,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg260p",
+      "model": "SG260P",
+      "power": 260,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg265p",
+      "model": "SG265P",
+      "power": 265,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg270p",
+      "model": "SG270P",
+      "power": 270,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg275p",
+      "model": "SG275P",
+      "power": 275,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg280p",
+      "model": "SG280P",
+      "power": 280,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg285p",
+      "model": "SG285P",
+      "power": 285,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg290p",
+      "model": "SG290P",
+      "power": 290,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sg290p-bf",
+      "model": "SG290P",
+      "power": 290,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sg300m-bf",
+      "model": "SG300M",
+      "power": 300,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "sg310m-fb",
+      "model": "SG310M",
+      "power": 310,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sg310m-bf",
+      "model": "SG310M",
+      "power": 315,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sg315m-bf",
+      "model": "SG315M",
+      "power": 315,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg340p",
+      "model": "SG340P",
+      "power": 340,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg350p",
+      "model": "SG350P",
+      "power": 350,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sg370m",
+      "model": "SG370M",
+      "power": 370,
+      "series": "SG"
+    },
+    {
+      "bifacial": false,
+      "finish": "FG",
+      "id": "sm290m-fg",
+      "model": "SM290M",
+      "power": 290,
+      "series": "SM"
+    },
+    {
+      "bifacial": false,
+      "finish": "FR",
+      "id": "sm290m-fr",
+      "model": "SM290M",
+      "power": 290,
+      "series": "SM"
+    },
+    {
+      "bifacial": false,
+      "finish": "FG",
+      "id": "sm300m-fg",
+      "model": "SM300M",
+      "power": 300,
+      "series": "SM"
+    },
+    {
+      "bifacial": false,
+      "finish": "FR",
+      "id": "sm300m-fr",
+      "model": "SM300M",
+      "power": 300,
+      "series": "SM"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "sm325m-fb",
+      "model": "SM325M",
+      "power": 325,
+      "series": "SM"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sm330m-bf",
+      "model": "SM330M",
+      "power": 330,
+      "series": "SM"
+    },
+    {
+      "bifacial": false,
+      "finish": "FB",
+      "id": "sm330m-fb",
+      "model": "SM330M",
+      "power": 330,
+      "series": "SM"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sm335m-bf",
+      "model": "SM335M",
+      "power": 335,
+      "series": "SM"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sm340m-bf",
+      "model": "SM340M",
+      "power": 340,
+      "series": "SM"
+    },
+    {
+      "bifacial": false,
+      "finish": "FG",
+      "id": "sm350m-fg",
+      "model": "SM350M",
+      "power": 350,
+      "series": "SM"
+    },
+    {
+      "bifacial": false,
+      "finish": "FR",
+      "id": "sm350m-fr",
+      "model": "SM350M",
+      "power": 350,
+      "series": "SM"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sm390m",
+      "model": "SM390M",
+      "power": 390,
+      "series": "SM"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sm395m",
+      "model": "SM395M",
+      "power": 395,
+      "series": "SM"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sm400m",
+      "model": "SM400M",
+      "power": 400,
+      "series": "SM"
+    },
+    {
+      "bifacial": false,
+      "finish": null,
+      "id": "sm405m",
+      "model": "SM405M",
+      "power": 405,
+      "series": "SM"
+    },
+    {
+      "bifacial": false,
+      "finish": "BF",
+      "id": "sp340m-bf",
+      "model": "SP340M",
+      "power": 340,
+      "series": "SP"
+    }
+  ],
+  "policy": {
+    "linkHosts": [
+      "peimar.com",
+      "www.peimar.com"
+    ],
+    "mapsHosts": [
+      "www.google.com",
+      "google.com",
+      "maps.google.com",
+      "maps.app.goo.gl"
+    ],
+    "socialHosts": {
+      "facebook": [
+        "www.facebook.com",
+        "facebook.com",
+        "m.facebook.com"
+      ],
+      "instagram": [
+        "www.instagram.com",
+        "instagram.com"
+      ],
+      "linkedin": [
+        "www.linkedin.com",
+        "linkedin.com"
+      ],
+      "telegram": [
+        "t.me"
+      ],
+      "tiktok": [
+        "www.tiktok.com",
+        "tiktok.com"
+      ],
+      "x": [
+        "x.com",
+        "twitter.com"
+      ],
+      "youtube": [
+        "www.youtube.com",
+        "youtube.com",
+        "youtu.be"
+      ]
+    }
+  },
+  "publishId": 0,
+  "routes": {
+    "accessories": "/products/accessories/",
+    "battery": "/products/storage/{slug}/",
+    "family": "/products/inverters/{slug}/",
+    "item": "/products/items/{slug}/",
+    "line": {
+      "accessories": "/products/accessories/",
+      "hybrid": "/products/hybrid/",
+      "micro": "/products/micro/",
+      "modules": "/products/modules/",
+      "onGrid": "/products/on-grid/"
+    },
+    "localePrefix": {
+      "ar": "/ar",
+      "ckb": "/ku",
+      "en": ""
+    },
+    "projects": "/projects/#{slug}",
+    "series": "/products/modules/{slug}/"
+  },
+  "schema": "faraday.site-reference",
+  "sitePaths": [
+    {
+      "height": 803,
+      "path": "/images/legacy/project-3kwp-emergency-water-station.jpg",
+      "width": 1024
+    },
+    {
+      "height": 768,
+      "path": "/images/legacy/project-12kwp-apartments-1.jpg",
+      "width": 1024
+    },
+    {
+      "height": 1024,
+      "path": "/images/legacy/project-3-6kwp-house.jpg",
+      "width": 1024
+    },
+    {
+      "height": 755,
+      "path": "/images/legacy/project-1-8kwp-advertising-board.jpg",
+      "width": 1024
+    },
+    {
+      "height": 768,
+      "path": "/images/legacy/project-30kwp-big-company.jpg",
+      "width": 1024
+    }
+  ],
+  "version": 1,
+  "vocab": {
+    "capacityKeys": [
+      "totalKwh",
+      "usableKwh",
+      "ratedKwh",
+      "nominalKwh",
+      "moduleKwh",
+      "usableKwhPerModule",
+      "modules",
+      "depthOfDischarge"
+    ],
+    "chemistries": [
+      "Li-ion (LFP)",
+      "LiFePO4",
+      "Lithium-ion (LiFePO4)",
+      "LFP (LiFePO4)"
+    ],
+    "docLangs": [
+      "en",
+      "it",
+      "fr",
+      "ar",
+      "ckb",
+      "multi"
+    ],
+    "socialNetworks": [
+      "facebook",
+      "instagram",
+      "tiktok",
+      "youtube",
+      "linkedin",
+      "telegram",
+      "x"
+    ],
+    "specKeys": [
+      "power",
+      "voltage",
+      "current",
+      "capacity",
+      "efficiency",
+      "dimensions",
+      "weight",
+      "crossSection",
+      "length",
+      "material",
+      "protection",
+      "temperature",
+      "warranty",
+      "certification",
+      "compatibility",
+      "custom"
+    ]
+  }
+}

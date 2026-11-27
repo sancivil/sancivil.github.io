@@ -415,7 +415,7 @@ const certs = facts.series === 'other' ? [] : ['IEC 61215', 'IEC 61730', `${t.pi
 <script>
   import { ScrollTrigger, reduceMotion } from '../../lib/motion/init.ts';
   import { moduleSvg } from '../../lib/three/drawing.ts';
-  import { loadScenes, webglAvailable, whenNear } from '../../lib/three/load.ts';
+  import { loadScenes, sceneContext, startScene } from '../../lib/three/load.ts';
   import { anatomyAt } from '../../lib/three/timeline.ts';
   import type { ModuleSpec } from '../../lib/three/types.ts';
 
@@ -455,19 +455,16 @@ const certs = facts.series === 'other' ? [] : ['IEC 61215', 'IEC 61730', `${t.pi
       });
     }
 
-    if (!webglAvailable()) {
-      stage.innerHTML = moduleSvg(spec);
-      return;
-    }
-    whenNear(
-      root,
-      async () => {
-        const { mountAnatomy } = await loadScenes();
-        await document.fonts.ready;
-        scene = mountAnatomy(stage, spec);
-        scene.setProgress(progress);
-      },
-      '600px',
-    );
+    // Two screens ahead: on a phone too the scene is up before the reader gets here, not built while they scroll.
+    startScene(root, '200%', async () => {
+      if (!sceneContext(stage.querySelector('canvas')!)) {
+        stage.innerHTML = moduleSvg(spec);
+        return;
+      }
+      const { mountAnatomy } = await loadScenes();
+      await document.fonts.ready;
+      scene = await mountAnatomy(stage, spec);
+      scene.setProgress(progress);
+    });
   });
 </script>

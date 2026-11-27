@@ -1,0 +1,68 @@
+# Go live: deploys the site-live artifact of a production "Build website" run to faradayiq.com over FTPS. The ERP
+# dispatches it for Go live and Put back; developers release code by running it from the Actions tab on production
+# with the run id of a production build.
+name: Go live
+run-name: ${{ inputs.publish_id != '' && format('Go live {0}', inputs.publish_id) || format('Go live run {0}', inputs.run_id) }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Run id of the production "Build website" run to deploy
+        type: string
+        required: true
+      publish_id:
+        description: ERP publish number the build must carry (empty for a code release)
+        type: string
+        default: ''
+      allow_large_removal:
+        description: yes lets this deploy remove more than 30% of the pages
+        type: string
+        default: 'no'
+
+permissions: {}
+
+jobs:
+  live:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+    concurrency:
+      group: production
+      cancel-in-progress: false
+    environment: production
+    steps:
+      - name: Check inputs
+        env:
+          RUN: ${{ inputs.run_id }}
+          ID: ${{ inputs.publish_id }}
+          BIG: ${{ inputs.allow_large_removal }}
+          REF: ${{ github.ref }}
+        run: |
+          fail() { echo "::error title=inputs::$1"; exit 1; }
+          [[ "$RUN" =~ ^[0-9]{1,20}$ ]] || fail run_id
+          [[ -z "$ID" || "$ID" =~ ^[0-9]{1,9}$ ]] || fail publish_id
+          [[ -z "$BIG" || "$BIG" == yes || "$BIG" == no ]] || fail allow_large_removal
+          [[ "$REF" == refs/heads/production ]] || fail ref
+
+      - name: Check out the deploy scripts
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          sparse-checkout: |
+            scripts/deploy
+            .github/actions
+          persist-credentials: false
+
+      - name: Deploy to faradayiq.com
+        uses: ./.github/actions/deploy-cpanel
+        with:
+          run-id: ${{ inputs.run_id }}
+          publish-id: ${{ inputs.publish_id }}
+          allow-large-removal: ${{ inputs.allow_large_removal }}
+          site-url: ${{ vars.SITE_URL }}
+          ftps-host: ${{ secrets.FTPS_HOST }}
+          ftps-user: ${{ secrets.FTPS_USER }}
+          ftps-password: ${{ secrets.FTPS_PASSWORD }}
+          ftps-port: ${{ secrets.FTPS_PORT }}

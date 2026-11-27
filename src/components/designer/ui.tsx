@@ -12,7 +12,7 @@ export function Num({ v, u, class: className }: { v: string; u?: string; class?:
   );
 }
 
-type IconName = 'arrow' | 'chevron' | 'check' | 'plus' | 'minus' | 'close' | 'link' | 'print' | 'reset' | 'copy';
+type IconName = 'arrow' | 'chevron' | 'check' | 'plus' | 'minus' | 'close' | 'link' | 'print' | 'reset' | 'copy' | 'swap';
 
 const paths: Record<IconName, string> = {
   copy: 'M5.5 5.5h7.5v7.5H5.5zM3 10.5V3h7.5',
@@ -25,6 +25,7 @@ const paths: Record<IconName, string> = {
   link: 'M6.5 9.5l3-3M7 4.5l1-1a2.5 2.5 0 013.5 3.5l-1 1M9 11.5l-1 1A2.5 2.5 0 014.5 9l1-1',
   print: 'M4.5 6V2.5h7V6M4.5 11.5h-2v-5h11v5h-2M4.5 9.5h7v4h-7z',
   reset: 'M3 3v3.5h3.5M3.5 6.5A5 5 0 113 9',
+  swap: 'M2.5 5.5h10M10 3l2.5 2.5L10 8M13.5 10.5h-10M6 8l-2.5 2.5L6 13',
 };
 
 /** `dir` icons point to the inline end and mirror in right-to-left pages. */
@@ -86,17 +87,23 @@ type NumberInputProps = {
   invalid?: boolean;
   describedBy?: string;
   onBlur?: () => void;
+  /** Told whether the text in the field is something other than a number; an empty field is not. */
+  onUnparsed?: (unparsed: boolean) => void;
   placeholder?: string;
 };
 
 /** Text input that keeps the typed draft and reports a parsed number (NaN while empty or invalid). */
-export function NumberInput({ id, value, onValue, unit, integer, signed, invalid, describedBy: db, onBlur, placeholder }: NumberInputProps) {
+export function NumberInput({ id, value, onValue, unit, integer, signed, invalid, describedBy: db, onBlur, onUnparsed, placeholder }: NumberInputProps) {
   const show = (v: number) => (Number.isFinite(v) ? String(v) : '');
   const [draft, setDraft] = useState(show(value));
   const focused = useRef(false);
+  const unparsed = draft.trim() !== '' && Number.isNaN(parseNumber(draft));
   useEffect(() => {
-    if (!focused.current && parseNumber(draft) !== value) setDraft(show(value));
+    if (!focused.current && !Object.is(parseNumber(draft), value)) setDraft(show(value));
   }, [value]);
+  useEffect(() => {
+    onUnparsed?.(unparsed);
+  }, [unparsed]);
   return (
     <div class={`dz-num-input${unit ? ' has-unit' : ''}`}>
       <input

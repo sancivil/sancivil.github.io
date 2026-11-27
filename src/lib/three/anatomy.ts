@@ -1,6 +1,6 @@
 import { Fog, Group, PerspectiveCamera, Scene, Vector3 } from 'three';
 import { buildModule } from './module.ts';
-import { addLights, createRenderer, deg, device, environment, fitDistance, isRtl, maxAnisotropy, studio, watchVisibility } from './stage.ts';
+import { addLights, deg, device, fitDistance, isRtl, prepare, setUp, watchVisibility } from './stage.ts';
 import { anatomyAt, smooth } from './timeline.ts';
 import type { ModuleSpec } from './types.ts';
 
@@ -13,8 +13,9 @@ const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
  * Scroll-scrubbed exploded view: front three-quarter view → side view while the layers separate.
  * Each separated layer gets a hairline callout from a point on the layer to its numbered label in a
  * column on the end side of the stage ([data-callouts]: one <g data-line> and one [data-tag] per layer).
+ * Builds the scene a slice at a time; resolves once its first frame is ready to draw (see `prepare`).
  */
-export function mountAnatomy(stage: HTMLElement, spec: ModuleSpec) {
+export async function mountAnatomy(stage: HTMLElement, spec: ModuleSpec) {
   const canvas = stage.querySelector('canvas')!;
   const side = isRtl(stage) ? -1 : 1;
   const callouts = stage.querySelector<HTMLElement>('[data-callouts]');
@@ -22,17 +23,18 @@ export function mountAnatomy(stage: HTMLElement, spec: ModuleSpec) {
   const lines = callouts ? [...callouts.querySelectorAll<SVGGElement>('[data-line]')] : [];
   const tags = callouts ? [...callouts.querySelectorAll<HTMLElement>('[data-tag]')] : [];
 
-  const renderer = createRenderer(canvas);
+  const setup = await setUp(canvas, side < 0);
+  const { renderer, anisotropy, photo } = setup;
   const scene = new Scene();
-  let env = environment(renderer, side < 0);
+  let env = setup.env;
   addLights(scene, side < 0, 1.7, 1.8);
   const fog = new Fog(0x0b0b0c, 1, 10);
   scene.fog = fog;
   const camera = new PerspectiveCamera(FOV, 1, 0.05, 60);
 
-  const pv = buildModule(spec, {
+  const pv = await buildModule(spec, {
     textureMax: device.textureMax,
-    anisotropy: maxAnisotropy(renderer),
+    anisotropy,
     envMap: env,
     envIntensity: 0.9,
     envRotation: 0,
@@ -103,7 +105,7 @@ export function mountAnatomy(stage: HTMLElement, spec: ModuleSpec) {
   let disposed = false;
   /** After the first frame: reflections from the photographed studio (not on phones). */
   const upgrade = async () => {
-    const s = await studio(renderer, side < 0);
+    const s = await photo();
     if (!s) return;
     if (disposed) return s.texture.dispose();
     pv.setEnvironment(s.texture, 0.9 * s.gain, s.rotation);
@@ -156,6 +158,7 @@ export function mountAnatomy(stage: HTMLElement, spec: ModuleSpec) {
     svg?.setAttribute('viewBox', `0 0 ${w} ${h}`);
     requestDraw();
   };
+  await prepare(renderer, scene, camera, scene, pv.textures);
   const ro = new ResizeObserver(resize);
   ro.observe(stage);
 

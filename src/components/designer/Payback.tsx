@@ -5,8 +5,10 @@ import { fmt, fmtMax, ltr, unit } from '../../lib/designer/format.ts';
 import {
   AGEING,
   CURRENCIES,
+  MAX_AMOUNT,
   PAYBACK_YEARS,
   amount,
+  amountOk,
   designTech,
   money,
   payback,
@@ -65,13 +67,29 @@ function Seg<V extends string>({ name, legend, options, value, onChange }: { nam
   );
 }
 
+function amountError(t: DesignerStrings, value: number, unparsed: boolean): string | null {
+  if (unparsed) return t.payback.errNumber;
+  if (Number.isNaN(value) || amountOk(value)) return null;
+  return value > MAX_AMOUNT ? t.payback.errLarge(fmt(MAX_AMOUNT)) : t.payback.errAmount;
+}
+
 function AmountField({ id, label, unit: u, help, value, onValue }: { id: string; label: string; unit: string; help: string; value: number; onValue: (v: number) => void }) {
   const { t } = useI18n();
   const [touched, touch] = useTouched();
-  const error = touched && !Number.isNaN(value) && !(value > 0) ? t.payback.errAmount : null;
+  const [unparsed, setUnparsed] = useState(false);
+  const error = touched ? amountError(t, value, unparsed) : null;
   return (
     <Field id={id} label={label} help={help} error={error}>
-      <NumberInput id={id} value={value} unit={u} invalid={!!error} describedBy={describedBy(id, help, error)} onBlur={touch} onValue={onValue} />
+      <NumberInput
+        id={id}
+        value={value}
+        unit={u}
+        invalid={!!error}
+        describedBy={describedBy(id, help, error)}
+        onBlur={touch}
+        onUnparsed={setUnparsed}
+        onValue={onValue}
+      />
     </Field>
   );
 }
@@ -107,9 +125,10 @@ export function FinanceFields({ id, value, onChange, bill }: { id: string; value
         />
       )}
       {bill?.basis === 'bill' ? (
-        <AmountField id={`${id}-bill`} label={t.payback.bill} unit={t.payback.billUnit(cur)} help={billHelp} value={bill.value} onValue={bill.onValue} />
+        <AmountField key="bill" id={`${id}-bill`} label={t.payback.bill} unit={t.payback.billUnit(cur)} help={billHelp} value={bill.value} onValue={bill.onValue} />
       ) : (
         <AmountField
+          key="price"
           id={`${id}-price`}
           label={t.payback.price}
           unit={`${cur}/kWh`}

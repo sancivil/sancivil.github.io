@@ -1,7 +1,5 @@
 import type { Locale } from './config.ts';
-
-/** Keeps a time range on one line: word joiners (U+2060) around the dash stop a line break there. */
-const keep = (s: string) => s.replaceAll('–', '\u2060–\u2060');
+import { ltr } from './text.ts';
 
 const enCount = (one: string, many: string) => (n: number) => `${n} ${n === 1 ? one : many}`;
 
@@ -61,7 +59,10 @@ const en = {
   },
   footer: {
     eyebrow: 'Exclusive Peimar agent in Iraq',
-    claim: (year: number) => `Solar systems designed and installed from Sulaymaniyah since ${year}.`,
+    claim: (year: number | null) =>
+      year === null
+        ? 'Solar systems designed and installed from Sulaymaniyah.'
+        : `Solar systems designed and installed from Sulaymaniyah since ${year}.`,
     openDesigner: 'Open the Designer',
     products: 'Products',
     company: 'Company',
@@ -72,19 +73,14 @@ const en = {
     rights: 'All rights reserved.',
     trademark: 'Peimar and the Peimar logo are trademarks of Peimar S.r.l., used by its exclusive agent in Iraq.',
   },
-  address: { street: 'Qasmlu Street', city: 'Sulaymaniyah', country: 'Iraq', place: 'Sulaymaniyah, Iraq' },
-  hours: `Saturday–Thursday ${keep('09:00–17:00')} · Friday closed`,
   help: {
+    label: 'Help',
     question: 'Need help?',
     action: 'Chat on WhatsApp',
-    aria: 'Need help? Chat with Faraday on WhatsApp',
     message: 'Hello Faraday, I need help choosing a solar system.',
   },
   units: { panels: 'panels', inverters: 'inverters', panelsCount: (n: number): string => (n === 1 ? 'panel' : 'panels') },
 };
-
-/** Keeps a time range or figure in left-to-right order inside Arabic/Kurdish text (U+2066 … U+2069). */
-const ltr = (s: string) => `\u2066${keep(s)}\u2069`;
 
 export type CommonStrings = typeof en;
 
@@ -138,7 +134,10 @@ const ar: CommonStrings = {
   },
   footer: {
     eyebrow: 'الوكيل الحصري لـ\u00a0Peimar في العراق',
-    claim: (year: number) => `منذ عام ${year} ونحن نصمّم منظومات الطاقة الشمسية ونركّبها من السليمانية.`,
+    claim: (year: number | null) =>
+      year === null
+        ? 'نصمّم منظومات الطاقة الشمسية ونركّبها من السليمانية.'
+        : `منذ عام ${year} ونحن نصمّم منظومات الطاقة الشمسية ونركّبها من السليمانية.`,
     openDesigner: 'افتح أداة التصميم',
     products: 'المنتجات',
     company: 'الشركة',
@@ -147,14 +146,12 @@ const ar: CommonStrings = {
     faq: 'الأسئلة الشائعة',
     solar: 'الطاقة الشمسية في مدن العراق',
     rights: 'جميع الحقوق محفوظة.',
-    trademark: 'اسم Peimar وشعارها علامتان تجاريتان لشركة Peimar S.r.l.، يستخدمهما وكيلها الحصري في العراق.',
+    trademark: `اسم Peimar وشعارها علامتان تجاريتان لشركة ${ltr('Peimar S.r.l.')}، يستخدمهما وكيلها الحصري في العراق.`,
   },
-  address: { street: 'شارع قاسملو', city: 'السليمانية', country: 'العراق', place: 'السليمانية، العراق' },
-  hours: `من السبت إلى الخميس ${ltr('09:00–17:00')} · الجمعة عطلة`,
   help: {
+    label: 'المساعدة',
     question: 'تحتاج مساعدة؟',
     action: 'راسلنا على واتساب',
-    aria: 'تحتاج مساعدة؟ راسل Faraday على واتساب',
     message: 'مرحبًا Faraday، أحتاج مساعدة في اختيار منظومة طاقة شمسية.',
   },
   units: {
@@ -219,7 +216,10 @@ const ckb: CommonStrings = {
   },
   footer: {
     eyebrow: 'بریکاری تایبەتی Peimar لە عێراق',
-    claim: (year: number) => `لە ساڵی ${year}ەوە لە سلێمانی سیستەمی وزەی خۆر دیزاین دەکەین و دایدەمەزرێنین.`,
+    claim: (year: number | null) =>
+      year === null
+        ? 'لە سلێمانی سیستەمی وزەی خۆر دیزاین دەکەین و دایدەمەزرێنین.'
+        : `لە ساڵی ${year}ەوە لە سلێمانی سیستەمی وزەی خۆر دیزاین دەکەین و دایدەمەزرێنین.`,
     openDesigner: 'دیزاینەر بکەرەوە',
     products: 'بەرهەمەکان',
     company: 'کۆمپانیا',
@@ -228,14 +228,12 @@ const ckb: CommonStrings = {
     faq: 'پرسیارە باوەکان',
     solar: 'داتای وزەی خۆری شارەکان',
     rights: 'هەموو مافەکان پارێزراون.',
-    trademark: 'ناو و لۆگۆی Peimar وەک نیشانەی بازرگانی دەگەڕێنەوە بۆ کۆمپانیای Peimar S.r.l.، و بریکارە تایبەتەکەی لە عێراق بەکاریان دەهێنێت.',
+    trademark: `ناو و لۆگۆی Peimar وەک نیشانەی بازرگانی دەگەڕێنەوە بۆ کۆمپانیای ${ltr('Peimar S.r.l.')}، و بریکارە تایبەتەکەی لە عێراق بەکاریان دەهێنێت.`,
   },
-  address: { street: 'شەقامی قاسملۆ', city: 'سلێمانی', country: 'عێراق', place: 'سلێمانی، عێراق' },
-  hours: `شەممە تا پێنجشەممە ${ltr('09:00–17:00')} · هەینی داخراوە`,
   help: {
+    label: 'یارمەتی',
     question: 'یارمەتیت پێویستە؟',
     action: 'لە واتسئاپ پەیوەندیمان پێوە بکە',
-    aria: 'یارمەتیت پێویستە؟ لە واتسئاپ پەیوەندی بە Faraday ەوە بکە',
     message: 'سڵاو Faraday، یارمەتیم پێویستە بۆ هەڵبژاردنی سیستەمێکی وزەی خۆر.',
   },
   units: { panels: 'پانێڵ', inverters: 'ئینڤێرتەر', panelsCount: () => 'پانێڵ' },

@@ -1,18 +1,27 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { cities } from '../../lib/designer/data.ts';
 import { fmt, kw, pct } from '../../lib/designer/format.ts';
 import { stringing } from './StepInverter.tsx';
-import { panelLabel } from './labels.ts';
-import { cityName, project, summary, useI18n } from './store.ts';
+import { panelLabel, projectName } from './labels.ts';
+import { cityName, other, project, summary, useI18n } from './store.ts';
 import { Dot, Icon, Num } from './ui.tsx';
 
-type Props = { open: boolean; onToggle: () => void; onShare: () => Promise<{ ok: boolean; url: string }>; onNew: () => void };
+type Props = { open: boolean; onToggle: () => void; onShare: () => Promise<{ ok: boolean; url: string }>; onNew: () => void; onSwitch: () => void };
 
-export function ProjectRail({ open, onToggle, onShare, onNew }: Props) {
+export function ProjectRail({ open, onToggle, onShare, onNew, onSwitch }: Props) {
   const { t, c, locale } = useI18n();
   const [copiedAt, setCopiedAt] = useState(0);
   const [manualUrl, setManualUrl] = useState('');
   const [confirming, setConfirming] = useState(false);
+  const keepBtn = useRef<HTMLButtonElement>(null);
+  const newBtn = useRef<HTMLButtonElement>(null);
+  /** Set by Keep: focus goes back to "New project". After Discard the new project's step title takes it. */
+  const kept = useRef(false);
+  useEffect(() => {
+    if (confirming) keepBtn.current?.focus();
+    else if (kept.current) newBtn.current?.focus();
+    kept.current = false;
+  }, [confirming]);
   const p = project.value;
   const s = summary.value;
   const city = cities.find((c) => c.id === p.cityId);
@@ -167,6 +176,12 @@ export function ProjectRail({ open, onToggle, onShare, onNew }: Props) {
               onFocus={(e) => e.currentTarget.select()}
             />
           )}
+          {other.value && (
+            <button type="button" class="dz-textbtn dz-sum__switch" onClick={onSwitch}>
+              <Icon name="swap" />
+              <span>{t.actions.switchTo(projectName(other.value.project, t))}</span>
+            </button>
+          )}
           {confirming ? (
             <div class="dz-confirm" role="group" aria-label={t.actions.confirmNew}>
               <p class="small">{t.actions.confirmNew}</p>
@@ -181,13 +196,21 @@ export function ProjectRail({ open, onToggle, onShare, onNew }: Props) {
                 >
                   {t.actions.discard}
                 </button>
-                <button type="button" class="dz-textbtn" onClick={() => setConfirming(false)}>
+                <button
+                  type="button"
+                  class="dz-textbtn"
+                  ref={keepBtn}
+                  onClick={() => {
+                    kept.current = true;
+                    setConfirming(false);
+                  }}
+                >
                   {t.actions.keep}
                 </button>
               </div>
             </div>
           ) : (
-            <button type="button" class="dz-textbtn" onClick={() => setConfirming(true)}>
+            <button type="button" class="dz-textbtn" ref={newBtn} onClick={() => setConfirming(true)}>
               <Icon name="reset" />
               {t.actions.newProject}
             </button>

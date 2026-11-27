@@ -256,7 +256,7 @@ const t = three[locale].sun;
 
 <script>
   import { ScrollTrigger, reduceMotion } from '../../lib/motion/init.ts';
-  import { afterLoadIdle, loadScenes, webglAvailable, whenNear } from '../../lib/three/load.ts';
+  import { loadScenes, sceneContext, startScene } from '../../lib/three/load.ts';
   import { clock, localMidnight, localMinutes, sunPosition, sunTimes } from '../../lib/three/sun.ts';
   import type { SunPosition } from '../../lib/three/sun.ts';
   import type { ModuleSpec } from '../../lib/three/types.ts';
@@ -374,34 +374,27 @@ const t = three[locale].sun;
   }
 
   document.querySelectorAll<HTMLElement>('[data-module-hero]').forEach((host) => {
-    if (!webglAvailable()) return;
     const spec = JSON.parse(host.dataset.spec ?? '{}') as ModuleSpec;
-    let scene: { setScroll(p: number): void; setSun(p: SunPosition): void } | null = null;
-    // As the hero scrolls away the module turns toward face-on, recedes and lifts (smoothed in the scene).
-    const away = reduceMotion
-      ? null
-      : ScrollTrigger.create({
-          trigger: host,
-          start: 0,
-          end: 'bottom top',
-          onUpdate: (self) => scene?.setScroll(self.progress),
-        });
-    afterLoadIdle(() =>
-      whenNear(
-        host,
-        async () => {
-          const { mountHero } = await loadScenes();
-          await document.fonts.ready;
-          scene = mountHero(host, spec, sunPosition(Date.now()));
-          scene.setScroll(away?.progress ?? 0);
-          const chip = host.querySelector<HTMLElement>('[data-sun]');
-          if (chip) {
-            chip.hidden = false;
-            sunChip(chip, (p) => scene?.setSun(p));
-          }
-        },
-        '0px',
-      ),
-    );
+    startScene(host, '0px', async () => {
+      if (!sceneContext(host.querySelector('canvas')!)) return;
+      const { mountHero } = await loadScenes();
+      await document.fonts.ready;
+      const scene = await mountHero(host, spec, sunPosition(Date.now()));
+      // As the hero scrolls away the module turns toward face-on, recedes and lifts (smoothed in the scene).
+      const away = reduceMotion
+        ? null
+        : ScrollTrigger.create({
+            trigger: host,
+            start: 0,
+            end: 'bottom top',
+            onUpdate: (self) => scene.setScroll(self.progress),
+          });
+      scene.setScroll(away?.progress ?? 0);
+      const chip = host.querySelector<HTMLElement>('[data-sun]');
+      if (chip) {
+        chip.hidden = false;
+        sunChip(chip, (p) => scene.setSun(p));
+      }
+    });
   });
 </script>

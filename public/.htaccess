@@ -12,22 +12,30 @@ ErrorDocument 404 /404.html
   RewriteCond %{HTTP_HOST} ^www\. [NC]
   RewriteRule ^ https://faradayiq.com%{REQUEST_URI} [L,R=301]
 
+  # The deploy's own records
+  RewriteRule ^\.deploy(/|$) - [F,L]
+
   # Folders that hold product pages but are not pages themselves
   RewriteRule ^((?:ar|ku)/)?products/inverters/?$ /$1products/ [L,R=301]
   RewriteRule ^((?:ar|ku)/)?products/storage/?$ /$1products/hybrid/ [L,R=301]
+  RewriteRule ^((?:ar|ku)/)?products/items/?$ /$1products/ [L,R=301]
+
+  # Product pages the owner hid (302) or renamed (301), written at build time by src/integrations/content-htaccess.ts
+  # CONTENT-REDIRECTS
+
+  # Old WordPress URLs, with or without their slash: ahead of the trailing-slash rule, so each takes one redirect
+  RewriteRule ^about-us/?$ /about/ [L,R=301]
+  RewriteRule ^contact-us/?$ /contact/ [L,R=301]
+  RewriteRule ^(12kwp-for-apartments|3-6-kwp-for-a-house|1-8-kwp-for-advertising-board|30-kwp-for-a-big-company|50-kwp-for-agriculture-land|3-kwp-for-emergency-power-water-station)/?$ /projects/ [L,R=301]
+  RewriteRule ^(blog|category/.*|author/.*|richard-swanson|who-was-michael-faraday|20[0-9]{2}/.*)/?$ / [L,R=301]
+  RewriteRule ^(sitemap|sitemap_index|wp-sitemap)\.xml$ /sitemap-index.xml [L,R=301]
+  RewriteRule ^wp-(admin|login\.php|content|includes)(/.*)?$ - [G,L]
 
   # Add the trailing slash to directory-style URLs (/about -> /about/)
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_URI} !\.[a-zA-Z0-9]{1,5}$
   RewriteCond %{REQUEST_URI} !/$
   RewriteRule ^(.*)$ /$1/ [L,R=301]
-
-  # Old WordPress URLs
-  RewriteRule ^about-us/?$ /about/ [L,R=301]
-  RewriteRule ^contact-us/?$ /contact/ [L,R=301]
-  RewriteRule ^(12kwp-for-apartments|3-6-kwp-for-a-house|1-8-kwp-for-advertising-board|30-kwp-for-a-big-company|50-kwp-for-agriculture-land|3-kwp-for-emergency-power-water-station)/?$ /projects/ [L,R=301]
-  RewriteRule ^(blog|category/.*|author/.*|richard-swanson|who-was-michael-faraday|20[0-9]{2}/.*)/?$ / [L,R=301]
-  RewriteRule ^wp-(admin|login\.php|content|includes)(/.*)?$ - [G,L]
 </IfModule>
 
 <IfModule mod_headers.c>
@@ -37,10 +45,14 @@ ErrorDocument 404 /404.html
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
   Header always set Strict-Transport-Security "max-age=31536000"
 
-  <FilesMatch "\.(html|xml|txt|webmanifest)$">
+  <FilesMatch "\.(html|xml|txt|webmanifest|json)$">
     Header set Cache-Control "public, max-age=0, must-revalidate"
   </FilesMatch>
-  <FilesMatch "\.(png|jpe?g|webp|avif|svg|hdr)$">
+  # /build.json and /data/: build facts for the ERP, not pages for search engines
+  <FilesMatch "\.json$">
+    Header set X-Robots-Tag "noindex"
+  </FilesMatch>
+  <FilesMatch "\.(png|jpe?g|webp|avif|svg|ico|hdr)$">
     Header set Cache-Control "public, max-age=2592000"
   </FilesMatch>
   # Hashed build assets (/_astro/name.HASH.ext) never change
@@ -56,6 +68,7 @@ ErrorDocument 404 /404.html
 <IfModule mod_mime.c>
   AddType application/manifest+json .webmanifest
   AddType font/woff2 .woff2
+  AddType image/x-icon .ico
   # 3D studio reflections (Radiance HDR, /hdr/)
   AddType image/vnd.radiance .hdr
 </IfModule>

@@ -34,7 +34,14 @@ const t = home[locale].meta;
   <HomeDesigner locale={locale} />
   <HomeProjects locale={locale} />
   <HomeWarranty locale={locale} />
-  <Faq qas={siteFaq(locale).slice(0, 5)} heading={faq[locale].heading} eyebrow={faq[locale].eyebrow} id="faq" theme="light">
+  <Faq
+    qas={siteFaq(locale).slice(0, 5)}
+    heading={faq[locale].heading}
+    eyebrow={faq[locale].eyebrow}
+    id="faq"
+    theme="light"
+    jsonLd={false}
+  >
     <a class="link-arrow" href={localizePath('/faq/', locale)}>{common[locale].footer.faq}</a>
   </Faq>
   <HomeContact locale={locale} />

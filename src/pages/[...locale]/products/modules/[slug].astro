@@ -10,7 +10,7 @@ import CertStrip from '../../../../components/products/CertStrip.astro';
 import FinishSwatch from '../../../../components/products/FinishSwatch.astro';
 import ModuleViewer from '../../../../components/three/ModuleViewer.astro';
 import JsonLd from '../../../../components/seo/JsonLd.astro';
-import { absolute, breadcrumbList, product } from '../../../../lib/seo/schema.ts';
+import { absolute, breadcrumbList, productGroup } from '../../../../lib/seo/schema.ts';
 import {
   GLASS_MM,
   OUTPUT_KEYS,
@@ -26,12 +26,14 @@ import {
   seriesCerts,
   seriesFinishes,
   seriesGlass,
+  seriesImage,
   seriesOutputs,
   seriesPanels,
   seriesRender,
   seriesTraits,
   warranty,
 } from '../../../../components/products/data.ts';
+import { paragraphs } from '../../../../content/index.ts';
 import { specFromPanel } from '../../../../lib/three/types.ts';
 import { localeFromParam, localizePath, withLocales } from '../../../../i18n/config.ts';
 import { common } from '../../../../i18n/common.ts';
@@ -55,7 +57,7 @@ const cut = cuts.size === 1 ? (cuts.has('half') ? s.cellsCaption.half : s.cellsC
 const extra = datasheetOnly(series);
 const d = t.detail;
 const ct = catalogText[locale];
-const render = seriesRender(series)!;
+const render = seriesImage(series);
 const back = seriesRender(series, 'back');
 const glass = seriesGlass(series);
 const finishes = seriesFinishes(series);
@@ -67,6 +69,9 @@ const downloads = [
   docItem({ label: ct.documents.installationManual, url: documents.installationManual }),
   docItem({ label: ct.documents.installationManualAR, url: documents.installationManualAR }),
   docItem({ label: ct.documents.productsFlyer, url: documents.productsFlyer }),
+  ...series.docs.flatMap((doc) =>
+    doc.kind === 'datasheet' ? [] : [docItem(doc, doc.kind === 'manual' ? `${t.label.manual} · ${doc.label}` : undefined)],
+  ),
 ];
 
 /* Series of the same Peimar line first, then the ones that share the most traits. */
@@ -82,9 +87,11 @@ const related = modules
   .map((r) => r.other);
 const pageUrl = absolute(localizePath(`/products/modules/${series.slug}/`, locale));
 const schema = [
-  product({
-    name: `Peimar ${series.name}`,
-    model: series.series,
+  productGroup({
+    name: `${series.brand} ${series.name}`,
+    id: series.slug,
+    models: series.models,
+    brand: series.brand,
     description: text?.description ?? series.description ?? series.name,
     image: render.src,
     url: pageUrl,
@@ -94,7 +101,6 @@ const schema = [
       ...(series.efficiencyMax ? [{ name: 'Maximum module efficiency', value: Number((series.efficiencyMax * 100).toFixed(2)), unitCode: 'P1' }] : []),
       ...(series.warranty?.product ? [{ name: 'Product warranty', value: series.warranty.product, unitText: 'years' }] : []),
       ...(series.warranty?.power ? [{ name: 'Linear power warranty', value: series.warranty.power, unitText: 'years' }] : []),
-      { name: 'Models', value: panels.map((x) => x.model).join(', ') },
     ],
   }),
   breadcrumbList([
@@ -105,7 +111,7 @@ const schema = [
 ];
 ---
 
-<Base title={s.title(series.name)} description={s.description(series.name)}>
+<Base title={s.title(series.brand, series.name)} description={s.description(series.brand, series.name)}>
   <JsonLd data={schema} />
   <section class="product theme-light">
     <div class="container">
@@ -120,22 +126,23 @@ const schema = [
 
       <div class="product__grid">
         <div class="product__stage">
-          <ModuleViewer spec={specFromPanel(initial)} label={s.viewer(initial.model)} locale={locale} />
-          <div class="poster" data-poster aria-hidden="true">
-            <img src={render.src} width={render.size[0]} height={render.size[1]} alt="" fetchpriority="high" decoding="async" />
-          </div>
+          <ModuleViewer spec={specFromPanel(initial)} label={s.viewer(initial.model)} locale={locale}>
+            <div slot="poster" class="poster" data-poster aria-hidden="true">
+              <img src={render.src} width={render.size[0]} height={render.size[1]} alt="" fetchpriority="high" decoding="async" />
+            </div>
+          </ModuleViewer>
         </div>
 
         <div class="product__info">
           <header class="product__head">
             <p class="eyebrow eyebrow--dot">
               <bdi>{series.series}</bdi>
-              {text && <span>· {text.tagline}</span>}
+              {text?.tagline && <span>· {text.tagline}</span>}
             </p>
             <h1 class="h1 product__title" data-reveal="lines">{series.name}</h1>
-            {text && <p class="product__lead">{text.description}</p>}
+            {text?.description && paragraphs(text.description).map((p) => <p class="product__lead">{p}</p>)}
             {
-              text && text.technology.length > 0 && (
+              text?.technology && (
                 <ul role="list" class="product__tags">
                   {text.technology.map((tech) => (
                     <li class="tag">{tech}</li>
@@ -219,7 +226,7 @@ const schema = [
             <p class="inside__big num">{series.cells.join(' / ')}</p>
             <p class="inside__text">{[cut, cellTypes.join(' · ')].filter(Boolean).join(' · ')}</p>
             {
-              text && text.technology.length > 0 && (
+              text?.technology && (
                 <ul role="list" class="inside__tags">
                   {text.technology.map((tech) => (
                     <li class="tag">{tech}</li>
@@ -290,9 +297,9 @@ const schema = [
         <h2 id="models-title" class="h2">{d.compareModels}</h2>
         <p class="models__swipe small">{t.inverterPage.swipe}</p>
       </div>
-      <div class="models__scroll" tabindex="0" role="region" aria-labelledby="models-title">
+      <div class="models__scroll" tabindex="0" role="region" aria-labelledby="models-caption">
         <table class="models__table">
-          <caption class="sr-only">{d.compareModelsCaption(series.name)}</caption>
+          <caption id="models-caption" class="sr-only">{d.compareModelsCaption(series.brand, series.name)}</caption>
           <thead>
             <tr>
               <th scope="col">{t.inverterPage.col.model}</th>
@@ -430,12 +437,13 @@ const schema = [
       max-height: none;
     }
   }
+  /* Laid over the viewer's stage: one cell the size of the stage, so the image fits inside it at every width. */
   .poster {
     position: absolute;
-    inset: 0 0 auto;
+    inset: 0;
     display: grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     place-items: center;
-    aspect-ratio: 4 / 3;
     padding-block: 56px 84px;
     pointer-events: none;
     transition: opacity 600ms var(--ease);
@@ -458,15 +466,8 @@ const schema = [
   .product__stage:has(.poster:not([hidden])) :global(.module-viewer__fallback) {
     visibility: hidden;
   }
-  @media (min-width: 901px) {
-    .poster {
-      aspect-ratio: auto;
-      block-size: clamp(480px, calc(100svh - var(--header-h) - 2 * var(--s-5)), 940px);
-    }
-  }
   @media (max-width: 720px) {
     .poster {
-      aspect-ratio: 1;
       padding-block: 48px 24px;
     }
   }

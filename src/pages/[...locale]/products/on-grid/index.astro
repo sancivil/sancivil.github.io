@@ -4,27 +4,31 @@ import PageIntro from '../../../../components/products/PageIntro.astro';
 import Stats from '../../../../components/products/Stats.astro';
 import SectionHead from '../../../../components/products/SectionHead.astro';
 import PhaseGroups from '../../../../components/products/PhaseGroups.astro';
+import ItemList from '../../../../components/products/ItemList.astro';
 import {
   categoryImage,
+  families,
   groupInverters,
   groupModels,
   groupPower,
   pct,
   powerParts,
 } from '../../../../components/products/data.ts';
-import { localeFromParam, localeParams } from '../../../../i18n/config.ts';
+import { categoryText, itemsByLine } from '../../../../content/index.ts';
+import { localeFromParam, localeParams, localizePath } from '../../../../i18n/config.ts';
 import { common } from '../../../../i18n/common.ts';
 import { products } from '../../../../i18n/products.ts';
-import { catalogText } from '../../../../i18n/catalog-text.ts';
 
 export const getStaticPaths = () => localeParams();
 const locale = localeFromParam(Astro.params.locale);
 const t = products[locale];
 const p = t.onGridPage;
 const nav = common[locale];
-const power = powerParts(groupPower('onGrid'));
-const efficiency = Math.max(...groupInverters('onGrid').map((m) => m.efficiencyMax ?? 0));
+const power = groupPower('onGrid');
+const inverters = groupInverters('onGrid');
 const models = groupModels('onGrid');
+const shown = families.onGrid.length > 0;
+const empty = !shown && itemsByLine('onGrid').length === 0;
 ---
 
 <Base title={p.title} description={p.description}>
@@ -33,27 +37,46 @@ const models = groupModels('onGrid');
     crumbs={[{ label: nav.nav.products, href: '/products/' }, { label: nav.productNav.onGrid }]}
     eyebrow={p.eyebrow}
     title={nav.productNav.onGrid}
-    lead={catalogText[locale].categories.onGrid}
+    lead={categoryText(locale, 'onGrid')}
     display
   >
     <Stats
       items={[
-        { label: p.stat.power, value: power.value, unit: power.unit },
-        { label: p.stat.efficiency, value: pct(efficiency, 1), unit: '%', count: true },
-        { label: p.stat.models, value: String(models) },
+        ...(power ? [{ label: p.stat.power, ...powerParts(power) }] : []),
+        ...(inverters.length
+          ? [{ label: p.stat.efficiency, value: pct(Math.max(...inverters.map((m) => m.efficiencyMax ?? 0)), 1), unit: '%', count: true }]
+          : []),
+        ...(shown ? [{ label: p.stat.models, value: String(models) }] : []),
       ]}
     />
   </PageIntro>
 
-  <section class="section" aria-labelledby="families-title">
-    <div class="container">
-      <SectionHead
-        id="families-title"
-        title={p.listTitle}
-        meta={t.count.models(models)}
-        image={{ ...categoryImage.onGrid, alt: t.categoryAlt.onGrid }}
-      />
-      <PhaseGroups locale={locale} group="onGrid" />
-    </div>
-  </section>
+  {
+    shown && (
+      <section class="section" aria-labelledby="families-title">
+        <div class="container">
+          <SectionHead
+            id="families-title"
+            title={p.listTitle}
+            meta={t.count.models(models)}
+            image={{ ...categoryImage.onGrid, alt: t.categoryAlt.onGrid }}
+          />
+          <PhaseGroups locale={locale} group="onGrid" />
+        </div>
+      </section>
+    )
+  }
+
+  <ItemList locale={locale} items={itemsByLine('onGrid')} />
+
+  {
+    empty && (
+      <section class="section">
+        <div class="container prose">
+          <p class="lead measure">{t.emptyLine.text}</p>
+          <p><a class="btn btn--sun" href={localizePath('/contact/', locale)}>{t.emptyLine.action}</a></p>
+        </div>
+      </section>
+    )
+  }
 </Base>

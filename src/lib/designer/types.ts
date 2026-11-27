@@ -61,7 +61,7 @@ export type City = {
 
 export type Battery = {
   name: string;
-  slug: string;
+  key: string;
   family: string;
   capacity: { totalKwh?: number | number[]; ratedKwh?: number; moduleKwh?: number; modules?: number[] } | null;
 };

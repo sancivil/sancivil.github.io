@@ -5,6 +5,8 @@ type NeedsQuoteData = { city: string; monthly: string; kwp: string; panels: stri
 type PaybackQuote = { cost: string; price: string; bill: string | null; time: string; yearly: string };
 type FailFn = (qty: string, value: string, limit: string, name: string) => string;
 
+const hours = (n: number) => (n === 1 ? '1 hour' : `${n} hours`);
+
 const en = {
   meta: {
     title: 'PV Designer',
@@ -27,6 +29,7 @@ const en = {
   app: { label: 'Faraday Designer' },
   steps: {
     label: 'Designer steps',
+    backNext: 'Previous and next step',
     names: { 1: 'Project data', 2: 'Panels', 3: 'Inverter', 4: 'Summary' },
     short: { 1: 'Project', 2: 'Panels', 3: 'Inverter', 4: 'Summary' },
     stepOf: (n: number) => `Step ${n} of 4`,
@@ -48,6 +51,10 @@ const en = {
     inverter: (model: string) => `${model} is selected as the first inverter.`,
     city: (name: string) => `${name} is selected: its temperatures and solar yield are used.`,
     shared: 'Project opened from a share link.',
+    kept: (name: string) => `${name} is still saved on this device.`,
+    switched: (name: string) => `${name} is open.`,
+    sharedReplace: (name: string) => `This share link replaces your current project, ${name}. Replace it?`,
+    sharedBroken: 'This share link is incomplete and cannot be opened. Ask the sender for a new link.',
     dismiss: 'Dismiss',
   },
   form: { required: 'required', clearSearch: 'Clear search' },
@@ -175,7 +182,7 @@ const en = {
     legendInvalid: 'Not possible',
     legendSelected: 'Selected',
     cell: (strings: number, series: number, power: string, modules: number) =>
-      `${series} in series, ${strings === 1 ? '1 string' : `${strings} strings`}: ${power}, ${modules} panels`,
+      `${series} in series, ${strings === 1 ? '1 string' : `${strings} strings`}: ${power}, ${modules === 1 ? '1 panel' : `${modules} panels`}`,
     whyNot: (layout: string) => `${layout} is not possible.`,
     blocked: 'No string layout works for this module on this MPPT:',
     applyRest: (layout: string) => `Apply ${layout} to the empty MPPTs`,
@@ -313,6 +320,7 @@ const en = {
     confirmNew: 'Discard this project and start again?',
     discard: 'Discard',
     keep: 'Keep',
+    switchTo: (name: string) => `Switch to ${name}`,
   },
   quote: {
     text: 'Send this design to Faraday. We reply with prices and availability.',
@@ -371,9 +379,10 @@ const en = {
     phase: 'Grid connection',
     errMonthly: 'Enter your monthly consumption in kWh.',
     errHours: 'Enter 0 to 24 hours.',
-    errKw: 'Enter a load in kW.',
+    errKw: 'Enter 0 to 500 kW.',
     eyebrow: 'Estimate',
     empty: 'Enter your city and monthly consumption to see a first system size.',
+    fixField: 'One of the values you entered is not valid. Correct it to see a system size.',
     kwpLabel: 'Recommended PV power',
     formula: <T>(annual: T, specific: T, city: string, kwp: T) => [annual, ' a year ÷ ', specific, ` in ${city} = `, kwp],
     module: 'Module',
@@ -391,10 +400,13 @@ const en = {
     batteryUnknown: 'Faraday matches a Peimar battery to this inverter.',
     batteryOver: 'Needs more than one battery stack per inverter. Faraday plans the layout.',
     noBattery: 'Enter an essential load and backup hours to size a battery.',
-    outage: (off: string, h: string, kw: string) => `The grid is off ${off} hours a day; the battery carries ${kw} for ${h} hours of it.`,
+    outage: (off: number, h: number, kw: string) => `The grid is off ${hours(off)} a day; the battery carries ${kw} for ${hours(h)} of it.`,
+    outageCovered: (off: number, kw: string) => `The grid is off ${hours(off)} a day; the battery carries ${kw} through all of it.`,
     coverage: (pct: string) => `${pct} of your yearly consumption`,
     noFit: (kwp: string) => `No Peimar hybrid inverter fits ${kwp} cleanly. Faraday sizes this one with you.`,
-    noFitBackup: (kwp: string) => `For ${kwp}, the backup load is more than one Peimar hybrid inverter of this phase carries. Faraday designs this one with you.`,
+    noFitBackupLoad: (kw: string, max: string) =>
+      `The essential load (${kw}) is more than Peimar hybrid inverters of this phase carry. This tool sizes up to ${max}. Faraday designs this one with you.`,
+    noFitBackupPv: (kwp: string, kw: string) => `Peimar hybrid inverters that carry ${kw} need more than ${kwp} of panels. Faraday designs this one with you.`,
     noFitSmall: (kwp: string) => `This need is below the smallest Peimar hybrid system for this phase (from ${kwp}). Faraday can still advise you.`,
     noFitLarge: (kwp: string) => `This need is above ${kwp}, the largest system this tool sizes. Faraday sizes larger systems with you.`,
     disclaimer: 'Estimate only. Faraday confirms it after a site visit: roof orientation, shade and your real loads change the result.',
@@ -422,6 +434,8 @@ const en = {
     billNeedsMonthly: 'Enter your monthly consumption first, so the bill becomes a price per kWh.',
     billUnit: (currency: string) => `${currency} / month`,
     errAmount: 'Enter an amount above 0.',
+    errNumber: 'Enter the amount in digits only.',
+    errLarge: (max: string) => `Enter an amount up to ${max}.`,
     hint: 'Enter the project cost and your electricity price to see when the system pays for itself.',
     noEnergy: 'Choose a city in step 1: the payback needs the energy estimate.',
     label: 'Payback time',
@@ -476,7 +490,7 @@ const ar: DesignerStrings = {
   meta: {
     title: 'أداة تصميم المنظومات الشمسية',
     description:
-      'صمّم منظومة طاقة شمسية من Peimar على الإنترنت. تفحص الأداة السلاسل على درجات الحرارة في المدن العراقية، وتختار الإنفرتر المناسب، وتقدّر الإنتاج من بيانات PVGIS. لا تحتاج إلى تسجيل.',
+      'صمّم منظومة طاقة شمسية من Peimar على الإنترنت: فحص السلاسل على درجات حرارة التصميم في العراق، واختيار الإنفرتر المناسب، وتقدير الإنتاج من PVGIS. دون تسجيل.',
   },
   landing: {
     eyebrow: 'أداة التصميم من Faraday',
@@ -494,6 +508,7 @@ const ar: DesignerStrings = {
   app: { label: 'أداة التصميم من Faraday' },
   steps: {
     label: 'خطوات التصميم',
+    backNext: 'الخطوة السابقة والتالية',
     names: { 1: 'بيانات المشروع', 2: 'الألواح', 3: 'الإنفرتر', 4: 'الملخّص' },
     short: { 1: 'المشروع', 2: 'الألواح', 3: 'الإنفرتر', 4: 'الملخّص' },
     stepOf: (n: number) => `الخطوة ${n} من 4`,
@@ -515,6 +530,10 @@ const ar: DesignerStrings = {
     inverter: (model: string) => `اخترنا ${model} للإنفرتر الأول.`,
     city: (name: string) => `اخترنا ${name}، وستُحسب المنظومة على درجات حرارتها وإنتاجها الشمسي.`,
     shared: 'هذا مشروع وصلك برابط مشاركة.',
+    kept: (name: string) => `مشروع «${name}» ما زال محفوظًا على هذا الجهاز.`,
+    switched: (name: string) => `فتحنا مشروع «${name}».`,
+    sharedReplace: (name: string) => `رابط المشاركة هذا سيحل مكان مشروعك الحالي «${name}». هل تريد استبداله؟`,
+    sharedBroken: 'رابط المشاركة هذا ناقص، فلا يمكن فتحه. اطلب من المرسل رابطًا جديدًا.',
     dismiss: 'إغلاق',
   },
   form: { required: 'مطلوب', clearSearch: 'امسح البحث' },
@@ -780,6 +799,7 @@ const ar: DesignerStrings = {
     confirmNew: 'هل تريد حذف هذا المشروع والبدء من جديد؟',
     discard: 'احذفه',
     keep: 'أبقِه',
+    switchTo: (name: string) => `انتقل إلى «${name}»`,
   },
   quote: {
     text: 'أرسل هذا التصميم إلى Faraday، ونرد عليك بالأسعار والمواد المتوفرة.',
@@ -838,9 +858,10 @@ const ar: DesignerStrings = {
     phase: 'نوع التغذية الكهربائية',
     errMonthly: 'أدخل استهلاكك الشهري بوحدة kWh.',
     errHours: 'أدخل عددًا من 0 إلى 24 ساعة.',
-    errKw: 'أدخل الحمل بوحدة kW.',
+    errKw: 'أدخل حملًا بين ⁦0⁩ و⁦500 kW⁩.',
     eyebrow: 'تقدير أولي',
     empty: 'اختر مدينتك وأدخل استهلاكك الشهري لترى حجمًا أوليًا للمنظومة.',
+    fixField: 'إحدى القيم التي أدخلتها غير صحيحة. صحّحها لترى حجم المنظومة.',
     kwpLabel: 'قدرة الألواح المقترحة',
     formula: <T>(annual: T, specific: T, city: string, kwp: T) => [annual, ' في السنة ÷ ', specific, ` في ${city} = `, kwp],
     module: 'اللوح',
@@ -858,10 +879,13 @@ const ar: DesignerStrings = {
     batteryUnknown: 'تختار لك Faraday بطارية Peimar تناسب هذا الإنفرتر.',
     batteryOver: 'تحتاج إلى أكثر من مجموعة بطاريات لكل إنفرتر، ويتولى فريق Faraday تخطيط توزيعها.',
     noBattery: 'أدخل الأحمال الضرورية وساعات التشغيل لنحسب حجم البطارية.',
-    outage: (off: string, h: string, kw: string) => `عدد ساعات الانقطاع في اليوم ${off}، وتغطي البطارية ${h} منها بحمل ${kw}.`,
+    outage: (off: number, h: number, kw: string) => `عدد ساعات الانقطاع في اليوم ⁦${off}⁩، وتغطي البطارية ⁦${h}⁩ منها بحمل ${kw}.`,
+    outageCovered: (off: number, kw: string) => `عدد ساعات الانقطاع في اليوم ⁦${off}⁩، وتغطيها البطارية كلها بحمل ${kw}.`,
     coverage: (pct: string) => `تغطي ${pct} من استهلاكك السنوي`,
     noFit: (kwp: string) => `لا يوجد إنفرتر هجين من Peimar يناسب ${kwp} تمامًا. فريق Faraday يحدد معك الحجم المناسب.`,
-    noFitBackup: (kwp: string) => `مع منظومة ${kwp}، الأحمال الضرورية أكبر من قدرة إنفرتر هجين واحد من Peimar بهذا الطور. فريق Faraday يصمم هذه المنظومة معك.`,
+    noFitBackupLoad: (kw: string, max: string) =>
+      `الأحمال الضرورية (${kw}) أكبر من قدرة إنفرترات Peimar الهجينة بهذا الطور، وهذه الأداة تحسب حتى ${max}. فريق Faraday يصمم هذه المنظومة معك.`,
+    noFitBackupPv: (kwp: string, kw: string) => `إنفرترات Peimar الهجينة التي تتحمّل ${kw} تحتاج إلى ألواح بقدرة تزيد على ${kwp}. فريق Faraday يصمم هذه المنظومة معك.`,
     noFitSmall: (kwp: string) => `احتياجك أقل من أصغر منظومة هجينة من Peimar بهذا الطور، وهي تبدأ من ${kwp}. ومع ذلك يمكن لـ\u00a0Faraday أن تنصحك.`,
     noFitLarge: (kwp: string) => `احتياجك أكبر من ${kwp}، وهي أكبر منظومة تحسبها هذه الأداة. فريق Faraday يصمم معك المنظومات الأكبر.`,
     disclaimer: 'هذا تقدير أولي. يؤكده فريق Faraday بعد زيارة الموقع، فالنتيجة تتغير بحسب اتجاه السطح والظل وأحمالك الفعلية.',
@@ -889,6 +913,8 @@ const ar: DesignerStrings = {
     billNeedsMonthly: 'أدخل استهلاكك الشهري أولًا لنحوّل الفاتورة إلى سعر للكيلوواط ساعة.',
     billUnit: (currency: string) => `${currency} / شهر`,
     errAmount: 'أدخل مبلغًا أكبر من صفر.',
+    errNumber: 'اكتب المبلغ بالأرقام فقط.',
+    errLarge: (max: string) => `أدخل مبلغًا لا يتجاوز ${max}.`,
     hint: 'أدخل تكلفة المشروع وسعر الكهرباء لتعرف متى تسترد المنظومة كلفتها.',
     noEnergy: 'اختر مدينة في الخطوة 1، فحساب مدة الاسترداد يحتاج إلى تقدير الإنتاج.',
     label: 'مدة الاسترداد',
@@ -925,7 +951,7 @@ const ckb: DesignerStrings = {
   meta: {
     title: 'دیزاینەری سیستەمی وزەی خۆر',
     description:
-      'سیستەمێکی وزەی خۆری Peimar ئۆنلاین دیزاین بکە. زنجیرەکان بەپێی پلەی گەرمیی شارەکانی عێراق دەپشکنرێن، ئینڤێرتەری گونجاو هەڵدەبژێردرێت و بەرهەمی ساڵانە بە داتای PVGIS دەخەمڵێنرێت. پێویست بە خۆتۆمارکردن ناکات.',
+      'سیستەمی خۆری Peimar ئۆنلاین دیزاین بکە: پشکنینی زنجیرەکان بە پلەکانی گەرمیی دیزاینی عێراق، هەڵبژاردنی ئینڤێرتەر و خەمڵاندنی بەرهەم بە PVGIS. بێ خۆتۆمارکردن.',
   },
   landing: {
     eyebrow: 'دیزاینەری Faraday',
@@ -943,6 +969,7 @@ const ckb: DesignerStrings = {
   app: { label: 'دیزاینەری Faraday' },
   steps: {
     label: 'هەنگاوەکانی دیزاین',
+    backNext: 'هەنگاوی پێشوو و دواتر',
     names: { 1: 'زانیاریی پڕۆژە', 2: 'پانێڵەکان', 3: 'ئینڤێرتەر', 4: 'پوختە' },
     short: { 1: 'پڕۆژە', 2: 'پانێڵ', 3: 'ئینڤێرتەر', 4: 'پوختە' },
     stepOf: (n: number) => `هەنگاوی ${n} لە 4`,
@@ -964,6 +991,10 @@ const ckb: DesignerStrings = {
     inverter: (model: string) => `${model} وەک ئینڤێرتەری یەکەم هەڵبژێردرا.`,
     city: (name: string) => `${name} هەڵبژێردرا. ژمێرکارییەکان بەپێی پلەی گەرمی و بەرهەمی خۆری ئەو شارە دەکرێن.`,
     shared: 'ئەم پڕۆژەیە بە لینکی هاوبەشکردن بۆت هاتووە.',
+    kept: (name: string) => `پڕۆژەی «${name}» هێشتا لەسەر ئەم ئامێرە پاشەکەوت کراوە.`,
+    switched: (name: string) => `پڕۆژەی «${name}» کرایەوە.`,
+    sharedReplace: (name: string) => `ئەم لینکی هاوبەشکردنە دەچێتە جێی پڕۆژەکەی ئێستات، «${name}». بیگۆڕیت؟`,
+    sharedBroken: 'ئەم لینکی هاوبەشکردنە ناتەواوە و ناکرێتەوە. داوای لینکێکی نوێ لە نێرەرەکە بکە.',
     dismiss: 'داخستن',
   },
   form: { required: 'پێویستە', clearSearch: 'گەڕانەکە بسڕەوە' },
@@ -1229,6 +1260,7 @@ const ckb: DesignerStrings = {
     confirmNew: 'ئەم پڕۆژەیە دەسڕیتەوە و لە سەرەتاوە دەست پێدەکەیتەوە؟',
     discard: 'بیسڕەوە',
     keep: 'بیهێڵەوە',
+    switchTo: (name: string) => `بڕۆ بۆ «${name}»`,
   },
   quote: {
     text: 'ئەم دیزاینە بۆ Faraday بنێرە، ئێمەش نرخ و بەردەستبوونی کاڵاکانت پێ دەڵێین.',
@@ -1287,9 +1319,10 @@ const ckb: DesignerStrings = {
     phase: 'جۆری هێڵی کارەبا',
     errMonthly: 'بەکارهێنانی مانگانەت بە kWh بنووسە.',
     errHours: 'ژمارەیەک لە 0 تا 24 کاتژمێر بنووسە.',
-    errKw: 'بارەکە بە kW بنووسە.',
+    errKw: 'بارێک لە نێوان ⁦0⁩ و ⁦500 kW⁩ بنووسە.',
     eyebrow: 'خەمڵاندنی سەرەتایی',
     empty: 'شارەکەت هەڵبژێرە و بەکارهێنانی مانگانەت بنووسە تا قەبارەی سەرەتایی سیستەم ببینیت.',
+    fixField: 'یەکێک لەو بەهایانەی نووسیوتن دروست نییە. ڕاستی بکەرەوە تا قەبارەی سیستەمەکە ببینیت.',
     kwpLabel: 'توانای پێشنیارکراوی پانێڵەکان',
     formula: <T>(annual: T, specific: T, city: string, kwp: T) => [annual, ' لە ساڵێکدا ÷ ', specific, ` لە ${city} = `, kwp],
     module: 'پانێڵ',
@@ -1307,10 +1340,14 @@ const ckb: DesignerStrings = {
     batteryUnknown: 'Faraday پاترییەکی گونجاو لە Peimar بۆ ئەم ئینڤێرتەرە هەڵدەبژێرێت.',
     batteryOver: 'بۆ هەر ئینڤێرتەرێک زیاتر لە یەک کۆمەڵە پاتری پێویستە. تیمی Faraday ڕێکخستنەکەی بۆ دادەنێت.',
     noBattery: 'بارە پێویستەکان و کاتژمێرەکانی پاتری بنووسە تا قەبارەی پاتری بژمێرین.',
-    outage: (off: string, h: string, kw: string) => `کارەبای نیشتمانی ڕۆژانە ${off} کاتژمێر دەبڕێت. پاترییەکە ${h} کاتژمێر لەو ماوەیە باری ${kw} هەڵدەگرێت.`,
+    outage: (off: number, h: number, kw: string) => `کارەبای نیشتمانی ڕۆژانە ⁦${off}⁩ کاتژمێر دەبڕێت. پاترییەکە ⁦${h}⁩ کاتژمێر لەو ماوەیە باری ${kw} هەڵدەگرێت.`,
+    outageCovered: (off: number, kw: string) => `کارەبای نیشتمانی ڕۆژانە ⁦${off}⁩ کاتژمێر دەبڕێت. پاترییەکە بە درێژایی ئەو ماوەیە باری ${kw} هەڵدەگرێت.`,
     coverage: (pct: string) => `${pct} لە بەکارهێنانی ساڵانەت دابین دەکات`,
     noFit: (kwp: string) => `هیچ ئینڤێرتەرێکی هایبریدی Peimar ڕێک بۆ ${kwp} ناگونجێت. تیمی Faraday لەگەڵت قەبارەکەی دیاری دەکات.`,
-    noFitBackup: (kwp: string) => `بۆ ${kwp}، بارە پێویستەکان لە توانای یەک ئینڤێرتەری هایبریدی Peimar بەم فازە زیاترن. تیمی Faraday لەگەڵت ئەم سیستەمە دیزاین دەکات.`,
+    noFitBackupLoad: (kw: string, max: string) =>
+      `بارە پێویستەکان (${kw}) لە توانای ئینڤێرتەرە هایبریدەکانی Peimar بەم فازە زیاترن. ئەم ئامرازە تا ${max} دەژمێرێت. تیمی Faraday لەگەڵت ئەم سیستەمە دیزاین دەکات.`,
+    noFitBackupPv: (kwp: string, kw: string) =>
+      `ئینڤێرتەرە هایبریدەکانی Peimar کە باری ${kw} هەڵدەگرن، پێویستیان بە پانێڵی زیاتر لە ${kwp} هەیە. تیمی Faraday لەگەڵت ئەم سیستەمە دیزاین دەکات.`,
     noFitSmall: (kwp: string) => `پێداویستییەکەت لە بچووکترین سیستەمی هایبریدی Peimar بۆ ئەم فازە کەمترە، کە لە ${kwp} دەست پێدەکات. هێشتا Faraday دەتوانێت ئامۆژگاریت بکات.`,
     noFitLarge: (kwp: string) => `پێداویستییەکەت لە ${kwp} زیاترە، کە گەورەترین سیستەمە ئەم ئامرازە دەتوانێت بیژمێرێت. تیمی Faraday سیستەمی گەورەتر لەگەڵت دیزاین دەکات.`,
     disclaimer: 'ئەمە تەنها خەمڵاندنە. تیمی Faraday دوای سەردانی شوێنەکە پشتڕاستی دەکاتەوە، چونکە ئاراستەی سەربان، سێبەر و بارە ڕاستەقینەکانت ئەنجامەکە دەگۆڕن.',
@@ -1338,6 +1375,8 @@ const ckb: DesignerStrings = {
     billNeedsMonthly: 'سەرەتا بەکارهێنانی مانگانەت بنووسە، تا پسوولەکە بکرێت بە نرخی هەر کیلۆوات کاتژمێرێک.',
     billUnit: (currency: string) => `${currency} / مانگ`,
     errAmount: 'بڕێکی سەروو سفر بنووسە.',
+    errNumber: 'بڕەکە تەنها بە ژمارە بنووسە.',
+    errLarge: (max: string) => `بڕێک بنووسە کە لە ${max} زیاتر نەبێت.`,
     hint: 'تێچووی پڕۆژە و نرخی کارەبا بنووسە تا بزانیت سیستەمەکە کەی تێچووی خۆی دەداتەوە.',
     noEnergy: 'لە هەنگاوی 1 شارێک هەڵبژێرە، چونکە ژمێردنی ماوەی گەڕانەوە پێویستی بە خەمڵاندنی بەرهەمە.',
     label: 'ماوەی گەڕانەوەی پارە',

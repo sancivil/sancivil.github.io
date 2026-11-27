@@ -2,7 +2,7 @@
 import { home } from '../../i18n/home.ts';
 import { company } from '../../i18n/company.ts';
 import type { Locale } from '../../i18n/config.ts';
-import catalog from '../../data/catalog.json';
+import programme from '../../data/technical/programme.json';
 import { warranty } from '../company/facts.ts';
 
 interface Props {
@@ -27,7 +27,7 @@ function curve(text: string) {
 const W = 480;
 const H = 220;
 const curves = (['topcon', 'perc'] as const).flatMap((key) => {
-  const data = curve(catalog.warranty.powerOutput[key === 'topcon' ? 'monoTopcon' : 'monoPerc']);
+  const data = curve(programme.warranty.powerOutput[key === 'topcon' ? 'monoTopcon' : 'monoPerc']);
   return data ? [{ key, ...data }] : [];
 });
 const span = Math.max(...curves.map((c) => c.years));

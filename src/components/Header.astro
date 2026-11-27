@@ -130,7 +130,7 @@ const href = (p: string) => localizePath(p, locale);
     flex: none;
     color: var(--paper);
   }
-  .site-header__logo > :global(svg) {
+  .site-header__logo > :global(img) {
     width: 100%;
   }
   .site-nav {
@@ -285,12 +285,13 @@ const href = (p: string) => localizePath(p, locale);
     } catch {}
   };
 
-  /** Language links anywhere on the page: remember the choice and keep the reader's place. */
+  /** Language links anywhere on the page: remember the choice and keep the reader's place and choices (?model=). */
   document.addEventListener('click', (e) => {
     const link = (e.target as Element).closest<HTMLAnchorElement>('a[data-lang-link]');
     if (!link) return;
     store(link.dataset.langLink ?? '');
-    if (location.hash) link.hash = location.hash;
+    link.search = location.search;
+    link.hash = location.hash;
   });
 
   if (header) {

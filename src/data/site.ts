@@ -1,16 +1,38 @@
+/* Contact details from the owner content (src/content/generated/contact.json): small and safe for client scripts. */
+import contactData from '../content/generated/contact.json';
+import type { Company, Phone } from '../content/contract.ts';
+import type { Locale } from '../i18n/config.ts';
+
+const data = contactData as Pick<Company, 'name' | 'phones' | 'email' | 'address' | 'foundedYear'>;
+const waHref = (phone: Phone) => `https://wa.me/${phone.e164.slice(1)}`;
+
+/** Every phone in the owner's order, with its call link and, for WhatsApp numbers, its chat link. */
+export const phones = data.phones.map((phone) => ({
+  ...phone,
+  href: `tel:${phone.e164}`,
+  whatsappHref: phone.whatsapp ? waHref(phone) : null,
+}));
+const primary = phones.find((phone) => phone.primary) ?? phones[0];
+const whatsapp = phones.find((phone) => phone.whatsapp) ?? primary;
+
 export const contact = {
-  company: 'Faraday Co.',
-  phoneDisplay: '+964 773 698 9694',
-  phoneHref: 'tel:+9647736989694',
-  whatsappHref: 'https://wa.me/9647736989694',
-  email: 'info@faradayiq.com',
-  street: 'Qasmlu Street',
-  city: 'Sulaymaniyah',
-  country: 'Iraq',
-  postalCode: '46001',
-  mapsHref: 'https://www.google.com/maps/search/?api=1&query=46001%20Qasimlu%20Street%2C%20Sulaymaniyah%2C%20Iraq',
-  founded: 2017,
+  company: data.name,
+  /** The primary number. */
+  phoneDisplay: primary.display,
+  phoneHref: primary.href,
+  /** The first WhatsApp number. */
+  whatsappHref: waHref(whatsapp),
+  email: data.email,
+  street: data.address.text.en.street,
+  city: data.address.text.en.city,
+  country: data.address.text.en.country,
+  postalCode: data.address.postalCode,
+  mapsHref: data.address.mapsUrl,
+  founded: data.foundedYear,
 };
+
+/** The office address in one language, for client scripts (pages use address() from src/content). */
+export const localAddress = (locale: Locale) => data.address.text[locale];
 
 export type NavKey = 'products' | 'designer' | 'projects' | 'about' | 'contact';
 export type ProductNavKey = 'modules' | 'hybrid' | 'onGrid' | 'micro' | 'accessories';

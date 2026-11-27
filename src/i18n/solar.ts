@@ -108,7 +108,7 @@ const en = {
     meta: {
       title: (n: string) => `Solar yield in Iraq by city: PVGIS data for ${n} cities`,
       description: (f: IraqFacts) =>
-        `How much 1 kWp of solar panels produces in a year in ${f.count} Iraqi cities, from ${f.lowY} kWh in ${f.lowest} to ${f.bestY} kWh in ${f.best}. PVGIS data with optimal tilt and design temperatures.`,
+        `Yearly yield of 1 kWp of solar panels in ${f.count} Iraqi cities, from ${f.lowY} kWh in ${f.lowest} to ${f.bestY} kWh in ${f.best}. PVGIS data, optimal tilt and design temperatures.`,
     },
     dataset: {
       name: (n: string) => `PVGIS solar yield for ${n} Iraqi cities`,
@@ -192,7 +192,7 @@ const en = {
     meta: {
       title: (city: string) => `Solar panels in ${city} — yield, sizing and Peimar systems`,
       description: (city: string, y: string, tilt: string) =>
-        `1 kWp of solar panels in ${city} produces about ${y} kWh a year (PVGIS). Monthly output, the best tilt (${tilt}°), Peimar panel counts and string design temperatures.`,
+        `1 kWp of solar panels in ${city} produces about ${y} kWh a year (PVGIS). Monthly output, best tilt (${tilt}°), Peimar panel counts and design temperatures.`,
     },
     dataset: {
       name: (city: string) => `PVGIS solar yield and design temperatures for ${city}, Iraq`,
@@ -364,7 +364,7 @@ const ar: SolarStrings = {
     meta: {
       title: (n: string) => `إنتاج الألواح الشمسية في ${n} مدينة عراقية حسب بيانات PVGIS`,
       description: (f: IraqFacts) =>
-        `ينتج كل ${ltr('1 kWp')} من الألواح الشمسية في العراق ما بين ${ltr(`${f.lowY} kWh`)} سنوياً في ${f.lowest} و${ltr(`${f.bestY} kWh`)} في ${f.best}. بيانات PVGIS لـ\u00a0${f.count} مدينة عراقية، مع أفضل زاوية ميل ودرجات الحرارة المعتمدة في التصميم.`,
+        `ينتج ${ltr('1 kWp')} من الألواح الشمسية بين ${ltr(`${f.lowY} kWh`)} سنوياً في ${f.lowest} و${ltr(`${f.bestY} kWh`)} في ${f.best} (PVGIS). بيانات ${f.count} مدينة عراقية وأفضل زاوية ميل ودرجات حرارة التصميم.`,
     },
     dataset: {
       name: (n: string) => `إنتاج الطاقة الشمسية في ${n} مدينة عراقية من بيانات PVGIS`,
@@ -451,7 +451,7 @@ const ar: SolarStrings = {
     meta: {
       title: (city: string) => `إنتاج الألواح الشمسية في ${city} وعدد ألواح Peimar المطلوبة`,
       description: (city: string, y: string, tilt: string) =>
-        `ينتج كل ${ltr('1 kWp')} من الألواح الشمسية في ${city} نحو ${ltr(`${y} kWh`)} في السنة حسب PVGIS. هنا الإنتاج الشهري وأفضل زاوية ميل (${ltr(`${tilt}°`)}) وعدد ألواح Peimar ودرجات الحرارة المعتمدة لتصميم السلاسل.`,
+        `ينتج ${ltr('1 kWp')} من الألواح الشمسية في ${city} نحو ${ltr(`${y} kWh`)} سنوياً (PVGIS). الإنتاج الشهري وأفضل زاوية ميل (${ltr(`${tilt}°`)}) وعدد ألواح Peimar ودرجات حرارة التصميم.`,
     },
     dataset: {
       name: (city: string) => `إنتاج الطاقة الشمسية ودرجات حرارة التصميم في ${city}، العراق، من بيانات PVGIS`,
@@ -625,7 +625,7 @@ const ckb: SolarStrings = {
     meta: {
       title: (n: string) => `بەرهەمی پانێڵی خۆر لە ${n} شاری عێراق بەپێی PVGIS`,
       description: (f: IraqFacts) =>
-        `هەر ${ltr('1 kWp')} پانێڵی خۆر لە عێراق ساڵانە لە ${ltr(`${f.lowY} kWh`)} لە ${f.lowest} تا ${ltr(`${f.bestY} kWh`)} لە ${f.best} کارەبا بەرهەم دەهێنێت. ژمارەکانی PVGIS بۆ ${f.count} شار، لەگەڵ باشترین لاری و پلەکانی گەرمی بۆ دیزاین.`,
+        `بەرهەمی ساڵانەی ${ltr('1 kWp')} پانێڵی خۆر لە ${f.count} شاری عێراق، لە ${ltr(`${f.lowY} kWh`)} لە ${f.lowest} تا ${ltr(`${f.bestY} kWh`)} لە ${f.best}. داتای PVGIS، باشترین لاری و پلەکانی گەرمیی دیزاین.`,
     },
     dataset: {
       name: (n: string) => `بەرهەمی وزەی خۆر لە ${n} شاری عێراق بەپێی PVGIS`,
@@ -716,7 +716,7 @@ const ckb: SolarStrings = {
     meta: {
       title: (city: string) => `بەرهەمی پانێڵی خۆر لە ${city} و چەند پانێڵی Peimar پێویستە`,
       description: (city: string, y: string, tilt: string) =>
-        `لە ${city} هەر ${ltr('1 kWp')} پانێڵی خۆر ساڵانە نزیکەی ${ltr(`${y} kWh`)} بەرهەم دەهێنێت (PVGIS). لێرە بەرهەمی مانگانە، باشترین لاری (${ltr(`${tilt}°`)})، ژمارەی پانێڵی Peimar و پلەکانی گەرمی بۆ دیزاینی زنجیرە دەبینیت.`,
+        `لە ${city} ${ltr('1 kWp')} پانێڵی خۆر ساڵانە نزیکەی ${ltr(`${y} kWh`)} دەدات (PVGIS). بەرهەمی مانگانە، باشترین لاری (${ltr(`${tilt}°`)})، ژمارەی پانێڵی Peimar و پلەکانی گەرمیی دیزاین.`,
     },
     dataset: {
       name: (city: string) => `بەرهەمی وزەی خۆر و پلەکانی گەرمیی دیزاین لە ${city}، عێراق، بەپێی PVGIS`,

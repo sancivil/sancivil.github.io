@@ -6,27 +6,31 @@ import SectionHead from '../../../../components/products/SectionHead.astro';
 import PhaseGroups from '../../../../components/products/PhaseGroups.astro';
 import BatteryList from '../../../../components/products/BatteryList.astro';
 import SystemDiagram from '../../../../components/products/SystemDiagram.astro';
+import ItemList from '../../../../components/products/ItemList.astro';
 import {
   batteries,
   categoryImage,
+  families,
   groupModels,
   groupPower,
   powerParts,
   warranty,
 } from '../../../../components/products/data.ts';
-import { localeFromParam, localeParams } from '../../../../i18n/config.ts';
+import { categoryText, itemsByLine } from '../../../../content/index.ts';
+import { localeFromParam, localeParams, localizePath } from '../../../../i18n/config.ts';
 import { common } from '../../../../i18n/common.ts';
 import { products } from '../../../../i18n/products.ts';
-import { catalogText } from '../../../../i18n/catalog-text.ts';
 
 export const getStaticPaths = () => localeParams();
 const locale = localeFromParam(Astro.params.locale);
 const t = products[locale];
 const p = t.hybridPage;
 const nav = common[locale];
-const power = powerParts(groupPower('hybrid'));
+const power = groupPower('hybrid');
 const years = warranty.batteries.years;
 const models = groupModels('hybrid');
+const inverters = families.hybrid.length > 0;
+const empty = !inverters && batteries.length === 0 && itemsByLine('hybrid').length === 0;
 ---
 
 <Base title={p.title} description={p.description}>
@@ -35,47 +39,72 @@ const models = groupModels('hybrid');
     crumbs={[{ label: nav.nav.products, href: '/products/' }, { label: nav.productNav.hybrid }]}
     eyebrow={p.eyebrow}
     title={nav.productNav.hybrid}
-    lead={catalogText[locale].categories.hybrid}
+    lead={categoryText(locale, 'hybrid')}
     display
   >
     <Stats
       items={[
-        { label: p.stat.power, value: power.value, unit: power.unit },
-        { label: p.stat.warranty, value: String(years), word: t.years(years), count: true },
-        { label: p.stat.models, value: String(models) },
+        ...(power ? [{ label: p.stat.power, ...powerParts(power) }] : []),
+        ...(batteries.length ? [{ label: p.stat.warranty, value: String(years), word: t.years(years), count: true }] : []),
+        ...(inverters ? [{ label: p.stat.models, value: String(models) }] : []),
       ]}
     />
   </PageIntro>
 
-  <section class="section" aria-labelledby="inverters-title">
-    <div class="container">
-      <SectionHead
-        id="inverters-title"
-        title={p.invertersTitle}
-        meta={t.count.models(models)}
-        image={{ ...categoryImage.hybrid, alt: t.categoryAlt.hybrid }}
-      />
-      <PhaseGroups locale={locale} group="hybrid" />
-    </div>
-  </section>
+  {
+    inverters && (
+      <section class="section" aria-labelledby="inverters-title">
+        <div class="container">
+          <SectionHead
+            id="inverters-title"
+            title={p.invertersTitle}
+            meta={t.count.models(models)}
+            image={{ ...categoryImage.hybrid, alt: t.categoryAlt.hybrid }}
+          />
+          <PhaseGroups locale={locale} group="hybrid" />
+        </div>
+      </section>
+    )
+  }
 
-  <section class="section section--tight system" aria-labelledby="system-title">
-    <div class="container system__grid">
-      <div class="system__head">
-        <p class="eyebrow">{t.detail.systemEyebrow}</p>
-        <h2 id="system-title" class="h2">{t.detail.systemTitle}</h2>
-        <p class="system__lead">{t.detail.systemLead}</p>
-      </div>
-      <SystemDiagram locale={locale} />
-    </div>
-  </section>
+  {
+    inverters && (
+      <section class="section section--tight system" aria-labelledby="system-title">
+        <div class="container system__grid">
+          <div class="system__head">
+            <p class="eyebrow">{t.detail.systemEyebrow}</p>
+            <h2 id="system-title" class="h2">{t.detail.systemTitle}</h2>
+            <p class="system__lead">{t.detail.systemLead}</p>
+          </div>
+          <SystemDiagram locale={locale} />
+        </div>
+      </section>
+    )
+  }
 
-  <section class="section theme-paper" id="storage" aria-labelledby="storage-title">
-    <div class="container">
-      <SectionHead id="storage-title" title={p.storageTitle} lead={p.storageLead} meta={t.count.storage(batteries.length)} />
-      <BatteryList locale={locale} batteries={batteries} />
-    </div>
-  </section>
+  {
+    batteries.length > 0 && (
+      <section class="section theme-paper" id="storage" aria-labelledby="storage-title">
+        <div class="container">
+          <SectionHead id="storage-title" title={p.storageTitle} lead={p.storageLead} meta={t.count.storage(batteries.length)} />
+          <BatteryList locale={locale} batteries={batteries} />
+        </div>
+      </section>
+    )
+  }
+
+  <ItemList locale={locale} items={itemsByLine('hybrid')} />
+
+  {
+    empty && (
+      <section class="section">
+        <div class="container prose">
+          <p class="lead measure">{t.emptyLine.text}</p>
+          <p><a class="btn btn--sun" href={localizePath('/contact/', locale)}>{t.emptyLine.action}</a></p>
+        </div>
+      </section>
+    )
+  }
 </Base>
 
 <style>

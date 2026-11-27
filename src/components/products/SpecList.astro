@@ -8,6 +8,8 @@ export interface SpecRow {
   unit?: string;
   /** Translated text, after the figure or on its own. */
   text?: string;
+  /** The text is a value shown alike in every language (a code, a material name): isolated from the page direction. */
+  neutral?: boolean;
   /** Switching hooks (data-k) for the model picker. */
   hook?: string;
   textHook?: string;
@@ -28,7 +30,7 @@ const { rows, class: className } = Astro.props;
           {row.value !== undefined && <Figure value={row.value} unit={row.unit} hook={row.hook} />}
           {row.text !== undefined && (
             <span class="spec__text" data-k={row.textHook}>
-              {row.text}
+              {row.neutral ? <bdi>{row.text}</bdi> : row.text}
             </span>
           )}
         </dd>
@@ -39,11 +41,12 @@ const { rows, class: className } = Astro.props;
 
 <style>
   .spec {
+    container-type: inline-size;
     border-top: 1px solid var(--line-c);
   }
   .spec__row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(min-content, 1fr) auto;
     align-items: baseline;
     gap: var(--s-4);
     padding-block: 0.8rem;
@@ -71,5 +74,17 @@ const { rows, class: className } = Astro.props;
     margin-inline-start: 0.3em;
     font-size: 0.8em;
     color: var(--muted-c);
+  }
+  /* Too narrow for a label beside a long figure ("Dimensions", "2278 × 1134 × 30 mm"): each value goes under its label. */
+  @container (max-width: 16.5rem) {
+    .spec__row {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: var(--s-1);
+    }
+    dd {
+      justify-content: flex-start;
+      max-width: none;
+      text-align: start;
+    }
   }
 </style>

@@ -4,16 +4,27 @@ import type { Project } from './facts.ts';
 interface Props {
   project: Project;
   alt: string;
+  /** Width hint for an uploaded photo's srcset. */
+  sizes?: string;
 }
 
-const { project, alt } = Astro.props;
+const { project, alt, sizes = '(max-width: 900px) 100vw, 40vw' } = Astro.props;
 const { photo } = project;
 ---
 
 {
   photo ? (
     <div class="pmedia" data-reveal="clip">
-      <img src={photo.src} width={photo.width} height={photo.height} alt={alt} loading="lazy" decoding="async" />
+      <img
+        src={photo.src}
+        srcset={photo.srcset ?? undefined}
+        sizes={photo.srcset ? sizes : undefined}
+        width={photo.width}
+        height={photo.height}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+      />
     </div>
   ) : (
     <div class="pmedia pmedia--tile" data-reveal="clip" aria-hidden="true" />

@@ -40,7 +40,7 @@ const STRING_CELLS = 24;
                 <span class="mega-tile__name">{t.productNav[c.key]}</span>
                 <span class="mega-tile__line">{t.menu.lines[c.key]}</span>
                 <span class="mega-tile__meta">
-                  <span>{t.menu.count[c.count.key](c.count.n)}</span>
+                  {c.count && <span>{t.menu.count[c.count.key](c.count.n)}</span>}
                   {c.range && <span class="num">{c.range}</span>}
                 </span>
               </a>
@@ -121,8 +121,7 @@ const STRING_CELLS = 24;
     height: 100%;
   }
   .mega-tile__well {
-    display: grid;
-    place-items: center;
+    display: block;
     aspect-ratio: 4 / 3;
     margin-bottom: var(--s-2);
     padding: var(--s-3);

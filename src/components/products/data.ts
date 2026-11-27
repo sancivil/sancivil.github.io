@@ -1,30 +1,27 @@
-import catalog from '../../data/catalog.json';
+import programme from '../../data/technical/programme.json';
 import panelData from '../../data/designer/panels.json';
 import inverterData from '../../data/designer/inverters.json';
 import { productNav, type ProductNavKey } from '../../data/site.ts';
+import {
+  accessories,
+  batteries,
+  families,
+  modules,
+  type Accessory,
+  type Battery,
+  type Doc,
+  type Family,
+  type GroupKey,
+  type Phase,
+  type Series,
+} from '../../content/index.ts';
+import type { CapacityKey } from '../../content/contract.ts';
 import type { PanelRecord } from '../../lib/three/types.ts';
+import { productImage } from './images.ts';
 
-export type Doc = { label: string; url: string };
-export type Phase = 'single_phase' | 'three_phase';
-export type GroupKey = 'hybrid' | 'onGrid' | 'micro';
+export type { Accessory, Battery, CapacityKey, Doc, Family, GroupKey, Phase, Series };
 export type CategoryKey = ProductNavKey;
-
-export interface Series {
-  series: string;
-  name: string;
-  slug: string;
-  tagline: string | null;
-  description: string | null;
-  technology: string[];
-  warranty: { product: number; power: number };
-  models: string[];
-  powerRange: number[];
-  efficiencyMax: number;
-  cells: number[];
-  finishes: { code: string; label: string | null }[];
-  datasheets: Doc[];
-  designerModels: string[];
-}
+export { productImage };
 
 export interface Panel extends PanelRecord {
   vmp: number;
@@ -40,18 +37,6 @@ export interface Panel extends PanelRecord {
   weight: number;
   cellType: string;
   protectionClass: string;
-}
-
-export interface Family {
-  name: string;
-  slug: string;
-  phase: Phase;
-  powerRange: number[] | null;
-  description: string | null;
-  datasheets: Doc[];
-  manual?: string;
-  models: string[];
-  designerModels: string[];
 }
 
 export interface Inverter {
@@ -78,41 +63,8 @@ export interface Inverter {
   image: string | null;
 }
 
-export type CapacityKey =
-  | 'totalKwh'
-  | 'usableKwh'
-  | 'ratedKwh'
-  | 'nominalKwh'
-  | 'moduleKwh'
-  | 'usableKwhPerModule'
-  | 'modules'
-  | 'depthOfDischarge';
-
-export interface Battery {
-  name: string;
-  slug: string;
-  family: string;
-  role: string;
-  capacity: Partial<Record<CapacityKey, number | number[]>> | null;
-  chemistry: string | null;
-  warrantyYears?: number;
-  description: string | null;
-  datasheets: Doc[];
-}
-
-export interface Accessory {
-  group: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  datasheets: Doc[];
-}
-
-export const modules = catalog.modules as Series[];
-export const families = catalog.inverters as Record<GroupKey, Family[]>;
-export const batteries = catalog.batteries as Battery[];
-export const accessories = catalog.accessories as Accessory[];
-export const { warranty, documents } = catalog;
+export { accessories, batteries, families, modules };
+export const { warranty, documents } = programme;
 
 const panels = panelData as Panel[];
 const inverters = inverterData as Inverter[];
@@ -123,11 +75,11 @@ export const categoryHref = (key: CategoryKey) => productNav.find((item) => item
 
 /** Category photos in public/images/products with their intrinsic sizes. */
 export const categoryImage: Record<CategoryKey, { src: string; size: [number, number] }> = {
-  modules: { src: catalog.categories.modules.image, size: [1024, 1024] },
-  hybrid: { src: catalog.categories.hybrid.image, size: [1024, 1024] },
-  onGrid: { src: catalog.categories.onGrid.image, size: [1024, 1024] },
-  micro: { src: catalog.categories.micro.image, size: [954, 1024] },
-  accessories: { src: catalog.categories.accessories.image, size: [1600, 1600] },
+  modules: { src: programme.categories.modules.image, size: [1024, 1024] },
+  hybrid: { src: programme.categories.hybrid.image, size: [1024, 1024] },
+  onGrid: { src: programme.categories.onGrid.image, size: [1024, 1024] },
+  micro: { src: programme.categories.micro.image, size: [954, 1024] },
+  accessories: { src: programme.categories.accessories.image, size: [1600, 1600] },
 };
 export const INVERTER_IMAGE_SIZE: [number, number] = [720, 720];
 
@@ -140,32 +92,38 @@ export const signed = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `−${Math.abs(n
 export const extent = (xs: number[]): [number, number] => [Math.min(...xs), Math.max(...xs)];
 export const pad2 = (i: number) => String(i + 1).padStart(2, '0');
 export const span = ([min, max]: [string, string]) => (min === max ? min : `${min}–${max}`);
+/** A name, label or code value as pages show it: Peimar groups variants with " | " ("PSI-OP650 | PSI-OPSW"), set as "PSI-OP650 / PSI-OPSW". */
+export const displayName = (name: string) => name.replaceAll(' | ', ' / ');
 
 /** A power range as figure parts, in W below 2 kW and in kW above. */
 export function powerParts([min, max]: number[]): { value: [string, string]; unit: string } {
   return max < 2000 ? { value: [String(min), String(max)], unit: 'W' } : { value: [kw(min), kw(max)], unit: 'kW' };
 }
 
-export type DocLang = 'EN' | 'IT' | 'FR' | 'AR';
+export type DocLang = 'EN' | 'IT' | 'FR' | 'AR' | 'KU' | 'MULTI';
 /* "(FR)" is also the Red Line finish code, so it counts as a language only after another suffix: "SF400M (BF) (FR)". */
 const LANG_TAG = / \((IT|US|EN|EN-[A-Z]{2})\)$|(?<=\)) \((FR)\)$/;
 const LANGS: Record<string, DocLang> = { EN: 'EN', 'EN-CA': 'EN', 'EN-IN': 'EN', US: 'EN', USA: 'EN', IT: 'IT', FR: 'FR', AR: 'AR' };
+const DOC_LANGS: Record<NonNullable<Doc['lang']>, DocLang> = { en: 'EN', it: 'IT', fr: 'FR', ar: 'AR', ckb: 'KU', multi: 'MULTI' };
 
-/** Peimar marks a document's language in the file name ("Peimar_EN_…") or at the end of its label ("(IT)"). */
-export function docInfo(doc: Doc): { label: string; lang: DocLang | null; pdf: boolean } {
+/**
+  A document's language: the owner's choice, or what Peimar marks in the file name ("Peimar_EN_…")
+  or at the end of the label ("(IT)").
+*/
+export function docInfo(doc: { label: string; url: string; lang?: Doc['lang'] }): { label: string; lang: DocLang | null; pdf: boolean } {
   const tag = doc.label.match(LANG_TAG);
   const code = doc.url.match(/Peimar_([A-Z]+(?:-[A-Z]+)?)_/)?.[1] ?? tag?.[1] ?? tag?.[2];
   return {
     label: doc.label.replace(LANG_TAG, ''),
-    lang: (code && LANGS[code]) || null,
+    lang: doc.lang ? DOC_LANGS[doc.lang] : (code && LANGS[code]) || null,
     pdf: /\.pdf$/i.test(doc.url),
   };
 }
 
 /** A document ready for DocList, optionally with a translated label. */
-export const docItem = (doc: Doc, label?: string) => {
+export const docItem = (doc: { label: string; url: string; lang?: Doc['lang'] }, label?: string) => {
   const info = docInfo(doc);
-  return { ...info, label: label ?? info.label, url: doc.url };
+  return { ...info, label: displayName(label ?? info.label), url: doc.url };
 };
 
 /* ---------- modules ---------- */
@@ -183,28 +141,18 @@ export function seriesPanels(series: Series): Panel[] {
 export const datasheetsFor = (series: Series, name: string) =>
   series.datasheets.filter((d) => docInfo(d).label === name);
 
-/** Models Peimar lists for a series without full figures in panels.json. */
+/** Models listed for a series without full figures in panels.json. */
 export function datasheetOnly(series: Series) {
   const known = new Set(seriesPanels(series).map(panelName));
   return series.models.filter((name) => !known.has(name)).map((name) => ({ name, sheets: datasheetsFor(series, name) }));
 }
-
-export function largestPanel(series: Series): Panel {
-  return seriesPanels(series).reduce((a, b) => (b.width * b.height > a.width * a.height ? b : a));
-}
-
-/** One scale for every module drawing on a page. */
-export const drawingBox = (() => {
-  const largest = modules.map(largestPanel);
-  return { width: Math.max(...largest.map((p) => p.width)), height: Math.max(...largest.map((p) => p.height)) };
-})();
 
 export const bestEfficiencyPanel = (series: Series) =>
   seriesPanels(series).find((p) => p.efficiency !== null && Math.abs(p.efficiency - series.efficiencyMax) < 1e-6);
 
 export type Trait = 'italy' | 'topcon' | 'perc' | 'bifacial' | 'coloured';
 
-/** Filter keys, read from Peimar's own wording in catalog.json. */
+/** Filter keys, read from Peimar's own wording in src/data/technical/series.json. */
 export function seriesTraits(series: Series): Trait[] {
   const tech = series.technology.join(' ');
   const traits: [Trait, boolean][] = [
@@ -217,6 +165,7 @@ export function seriesTraits(series: Series): Trait[] {
   return traits.filter(([, on]) => on).map(([key]) => key);
 }
 
+/* The contract keeps at least one series visible, so these never meet an empty list. */
 export const moduleCount = modules.reduce((n, s) => n + s.models.length, 0);
 export const modulePower = extent(modules.flatMap((s) => s.powerRange));
 export const moduleEfficiency = Math.max(...modules.map((s) => s.efficiencyMax));
@@ -242,6 +191,7 @@ export function familyPower(family: Family): [number, number] | null {
   return models.length ? extent(models.map((m) => m.pnomAc)) : null;
 }
 
+/** Peimar's photo of the family's most powerful model that has one. */
 export function familyImage(family: Family): string | null {
   const withImage = familyInverters(family).filter((m) => m.image);
   return withImage.length ? withImage[withImage.length - 1].image : null;
@@ -249,8 +199,10 @@ export function familyImage(family: Family): string | null {
 
 export const groupModels = (group: GroupKey) => families[group].reduce((n, f) => n + f.models.length, 0);
 export const groupInverters = (group: GroupKey) => families[group].flatMap(familyInverters);
-export function groupPower(group: GroupKey): [number, number] {
-  return extent(families[group].flatMap((f) => familyPower(f) ?? []));
+/** The power span of a product line, or null when none of its families states one. */
+export function groupPower(group: GroupKey): [number, number] | null {
+  const powers = families[group].flatMap((f) => familyPower(f) ?? []);
+  return powers.length ? extent(powers) : null;
 }
 
 /** Peimar's EU efficiency can never exceed peak efficiency; such values are data errors and stay unstated. */
@@ -297,18 +249,10 @@ export function capacityValue(key: CapacityKey, v: number | number[]): { value: 
 
 /* ---------- studio renders: public/images/products/modules, made with the 3D viewer at its home view ---------- */
 
-const RENDERS: Record<string, { front: [number, number]; back?: [number, number] }> = {
-  's-series-sa': { front: [666, 1400], back: [756, 1400] },
-  's-series-sf': { front: [670, 1400] },
-  'revamping-line': { front: [670, 1400] },
-  'or-series-or10e': { front: [810, 1400], back: [932, 1400] },
-  'or-series-or10h': { front: [658, 1400], back: [750, 1400] },
-  'or-series-or12h': { front: [708, 1400], back: [812, 1400] },
-  'dr-series-dr10h': { front: [658, 1400] },
-};
-
 export interface Render {
   src: string;
+  /** Its WebP versions, or an uploaded photo's resized copies; null for a photo without any. */
+  srcset: string | null;
   size: [number, number];
   /** The model the render shows: the series' most powerful panel, which the viewer opens on. */
   model: string;
@@ -316,11 +260,23 @@ export interface Render {
 
 /** Front three-quarter render of a series, or its rear view where the rear is glass or transparent. */
 export function seriesRender(series: Series, view: 'front' | 'back' = 'front'): Render | null {
-  const entry = RENDERS[series.slug];
-  const size = entry?.[view];
+  const size = series.render?.[view];
   if (!size) return null;
-  const suffix = view === 'back' ? '-back' : '';
-  return { src: `/images/products/modules/${series.slug}${suffix}.webp`, size, model: panelName(seriesPanels(series).at(-1)!) };
+  const shown = seriesPanels(series).at(-1);
+  const src = `/images/products/modules/${series.curatedKey}${view === 'back' ? '-back' : ''}.webp`;
+  return { src, srcset: productImage(src, size).srcset, size, model: shown ? panelName(shown) : series.name };
+}
+
+/** The series' studio render or, until it has one, the owner's first photo or the modules photo. */
+export function seriesImage(series: Series): Render {
+  const photo = series.photos[0];
+  const { src, size } = categoryImage.modules;
+  return (
+    seriesRender(series) ??
+    (photo
+      ? { src: photo.src, srcset: photo.srcset, size: [photo.width, photo.height], model: series.name }
+      : { src, srcset: productImage(src, size).srcset, size, model: series.name })
+  );
 }
 
 /* ---------- warranty curves (Peimar PV module warranty 2026) ---------- */

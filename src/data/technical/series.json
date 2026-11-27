@@ -1,0 +1,402 @@
+[
+  {
+    "key": "s-series-sa",
+    "name": "S Series SA",
+    "series": "S Series",
+    "tagline": "Made in Italy module",
+    "description": "Made in Italy module, manufactured in our production factory. Anti-reflective glass, compact and sturdy frame, anchorable also on the short side. Maximum efficiency and high performance.",
+    "technology": [
+      "Monocrystalline M10",
+      "PERC monofacial",
+      "PERC bifacial (SA550M (B))",
+      "TOPCon monofacial N-type (SAxxxMN)"
+    ],
+    "warranty": {
+      "product": 30,
+      "power": 30
+    },
+    "powerRange": [
+      450,
+      585
+    ],
+    "efficiencyMax": 0.2155,
+    "cells": [
+      60,
+      66,
+      72
+    ],
+    "finishes": [
+      {
+        "code": "FB",
+        "label": null
+      },
+      {
+        "code": "BF",
+        "label": null
+      },
+      {
+        "code": "B",
+        "label": null
+      }
+    ],
+    "panelIds": [
+      "sa450m-fb",
+      "sa455m-bf",
+      "sa460m-bf",
+      "sa500m-bf",
+      "sa500m-fb",
+      "sa505m-bf",
+      "sa545m-b",
+      "sa545m",
+      "sa550m-b"
+    ],
+    "render": {
+      "front": [
+        666,
+        1400
+      ],
+      "back": [
+        756,
+        1400
+      ]
+    }
+  },
+  {
+    "key": "s-series-sf",
+    "name": "S Series SF",
+    "series": "S Series",
+    "tagline": "Made in Italy module",
+    "description": "Made in Italy module, manufactured in our production factory. Available in the Green Line (FG) and Red Line (FR) coloured-glass versions for perfect environmental integration in areas subject to landscape constraints.",
+    "technology": [
+      "Monocrystalline PERC"
+    ],
+    "warranty": {
+      "product": 30,
+      "power": 30
+    },
+    "powerRange": [
+      350,
+      440
+    ],
+    "efficiencyMax": 0.2084,
+    "cells": [
+      60,
+      66,
+      72
+    ],
+    "finishes": [
+      {
+        "code": "BF",
+        "label": null
+      },
+      {
+        "code": "FB",
+        "label": null
+      },
+      {
+        "code": "FG",
+        "label": "Green Line"
+      },
+      {
+        "code": "FR",
+        "label": "Red Line"
+      }
+    ],
+    "panelIds": [
+      "sf350m-bf",
+      "sf350m-fb",
+      "sf360m-fg",
+      "sf360m-fr",
+      "sf365m-bf",
+      "sf400m-bf",
+      "sf400m-fb",
+      "sf410m-bf",
+      "sf415m-bf",
+      "sf440m"
+    ],
+    "render": {
+      "front": [
+        670,
+        1400
+      ]
+    }
+  },
+  {
+    "key": "revamping-line",
+    "name": "Revamping Line",
+    "series": "S Series",
+    "tagline": "Revamping Line | Made in Italy",
+    "description": "Made in Italy modules in 54, 60 and 72 cell formats, polycrystalline (SGxxxP) and monocrystalline (SGxxxM, SMxxxM).",
+    "technology": [
+      "Polycrystalline",
+      "Monocrystalline"
+    ],
+    "warranty": {
+      "product": 30,
+      "power": 30
+    },
+    "powerRange": [
+      205,
+      405
+    ],
+    "efficiencyMax": 0.2042,
+    "cells": [
+      54,
+      60,
+      72
+    ],
+    "finishes": [
+      {
+        "code": "BF",
+        "label": null
+      },
+      {
+        "code": "FB",
+        "label": null
+      }
+    ],
+    "panelIds": [
+      "sg205p",
+      "sg210p",
+      "sg215p",
+      "sg220p",
+      "sg225p",
+      "sg230p",
+      "sg235p",
+      "sg240p",
+      "sg245p",
+      "sg250p",
+      "sg255p",
+      "sg260p",
+      "sg265p",
+      "sg270p",
+      "sg275p",
+      "sg280p",
+      "sg285p",
+      "sg290p",
+      "sg300m-bf",
+      "sg310m-bf",
+      "sg310m-fb",
+      "sg315m-bf",
+      "sm330m-bf",
+      "sm330m-fb",
+      "sm335m-bf",
+      "sm340m-bf",
+      "sm390m",
+      "sm395m",
+      "sm400m",
+      "sm405m"
+    ],
+    "render": {
+      "front": [
+        670,
+        1400
+      ]
+    }
+  },
+  {
+    "key": "or-series-or10e",
+    "name": "OR Series OR10E",
+    "series": "OR Series",
+    "tagline": "Half Cell",
+    "description": "Manufactured in our production factory. TOPCon bifacial technology with anti-reflective double glass. Maximum efficiency and high performance, compact and sturdy frame.",
+    "technology": [
+      "Monocrystalline M10 N-type",
+      "TOPCon bifacial",
+      "Double glass"
+    ],
+    "warranty": {
+      "product": 25,
+      "power": 30
+    },
+    "powerRange": [
+      460,
+      640
+    ],
+    "efficiencyMax": 0.2302,
+    "cells": [
+      96
+    ],
+    "finishes": [
+      {
+        "code": "BF",
+        "label": null
+      },
+      {
+        "code": "FB",
+        "label": null
+      }
+    ],
+    "panelIds": [
+      "or10e460mndb-bf",
+      "or10e460mndb-fb"
+    ],
+    "render": {
+      "front": [
+        810,
+        1400
+      ],
+      "back": [
+        932,
+        1400
+      ]
+    }
+  },
+  {
+    "key": "or-series-or10h",
+    "name": "OR Series OR10H",
+    "series": "OR Series",
+    "tagline": "Half Cell",
+    "description": "Manufactured in our production factory. Half-cut M10 cells in PERC monofacial and TOPCon bifacial double-glass (MNDB) versions. Maximum efficiency and high performance, compact and sturdy frame.",
+    "technology": [
+      "Monocrystalline M10 half-cut",
+      "PERC monofacial",
+      "TOPCon bifacial N-type (MNDB)",
+      "Double glass (MNDB)"
+    ],
+    "warranty": {
+      "product": 25,
+      "power": 30
+    },
+    "powerRange": [
+      375,
+      610
+    ],
+    "efficiencyMax": 0.2363,
+    "cells": [
+      108,
+      120,
+      132,
+      144
+    ],
+    "finishes": [
+      {
+        "code": "FR",
+        "label": "Red Line"
+      },
+      {
+        "code": "FB",
+        "label": null
+      },
+      {
+        "code": "BF",
+        "label": null
+      },
+      {
+        "code": "SF",
+        "label": null
+      }
+    ],
+    "panelIds": [
+      "or10h375m-fr",
+      "or10h425mndb-fb",
+      "or10h430mndb-fb",
+      "or10h440mn-bf",
+      "or10h440mn-fb",
+      "or10h440mndb-bf",
+      "or10h440mndb-fb",
+      "or10h440mndb-sf",
+      "or10h450m",
+      "or10h450mndb-bf",
+      "or10h450mndb-fb",
+      "or10h500m-fb",
+      "or10h500mndb-bf",
+      "or10h500mndb-fb",
+      "or10h510mndb-bf",
+      "or10h545m",
+      "or10h560m",
+      "or10h595mndb",
+      "or10h610mndb"
+    ],
+    "render": {
+      "front": [
+        658,
+        1400
+      ],
+      "back": [
+        750,
+        1400
+      ]
+    }
+  },
+  {
+    "key": "or-series-or12h",
+    "name": "OR Series OR12H",
+    "series": "OR Series",
+    "tagline": "Half Cell",
+    "description": "Manufactured in our production factory. M12 half-cut N-type cells with TOPCon bifacial technology and anti-reflective double glass. Maximum efficiency and high performance.",
+    "technology": [
+      "Monocrystalline M12 half-cut N-type",
+      "TOPCon bifacial",
+      "Double glass"
+    ],
+    "warranty": {
+      "product": 25,
+      "power": 30
+    },
+    "powerRange": [
+      635,
+      735
+    ],
+    "efficiencyMax": 0.2302,
+    "cells": [
+      120,
+      132
+    ],
+    "finishes": [],
+    "panelIds": [
+      "or12h635mndb",
+      "or12h670m",
+      "or12h715mndb"
+    ],
+    "render": {
+      "front": [
+        708,
+        1400
+      ],
+      "back": [
+        812,
+        1400
+      ]
+    }
+  },
+  {
+    "key": "dr-series-dr10h",
+    "name": "DR Series DR10H",
+    "series": "DR Series",
+    "tagline": null,
+    "description": null,
+    "technology": [],
+    "warranty": {
+      "product": 25,
+      "power": 30
+    },
+    "powerRange": [
+      450,
+      550
+    ],
+    "efficiencyMax": 0.2128,
+    "cells": [
+      120,
+      132,
+      144
+    ],
+    "finishes": [
+      {
+        "code": "FB",
+        "label": null
+      }
+    ],
+    "panelIds": [
+      "dr10h450m-fb",
+      "dr10h500m-fb",
+      "dr10h550mb"
+    ],
+    "render": {
+      "front": [
+        658,
+        1400
+      ]
+    }
+  }
+]

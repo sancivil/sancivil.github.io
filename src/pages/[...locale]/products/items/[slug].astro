@@ -1,0 +1,244 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import Breadcrumbs from '../../../../components/products/Breadcrumbs.astro';
+import ProductWell from '../../../../components/products/ProductWell.astro';
+import SpecList, { type SpecRow } from '../../../../components/products/SpecList.astro';
+import DocList from '../../../../components/products/DocList.astro';
+import JsonLd from '../../../../components/seo/JsonLd.astro';
+import { absolute, breadcrumbList, product } from '../../../../lib/seo/schema.ts';
+import { categoryHref, categoryImage, displayName, docItem } from '../../../../components/products/data.ts';
+import { items, paragraphs } from '../../../../content/index.ts';
+import { whatsappLink } from '../../../../data/site.ts';
+import { localeFromParam, localizePath, withLocales } from '../../../../i18n/config.ts';
+import { common } from '../../../../i18n/common.ts';
+import { products } from '../../../../i18n/products.ts';
+import { itemText } from '../../../../i18n/catalog-text.ts';
+
+export const getStaticPaths = () => withLocales(items.map((item) => ({ params: { slug: item.slug } })));
+
+const locale = localeFromParam(Astro.params.locale);
+const item = items.find((i) => i.slug === Astro.params.slug)!;
+const name = displayName(item.name);
+const t = products[locale];
+const p = t.itemPage;
+const nav = common[locale];
+const text = itemText(locale, item.slug);
+const lineLabel = nav.productNav[item.line];
+const linePath = categoryHref(item.line);
+const [photo, ...more] = item.photos;
+
+const specs: SpecRow[] = item.specs.map((spec) => ({
+  label: spec.key === 'custom' ? (spec.label?.[locale] ?? '') : t.specKey[spec.key],
+  text: displayName(spec.value),
+  neutral: true,
+}));
+const docs = item.docs.map((doc) => (doc.kind === 'manual' ? docItem(doc, `${t.label.manual} · ${doc.label}`) : docItem(doc)));
+const sheetsOnly = item.docs.every((doc) => doc.kind === 'datasheet');
+
+const pageUrl = absolute(localizePath(`/products/items/${item.slug}/`, locale));
+const schema = [
+  product({
+    name: `${item.brand} ${name}`,
+    brand: item.brand,
+    description: text?.summary ?? text?.description ?? `${name} · ${lineLabel}`,
+    image: photo?.src ?? categoryImage[item.line].src,
+    url: pageUrl,
+    category: lineLabel,
+  }),
+  breadcrumbList([
+    { name: nav.nav.products, url: absolute(localizePath('/products/', locale)) },
+    { name: lineLabel, url: absolute(localizePath(linePath, locale)) },
+    { name, url: pageUrl },
+  ]),
+];
+---
+
+<Base title={p.title(item.brand, name)} description={text?.summary ?? p.description(item.brand, name, lineLabel)}>
+  <JsonLd data={schema} />
+  <section class="product theme-light">
+    <div class="container">
+      <Breadcrumbs
+        locale={locale}
+        items={[
+          { label: nav.nav.products, href: '/products/' },
+          { label: lineLabel, href: linePath },
+          { label: name },
+        ]}
+      />
+
+      <div class="product__grid">
+        <figure class="product__figure">
+          <ProductWell
+            image={photo ?? null}
+            alt={photo?.alt[locale] ?? name}
+            label={name}
+            brand={item.brand}
+            sizes="(max-width: 900px) 74vw, (max-width: 1440px) 29vw, 420px"
+            eager
+            priority
+            class="product__well"
+          />
+          {
+            more.length > 0 && (
+              <ul role="list" class="product__thumbs">
+                {more.map((extra) => (
+                  <li>
+                    <a href={extra.src} target="_blank" rel="noopener">
+                      <img
+                        src={extra.src}
+                        srcset={extra.srcset ?? undefined}
+                        sizes="96px"
+                        width={extra.width}
+                        height={extra.height}
+                        alt={extra.alt[locale] ?? name}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+        </figure>
+
+        <div class="product__info">
+          <header class="product__head">
+            <p class="eyebrow eyebrow--dot"><bdi>{item.brand}</bdi> · {lineLabel}</p>
+            <h1 class="h1 product__title" data-reveal="lines"><span dir="ltr">{name}</span></h1>
+            {text?.summary && <p class="product__lead">{text.summary}</p>}
+          </header>
+
+          {
+            text?.description && (
+              <div class="product__text">
+                {paragraphs(text.description).map((para) => (
+                  <p>{para}</p>
+                ))}
+              </div>
+            )
+          }
+
+          {
+            specs.length > 0 && (
+              <section class="product__facts" aria-labelledby="specs-title">
+                <h2 id="specs-title" class="product__label">
+                  {p.specs}
+                </h2>
+                <SpecList rows={specs} />
+              </section>
+            )
+          }
+
+          {
+            docs.length > 0 && (
+              <section class="product__facts" aria-labelledby="docs-title">
+                <h2 id="docs-title" class="product__label">
+                  {sheetsOnly ? t.label.datasheet : t.label.documents}
+                </h2>
+                <DocList locale={locale} items={docs} />
+              </section>
+            )
+          }
+
+          <div class="product__actions">
+            <a class="btn btn--sun" href={whatsappLink(t.quoteMessage(item.brand, name))} target="_blank" rel="noopener">
+              {t.quote}<span class="sr-only">{t.newTab}</span>
+            </a>
+            <a class="btn btn--line" href={localizePath(linePath, locale)}>{lineLabel}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .product {
+    padding-block: var(--s-4) clamp(56px, 7vw, 112px);
+  }
+  .product__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--s-7) clamp(32px, 5vw, 96px);
+    margin-top: var(--s-6);
+    align-items: start;
+  }
+  .product__figure {
+    position: sticky;
+    top: calc(var(--header-h) + var(--s-5));
+    display: grid;
+    gap: var(--s-3);
+  }
+  .product :global(.product__well) {
+    padding: 10%;
+  }
+  .product__thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+  .product__thumbs img {
+    width: 72px;
+    aspect-ratio: 1;
+    object-fit: contain;
+    border-radius: var(--r-2);
+    background: var(--paper-2);
+  }
+  .product__info {
+    display: grid;
+    gap: var(--s-7);
+    min-width: 0;
+  }
+  .product__head {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+  }
+  .product__title {
+    font-family: var(--font-sans);
+    font-size: clamp(2.25rem, 1rem + 3vw, 4rem);
+    overflow-wrap: anywhere;
+  }
+  .product__lead {
+    max-width: 52ch;
+    font-size: 1.0625rem;
+    color: var(--muted);
+  }
+  .product__text {
+    display: grid;
+    gap: var(--s-3);
+    max-width: 68ch;
+  }
+  .product__label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  :global([dir='rtl']) .product__label {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .product__facts {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .product__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+  @media (max-width: 900px) {
+    .product__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .product__figure {
+      position: static;
+    }
+  }
+</style>

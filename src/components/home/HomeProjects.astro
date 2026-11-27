@@ -1,7 +1,7 @@
 ---
 import ProjectMedia from '../company/ProjectMedia.astro';
 import { home } from '../../i18n/home.ts';
-import { company, type ProjectSlug } from '../../i18n/company.ts';
+import { company } from '../../i18n/company.ts';
 import { localizePath, type Locale } from '../../i18n/config.ts';
 import { projectList, projectSpan } from '../company/facts.ts';
 
@@ -14,47 +14,51 @@ const t = home[locale].projects;
 const c = company[locale];
 ---
 
-<section class="pj theme-light section" aria-labelledby="pj-title">
-  <div class="container pj__head">
-    <div class="pj__heading">
-      <p class="eyebrow">{t.eyebrow}</p>
-      <h2 id="pj-title" class="h2" data-reveal="lines">{t.title(projectSpan.count, projectSpan.min, projectSpan.max)}</h2>
-    </div>
-    <a class="link-arrow pj__all" href={localizePath('/projects/', locale)}>{t.link}</a>
-  </div>
+{
+  projectSpan && (
+    <section class="pj theme-light section" aria-labelledby="pj-title">
+      <div class="container pj__head">
+        <div class="pj__heading">
+          <p class="eyebrow">{t.eyebrow}</p>
+          <h2 id="pj-title" class="h2" data-reveal="lines">{t.title(projectSpan.count, projectSpan.min, projectSpan.max)}</h2>
+        </div>
+        <a class="link-arrow pj__all" href={localizePath('/projects/', locale)}>{t.link}</a>
+      </div>
 
-  <ul class="pj__row" role="list">
-    {
-      projectList.map((p, i) => {
-        const copy = c.projects[p.slug as ProjectSlug];
-        return (
-          <li class:list={['pj__item', { 'pj__item--lg': i < 2, 'pj__item--tile': !p.photo }]}>
-            <a class="pj__card" href={localizePath(`/projects/#${p.slug}`, locale)}>
-              <span class="pj__media" data-pj-media={p.photo && i < 2 ? '' : undefined} data-reveal="clip">
-                <ProjectMedia project={p} alt="" />
-                <span class="tag pj__tag">{c.categories[p.category]}</span>
-                {!p.photo && (
-                  <span class="pj__tile-word" aria-hidden="true">
-                    {c.categories[p.category]}
+      <ul class="pj__row" role="list">
+        {
+          projectList.map((p, i) => {
+            const copy = p.text[locale];
+            return (
+              <li class:list={['pj__item', { 'pj__item--lg': i < 2, 'pj__item--tile': !p.photo }]}>
+                <a class="pj__card" href={localizePath(`/projects/#${p.slug}`, locale)}>
+                  <span class="pj__media" data-pj-media={p.photo && i < 2 ? '' : undefined} data-reveal="clip">
+                    <ProjectMedia project={p} alt="" />
+                    <span class="tag pj__tag">{c.categories[p.category]}</span>
+                    {!p.photo && (
+                      <span class="pj__tile-word" aria-hidden="true">
+                        {c.categories[p.category]}
+                      </span>
+                    )}
                   </span>
-                )}
-              </span>
-              <span class="pj__meta">
-                <span class="pj__kwp num">
-                  <span data-reveal="count" data-to={p.kwp} data-decimals={Number.isInteger(p.kwp) ? 0 : 1}>
-                    {p.kwp}
+                  <span class="pj__meta">
+                    <span class="pj__kwp num">
+                      <span data-reveal="count" data-to={p.kwp} data-decimals={Number.isInteger(p.kwp) ? 0 : 1}>
+                        {p.kwp}
+                      </span>
+                      <span class="unit">kWp</span>
+                    </span>
+                    <span class="pj__title">{copy.title}</span>
                   </span>
-                  <span class="unit">kWp</span>
-                </span>
-                <span class="pj__title">{copy.title}</span>
-              </span>
-            </a>
-          </li>
-        );
-      })
-    }
-  </ul>
-</section>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </section>
+  )
+}
 
 <style>
   .pj__head {

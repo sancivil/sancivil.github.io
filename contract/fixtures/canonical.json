@@ -1,0 +1,28 @@
+{
+  "zeta": [3, 2, 1, [], {}, null, true, false, "", [[]]],
+  "publishId": 43,
+  "Alpha": {
+    "b": 1,
+    "a": 2,
+    "B": 3,
+    "A": 4,
+    "10": "ten",
+    "9": "nine",
+    "\u00e9": "e with acute accent",
+    "\u0643": "kaf",
+    "a b": "space in a key"
+  },
+  "publishedAt": "2026-12-02T09:14:00Z",
+  "numbers": [0, -0, 7, -7, 1.5, -2.25e-7, 0.1, 1E2, 1e21, 123456789012345678901, 5e-324, 1.7976931348623157e308],
+  "text": {
+    "ckb": "شەقامی قاسملۆ، سلێمانی",
+    "ar": "شارع قاسملو، السليمانية",
+    "zwnj": "هاوکۆڵکە\u200cی پلەی گەرمی",
+    "nbsp": "الوكيل الحصري لـ\u00a0Peimar",
+    "escapes": "quote \" backslash \\ slash \/ newline \n tab \t control \u0001 delete \u007f",
+    "astral": "\ud835\udc00",
+    "escaped": "\u0041\u00e9\u0643"
+  },
+  "contentHash": "left out of the hash, like publishId and publishedAt",
+  "nested": { "list": [{ "z": 1, "y": [{ "b": null, "a": "x" }] }], "empty": {} }
+}

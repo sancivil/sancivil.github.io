@@ -5,16 +5,22 @@ import { whatsappLink } from '../../data/site.ts';
 import { batteries, cities, inverters, panels } from '../../lib/designer/data.ts';
 import { fmt, fmtMax, kwRating, ltr, pct, unit } from '../../lib/designer/format.ts';
 import { AGEING, moduleTech, payback, priceFromBill, rate } from '../../lib/designer/payback.ts';
+import { hasWork } from '../../lib/designer/project.ts';
 import { encodeProject } from '../../lib/designer/share.ts';
-import { projectFromSizing, sizeFromNeeds, type Needs, type Sizing } from '../../lib/designer/sizing.ts';
+import { projectFromSizing, sizeFromNeeds, type Needs, type Sizing, type SizingOutcome } from '../../lib/designer/sizing.ts';
 import type { Phase, Project } from '../../lib/designer/types.ts';
 import { FinanceFields, PaybackView, paybackLines } from './Payback.tsx';
-import { cityName, homeFinance, needs, project, step, mode, useI18n } from './store.ts';
+import { projectName } from './labels.ts';
+import { cityName, homeFinance, needs, notice, openProject, project, step, useI18n } from './store.ts';
 import { Field, Icon, Num, NumberInput, describedBy, useTouched } from './ui.tsx';
 
 const sizingData = { panels, inverters, cities, batteries };
 
-function NumberField({ id, k, label, unit, help, error, integer }: { id: string; k: keyof Omit<Needs, 'cityId' | 'phase'>; label: string; unit: string; help: string; error: string | null; integer?: boolean }) {
+type NeedKey = keyof Omit<Needs, 'cityId' | 'phase'>;
+
+type NumberFieldProps = { id: string; k: NeedKey; label: string; unit: string; help: string; error: string | null; onUnparsed: (unparsed: boolean) => void };
+
+function NumberField({ id, k, label, unit, help, error, onUnparsed }: NumberFieldProps) {
   const [touched, touch] = useTouched();
   const shown = touched ? error : null;
   return (
@@ -23,15 +29,18 @@ function NumberField({ id, k, label, unit, help, error, integer }: { id: string;
         id={id}
         value={needs.value[k]}
         unit={unit}
-        integer={integer}
         invalid={!!shown}
         describedBy={describedBy(id, help, shown)}
         onBlur={touch}
+        onUnparsed={onUnparsed}
         onValue={(v) => (needs.value = { ...needs.value, [k]: v })}
       />
     </Field>
   );
 }
+
+/** Hours as the outage sentence shows them: at most one decimal. */
+const tenth = (v: number) => Math.round(v * 10) / 10;
 
 function layoutText(s: Sizing): string {
   return s.layout.groups
@@ -48,16 +57,25 @@ function batteryText(s: Sizing): string | null {
 export function NeedsWizard({ onContinue }: { onContinue: () => void }) {
   const { t, c, locale } = useI18n();
   const n = needs.value;
-  const outcome = useMemo(() => sizeFromNeeds(n, sizingData), [n]);
+  /** Fields whose text is not a number: they count as wrong, never as left empty. */
+  const [unparsed, setUnparsed] = useState<Partial<Record<NeedKey, boolean>>>({});
+  const flag = (k: NeedKey) => (u: boolean) => setUnparsed((x) => ({ ...x, [k]: u }));
+  const anyUnparsed = Object.values(unparsed).some(Boolean);
+  const outcome = useMemo((): SizingOutcome => (anyUnparsed ? { ok: false, reason: 'input' } : sizeFromNeeds(n, sizingData)), [n, anyUnparsed]);
   const city = cities.find((x) => x.id === n.cityId) ?? null;
 
-  const hoursErr = (v: number) => (Number.isNaN(v) || (v >= 0 && v <= 24) ? null : t.needs.errHours);
-  const kwErr = Number.isNaN(n.backupKw) || (n.backupKw >= 0 && n.backupKw <= 500) ? null : t.needs.errKw;
-  const monthlyErr = n.monthlyKwh > 0 && n.monthlyKwh <= 200000 ? null : t.needs.errMonthly;
+  const err = (k: NeedKey, ok: boolean, message: string) => (ok && !unparsed[k] ? null : message);
+  const hoursOk = (v: number) => Number.isNaN(v) || (v >= 0 && v <= 24);
+  const monthlyErr = err('monthlyKwh', n.monthlyKwh > 0 && n.monthlyKwh <= 200000, t.needs.errMonthly);
+  const gridErr = err('gridHours', hoursOk(n.gridHours), t.needs.errHours);
+  const kwErr = err('backupKw', Number.isNaN(n.backupKw) || (n.backupKw >= 0 && n.backupKw <= 500), t.needs.errKw);
+  const backupHoursErr = err('backupHours', hoursOk(n.backupHours), t.needs.errHours);
 
   const fin = homeFinance.value;
   const byBill = fin.basis === 'bill';
-  const price = byBill ? priceFromBill(fin.bill, n.monthlyKwh) : fin.pricePerKwh;
+  const billPrice = priceFromBill(fin.bill, n.monthlyKwh);
+  /** A price from the bill counts as rounded under the bill field, so the result, the quotes and the design agree. */
+  const price = byBill ? (Number.isFinite(billPrice) ? Number(rate(billPrice).replace(/,/g, '')) : NaN) : fin.pricePerKwh;
   const setFin = (patch: Partial<typeof fin>) => (homeFinance.value = { ...homeFinance.value, ...patch });
   const prices = { currency: fin.currency, cost: fin.cost, pricePerKwh: price };
   const result = outcome.ok
@@ -70,15 +88,10 @@ export function NeedsWizard({ onContinue }: { onContinue: () => void }) {
       })
     : null;
 
-  /** The design carries the payback inputs; a price from the bill is rounded as shown under the bill field. */
+  /** The design carries the payback inputs. */
   const projectFor = (s: Sizing): Project => ({
     ...projectFromSizing(s, t.needs.projectName(cityName(s.city, locale))),
-    finance: {
-      currency: fin.currency,
-      cost: fin.cost,
-      pricePerKwh: byBill && Number.isFinite(price) ? Number(rate(price).replace(/,/g, '')) : price,
-      useKwh: s.annualKwh,
-    },
+    finance: { currency: fin.currency, cost: fin.cost, pricePerKwh: price, useKwh: s.annualKwh },
   });
 
   const shareFor = (s: Sizing) => `${location.origin}${location.pathname}#p=${encodeProject(projectFor(s))}`;
@@ -89,15 +102,15 @@ export function NeedsWizard({ onContinue }: { onContinue: () => void }) {
   const go = (s: Sizing, replace = false) => {
     const next = projectFor(s);
     const current = project.value;
-    const hasDesign = current.subArrays.some((x) => x.panelId) || current.inverters.some((b) => b.inverterId);
-    if (!replace && hasDesign && encodeProject(current) !== encodeProject(next)) {
+    if (!replace && hasWork(current) && encodeProject(current) !== encodeProject(next)) {
       setConfirming(true);
       return;
     }
     setConfirming(false);
-    project.value = next;
-    mode.value = 'design';
+    openProject(next);
     step.value = 3;
+    // A message about the replaced project (a share link's Replace/Keep question included) no longer applies.
+    notice.value = null;
     onContinue();
   };
 
@@ -114,6 +127,16 @@ export function NeedsWizard({ onContinue }: { onContinue: () => void }) {
         link: shareFor(s),
       }),
     );
+
+  const noFitText = (o: Extract<SizingOutcome, { ok: false }>) => {
+    const target = unit(fmt(o.targetKwp ?? 0, 2), 'kWp');
+    const load = unit(fmtMax(n.backupKw), 'kW');
+    if (o.limit === 'backupLoad' && o.maxLoadKw !== undefined) return t.needs.noFitBackupLoad(load, unit(fmt(o.maxLoadKw), 'kW'));
+    if (o.limit === 'backupPv') return t.needs.noFitBackupPv(target, load);
+    if (o.limit === 'small' && o.minKwp !== undefined) return t.needs.noFitSmall(unit(fmt(o.minKwp, 2), 'kWp'));
+    if (o.limit === 'large' && o.maxKwp !== undefined) return t.needs.noFitLarge(unit(fmt(o.maxKwp, 0), 'kWp'));
+    return t.needs.noFit(target);
+  };
 
   const phases: Phase[] = ['single_phase', 'three_phase'];
 
@@ -146,11 +169,27 @@ export function NeedsWizard({ onContinue }: { onContinue: () => void }) {
               ))}
             </select>
           </Field>
-          <NumberField id="dz-n-monthly" k="monthlyKwh" label={t.needs.monthly} unit={t.needs.monthlyUnit} help={t.needs.monthlyHelp} error={monthlyErr} />
-          <NumberField id="dz-n-grid" k="gridHours" label={t.needs.gridHours} unit={t.needs.gridUnit} help={t.needs.gridHelp} error={hoursErr(n.gridHours)} />
+          <NumberField
+            id="dz-n-monthly"
+            k="monthlyKwh"
+            label={t.needs.monthly}
+            unit={t.needs.monthlyUnit}
+            help={t.needs.monthlyHelp}
+            error={monthlyErr}
+            onUnparsed={flag('monthlyKwh')}
+          />
+          <NumberField id="dz-n-grid" k="gridHours" label={t.needs.gridHours} unit={t.needs.gridUnit} help={t.needs.gridHelp} error={gridErr} onUnparsed={flag('gridHours')} />
           <div class="dz-grid dz-grid--tight">
-            <NumberField id="dz-n-kw" k="backupKw" label={t.needs.backupKw} unit="kW" help={t.needs.backupKwHelp} error={kwErr} />
-            <NumberField id="dz-n-hours" k="backupHours" label={t.needs.backupHours} unit={t.needs.hoursUnit} help={t.needs.backupHoursHelp} error={hoursErr(n.backupHours)} />
+            <NumberField id="dz-n-kw" k="backupKw" label={t.needs.backupKw} unit="kW" help={t.needs.backupKwHelp} error={kwErr} onUnparsed={flag('backupKw')} />
+            <NumberField
+              id="dz-n-hours"
+              k="backupHours"
+              label={t.needs.backupHours}
+              unit={t.needs.hoursUnit}
+              help={t.needs.backupHoursHelp}
+              error={backupHoursErr}
+              onUnparsed={flag('backupHours')}
+            />
           </div>
           <fieldset class="dz-seg">
             <legend class="field__label">{t.needs.phase}</legend>
@@ -187,24 +226,14 @@ export function NeedsWizard({ onContinue }: { onContinue: () => void }) {
           <p class="eyebrow eyebrow--dot" id="dz-n-result">
             {t.needs.eyebrow}
           </p>
-          {!outcome.ok && outcome.reason === 'input' && <p class="dz-needs__empty">{t.needs.empty}</p>}
-          {!outcome.ok && outcome.reason === 'noFit' && (
-            <p class="dz-needs__empty">
-              {outcome.limit === 'backup'
-                ? t.needs.noFitBackup(unit(fmt(outcome.targetKwp ?? 0, 2), 'kWp'))
-                : outcome.limit === 'small' && outcome.minKwp !== undefined
-                  ? t.needs.noFitSmall(unit(fmt(outcome.minKwp, 2), 'kWp'))
-                  : outcome.limit === 'large' && outcome.maxKwp !== undefined
-                    ? t.needs.noFitLarge(unit(fmt(outcome.maxKwp, 0), 'kWp'))
-                    : t.needs.noFit(unit(fmt(outcome.targetKwp ?? 0, 2), 'kWp'))}
-            </p>
-          )}
+          {!outcome.ok && outcome.reason === 'input' && <p class="dz-needs__empty">{city && monthlyErr === null ? t.needs.fixField : t.needs.empty}</p>}
+          {!outcome.ok && outcome.reason === 'noFit' && <p class="dz-needs__empty">{noFitText(outcome)}</p>}
           {outcome.ok && (
             <SizingView
               s={outcome.sizing}
               n={n}
               onContinue={() => go(outcome.sizing)}
-              confirm={confirming ? { name: `⁨${project.value.name || t.rail.untitled}⁩`, onReplace: () => go(outcome.sizing, true), onKeep: () => setConfirming(false) } : null}
+              confirm={confirming ? { name: projectName(project.value, t), onReplace: () => go(outcome.sizing, true), onKeep: () => setConfirming(false) } : null}
               quoteHref={() => quote(outcome.sizing)}
               units={c.units}
             >
@@ -239,6 +268,8 @@ function SizingView({ s, n, onContinue, confirm, quoteHref, units, children }: S
   const city = cityName(s.city, locale);
   const coverage = s.productionKwh / s.annualKwh;
   const bat = batteryText(s);
+  /** Outage hours as the sentence shows them; the sentence compares the shown figures, so it never reads "off 0 hours". */
+  const off = tenth(s.outageHours ?? 0);
   const coef = s.panel.ctPmax ?? 0;
 
   return (
@@ -311,8 +342,12 @@ function SizingView({ s, n, onContinue, confirm, quoteHref, units, children }: S
                     : t.needs.batteryUnknown}
                   {s.battery.overMax ? ` ${t.needs.batteryOver}` : ''}
                 </span>
-                {s.outageHours !== null && (
-                  <span class="dz-sizing__note">{t.needs.outage(ltr(fmtMax(s.outageHours)), ltr(fmtMax(n.backupHours)), unit(fmtMax(n.backupKw), 'kW'))}</span>
+                {off > 0 && (
+                  <span class="dz-sizing__note">
+                    {tenth(n.backupHours) >= off
+                      ? t.needs.outageCovered(off, unit(fmtMax(n.backupKw), 'kW'))
+                      : t.needs.outage(off, tenth(n.backupHours), unit(fmtMax(n.backupKw), 'kW'))}
+                  </span>
                 )}
               </>
             ) : (

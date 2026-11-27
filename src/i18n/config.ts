@@ -9,6 +9,7 @@ export interface LocaleMeta {
   lang: string;
   /** Value for <link rel="alternate" hreflang>. */
   hreflang: string;
+  /** Value for og:locale, from the list Facebook accepts (ar_AR for Arabic, cb_IQ for Sorani). */
   ogLocale: string;
   dir: 'ltr' | 'rtl';
   /** URL segment; undefined = site root (English). */
@@ -17,8 +18,8 @@ export interface LocaleMeta {
 
 export const localeMeta: Record<Locale, LocaleMeta> = {
   en: { label: 'English', lang: 'en', hreflang: 'en', ogLocale: 'en_US', dir: 'ltr', segment: undefined },
-  ar: { label: 'العربية', lang: 'ar', hreflang: 'ar', ogLocale: 'ar_IQ', dir: 'rtl', segment: 'ar' },
-  ckb: { label: 'کوردی', lang: 'ckb', hreflang: 'ku', ogLocale: 'ckb_IQ', dir: 'rtl', segment: 'ku' },
+  ar: { label: 'العربية', lang: 'ar', hreflang: 'ar', ogLocale: 'ar_AR', dir: 'rtl', segment: 'ar' },
+  ckb: { label: 'کوردی', lang: 'ckb', hreflang: 'ku', ogLocale: 'cb_IQ', dir: 'rtl', segment: 'ku' },
 };
 
 const bySegment = new Map(locales.map((l) => [localeMeta[l].segment, l]));

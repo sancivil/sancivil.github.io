@@ -5,10 +5,11 @@ import { products } from '../../i18n/products.ts';
 
 interface Props {
   locale: Locale;
+  brand: string;
   name: string;
   models: Inverter[];
 }
-const { locale, name, models } = Astro.props;
+const { locale, brand, name, models } = Astro.props;
 const t = products[locale];
 const c = t.inverterPage.col;
 
@@ -36,9 +37,9 @@ const columns = allColumns.filter((col) => models.some((m) => col.cell(m) !== nu
 ---
 
 <div class="compare" data-compare>
-  <div class="compare__scroll" tabindex="0" role="region" aria-label={t.inverterPage.tableCaption(name)}>
+  <div class="compare__scroll" tabindex="0" role="region" aria-labelledby="models-caption">
     <table>
-      <caption class="sr-only">{t.inverterPage.tableCaption(name)}</caption>
+      <caption id="models-caption" class="sr-only">{t.inverterPage.tableCaption(brand, name)}</caption>
       <thead>
         <tr>
           <th scope="col" class="compare__corner">{c.model}</th>

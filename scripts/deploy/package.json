@@ -1,0 +1,8 @@
+{
+  "name": "faraday-deploy",
+  "private": true,
+  "description": "FTPS deploy of the built site, installed on its own in CI (npm ci --ignore-scripts --prefix scripts/deploy).",
+  "dependencies": {
+    "basic-ftp": "6.2.6"
+  }
+}

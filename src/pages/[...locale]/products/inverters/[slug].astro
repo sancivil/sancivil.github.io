@@ -9,11 +9,12 @@ import InverterTable from '../../../../components/products/InverterTable.astro';
 import SystemDiagram from '../../../../components/products/SystemDiagram.astro';
 import FamilyList from '../../../../components/products/FamilyList.astro';
 import JsonLd from '../../../../components/seo/JsonLd.astro';
-import { absolute, breadcrumbList, product } from '../../../../lib/seo/schema.ts';
+import { absolute, breadcrumbList, productGroup } from '../../../../lib/seo/schema.ts';
 import {
   GROUPS,
   INVERTER_IMAGE_SIZE,
   categoryHref,
+  displayName,
   docItem,
   extent,
   familyBySlug,
@@ -23,6 +24,7 @@ import {
   families,
   pct,
   powerParts,
+  productImage,
   span,
   storageReady,
 } from '../../../../components/products/data.ts';
@@ -37,15 +39,17 @@ export const getStaticPaths = () =>
 
 const locale = localeFromParam(Astro.params.locale);
 const { family, group } = familyBySlug(Astro.params.slug!)!;
+const name = displayName(family.name);
 const t = products[locale];
 const p = t.inverterPage;
 const nav = common[locale];
 
 const kind = t.kind[group][family.phase];
 const note = familyNote(locale, family.slug);
+const photo = family.photos[0];
 const image = familyImage(family);
 const models = familyInverters(family);
-const missing = family.models.filter((name) => !models.some((m) => m.model === name));
+const missing = family.models.filter((model) => !models.some((m) => m.model === model));
 const power = familyPower(family);
 const powerFig = power && powerParts(power);
 
@@ -76,10 +80,7 @@ const facts: SpecRow[] = [
   { label: p.fact.models, value: String(family.models.length) },
 ];
 
-const docs = [
-  ...family.datasheets.map((doc) => docItem(doc)),
-  ...(family.manual ? [docItem({ label: `${t.label.manual} · ${family.name}`, url: family.manual })] : []),
-];
+const docs = family.docs.map((doc) => (doc.kind === 'manual' ? docItem(doc, `${t.label.manual} · ${doc.label}`) : docItem(doc)));
 
 /* Families of the same group, same phase first, closest in power. */
 const anchor = power ? power[0] : 0;
@@ -97,28 +98,29 @@ const pageUrl = absolute(localizePath(`/products/inverters/${family.slug}/`, loc
 const groupPath = { hybrid: '/products/hybrid/', onGrid: '/products/on-grid/', micro: '/products/micro/' }[group];
 const groupLabel = { hybrid: nav.productNav.hybrid, onGrid: nav.productNav.onGrid, micro: nav.productNav.micro }[group];
 const schema = [
-  product({
-    name: `Peimar ${family.name}`,
-    model: family.name,
-    description: note ?? family.description ?? `${family.name} · ${kind}`,
-    image: image ?? '/images/products/peimar-hybrid-inverters-batteries.png',
+  productGroup({
+    name: `${family.brand} ${name}`,
+    id: family.slug,
+    models: family.models,
+    brand: family.brand,
+    description: note ?? family.description ?? `${name} · ${kind}`,
+    image: photo?.src ?? image ?? '/images/products/peimar-hybrid-inverters-batteries.png',
     url: pageUrl,
     category: kind,
     additionalProperty: [
       ...(power ? [{ name: 'AC nominal power', value: `${power[0] / 1000}–${power[1] / 1000}`, unitCode: 'KWT' }] : []),
       { name: 'Phase', value: family.phase === 'three_phase' ? 'Three-phase' : 'Single-phase' },
-      ...(models.length ? [{ name: 'Models', value: models.map((x) => x.model).join(', ') }] : []),
     ],
   }),
   breadcrumbList([
     { name: nav.nav.products, url: absolute(localizePath('/products/', locale)) },
     { name: groupLabel, url: absolute(localizePath(groupPath, locale)) },
-    { name: family.name, url: pageUrl },
+    { name, url: pageUrl },
   ]),
 ];
 ---
 
-<Base title={p.title(family.name, kind)} description={p.description(family.name, kind)}>
+<Base title={p.title(family.brand, name, kind)} description={p.description(family.brand, name, kind)}>
   <JsonLd data={schema} />
   <section class="product theme-light">
     <div class="container">
@@ -127,25 +129,26 @@ const schema = [
         items={[
           { label: nav.nav.products, href: '/products/' },
           { label: nav.productNav[group], href: categoryHref(group) },
-          { label: family.name },
+          { label: name },
         ]}
       />
 
       <div class="product__grid">
         <ProductWell
-          src={image}
-          alt={t.productAlt(family.name, kind)}
+          image={photo ?? (image && productImage(image, INVERTER_IMAGE_SIZE))}
+          alt={photo?.alt[locale] ?? t.productAlt(family.brand, name, kind)}
           label={family.models[0]}
-          size={INVERTER_IMAGE_SIZE}
-          sizes="(max-width: 900px) 100vw, 50vw"
+          brand={family.brand}
+          sizes="(max-width: 900px) 58vw, (max-width: 1440px) 35vw, 502px"
           eager
+          priority
           class="product__well"
         />
 
         <div class="product__info">
           <header class="product__head">
             <p class="eyebrow eyebrow--dot">{kind}</p>
-            <h1 class="h1 product__title" data-reveal="lines">{family.name}</h1>
+            <h1 class="h1 product__title" data-reveal="lines">{name}</h1>
             {note && <p class="product__lead">{note}</p>}
           </header>
 
@@ -195,7 +198,7 @@ const schema = [
             }
             <a
               class:list={['btn', models.length > 0 ? 'btn--line' : 'btn--sun']}
-              href={whatsappLink(t.quoteMessage(family.name))}
+              href={whatsappLink(t.quoteMessage(family.brand, name))}
               target="_blank"
               rel="noopener"
             >
@@ -213,14 +216,14 @@ const schema = [
         <h2 id="compare-title" class="h2">{models.length > 0 ? p.tableTitle : p.modelsTitle}</h2>
         <p class="compare-section__meta">{t.count.models(family.models.length)}</p>
       </div>
-      {models.length > 0 && <InverterTable locale={locale} name={family.name} models={models} />}
+      {models.length > 0 && <InverterTable locale={locale} brand={family.brand} name={name} models={models} />}
       {
         missing.length > 0 && (
           <div class="models-only">
             <ul role="list" class="models-only__list">
-              {missing.map((name) => (
+              {missing.map((model) => (
                 <li class="tag" dir="ltr">
-                  {name}
+                  {model}
                 </li>
               ))}
             </ul>

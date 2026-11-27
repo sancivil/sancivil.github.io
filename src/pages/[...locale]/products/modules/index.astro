@@ -3,11 +3,12 @@ import Base from '../../../../layouts/Base.astro';
 import PageIntro from '../../../../components/products/PageIntro.astro';
 import Stats from '../../../../components/products/Stats.astro';
 import SeriesList from '../../../../components/products/SeriesList.astro';
+import ItemList from '../../../../components/products/ItemList.astro';
 import { moduleEfficiency, modulePower, modules, pct, seriesTraits, type Trait } from '../../../../components/products/data.ts';
 import { localeFromParam, localeParams } from '../../../../i18n/config.ts';
+import { categoryText, itemsByLine } from '../../../../content/index.ts';
 import { common } from '../../../../i18n/common.ts';
 import { products } from '../../../../i18n/products.ts';
-import { catalogText } from '../../../../i18n/catalog-text.ts';
 
 export const getStaticPaths = () => localeParams();
 const locale = localeFromParam(Astro.params.locale);
@@ -26,7 +27,7 @@ const traits = order.filter((trait) => modules.some((s) => seriesTraits(s).inclu
     crumbs={[{ label: nav.nav.products, href: '/products/' }, { label: nav.productNav.modules }]}
     eyebrow={p.eyebrow}
     title={nav.productNav.modules}
-    lead={catalogText[locale].categories.modules}
+    lead={categoryText(locale, 'modules')}
     display
   >
     <Stats
@@ -63,6 +64,8 @@ const traits = order.filter((trait) => modules.some((s) => seriesTraits(s).inclu
       <SeriesList locale={locale} series={modules} />
     </div>
   </section>
+
+  <ItemList locale={locale} items={itemsByLine('modules')} />
 </Base>
 
 <style>

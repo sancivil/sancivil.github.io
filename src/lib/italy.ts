@@ -1,5 +1,11 @@
-/** Underlines every "Made in Italy" phrase (EN / AR / KU) with the Italian tricolour. */
-const PHRASE = /(Made in Italy|صُنعت? في إيطاليا|صنعت? في إيطاليا|صناعة إيطالية|دروستکراوی ئیتاڵیا)/;
+/**
+  Underlines every "Made in Italy" claim with the Italian tricolour, in its canonical phrasings (src/i18n/GLOSSARY.md):
+  "Made in Italy"; صُنع في إيطاليا (صُنعت), المصنوعة في إيطاليا and صناعة إيطالية; دروستکراوی ئیتاڵیا. Only whole
+  words count, so مصنع في إيطاليا ("a factory in Italy") is no claim; a conjunction joined to the first word or a
+  suffix joined to the last stays under the line with it (والمصنوعة في إيطاليا, دروستکراوی ئیتاڵیاوە).
+*/
+const PHRASE =
+  /(?<![\p{L}\p{M}])((?:[Mm]ade in Italy|[وف]?(?:صُ?نعت? في إيطاليا|(?:ال)?مصنوعة في إيطاليا|صناعة إيطالية)|دروستکراوی ئیتاڵیا)[\p{L}\p{M}]*)/u;
 const SKIP = new Set(['SCRIPT', 'STYLE', 'TITLE', 'TEXTAREA', 'OPTION', 'svg', 'SVG']);
 
 function mark(root: ParentNode) {

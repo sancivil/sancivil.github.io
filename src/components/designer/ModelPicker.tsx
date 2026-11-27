@@ -1,5 +1,6 @@
 import type { ComponentChildren } from 'preact';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import { latinDigits } from '../../lib/designer/format.ts';
 import { useI18n } from './store.ts';
 import { Icon } from './ui.tsx';
 
@@ -23,7 +24,8 @@ type Props = {
   footer?: ComponentChildren;
 };
 
-const norm = (s: string) => s.toLowerCase().replace(/[\s()\-_.]/g, '');
+/** Search text without case, spacing, punctuation or decimal signs; Arabic-Indic and Persian digits match Western ones. */
+const norm = (s: string) => latinDigits(s).toLowerCase().replace(/[\s()\-_.,٫٬]/g, '');
 
 /** Searchable listbox grouped by series or type; arrow keys, Enter and Escape work from the search field. */
 export function ModelPicker({ id, value, options, placeholder, searchLabel, noResults, invalid, describedBy, onChange, onClose, footer }: Props) {

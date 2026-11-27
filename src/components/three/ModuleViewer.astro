@@ -8,7 +8,13 @@
   Fills its parent width. The stage is 4/3 (1/1 under 720px, where the toolbar moves below it)
   on --paper-2 with a soft contact shadow, and draws its own controls (front / back / explode /
   dimensions / details / zoom / reset). Touch: vertical swipes scroll the page, horizontal drags turn the
-  module, no pinch capture. Without JS or WebGL it shows a front elevation with model and size.
+  module, no pinch capture. Without JS or WebGL it shows a front elevation with model and size
+  (height × width × depth, the datasheet order).
+  Slot "poster" (optional): an element marked data-poster, laid over the stage (its containing block)
+  while the 3D view loads; the viewer hides it when WebGL is missing, so the drawing and the note show.
+  The 3D view starts once the page has loaded and settled, the stage is near the viewport and the main
+  thread is idle, one scene at a time per page (src/lib/three/load.ts), and is built a slice at a time
+  (src/lib/three/stage.ts: setUp, prepare). Without WebGL 2, three.js is never loaded.
   Details: five numbered hotspots ride on 3D points (front glass, cells, frame corner, junction box,
   rear label) and fade out when their face turns away. Click, tap or keyboard focus opens a card with
   the sourced anatomy caption and the model's data (power, protection class, label ratings); focusing
@@ -44,6 +50,7 @@ const uid = `mv-${spec.model.replace(/[^a-z0-9]/gi, '').toLowerCase()}`;
 <pv-module-viewer class:list={['module-viewer', className]} data-spec={JSON.stringify(spec)} data-locale={locale} role="group" aria-label={label}>
   <div class="module-viewer__stage" data-stage>
     <div class="module-viewer__fallback" data-fallback set:html={moduleSvg(spec)} />
+    <slot name="poster" />
     <div class="module-viewer__dims" data-dims hidden aria-hidden="true">
       <svg><path></path></svg>
       <span class="mono" data-dim="w"></span>
@@ -52,7 +59,8 @@ const uid = `mv-${spec.model.replace(/[^a-z0-9]/gi, '').toLowerCase()}`;
     </div>
     <p class="module-viewer__meta mono">
       <bdi data-model>{spec.model}</bdi>
-      <span class="num" data-size>{spec.width} × {spec.height} × {spec.depth} mm</span>
+      <span class="sr-only">{t.dimensions}</span>
+      <span class="num" data-size>{spec.height} × {spec.width} × {spec.depth} mm</span>
     </p>
     <p class="module-viewer__hint small" data-hint hidden>{t.hint}</p>
     <div class="module-viewer__spots" data-spots role="group" aria-label={t.spots} hidden>
@@ -71,7 +79,7 @@ const uid = `mv-${spec.model.replace(/[^a-z0-9]/gi, '').toLowerCase()}`;
       </div>
     </div>
   </div>
-  <div class="module-viewer__bar" role="group" aria-label={t.controls} data-bar hidden>
+  <div class="module-viewer__bar" role="group" aria-label={t.controls} data-bar>
     <span class="module-viewer__seg">
       <button type="button" data-act="front">{t.front}</button>
       <button type="button" data-act="back">{t.back}</button>
@@ -97,7 +105,9 @@ const uid = `mv-${spec.model.replace(/[^a-z0-9]/gi, '').toLowerCase()}`;
     color: var(--ink);
     background: var(--paper-2);
     border-radius: var(--r-2);
-    overflow: hidden;
+    /* Clips without being a scroller: in RTL, a scroller's origin moves with its left overflow (hotspots near the
+       start edge), which shifts everything inside it. */
+    overflow: clip;
   }
   .module-viewer__stage {
     position: relative;
@@ -196,6 +206,10 @@ const uid = `mv-${spec.model.replace(/[^a-z0-9]/gi, '').toLowerCase()}`;
     inset: 0;
     direction: ltr;
     pointer-events: none;
+  }
+  /* The first 3D frame places the hotspots; until then they would sit stacked in the corner. */
+  .module-viewer__stage:not(:global(.is-ready)) .module-viewer__spots {
+    visibility: hidden;
   }
   .module-viewer__spot {
     position: absolute;
@@ -355,7 +369,11 @@ const uid = `mv-${spec.model.replace(/[^a-z0-9]/gi, '').toLowerCase()}`;
     justify-content: center;
     gap: var(--s-2);
   }
-  .module-viewer__bar[hidden] {
+  /* Laid out from the start, so the framing counts it and, under the stage, its room is kept; shown with the first 3D frame. */
+  .module-viewer__stage:not(:global(.is-ready)) + .module-viewer__bar {
+    visibility: hidden;
+  }
+  :global(.no-js) .module-viewer__bar {
     display: none;
   }
   .module-viewer__seg {
@@ -446,7 +464,7 @@ const uid = `mv-${spec.model.replace(/[^a-z0-9]/gi, '').toLowerCase()}`;
   import type { ThreeStrings } from '../../i18n/three.ts';
   import { moduleSvg } from '../../lib/three/drawing.ts';
   import { moduleFacts } from '../../lib/three/facts.ts';
-  import { loadScenes, webglAvailable, whenNear } from '../../lib/three/load.ts';
+  import { loadScenes, sceneContext, startScene } from '../../lib/three/load.ts';
   import type { MarkKey } from '../../lib/three/module.ts';
   import type { ModuleSpec } from '../../lib/three/types.ts';
   import type { ModuleViewerScene } from '../../lib/three/viewer.ts';
@@ -490,11 +508,7 @@ const uid = `mv-${spec.model.replace(/[^a-z0-9]/gi, '').toLowerCase()}`;
     }
 
     connectedCallback() {
-      if (!webglAvailable()) {
-        this.querySelector<HTMLElement>('[data-nowebgl]')!.hidden = false;
-        return;
-      }
-      whenNear(this, () => this.mount(), '400px');
+      startScene(this, '400px', () => this.mount());
     }
 
     disconnectedCallback() {
@@ -506,7 +520,7 @@ const uid = `mv-${spec.model.replace(/[^a-z0-9]/gi, '').toLowerCase()}`;
       if (!value || value === previous || !this.isConnected) return;
       const spec = this.spec;
       this.querySelector('[data-model]')!.textContent = spec.model;
-      this.querySelector('[data-size]')!.textContent = `${spec.width} × ${spec.height} × ${spec.depth} mm`;
+      this.querySelector('[data-size]')!.textContent = `${spec.height} × ${spec.width} × ${spec.depth} mm`;
       this.querySelector('[data-fallback]')!.innerHTML = moduleSvg(spec);
       this.scene?.setSpec(spec);
       this.closeSpot(false);
@@ -566,22 +580,26 @@ const uid = `mv-${spec.model.replace(/[^a-z0-9]/gi, '').toLowerCase()}`;
     }
 
     async mount() {
+      if (this.scene) return;
+      const canvas = document.createElement('canvas');
+      if (!sceneContext(canvas)) {
+        this.querySelector<HTMLElement>('[data-nowebgl]')!.hidden = false;
+        this.querySelectorAll<HTMLElement>('[data-poster]').forEach((el) => (el.hidden = true));
+        return;
+      }
       const [{ mountViewer }, { three }] = await Promise.all([loadScenes(), import('../../i18n/three.ts')]);
       this.strings = three[(this.dataset.locale as Locale) ?? 'en'];
       await document.fonts.ready;
-      if (!this.isConnected || this.scene) return;
+      if (!this.isConnected) return;
       const stage = this.querySelector<HTMLElement>('[data-stage]')!;
       const bar = this.querySelector<HTMLElement>('[data-bar]')!;
       const meta = this.querySelector<HTMLElement>('.module-viewer__meta')!;
-      const canvas = document.createElement('canvas');
-      canvas.tabIndex = 0;
       canvas.setAttribute('role', 'img');
       canvas.setAttribute('aria-label', this.getAttribute('aria-label') ?? '');
       stage.prepend(canvas);
-      bar.hidden = false;
-      this.querySelector<HTMLElement>('[data-hint]')!.hidden = false;
       const overlaid = () => getComputedStyle(bar).position === 'absolute';
-      this.scene = mountViewer(
+      const requested = this.dataset.spec;
+      const scene = await mountViewer(
         {
           stage,
           canvas,
@@ -591,6 +609,11 @@ const uid = `mv-${spec.model.replace(/[^a-z0-9]/gi, '').toLowerCase()}`;
         },
         this.spec,
       );
+      if (!this.isConnected) return scene.dispose();
+      this.scene = scene;
+      canvas.tabIndex = 0;
+      if (this.dataset.spec !== requested) void scene.setSpec(this.spec);
+      this.querySelector<HTMLElement>('[data-hint]')!.hidden = false;
       bar.addEventListener('click', (e) => {
         const button = (e.target as Element).closest<HTMLButtonElement>('button[data-act]');
         if (button) this.act(button);

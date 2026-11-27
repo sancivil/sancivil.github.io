@@ -6,8 +6,8 @@ import type { Locale } from '../../i18n/config.ts';
 import type { DesignerStrings } from '../../i18n/designer.ts';
 import { summarize } from '../../lib/designer/calc.ts';
 import { catalog } from '../../lib/designer/data.ts';
-import { createProject, reachableStep, stepErrors, type StepNo } from '../../lib/designer/project.ts';
-import { fromCompact, toCompact } from '../../lib/designer/share.ts';
+import { createProject, hasWork, reachableStep, stepErrors, type StepNo } from '../../lib/designer/project.ts';
+import { fromCompact, toCompact, type Saved } from '../../lib/designer/share.ts';
 import type { Needs } from '../../lib/designer/sizing.ts';
 import type { City, Finance, Project } from '../../lib/designer/types.ts';
 
@@ -17,14 +17,24 @@ export const emptyNeeds = (): Needs => ({ cityId: '', monthlyKwh: NaN, gridHours
 
 /** Payback inputs of the needs path: the monthly bill (basis 'bill') can stand in for the price per kWh. */
 export type HomeFinance = Omit<Finance, 'useKwh'> & { basis: 'kwh' | 'bill'; bill: number };
-const emptyHomeFinance = (): HomeFinance => ({ currency: 'IQD', cost: NaN, pricePerKwh: NaN, basis: 'kwh', bill: NaN });
+export const emptyHomeFinance = (): HomeFinance => ({ currency: 'IQD', cost: NaN, pricePerKwh: NaN, basis: 'kwh', bill: NaN });
 
 export const project = signal<Project>(createProject());
+/** The share code the open project was opened from; '' when it was made on this device. */
+export const origin = signal('');
+/** A second project kept on this device: the visitor's own, set aside when a share link opened another one. */
+export const other = signal<Saved | null>(null);
 export const step = signal<StepNo>(1);
 export const mode = signal<Mode>('design');
 export const needs = signal<Needs>(emptyNeeds());
 export const homeFinance = signal<HomeFinance>(emptyHomeFinance());
-export const notice = signal<string | null>(null);
+
+/**
+ * A message above the step, with optional buttons (a choice or a shortcut that belongs to the message). The button
+ * marked `focus` takes the keyboard focus when the message appears.
+ */
+export type Notice = { text: string; actions?: { label: string; run: () => void; focus?: boolean }[] };
+export const notice = signal<Notice | null>(null);
 
 export const summary = computed(() => summarize(project.value, catalog));
 export const reachable = computed(() => reachableStep(project.value, catalog));
@@ -43,6 +53,22 @@ export function goTo(n: StepNo) {
   step.value = Math.min(n, reachable.value) as StepNo;
 }
 
+/** Open `p` in the Designer at the furthest step it reaches; `from` is the share code it came from. */
+export function openProject(p: Project, from = '') {
+  project.value = p;
+  origin.value = from;
+  mode.value = 'design';
+  step.value = reachable.value;
+}
+
+/** Swap the open project with the other one kept on this device; an open project that holds no work is not kept. */
+export function switchProjects() {
+  const next = other.value;
+  if (!next) return;
+  other.value = hasWork(project.value) ? { project: project.value, from: origin.value } : null;
+  openProject(next.project, next.from);
+}
+
 const STORAGE_KEY = 'faraday-designer-v1';
 
 export function restore(): boolean {
@@ -53,6 +79,9 @@ export function restore(): boolean {
     const p = fromCompact(data.p, catalog);
     if (!p) return false;
     project.value = p;
+    origin.value = typeof data.c === 'string' ? data.c : '';
+    const kept = data.o && typeof data.o === 'object' ? fromCompact(data.o.p, catalog) : null;
+    other.value = kept ? { project: kept, from: typeof data.o.c === 'string' ? data.o.c : '' } : null;
     mode.value = data.m === 'needs' ? 'needs' : 'design';
     step.value = Math.min(Number(data.s) || 1, reachable.value) as StepNo;
     const num = (v: unknown) => (typeof v === 'number' ? v : NaN);
@@ -87,7 +116,15 @@ export function persist() {
   try {
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ p: toCompact(project.value), s: step.value, m: mode.value, n: needs.value, f: homeFinance.value }),
+      JSON.stringify({
+        p: toCompact(project.value),
+        c: origin.value,
+        o: other.value && { p: toCompact(other.value.project), c: other.value.from },
+        s: step.value,
+        m: mode.value,
+        n: needs.value,
+        f: homeFinance.value,
+      }),
     );
   } catch {
     /* storage full or blocked: the design still works for this visit */

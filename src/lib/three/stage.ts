@@ -10,10 +10,33 @@ import {
   PlaneGeometry,
   SRGBColorSpace,
   Scene,
+  WebGLRenderTarget,
   WebGLRenderer,
 } from 'three';
-import type { BufferGeometry, DataTexture, Side, Texture, Vector3 } from 'three';
+import type { BufferGeometry, Camera, DataTexture, Material, Object3D, Side, Texture, Vector3 } from 'three';
 import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
+
+const SLICE = 12;
+let sliceFrame = -1;
+let sliceStart = 0;
+
+/** Resolves at the next animation frame, which opens a new slice for `pace`. */
+async function nextFrame() {
+  const frame = await new Promise<number>((resolve) => requestAnimationFrame(resolve));
+  if (frame !== sliceFrame) {
+    sliceFrame = frame;
+    sliceStart = performance.now();
+  }
+}
+
+/**
+ * Long set-up work awaits this between its steps: it returns at once while the current slice has time left, else at the
+ * next animation frame. All such work shares one slice of 12 ms per frame, so pieces of it running side by side still
+ * leave each frame most of its time.
+ */
+export async function pace() {
+  while (performance.now() - sliceStart >= SLICE) await nextFrame();
+}
 
 const phone = Math.min(screen.width, screen.height) <= 720;
 const coarse = matchMedia('(pointer: coarse)').matches;
@@ -30,16 +53,72 @@ export const device = {
 export const detailTextureMax = (renderer: WebGLRenderer) =>
   phone ? 1024 : coarse || renderer.capabilities.maxTextureSize < 8192 ? 2048 : 4096;
 
-export const maxAnisotropy = (renderer: WebGLRenderer) => renderer.capabilities.getMaxAnisotropy();
+/**
+ * Resolves once the GPU has run every command issued so far, checking a fence once a frame. Until then any blocking
+ * call, a WebGL query or the first fill of a 2D canvas, would wait for it on the main thread.
+ */
+async function caughtUp(renderer: WebGLRenderer) {
+  const gl = renderer.getContext() as WebGL2RenderingContext;
+  const fence = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0)!;
+  gl.flush();
+  while (gl.getSyncParameter(fence, gl.SYNC_STATUS) !== gl.SIGNALED) await nextFrame();
+  gl.deleteSync(fence);
+}
 
-export function createRenderer(canvas: HTMLCanvasElement) {
-  const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+/**
+ * A renderer on the canvas's WebGL 2 context (made by the component with `sceneContext`, load.ts), its texture
+ * anisotropy limit, the procedural studio as its environment (`env`), and `photo()` to call after the first frame for
+ * the photographed studio (see `studio`). Creating the renderer and prefiltering the procedural studio each get a task
+ * of their own: PMREMGenerator compiles its filters on first use, a wait no caller can split. The limit is read while
+ * the GPU is idle (a query waits for the GPU to catch up), and the photo's conversion program compiles alongside the
+ * filters, so the later upgrade waits for nothing.
+ */
+export async function setUp(canvas: HTMLCanvasElement, rtl: boolean) {
+  const renderer = new WebGLRenderer({ canvas, context: canvas.getContext('webgl2')! });
   renderer.setPixelRatio(device.dpr);
   renderer.outputColorSpace = SRGBColorSpace;
   renderer.toneMapping = NeutralToneMapping;
   renderer.toneMappingExposure = 1;
   renderer.setClearColor(0x000000, 0);
-  return renderer;
+  const anisotropy = renderer.capabilities.getMaxAnisotropy();
+  await nextFrame();
+  const pmrem = new PMREMGenerator(renderer);
+  if (!phone) {
+    // The program is built for the bound render target (no tone mapping, linear output), as the conversion draws.
+    const target = new WebGLRenderTarget(1, 1);
+    renderer.setRenderTarget(target);
+    pmrem.compileEquirectangularShader();
+    renderer.setRenderTarget(null);
+    target.dispose();
+  }
+  const env = environment(pmrem, rtl);
+  if (phone) pmrem.dispose();
+  await caughtUp(renderer);
+  return { renderer, anisotropy, env, photo: () => studio(pmrem, rtl) };
+}
+
+/**
+ * Readies an object for its first frame so that frame only draws. Its programs start compiling a material at a time
+ * (the GPU builds them in parallel where the browser has KHR_parallel_shader_compile) and its `textures` upload a
+ * slice at a time. Once the GPU has caught up, `compileAsync` waits for the programs, by then without blocking: each
+ * of its readiness queries waits for the GPU. `scene` gives the lights and environment they are built for.
+ */
+export async function prepare(renderer: WebGLRenderer, object: Object3D, camera: Camera, scene: Scene, textures: Texture[]) {
+  const owners = new Map<Material, Object3D>();
+  object.traverse((o) => {
+    const m = (o as Mesh).material;
+    for (const material of Array.isArray(m) ? m : m ? [m] : []) if (!owners.has(material)) owners.set(material, o);
+  });
+  for (const owner of new Set(owners.values())) {
+    renderer.compile(owner, camera, scene);
+    await pace();
+  }
+  for (const texture of textures) {
+    renderer.initTexture(texture);
+    await pace();
+  }
+  await caughtUp(renderer);
+  await renderer.compileAsync(object, camera, scene);
 }
 
 /**
@@ -48,7 +127,7 @@ export function createRenderer(canvas: HTMLCanvasElement) {
  * edges pick up their long highlights. `rtl` mirrors the room so mirrored scenes reflect the same
  * strips (otherwise a turned module picks up the warm strip instead of the cool one).
  */
-export function environment(renderer: WebGLRenderer, rtl = false): Texture {
+function environment(pmrem: PMREMGenerator, rtl: boolean): Texture {
   const side = rtl ? -1 : 1;
   const scene = new Scene();
   const owned: { dispose(): void }[] = [];
@@ -75,9 +154,7 @@ export function environment(renderer: WebGLRenderer, rtl = false): Texture {
   add(new PlaneGeometry(7, 0.32), 0xffffff, 4, face(0, -0.9, 5.8));
   add(new PlaneGeometry(0.6, 6.5), 0xffe6c4, 4.5, face(3.2, 2.2, -5.2));
   add(new PlaneGeometry(0.6, 6.5), 0xdfe8ff, 2.5, face(-3.6, 2.2, -4.8));
-  const pmrem = new PMREMGenerator(renderer);
   const texture = pmrem.fromScene(scene, 0.015).texture;
-  pmrem.dispose();
   owned.forEach((o) => o.dispose());
   return texture;
 }
@@ -99,7 +176,8 @@ function mirror(t: DataTexture) {
     const row = y * width;
     for (let x = 0; x < width; x++) {
       const from = (row + ((((width >> 1) - 1 - x) % width) + width) % width) * 4;
-      out.set(data.subarray(from, from + 4), (row + x) * 4);
+      const to = (row + x) * 4;
+      for (let k = 0; k < 4; k++) out[to + k] = data[from + k];
     }
   }
   t.image.data = out;
@@ -108,10 +186,10 @@ function mirror(t: DataTexture) {
 }
 
 /**
- * Upgrades a scene to the photographed studio: call after its first frame. The 1.6 MB HDR loads once
- * per page; phones keep the procedural studio. Resolves to null there or when loading fails.
+ * Upgrades a scene to the photographed studio (through `setUp`'s `photo`): call after its first frame. The 1.6 MB HDR
+ * loads once per page; phones keep the procedural studio. Resolves to null there or when loading fails.
  */
-export async function studio(renderer: WebGLRenderer, rtl: boolean): Promise<{ texture: Texture; gain: number; rotation: number } | null> {
+async function studio(pmrem: PMREMGenerator, rtl: boolean): Promise<{ texture: Texture; gain: number; rotation: number } | null> {
   if (phone) return null;
   let source = studios.get(rtl);
   if (!source) {
@@ -120,13 +198,15 @@ export async function studio(renderer: WebGLRenderer, rtl: boolean): Promise<{ t
   }
   try {
     const equirect = await source;
-    const pmrem = new PMREMGenerator(renderer);
+    // The file was decoded in this task; prefilter it in the next.
+    await nextFrame();
     const texture = pmrem.fromEquirectangular(equirect).texture;
-    pmrem.dispose();
     equirect.dispose();
     return { texture, gain: STUDIO.gain, rotation: rtl ? -STUDIO.rotation : STUDIO.rotation };
   } catch {
     return null;
+  } finally {
+    pmrem.dispose();
   }
 }
 

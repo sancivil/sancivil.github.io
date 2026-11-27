@@ -33,7 +33,7 @@ const json = (path: string) => JSON.parse(readFileSync(new URL(path, import.meta
 const panels: Panel[] = json('../src/data/designer/panels.json');
 const inverters: Inverter[] = json('../src/data/designer/inverters.json');
 const cities: City[] = json('../src/data/iraq-solar.json').cities;
-const batteries: Battery[] = json('../src/data/catalog.json').batteries;
+const batteries: Battery[] = json('../src/data/technical/batteries.json');
 const ref = json('./fixtures/peimar-reference.json');
 
 const refPanel: Panel = {
@@ -292,6 +292,14 @@ function shape(value: unknown): unknown {
   }
   return typeof value;
 }
+
+test('English counts one panel and one hour in the singular', () => {
+  assert.ok(designer.en.inverter.cell(1, 1, '0.61 kW', 1).endsWith(', 1 panel'));
+  assert.ok(designer.en.inverter.cell(1, 2, '1.22 kW', 2).endsWith(', 2 panels'));
+  assert.equal(designer.en.needs.outage(1, 1, '2 kW'), 'The grid is off 1 hour a day; the battery carries 2 kW for 1 hour of it.');
+  assert.equal(designer.en.needs.outage(12, 4, '2 kW'), 'The grid is off 12 hours a day; the battery carries 2 kW for 4 hours of it.');
+  assert.equal(designer.en.needs.outageCovered(0.5, '2 kW'), 'The grid is off 0.5 hours a day; the battery carries 2 kW through all of it.');
+});
 
 test('English, Arabic and Kurdish dictionaries have the same keys', () => {
   assert.deepEqual(shape(designer.ar), shape(designer.en));

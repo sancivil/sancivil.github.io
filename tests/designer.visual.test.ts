@@ -8,7 +8,7 @@ import type { Catalog, Inverter, Panel } from '../src/lib/designer/types.ts';
 
 const json = (path: string) => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
 const panels: Panel[] = json('../src/data/designer/panels.json');
-const modules: { slug: string; designerModels: string[] }[] = json('../src/data/catalog.json').modules;
+const modules: { key: string; panelIds: string[]; render: unknown }[] = json('../src/data/technical/series.json');
 const ref = json('./fixtures/peimar-reference.json');
 
 const refPanel: Panel = { ...ref.module, id: 'ref-or10h560m', series: 'OR10H', finish: null, bifacial: false, efficiency: null, width: null, height: null };
@@ -90,7 +90,7 @@ test('labelRows: labels closer than the gap move to the next free row', () => {
   assert.deepEqual(labelRows([], 0.1), []);
 });
 
-test('seriesRenders: catalog models, then series codes; custom panels and series without a render get none', () => {
+test('seriesRenders: series panels, then series codes; custom panels and series without a render get none', () => {
   const render = seriesRenders(modules, panels);
   const byId = (id: string) => panels.find((p) => p.id === id)!;
   assert.equal(render(byId('or10h560m')), '/images/products/modules/or-series-or10h.webp');
@@ -100,6 +100,6 @@ test('seriesRenders: catalog models, then series codes; custom panels and series
   assert.equal(render({ ...byId('or10h560m'), id: 'c1', custom: true }), null);
   for (const p of panels) {
     const src = render(p);
-    if (src) assert.ok(modules.some((m) => src === `/images/products/modules/${m.slug}.webp`));
+    if (src) assert.ok(modules.some((m) => src === `/images/products/modules/${m.key}.webp`));
   }
 });

@@ -1,8 +1,8 @@
 import { energyEstimate, moduleAt, tempsValid, type ProjectSummary } from '../../lib/designer/calc.ts';
 import { cities } from '../../lib/designer/data.ts';
-import { fmt, kw, ltr, pct, unit } from '../../lib/designer/format.ts';
+import { fmt, iraqDate, kw, ltr, pct, unit } from '../../lib/designer/format.ts';
 import type { City, Project } from '../../lib/designer/types.ts';
-import { contact, whatsappLink } from '../../data/site.ts';
+import { contact, localAddress, whatsappLink } from '../../data/site.ts';
 import type { DesignerStrings } from '../../i18n/designer.ts';
 import type { Locale } from '../../i18n/config.ts';
 import { EnergyChart } from './EnergyChart.tsx';
@@ -15,7 +15,7 @@ import { cityName, project, summary, update, useI18n } from './store.ts';
 import { Dot, Icon, Num } from './ui.tsx';
 import { RatioGauge, StringDiagram, VoltageRuler, useTween } from './Visuals.tsx';
 
-export const today = () => new Date().toISOString().slice(0, 10);
+const today = () => iraqDate(new Date());
 
 export function facing(city: City, t: DesignerStrings): string {
   const a = city.optimalAzimuth;
@@ -53,7 +53,9 @@ export function quoteText(p: Project, s: ProjectSummary, t: DesignerStrings, loc
   return t.quote.message({
     project: p.name || t.rail.untitled,
     city: city ? cityName(city, locale) : '–',
-    panels: s.subArrays.filter((x) => x.panel && x.subArray.count > 0).map((x) => ltr(`${x.subArray.count} × Peimar ${panelLabel(x.panel!)} (${kw(x.installedW)} kWp)`)),
+    panels: s.subArrays
+      .filter((x) => x.panel && x.subArray.count > 0)
+      .map((x) => ltr(`${x.subArray.count} × ${x.panel!.custom ? '' : 'Peimar '}${panelLabel(x.panel!)} (${kw(x.installedW)} kWp)`)),
     inverters: s.blocks.filter((b) => b.inv).map((b) => ltr(`${b.count} × Peimar ${b.inv!.model}, ${stringing(b)}`)),
     yearly: est ? unit(fmt(est.annual), 'kWh') : null,
     payback: paybackLines(t, r, p.finance, null),
@@ -193,7 +195,7 @@ function PaybackSection({ s, est, printOnly }: { s: ProjectSummary; est: ReturnT
 }
 
 export function Report({ printOnly }: { printOnly?: boolean }) {
-  const { t, c, locale } = useI18n();
+  const { t, locale } = useI18n();
   const p = project.value;
   const s = summary.value;
   const city = cities.find((c) => c.id === p.cityId) ?? null;
@@ -492,8 +494,8 @@ export function Report({ printOnly }: { printOnly?: boolean }) {
       <footer class="dz-report__foot">
         <p class="small">{t.report.disclaimer}</p>
         <p class="small dz-print-block">
-          <bdi>{contact.company}</bdi> · {c.address.street}
-          {locale === 'en' ? ',' : '،'} {c.address.city} ·{' '}
+          <bdi>{contact.company}</bdi> · {localAddress(locale).street}
+          {locale === 'en' ? ',' : '،'} {localAddress(locale).city} ·{' '}
           <span class="mono" dir="ltr">
             {contact.phoneDisplay}
           </span>{' '}

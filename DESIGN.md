@@ -135,10 +135,30 @@ right-to-left. Every page exists in all three; nothing is English-only.
 - **Type**: Arabic script never gets negative letter-spacing or uppercase transforms, and needs
   more line-height (global.css handles the shared classes; check your custom styles too).
   Fonts: DM Sans plus Noto Kufi Arabic (display) and Noto Sans Arabic (text), all SIL OFL 1.1.
-- **Data text** (Peimar descriptions in catalog.json) is English. Translations live in the area's
-  i18n file keyed by slug; fall back to English only for raw product codes.
+- **Owner text** (product copy, projects, history) comes in each language from the owner content (§5d).
+  Peimar's raw descriptions in `src/data/technical/` are English and only feed JSON-LD fallbacks.
 - Translations must be natural Modern Standard Arabic and standard Sorani, short and plain, with no
   machine-literal phrasing. The client does a native review before launch.
+
+## 5d. Owner content
+
+The owner edits the company details, phones, hours, product texts and photos, projects, history and figures in
+the ERP. The site receives them as one checked snapshot (`contract/README.md`); the code owns everything else.
+
+- **One way in.** Pages and components read owner content only through `src/content/index.ts`, plus the contact
+  details in `src/data/site.ts`, which client scripts can import. Never read `src/content/generated/` or the seed
+  directly, and never copy an owner fact into markup or `src/i18n/`.
+- **Anything can change.** Lists may be empty, grow or shrink; there may be one to five phones; a milestone may
+  be gone. Show the empty state, hide a figure that is null, compute counts and ranges from the data, and keep the
+  wording true for any content: the projects headings read as a selection, and the footer's "since" year comes
+  from the `projects` milestone and drops out without it.
+- **No English on /ar/ or /ku/.** Owner text is per language. Where a language is missing, leave the text out
+  or use a translated template; a product photo's alt falls back to the product name, which is Latin. Only JSON-LD
+  may keep English: Peimar's raw descriptions of curated entries and the organization description.
+- **Photos.** The importer re-encodes uploads to WebP at 480, 960 and 1600 px, without metadata, into
+  `public/media/`. Render them with the adapter's `src`, `srcset`, `width`, `height` and `alt`; product photos
+  keep `object-fit: contain`, like the product wells.
+- **Language-neutral values** (names, model codes, brands, spec values, phone numbers) go in `<bdi>` or `dir="ltr"`.
 
 ## 6. Voice
 
@@ -147,8 +167,8 @@ Specific, calm and technical. Numbers beat adjectives: "23.02% module efficiency
 empower, game-changer, elevate, next-level, world-class, innovative solutions. No emoji. No
 exclamation marks.
 Use only sourced facts. Peimar facts come from peimar.com (research/peimar-notes.md), Faraday
-facts from the old site (research/faraday-legacy.md), and specs from src/data. If a fact is
-missing, design around it; do not invent testimonials, client logos, awards or certifications.
+facts from the owner content (§5d; research/faraday-legacy.md keeps the old site's), and specs from
+src/data. If a fact is missing, design around it; do not invent testimonials, client logos, awards or certifications.
 
 ## 7. Banned (the "AI look")
 
@@ -161,8 +181,8 @@ everything fading up identically, lorem ipsum, "Learn more" repeated on every ca
 
 - Astro 7 static output. Vanilla TS for page behavior; Preact only for the Designer app (`client:only="preact"`).
 - TypeScript uses erasable syntax only (no enums or namespaces; type-only imports use `import type`). Imports of local .ts files use the `.ts` extension so Node can run tests directly (`node --test tests/`).
-- Data lives in `src/data/*.json`; pages read it at build time. Do not hard-code specs in markup.
-- Images: product PNGs in `public/images/products/`, legacy photos in `public/images/legacy/`. Set width and height on every `<img>`, `loading="lazy"` below the fold, and meaningful alt text.
+- Owner content comes through `src/content/index.ts` (§5d); technical data lives in `src/data/technical/*.json` and `src/data/designer/*.json`. Pages read both at build time. Do not hard-code specs or owner facts in markup.
+- Images: product PNGs in `public/images/products/`, legacy photos in `public/images/legacy/`, owner photos in `public/media/` (written by the importer). Set width and height on every `<img>`, `loading="lazy"` below the fold, and meaningful alt text.
 - Three.js is lazy-loaded (dynamic `import()`) only on pages and sections that use it.
 - Accessibility: semantic landmarks, one h1 per page, labels on every input, sufficient contrast, keyboard-operable menus, tabs and matrix cells.
 - Keep the code plain: no speculative abstractions, no dead code, no comments that narrate the code.

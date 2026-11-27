@@ -11,28 +11,47 @@ const show = !stripLocale(path).startsWith('/designer/');
 
 {
   show && (
-    <a class="help" href={whatsappLink(t.message)} target="_blank" rel="noopener" aria-label={t.aria} data-help>
-      <span class="help__icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
-          <path d="M4.5 19.5 5.6 16A8 8 0 1 1 8.3 18.6Z" />
-          <path d="M9.2 8.6c-.3.9.2 2.4 1.5 3.7 1.3 1.3 2.8 1.8 3.7 1.5l.9-1.3-1.6-1-.8.6c-.6-.2-1.4-1-1.7-1.6l.6-.8-1-1.6Z" fill="currentColor" stroke="none" />
-        </svg>
-      </span>
-      <span class="help__text">
-        <span class="help__q">{t.question}</span>
-        <span class="help__a">{t.action}</span>
-      </span>
-    </a>
+    <aside class="help-dock" aria-label={t.label} data-help>
+      <a class="help" href={whatsappLink(t.message)} target="_blank" rel="noopener" aria-label={`${t.question} ${t.action}`}>
+        <span class="help__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
+            <path d="M4.5 19.5 5.6 16A8 8 0 1 1 8.3 18.6Z" />
+            <path d="M9.2 8.6c-.3.9.2 2.4 1.5 3.7 1.3 1.3 2.8 1.8 3.7 1.5l.9-1.3-1.6-1-.8.6c-.6-.2-1.4-1-1.7-1.6l.6-.8-1-1.6Z" fill="currentColor" stroke="none" />
+          </svg>
+        </span>
+        <span class="help__text">
+          <span class="help__q">{t.question}</span>
+          <span class="help__a">{t.action}</span>
+        </span>
+      </a>
+    </aside>
   )
 }
 
 <style>
-  .help {
+  .help-dock {
     position: fixed;
     z-index: 90;
     inset-inline-end: max(16px, env(safe-area-inset-right));
     bottom: calc(16px + env(safe-area-inset-bottom));
-    display: inline-flex;
+    transition:
+      transform var(--dur-3) var(--ease-out-expo),
+      opacity var(--dur-2) var(--ease),
+      visibility 0s;
+  }
+  /* Hidden once it has slid away, so it never takes keyboard focus or reads out while out of sight. */
+  .help-dock.is-away {
+    opacity: 0;
+    transform: translateY(calc(100% + 24px));
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      transform var(--dur-3) var(--ease-out-expo),
+      opacity var(--dur-2) var(--ease),
+      visibility 0s var(--dur-3);
+  }
+  .help {
+    display: flex;
     align-items: center;
     gap: var(--s-3);
     min-height: 56px;
@@ -44,10 +63,7 @@ const show = !stripLocale(path).startsWith('/designer/');
     box-shadow: 0 10px 30px rgb(0 0 0 / 0.28);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
-    transition:
-      transform var(--dur-3) var(--ease-out-expo),
-      opacity var(--dur-2) var(--ease),
-      border-color var(--dur-2) var(--ease);
+    transition: border-color var(--dur-2) var(--ease);
   }
   :global([dir='rtl']) .help {
     padding: 8px 8px 8px var(--s-5);
@@ -55,11 +71,6 @@ const show = !stripLocale(path).startsWith('/designer/');
   .help:hover,
   .help:focus-visible {
     border-color: var(--sun);
-  }
-  .help.is-away {
-    opacity: 0;
-    transform: translateY(calc(100% + 24px));
-    pointer-events: none;
   }
   .help__icon {
     display: grid;
@@ -99,19 +110,44 @@ const show = !stripLocale(path).startsWith('/designer/');
     }
   }
   @media print {
-    .help {
+    .help-dock {
       display: none;
     }
   }
 </style>
 
 <script>
+  /*
+    Out of the way while the home hero fills most of the screen, and near the footer's legal row: at the end of the
+    page the button would cover the trademark notice and the language links. It leaves while the row is still
+    300 px below the fold, about what a brisk scroll covers while the button fades, so the row never meets it.
+  */
   const help = document.querySelector<HTMLElement>('[data-help]');
   const hero = document.querySelector<HTMLElement>('[data-hero]');
-  if (help && hero) {
-    help.classList.add('is-away');
-    new IntersectionObserver(([entry]) => help.classList.toggle('is-away', entry.intersectionRatio > 0.35), {
-      threshold: [0, 0.35, 1],
-    }).observe(hero);
+  const legal = document.querySelector<HTMLElement>('[data-help-clear]');
+  if (help) {
+    let overHero = Boolean(hero);
+    let nearLegal = false;
+    const update = () => help.classList.toggle('is-away', overHero || nearLegal);
+    update();
+    /* A busy page can get several entries for the target in one callback, oldest first: the last is the current one. */
+    if (hero) {
+      new IntersectionObserver(
+        (entries) => {
+          overHero = entries.at(-1)!.intersectionRatio > 0.35;
+          update();
+        },
+        { threshold: [0, 0.35, 1] },
+      ).observe(hero);
+    }
+    if (legal) {
+      new IntersectionObserver(
+        (entries) => {
+          nearLegal = entries.at(-1)!.isIntersecting;
+          update();
+        },
+        { rootMargin: '0px 0px 300px 0px' },
+      ).observe(legal);
+    }
   }
 </script>

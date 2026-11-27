@@ -1,6 +1,6 @@
 ---
 import Figure from './Figure.astro';
-import { pad2, panelName, pct, seriesPanels, seriesRender, seriesTraits, type Series } from './data.ts';
+import { displayName, pad2, panelName, pct, seriesImage, seriesPanels, seriesTraits, type Series } from './data.ts';
 import { localizePath } from '../../i18n/config.ts';
 import type { Locale } from '../../i18n/config.ts';
 import { products } from '../../i18n/products.ts';
@@ -17,15 +17,30 @@ const { locale, series, compact = false, headingLevel = 'h2' } = Astro.props;
 const t = products[locale];
 const Heading = headingLevel;
 
+/*
+  The width an image is drawn at, for srcset: a portrait render fills the well's height inside its padding, a wider
+  image its width. The well is 104 px wide on phones, 3/10 of the row (25.5vw) up to 1080 px and 3/12 (compact 2/12)
+  above: 21vw (14vw), at most 302 px (201 px).
+*/
+const drawnSizes = ([width, height]: [number, number]) => {
+  const share = Math.min(0.8, ((compact ? 0.84 : 0.88) * width) / height);
+  const px = (well: number) => `${Math.ceil(well * share)}px`;
+  const vw = (well: number) => `${(well * share).toFixed(1)}vw`;
+  return `(max-width: 720px) ${px(104)}, (max-width: 1080px) ${vw(25.5)}, (max-width: 1440px) ${vw(compact ? 14 : 21)}, ${px(compact ? 201 : 302)}`;
+};
+
 const rows = series.map((s) => {
   const text = seriesText(locale, s.slug);
-  const shown = seriesPanels(s).at(-1)!;
+  const shown = seriesPanels(s).at(-1);
+  const render = seriesImage(s);
   return {
     s,
+    name: displayName(s.name),
     text,
     traits: seriesTraits(s).join(' '),
     shown,
-    render: seriesRender(s)!,
+    render,
+    sizes: drawnSizes(render.size),
     href: localizePath(`/products/modules/${s.slug}/`, locale),
   };
 });
@@ -39,14 +54,16 @@ const rows = series.map((s) => {
           <div class="row__well" data-reveal="clip">
             <img
               src={row.render.src}
+              srcset={row.render.srcset ?? undefined}
+              sizes={row.sizes}
               width={row.render.size[0]}
               height={row.render.size[1]}
-              alt={t.detail.renderAlt(row.render.model)}
-              loading={i < 2 && !compact ? 'eager' : 'lazy'}
+              alt={t.detail.renderAlt(displayName(row.render.model))}
+              loading={i === 0 && !compact ? 'eager' : 'lazy'}
               decoding="async"
             />
           </div>
-          {!compact && (
+          {!compact && row.shown && (
             <figcaption class="row__caption">
               <bdi>
                 {panelName(row.shown)} · {row.shown.height} × {row.shown.width} mm
@@ -59,11 +76,11 @@ const rows = series.map((s) => {
           <span class="row__index mono">{pad2(i)}</span>
           <Heading class:list={[compact ? 'h3' : 'h2', 'row__name']}>
             <a class="row__link" href={row.href} dir="ltr">
-              {row.s.name}
+              {row.name}
             </a>
           </Heading>
-          {row.text && <p class="row__tagline">{row.text.tagline}</p>}
-          {!compact && row.text && row.text.technology.length > 0 && (
+          {row.text?.tagline && <p class="row__tagline">{row.text.tagline}</p>}
+          {!compact && row.text?.technology && (
             <ul role="list" class="row__tags">
               {row.text.technology.map((tech) => (
                 <li class="tag">{tech}</li>
@@ -145,8 +162,9 @@ const rows = series.map((s) => {
   }
   .row__well {
     display: grid;
-    place-items: center;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     aspect-ratio: 1;
+    min-block-size: 0;
     padding: 6% 10%;
     background: var(--paper-2);
     border-radius: var(--r-2);

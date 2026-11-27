@@ -1,10 +1,11 @@
 ---
 import ModuleHero from '../three/ModuleHero.astro';
 import { home } from '../../i18n/home.ts';
-import { company } from '../../i18n/company.ts';
+import { products } from '../../i18n/products.ts';
 import { localizePath, type Locale } from '../../i18n/config.ts';
 import { heroSpec } from '../company/facts.ts';
 import { contact } from '../../data/site.ts';
+import { figures } from '../../content/index.ts';
 
 interface Props {
   locale: Locale;
@@ -12,9 +13,9 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = home[locale].hero;
-const years = company[locale].years;
-/** Client-confirmed (2026-11-23): founded 2017, more than 4% of Iraq’s solar power, 100 distributors, 100 MW supplied and installed. */
+/** Years since the company was founded, as of the build. */
 const experience = new Date().getFullYear() - contact.founded;
+const years = products[locale].years(experience);
 ---
 
 <section class="hero theme-dark" aria-labelledby="hero-title" data-hero>
@@ -41,21 +42,33 @@ const experience = new Date().getFullYear() - contact.founded;
 
     <dl class="hero__specs" aria-label={t.specsLabel}>
       <div class="hero__spec">
-        <dt>{t.specs.experience}</dt>
+        <dt>{t.specs.experience(contact.founded)}</dt>
         <dd><span><span class="num">{experience}+</span><span class="unit">{years}</span></span></dd>
       </div>
-      <div class="hero__spec">
-        <dt>{t.specs.share}</dt>
-        <dd><span class="num">+4<span class="unit">%</span></span></dd>
-      </div>
-      <div class="hero__spec">
-        <dt>{t.specs.distributors}</dt>
-        <dd><span class="num">100</span></dd>
-      </div>
-      <div class="hero__spec">
-        <dt>{t.specs.installed}</dt>
-        <dd><span class="num">100<span class="unit">MW</span></span></dd>
-      </div>
+      {
+        figures.iraqSharePct !== null && (
+          <div class="hero__spec">
+            <dt>{t.specs.share}</dt>
+            <dd><span class="num">+{figures.iraqSharePct}<span class="unit">%</span></span></dd>
+          </div>
+        )
+      }
+      {
+        figures.distributors !== null && (
+          <div class="hero__spec">
+            <dt>{t.specs.distributors}</dt>
+            <dd><span class="num">{figures.distributors}</span></dd>
+          </div>
+        )
+      }
+      {
+        figures.installedMw !== null && (
+          <div class="hero__spec">
+            <dt>{t.specs.installed}</dt>
+            <dd><span class="num">{figures.installedMw}<span class="unit">MW</span></span></dd>
+          </div>
+        )
+      }
     </dl>
   </div>
 </section>

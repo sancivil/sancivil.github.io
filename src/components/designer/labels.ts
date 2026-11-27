@@ -1,9 +1,12 @@
 import type { DesignerStrings } from '../../i18n/designer.ts';
 import { checkOp, checkTemp, mpptGroups, type Check } from '../../lib/designer/calc.ts';
 import { fmt, kwRating, ltr, unit } from '../../lib/designer/format.ts';
-import type { Inverter, Panel, Temps } from '../../lib/designer/types.ts';
+import type { Inverter, Panel, Project, Temps } from '../../lib/designer/types.ts';
 
 export const panelLabel = (p: Panel) => (p.finish ? `${p.model} (${p.finish.code})` : p.model);
+
+/** A project's name inside a sentence, isolated so that right-to-left text never reorders it. */
+export const projectName = (p: Project, t: DesignerStrings) => `⁨${p.name || t.rail.untitled}⁩`;
 
 export function panelMeta(p: Panel): string {
   const parts = [`${fmt(p.power)} W`];

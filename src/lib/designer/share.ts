@@ -1,4 +1,4 @@
-import { MAX_COUNT, createProject, normalizeProject } from './project.ts';
+import { MAX_COUNT, createProject, hasWork, normalizeProject } from './project.ts';
 import type { Catalog, Finance, GroupSel, InverterBlock, Panel, Project, SubArray } from './types.ts';
 
 const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : NaN);
@@ -73,7 +73,7 @@ export function fromCompact(raw: unknown, catalog?: Catalog): Project | null {
   const project: Project = {
     ...base,
     name: str(name, 200),
-    number: str(number, 80),
+    number: str(number, 200),
     client: str(client, 200),
     address: str(address, 300),
     notes: str(notes),
@@ -104,11 +104,45 @@ export function encodeProject(p: Project): string {
   return toBase64Url(JSON.stringify(toCompact(p)));
 }
 
-/** Never throws: a truncated, corrupted or foreign code gives null so the caller falls back to a fresh project. */
+/** Never throws: a truncated, corrupted or foreign code gives null, so the caller can say the link is broken. */
 export function decodeProject(code: string, catalog?: Catalog): Project | null {
   try {
     return fromCompact(JSON.parse(fromBase64Url(code)), catalog);
   } catch {
     return null;
   }
+}
+
+/**
+ * The share code in a location hash ("#p=…"), or null when the hash is not a share link. Tolerates what mail and chat
+ * apps do to a long link: an encoded "=", spaces or line breaks inside it, punctuation glued to its end.
+ */
+export function shareCode(hash: string): string | null {
+  let text = hash;
+  try {
+    text = decodeURIComponent(hash);
+  } catch {
+    // A stray "%" that starts no escape: read the hash as it is.
+  }
+  return text.replace(/\s+/g, '').match(/^#p=([A-Za-z0-9_-]*)/)?.[1] ?? null;
+}
+
+/** A project kept on this device and the share code it was opened from ('' when it was made here). */
+export type Saved = { project: Project; from: string };
+
+/** Unchanged since it was opened from a share link, so that link still holds it. */
+const inLink = (s: Saved) => s.from !== '' && encodeProject(s.project) === s.from;
+
+/**
+ * What opening a share link for `shared` does on a device that holds the open project and maybe one other:
+ * 'keep' first sets the open project aside as the other one, whenever that slot is free (empty, a copy, or still held by
+ * its link); 'open' replaces the open project when that loses nothing: it holds no work, or its link still holds it;
+ * 'ask' when both projects hold work that exists only on this device.
+ */
+export function shareMove(open: Saved, other: Saved | null, shared: Project): 'open' | 'keep' | 'ask' {
+  const code = encodeProject(shared);
+  const openCode = encodeProject(open.project);
+  if (!hasWork(open.project) || openCode === code) return 'open';
+  if (!other || !hasWork(other.project) || inLink(other) || [code, openCode].includes(encodeProject(other.project))) return 'keep';
+  return inLink(open) ? 'open' : 'ask';
 }

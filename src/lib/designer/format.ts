@@ -20,15 +20,30 @@ export const ltr = (s: string | number) => `⁦${s}⁩`;
 /** A value and its unit that never wrap apart, isolated for RTL text: unit('6', 'kW') → "6 kW". */
 export const unit = (value: string, u: string) => ltr(`${value} ${u}`);
 
-/** Accept Arabic-Indic and Persian digits, the Arabic decimal sign and typographic minus from Iraqi keyboards. */
+/** Arabic-Indic and Persian digits as Western digits: "٦١٠" and "۶۱۰" → "610". */
+export const latinDigits = (s: string) =>
+  s.replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660)).replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0));
+
+/**
+ * Accept Arabic-Indic and Persian digits, the Arabic decimal sign, a decimal comma ("4,5", "0,12"), thousands separators
+ * ("9,000,000", "٩٬٠٠٠", "9 000"), the typographic minus and bidi marks copied along with a figure. Commas count as
+ * thousands separators only in a full grouping such as "1,500"; any other single comma is the decimal point.
+ */
 export function parseNumber(input: string): number {
-  const normalized = input
-    .trim()
-    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
-    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0))
+  const s = latinDigits(input)
+    .replace(/[\s\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/g, '')
     .replace(/٫/g, '.')
-    .replace(/[,٬\s]/g, '')
     .replace(/[−–]/g, '-');
+  const grouped = /^-?[1-9]\d{0,2}([,٬]\d{3})+(\.\d*)?$/.test(s);
+  const normalized = grouped ? s.replace(/[,٬]/g, '') : s.replace(/^(-?\d*),(\d*)$/, '$1.$2');
   if (!/^-?(\d+\.?\d*|\.\d+)$/.test(normalized)) return NaN;
   return Number(normalized);
+}
+
+const IRAQ_DAY = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Baghdad', year: 'numeric', month: '2-digit', day: '2-digit' });
+
+/** The calendar day in Iraq (Asia/Baghdad) as YYYY-MM-DD, whatever the time zone of the device. */
+export function iraqDate(at: Date): string {
+  const part = Object.fromEntries(IRAQ_DAY.formatToParts(at).map((p) => [p.type, p.value]));
+  return `${part.year}-${part.month}-${part.day}`;
 }

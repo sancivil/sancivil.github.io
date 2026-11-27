@@ -35,6 +35,7 @@ import type { ColorSpace, Material, Object3D, Texture } from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { toCreasedNormals } from 'three/addons/utils/BufferGeometryUtils.js';
 import { FRAME_LIP, FRAME_WALL, cellLayout } from './layout.ts';
+import { pace } from './stage.ts';
 import { drawBrushed, drawCellSheet, drawLabel } from './textures.ts';
 import type { ModuleSpec } from './types.ts';
 
@@ -78,6 +79,8 @@ export interface PvModule {
   anchor(i: number, t: number | readonly number[], side: number): Vector3;
   /** Swaps the reflected studio on every material (strength = the scene's environment strength, rotation about y). */
   setEnvironment(map: Texture, strength: number, rotation: number): void;
+  /** Every texture of the module, to upload before its first frame. */
+  textures: Texture[];
   dispose(): void;
 }
 
@@ -210,7 +213,9 @@ function miter(g: BufferGeometry, length: number) {
   p.needsUpdate = true;
 }
 
-export function buildModule(spec: ModuleSpec, opts: BuildOptions): PvModule {
+/** Builds the module a slice at a time (see `pace`). */
+export async function buildModule(spec: ModuleSpec, opts: BuildOptions): Promise<PvModule> {
+  await pace();
   const W = spec.width * MM;
   const H = spec.height * MM;
   const D = spec.depth * MM;
@@ -332,7 +337,7 @@ export function buildModule(spec: ModuleSpec, opts: BuildOptions): PvModule {
   addOutline(3, zEncap2);
 
   // 03 cells and ribbons (anti-reflective silicon: low specular, metal ribbons from the surface map)
-  const sheet = drawCellSheet(spec, L, opts.textureMax);
+  const sheet = await drawCellSheet(spec, L, opts.textureMax);
   const cellMap = tex(new CanvasTexture(sheet.color), SRGBColorSpace);
   const cellSurface = tex(new CanvasTexture(sheet.surface), NoColorSpace);
   const cellMaterial = mat(
@@ -404,6 +409,7 @@ export function buildModule(spec: ModuleSpec, opts: BuildOptions): PvModule {
   if (spec.back === 'glass') addOutline(4, zBack);
 
   const standards = /^(S|OR)/i.test(spec.model);
+  await pace();
   const label = new Mesh(
     geo(new PlaneGeometry(0.24, 0.15)),
     mat(new MeshStandardMaterial({ map: tex(new CanvasTexture(drawLabel(spec, standards)), SRGBColorSpace), roughness: 0.55 }), 0.6),
@@ -413,8 +419,9 @@ export function buildModule(spec: ModuleSpec, opts: BuildOptions): PvModule {
   layers[4].add(label);
 
   // 06 frame: four mitred hollow members, anodised aluminium with a satin brush along each member (uv in mm)
+  await pace();
   const silver = spec.frame === 'silver';
-  const brushed = tex(new CanvasTexture(drawBrushed()), NoColorSpace);
+  const brushed = tex(new CanvasTexture(await drawBrushed()), NoColorSpace);
   brushed.wrapS = brushed.wrapT = RepeatWrapping;
   brushed.repeat.set(1 / 128, 1 / 512);
   const frameMaterial = mat(
@@ -440,6 +447,7 @@ export function buildModule(spec: ModuleSpec, opts: BuildOptions): PvModule {
     [new Vector3(-W / 2, H / 2, -D / 2), new Vector3(1, 0, 0), new Vector3(0, -1, 0), H],
   ];
   for (const [origin, inward, along, length] of sides) {
+    await pace();
     const extruded = new ExtrudeGeometry(profile, { depth: length / MM, bevelEnabled: false, steps: 1 });
     miter(extruded, length / MM);
     const g = geo(toCreasedNormals(extruded, 0.6));
@@ -468,6 +476,7 @@ export function buildModule(spec: ModuleSpec, opts: BuildOptions): PvModule {
   }
 
   // 07 junction boxes with cables and plug connectors
+  await pace();
   const plastic = mat(new MeshPhysicalMaterial({ color: '#131315', roughness: 0.46, clearcoat: 0.2, clearcoatRoughness: 0.4 }), 0.9);
   const lidPlastic = mat(new MeshStandardMaterial({ color: '#1b1c1f', roughness: 0.34 }), 0.9);
   const rubber = mat(new MeshPhysicalMaterial({ color: '#0c0c0e', roughness: 0.55, sheen: 0.3, sheenRoughness: 0.6 }), 0.7);
@@ -556,8 +565,12 @@ export function buildModule(spec: ModuleSpec, opts: BuildOptions): PvModule {
 
   if (spec.halfCut) {
     const xs = W * 0.3;
-    for (const x of [-xs, 0, xs]) addBox(x, 0, 0.062, 0.05, 0.014);
+    for (const x of [-xs, 0, xs]) {
+      await pace();
+      addBox(x, 0, 0.062, 0.05, 0.014);
+    }
     for (const sy of [1, -1]) {
+      await pace();
       const x = -sy * xs;
       cable(
         new Vector3(x, sy * 0.026, zBack - 0.007),
@@ -574,6 +587,7 @@ export function buildModule(spec: ModuleSpec, opts: BuildOptions): PvModule {
     const y = H / 2 - 0.17;
     addBox(0, y, 0.11, 0.1, 0.018);
     for (const sx of [-1, 1]) {
+      await pace();
       cable(
         new Vector3(sx * 0.056, y - 0.02, zBack - 0.008),
         [
@@ -662,6 +676,7 @@ export function buildModule(spec: ModuleSpec, opts: BuildOptions): PvModule {
       });
       return (lo + hi) / 2;
     },
+    textures,
     dispose() {
       geometries.forEach((g) => g.dispose());
       materials.forEach((m) => m.dispose());

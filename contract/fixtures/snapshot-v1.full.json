@@ -1,0 +1,779 @@
+{
+  "catalog": {
+    "accessories": [
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x-1pmeter-zi",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X-1PMETER-ZI",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-1PMETER-ZI.pdf"
+          }
+        ],
+        "group": "Meter",
+        "name": "PSI-X-1PMETER-ZI",
+        "photos": [],
+        "slug": "psi-x-1pmeter-zi",
+        "text": {
+          "ar": {
+            "line": "عداد أحادي الطور لسلسلة PSI-X"
+          },
+          "ckb": {
+            "line": "پێوەری تاک فاز بۆ زنجیرەی PSI-X"
+          },
+          "en": {
+            "line": "Single-phase meter for the PSI-X Series"
+          }
+        },
+        "variants": null
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x1-evc",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X1-EVC",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X1-EVC7.2.pdf"
+          }
+        ],
+        "group": "EV Charger",
+        "name": "PSI-X1-EVC",
+        "photos": [],
+        "slug": "psi-x1-evc",
+        "text": {},
+        "variants": [
+          "PSI-X1-EVC7.2-SXC",
+          "PSI-X1-EVC7.2-PXC",
+          "PSI-X1-EVC7.2-SLC",
+          "PSI-X1-EVC7.2-PLC"
+        ]
+      }
+    ],
+    "accessoryGroups": [
+      {
+        "key": "Meter",
+        "name": {
+          "ar": "العدادات",
+          "ckb": "پێوەری کارەبا",
+          "en": "Meters"
+        }
+      },
+      {
+        "key": "EV Charger",
+        "name": {
+          "ar": "شواحن السيارات الكهربائية",
+          "ckb": "بارگەکەری ئۆتۆمبێلی کارەبایی",
+          "en": "EV chargers"
+        }
+      }
+    ],
+    "batteries": [
+      {
+        "brand": "Peimar",
+        "capacity": {
+          "moduleKwh": 5,
+          "modules": [
+            2,
+            10
+          ]
+        },
+        "chemistry": "LiFePO4",
+        "curatedKey": null,
+        "docs": [],
+        "name": "PSI-X-HS 5.0",
+        "photos": [
+          {
+            "alt": {},
+            "media": "3e80ae87b41cd7e4f6ba6fa4802fff38584fd41d112c8913f00f5ba67444af58"
+          }
+        ],
+        "slug": "psi-x-hs-5-0",
+        "text": {
+          "ckb": {
+            "description": "پاتریی ڤۆڵتی بەرز کە لە 2 تا 10 مۆدیوڵی PSI-X-HS 5.0 پێک دێت.",
+            "family": "PSI-X-HS · پاتریی ڤۆڵتی بەرز"
+          },
+          "en": {
+            "description": "High-voltage storage battery built from 2 to 10 PSI-X-HS 5.0 modules.",
+            "family": "PSI-X-HS · HV storage batteries"
+          }
+        },
+        "warrantyYears": 10
+      },
+      {
+        "brand": "Peimar",
+        "capacity": {
+          "depthOfDischarge": 0.9,
+          "moduleKwh": 3.6,
+          "modules": [
+            2,
+            13
+          ],
+          "nominalKwh": [
+            7.3,
+            47.9
+          ],
+          "usableKwh": [
+            6.5,
+            43.1
+          ]
+        },
+        "chemistry": "Lithium-ion (LiFePO4)",
+        "curatedKey": "psi-x-hs-3-6",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X-HS 3.6",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X-HS_3.6.pdf"
+          }
+        ],
+        "name": "PSI-X-HS 3.6",
+        "photos": [],
+        "slug": "psi-x-hs-3-6",
+        "text": {
+          "ar": {
+            "description": "بطاريات تخزين عالية الجهد تُبنى من 2 إلى 13 وحدة PSI-X-3.6HS، ويمكن مراقبتها عن بُعد عبر Peimar X Portal.",
+            "family": "PSI-X-HS · بطاريات تخزين عالية الجهد",
+            "role": "تصميم معياري: PSI-X-BMS-HS + PSI-X-3.6HS + PSI-X-SBOX-HS"
+          },
+          "ckb": {
+            "description": "پاتریی ڤۆڵتی بەرز کە لە 2 تا 13 مۆدیوڵی PSI-X-3.6HS پێک دێت. لە ڕێگەی Peimar X Portal لە دوورەوە چاودێری دەکرێت.",
+            "family": "PSI-X-HS · پاتریی ڤۆڵتی بەرز",
+            "role": "مۆدیوڵار: PSI-X-BMS-HS + PSI-X-3.6HS + PSI-X-SBOX-HS"
+          },
+          "en": {
+            "description": "High-voltage storage batteries built from 2 to 13 PSI-X-3.6HS modules. Remote monitoring through the Peimar X Portal.",
+            "family": "PSI-X-HS · HV storage batteries",
+            "role": "Modular: PSI-X-BMS-HS + PSI-X-3.6HS + PSI-X-SBOX-HS"
+          }
+        },
+        "warrantyYears": 10
+      }
+    ],
+    "families": [
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-x1p-hy",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "PSI-X1P3000-HY | PSI-X1P6000-HY",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_PSI-X1P3000-6000-HY.pdf"
+          },
+          {
+            "kind": "manual",
+            "label": "PSI-X1P HY",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar_EN_user-manual_PSI-X1P3000-5000-6000-HY.pdf"
+          }
+        ],
+        "group": "hybrid",
+        "models": [
+          {
+            "name": "PSI-X1P3000-HY",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1P5000-HY",
+            "techRef": null
+          },
+          {
+            "name": "PSI-X1P6000-HY",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-X1P HY",
+        "phase": "single_phase",
+        "photos": [],
+        "powerRange": [
+          3000,
+          6000
+        ],
+        "slug": "psi-x1p-hy",
+        "text": {
+          "ckb": {
+            "note": "لەگەڵ پاتریی ڤۆڵتی بەرزی PSI-X-HS کار دەکات."
+          },
+          "en": {
+            "note": "Works with the PSI-X-HS high-voltage batteries."
+          }
+        }
+      },
+      {
+        "brand": "Peimar",
+        "curatedKey": "psi-j-rf",
+        "docs": [
+          {
+            "kind": "manual",
+            "label": "PSI-J RF",
+            "lang": null,
+            "url": "https://peimar.com/documents/Peimar-user-manual_PSI-J3000-RF_2021_10_00.pdf"
+          }
+        ],
+        "group": "hybrid",
+        "models": [
+          {
+            "name": "PSI-J3000-RF",
+            "techRef": null
+          }
+        ],
+        "name": "PSI-J RF",
+        "phase": "single_phase",
+        "photos": [],
+        "powerRange": null,
+        "slug": "psi-j-rf",
+        "text": {
+          "ar": {
+            "note": "إنفرتر Retrofit يضيف تخزين الطاقة إلى منظومة قائمة."
+          },
+          "ckb": {
+            "note": "ئینڤێرتەری Retrofit کە هەڵگرتنی وزە بۆ سیستەمێکی پێشتر دامەزراو زیاد دەکات."
+          },
+          "en": {
+            "note": "Retrofit inverter with energy storage, for existing systems."
+          }
+        }
+      }
+    ],
+    "items": [
+      {
+        "brand": "Faraday",
+        "curatedKey": null,
+        "docs": [],
+        "line": "accessories",
+        "name": "Ground mount kit 2×6",
+        "photos": [
+          {
+            "alt": {
+              "ar": "طقم التثبيت الأرضي 2×6 يحمل 12 لوحًا",
+              "ckb": "کیتی سەر زەوی 2×6 کە 12 پانێڵ هەڵدەگرێت",
+              "en": "Ground mount kit 2×6 holding 12 modules"
+            },
+            "media": "724ab0eb338a28ae0fae37d3e84b9d96ad5b0a7ead5dd44b11e8997a41aa22c6"
+          }
+        ],
+        "slug": "ground-mount-kit-2x6",
+        "specs": [
+          {
+            "key": "material",
+            "label": null,
+            "value": "Galvanised steel"
+          },
+          {
+            "key": "custom",
+            "label": {
+              "ar": "عدد الألواح في الطقم",
+              "ckb": "ژمارەی پانێڵ لە هەر کیتێکدا",
+              "en": "Modules per kit"
+            },
+            "value": "12"
+          },
+          {
+            "key": "dimensions",
+            "label": null,
+            "value": "6.9 × 2.3 m"
+          }
+        ],
+        "text": {
+          "ar": {
+            "description": "قضبان وقوائم حديدية مثقّبة مسبقًا لتركيب 12 لوحًا في صفّين.\n\nيُسلَّم مع كل القطع اللازمة لتركيب طقم واحد.",
+            "summary": "هيكل حديدي يثبّت 12 لوحًا على الأرض في صفّين."
+          },
+          "ckb": {
+            "description": "ڕەیڵ و پایەی پۆڵای کونکراو بۆ 12 پانێڵ لە دوو ڕیزدا.\n\nلەگەڵ هەموو ئەو پارچانەی بۆ دامەزراندنی یەک کیت پێویستن دەگەیەنرێت.",
+            "summary": "چوارچێوەی پۆڵا کە 12 پانێڵ لە دوو ڕیزدا لەسەر زەوی هەڵدەگرێت."
+          },
+          "en": {
+            "description": "Pre-drilled steel rails and legs for 12 modules in two rows.\n\nDelivered with all the parts needed to install one kit.",
+            "summary": "Steel frame that holds 12 modules on the ground, in two rows."
+          }
+        }
+      }
+    ],
+    "series": [
+      {
+        "brand": "Peimar",
+        "curatedKey": "or-series-or10h",
+        "docs": [
+          {
+            "kind": "datasheet",
+            "label": "OR10H440MNDB (BF)",
+            "lang": "en",
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H440MNDB(BF).pdf"
+          },
+          {
+            "kind": "datasheet",
+            "label": "OR10H510MNDB (FB)",
+            "lang": null,
+            "url": "https://peimar.com/datasheet/Peimar_EN_OR10H510MNDB%28FB%29.pdf"
+          },
+          {
+            "kind": "document",
+            "label": "PV modules warranty 2026",
+            "lang": "multi",
+            "url": "https://www.peimar.com/documents/Peimar_EN_WARRANTY-PV-MODULES_2026.pdf"
+          }
+        ],
+        "models": [
+          {
+            "name": "OR10H440MNDB (BF)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H450MNDB (BF)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H510MNDB (FB)",
+            "techRef": null
+          },
+          {
+            "name": "OR10H 560M",
+            "techRef": "or10h560m"
+          }
+        ],
+        "name": "OR Series OR10H",
+        "photos": [
+          {
+            "alt": {
+              "en": "OR Series OR10H module, front view"
+            },
+            "media": "a9986115b9a3e09d9aef70f5a7e96a14c6e26376d8ee16ee7aee4284ceb6894f"
+          }
+        ],
+        "slug": "or-series-or10h",
+        "text": {
+          "ar": {
+            "description": "يُصنع في مصنع Peimar بخلايا M10 نصفية، ويتوفر بنسخة PERC أحادية الوجه ونسخة TOPCon ثنائية الوجه بزجاج مزدوج (MNDB).",
+            "tagline": "لوح بخلايا نصفية",
+            "technology": [
+              "أحادي البلورة M10 بخلايا نصفية",
+              "PERC أحادي الوجه",
+              "TOPCon ثنائي الوجه من النوع N",
+              "زجاج مزدوج"
+            ]
+          },
+          "ckb": {
+            "description": "لە کارگەی Peimar دروست دەکرێت، بە خانەی M10 ی نیوەبڕاو. دوو جۆری هەیە: PERC ی یەک ڕوو و TOPCon ی دوو ڕوو بە شووشەی دووانە (MNDB).",
+            "tagline": "پانێڵی خانە نیوەبڕاو",
+            "technology": [
+              "تاک کریستاڵ M10 نیوەبڕاو",
+              "PERC یەک ڕوو",
+              "TOPCon دوو ڕوو جۆری N",
+              "شووشەی دووانە"
+            ]
+          },
+          "en": {
+            "description": "Manufactured in Peimar's production factory. Half-cut M10 cells, in PERC monofacial versions and TOPCon bifacial versions with double glass (MNDB).",
+            "tagline": "Half-cell module",
+            "technology": [
+              "Monocrystalline M10 half-cut",
+              "PERC monofacial",
+              "TOPCon bifacial N-type",
+              "Double glass"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "company": {
+    "address": {
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=46001%20Qasimlu%20Street%2C%20Sulaymaniyah%2C%20Iraq",
+      "postalCode": "46001",
+      "text": {
+        "ar": {
+          "city": "السليمانية",
+          "country": "العراق",
+          "street": "شارع قاسملو"
+        },
+        "ckb": {
+          "city": "سلێمانی",
+          "country": "عێراق",
+          "street": "شەقامی قاسملۆ"
+        },
+        "en": {
+          "city": "Sulaymaniyah",
+          "country": "Iraq",
+          "street": "Qasmlu Street"
+        }
+      }
+    },
+    "email": "info@faradayiq.com",
+    "foundedYear": 2017,
+    "hours": [
+      {
+        "close": "17:00",
+        "day": "sat",
+        "open": "09:00"
+      },
+      {
+        "close": "17:00",
+        "day": "sun",
+        "open": "09:00"
+      },
+      {
+        "close": "17:00",
+        "day": "mon",
+        "open": "09:00"
+      },
+      {
+        "close": "17:00",
+        "day": "tue",
+        "open": "09:00"
+      },
+      {
+        "close": "17:00",
+        "day": "wed",
+        "open": "09:00"
+      },
+      {
+        "close": "13:00",
+        "day": "thu",
+        "open": "09:00"
+      },
+      {
+        "close": null,
+        "day": "fri",
+        "open": null
+      }
+    ],
+    "hoursNote": {
+      "ar": "أوقات الدوام في رمضان: 10:00–15:00، من السبت إلى الخميس.",
+      "ckb": "کاتی دەوام لە ڕەمەزاندا: 10:00–15:00، شەممە تا پێنجشەممە.",
+      "en": "Ramadan hours: 10:00–15:00, Saturday to Thursday."
+    },
+    "name": "Faraday Co.",
+    "phones": [
+      {
+        "display": "+964 773 698 9694",
+        "e164": "+9647736989694",
+        "label": null,
+        "primary": true,
+        "whatsapp": true
+      },
+      {
+        "display": "+964 750 000 0001",
+        "e164": "+9647500000001",
+        "label": {
+          "ar": "المبيعات",
+          "ckb": "فرۆشتن",
+          "en": "Sales"
+        },
+        "primary": false,
+        "whatsapp": false
+      },
+      {
+        "display": "+964 770 000 0002",
+        "e164": "+9647700000002",
+        "label": {
+          "ar": "الدعم الفني",
+          "ckb": "پشتگیریی تەکنیکی",
+          "en": "Technical support"
+        },
+        "primary": false,
+        "whatsapp": true
+      }
+    ],
+    "socials": [
+      {
+        "network": "facebook",
+        "url": "https://www.facebook.com/102574992430776"
+      },
+      {
+        "network": "instagram",
+        "url": "https://www.instagram.com/faraday.example/"
+      }
+    ]
+  },
+  "contentHash": "b9eea5354f619b27e80ae7ebba7a47041e5e72f12b3a668d675132a76615f486",
+  "history": {
+    "milestones": [
+      {
+        "key": "founded",
+        "text": {
+          "ar": {
+            "text": "بدأت الشركة عملها في السليمانية، وتخصصت في الطاقة الشمسية.",
+            "title": "تأسيس Faraday"
+          },
+          "ckb": {
+            "text": "کۆمپانیاکە لە سلێمانی دەستی بە کار کرد، لە بواری وزەی خۆردا.",
+            "title": "دامەزرانی Faraday"
+          },
+          "en": {
+            "text": "The company starts out in Sulaymaniyah, working in solar energy.",
+            "title": "Faraday is founded"
+          }
+        },
+        "year": 2017
+      },
+      {
+        "key": "peimar",
+        "text": {
+          "ar": {
+            "text": "اعتمدت Peimar الإيطالية شركة Faraday وكيلًا رسميًا لها في عموم العراق.",
+            "title": "وكالة Peimar لعموم العراق"
+          },
+          "ckb": {
+            "text": "کۆمپانیای ئیتاڵیی Peimar بریکارنامەی فەرمیی بۆ هەموو عێراق دا بە Faraday.",
+            "title": "بریکاری Peimar بۆ هەموو عێراق"
+          },
+          "en": {
+            "text": "Peimar, the Italian manufacturer, appoints Faraday as its agent for the whole country.",
+            "title": "Peimar agent for all of Iraq"
+          }
+        },
+        "year": 2021
+      }
+    ],
+    "today": {
+      "ar": {
+        "label": "اليوم",
+        "text": "الوكيل الرئيسي مع 100 موزّع في أنحاء العراق، وأكثر من 4% من مجمل الطاقة الشمسية في البلاد.",
+        "title": "الوكيل الحصري لـ Peimar في العراق"
+      },
+      "ckb": {
+        "label": "ئەمڕۆ",
+        "text": "بریکاری سەرەکی لەگەڵ 100 دابەشکەر لە سەرانسەری عێراق، و زیاتر لە 4% لە کۆی وزەی خۆری وڵات.",
+        "title": "بریکاری تایبەتی Peimar لە عێراق"
+      },
+      "en": {
+        "label": "Today",
+        "text": "Main agent with 100 distributors across Iraq, and more than 4% of the country’s total solar power.",
+        "title": "Exclusive Peimar agent in Iraq"
+      }
+    }
+  },
+  "media": [
+    {
+      "bytes": 734221,
+      "credit": null,
+      "ext": "jpg",
+      "height": 1536,
+      "people": "none",
+      "rights": "manufacturer",
+      "sha256": "a9986115b9a3e09d9aef70f5a7e96a14c6e26376d8ee16ee7aee4284ceb6894f",
+      "width": 2048
+    },
+    {
+      "bytes": 412903,
+      "credit": null,
+      "ext": "png",
+      "height": 1600,
+      "people": "none",
+      "rights": "manufacturer",
+      "sha256": "3e80ae87b41cd7e4f6ba6fa4802fff38584fd41d112c8913f00f5ba67444af58",
+      "width": 1600
+    },
+    {
+      "bytes": 296114,
+      "credit": null,
+      "ext": "webp",
+      "height": 1365,
+      "people": "none",
+      "rights": "own",
+      "sha256": "724ab0eb338a28ae0fae37d3e84b9d96ad5b0a7ead5dd44b11e8997a41aa22c6",
+      "width": 2048
+    },
+    {
+      "bytes": 1048576,
+      "credit": "Licensed photo, CC BY 4.0",
+      "ext": "jpg",
+      "height": 1152,
+      "people": "consented",
+      "rights": "licensed",
+      "sha256": "3ac8775af916636d1ebb79c33a69d162b02111a8398c7b0fbcddf253fc64a340",
+      "width": 2048
+    }
+  ],
+  "minor": 0,
+  "projects": [
+    {
+      "category": "public",
+      "cover": {
+        "alt": {
+          "ar": "ألواح شمسية مثبّتة على الأرض قرب مباني محطة مياه",
+          "ckb": "پانێڵی خۆری سەر زەوی لە تەنیشت بیناکانی وێستگەیەکی ئاو",
+          "en": "Ground-mounted solar modules beside the buildings of a water station"
+        },
+        "sitePath": "/images/legacy/project-3kwp-emergency-water-station.jpg"
+      },
+      "sizeKwp": 3,
+      "slug": "3-kwp-for-emergency-power-water-station",
+      "text": {
+        "ar": {
+          "line": "ألواح مثبّتة على الأرض تشغّل المحطة عند انقطاع الكهرباء.",
+          "title": "طاقة احتياطية لمحطة مياه"
+        },
+        "ckb": {
+          "line": "کە کارەبا دەبڕێت، پانێڵەکانی سەر زەوی وێستگەکە کار پێ دەکەن.",
+          "title": "کارەبای یەدەگ بۆ وێستگەی ئاو"
+        },
+        "en": {
+          "line": "Ground-mounted modules that supply emergency power.",
+          "title": "Emergency power for a water station"
+        }
+      },
+      "year": null
+    },
+    {
+      "category": "public",
+      "cover": {
+        "alt": {
+          "ar": "صفوف من الألواح الشمسية على سطح مدرسة مستوٍ",
+          "ckb": "ڕیزی پانێڵی خۆر لەسەر بانی تەختی قوتابخانەیەک",
+          "en": "Rows of solar modules on a flat school roof"
+        },
+        "media": "3ac8775af916636d1ebb79c33a69d162b02111a8398c7b0fbcddf253fc64a340"
+      },
+      "sizeKwp": 20,
+      "slug": "school-roof-20-kwp",
+      "text": {
+        "ar": {
+          "line": "ألواح على سطح مدرسة تغطي استهلاكها خلال النهار.",
+          "title": "سطح مدرسة"
+        },
+        "ckb": {
+          "line": "پانێڵ لەسەر بانی قوتابخانەیەک کە کارەبای ڕۆژانەی دابین دەکەن.",
+          "title": "بانی قوتابخانەیەک"
+        },
+        "en": {
+          "line": "Modules on a school roof that cover its daytime use.",
+          "title": "A school roof"
+        }
+      },
+      "year": 2026
+    },
+    {
+      "category": "agriculture",
+      "cover": null,
+      "sizeKwp": 50,
+      "slug": "50-kwp-for-agriculture-land",
+      "text": {
+        "ar": {
+          "line": "منظومة شمسية تخدم أرضًا زراعية.",
+          "title": "أرض زراعية"
+        },
+        "ckb": {
+          "line": "سیستەمی وزەی خۆر بۆ زەوییەکی کشتوکاڵی.",
+          "title": "زەویی کشتوکاڵی"
+        },
+        "en": {
+          "line": "Solar power for agricultural land.",
+          "title": "Agricultural land"
+        }
+      },
+      "year": null
+    }
+  ],
+  "publishId": 43,
+  "publishedAt": "2026-12-02T09:14:00Z",
+  "redirects": [
+    {
+      "from": "or-series-or12h",
+      "kind": "series",
+      "line": "modules",
+      "permanent": false,
+      "to": null
+    },
+    {
+      "from": "psi-j-mirus-line",
+      "kind": "family",
+      "line": "onGrid",
+      "permanent": false,
+      "to": null
+    },
+    {
+      "from": "psi-x-hs-5",
+      "kind": "battery",
+      "line": "hybrid",
+      "permanent": true,
+      "to": "psi-x-hs-5-0"
+    },
+    {
+      "from": "ground-mount-kit",
+      "kind": "item",
+      "line": "accessories",
+      "permanent": true,
+      "to": null
+    }
+  ],
+  "schema": "faraday.site-snapshot",
+  "site": {
+    "categoryText": {
+      "accessories": {
+        "ar": "أجهزة ومكوّنات لإدارة المنظومة الشمسية وتحسين أدائها وربط أجزائها ببعض.",
+        "ckb": "ئامێر و پارچە بۆ بەڕێوەبردنی سیستەمی وزەی خۆر، باشترکردنی کارەکەی و پێکەوەبەستنی بەشەکانی.",
+        "en": "Devices and components for the management, optimization and integration of the photovoltaic system."
+      },
+      "hybrid": {
+        "ar": "أنظمة تدير الكهرباء التي تنتجها الألواح وتخزّنها، لتستخدمها بكفاءة أكبر.",
+        "ckb": "سیستەمێک کە ئەو کارەبایەی پانێڵەکان بەرهەمی دەهێنن بەڕێوە دەبات و هەڵیدەگرێت، تا باشتر بەکاری بهێنیت.",
+        "en": "Systems for managing and storing generated energy, for more efficient use."
+      },
+      "micro": {
+        "ar": "مايكرو إنفرترات أحادية الطور بمدخلَي MPPT.",
+        "ckb": "مایکرۆ ئینڤێرتەری تاک فاز، هەریەکەیان بە دوو MPPT.",
+        "en": "Single-phase microinverters with two MPPT inputs."
+      },
+      "modules": {
+        "ar": "ألواح عالية الكفاءة بتقنيات مختلفة، تجد بينها ما يناسب أي نوع من التركيب.",
+        "ckb": "پانێڵی کارایی بەرز بە چەند تەکنەلۆژیایەکی جیاواز، بۆ هەر جۆرە دامەزراندنێک.",
+        "en": "High-efficiency modules, available in different technologies for every type of installation."
+      },
+      "onGrid": {
+        "ar": "إنفرترات أحادية الطور وثلاثية الأطوار تدير طاقة منظومتك بكفاءة.",
+        "ckb": "ئینڤێرتەری تاک فاز و سێ فاز کە وزەی سیستەمەکەت بە کارایی بەڕێوە دەبەن.",
+        "en": "Single-phase and three-phase inverters for efficient energy management."
+      }
+    },
+    "featured": {
+      "heroPanel": "or10h440mndb-bf",
+      "productsHeroSeries": "or-series-or10h",
+      "tickerBatteries": [
+        "psi-x-hs-5-0",
+        "psi-x-hs-3-6"
+      ],
+      "tickerInverters": [
+        "psi-x1p6000-hy",
+        "psi-x1p3000-hy"
+      ]
+    },
+    "figures": {
+      "distributors": 100,
+      "installedMw": null,
+      "iraqSharePct": 4.5,
+      "peimarAgentSince": 2021
+    },
+    "organization": {
+      "areaServed": [
+        "sulaymaniyah",
+        "erbil",
+        "baghdad"
+      ],
+      "description": "Exclusive agent of Peimar in Iraq: Peimar photovoltaic modules, hybrid and on-grid inverters, batteries and accessories, with system design and installation from Sulaymaniyah.",
+      "slogan": "Renewable energy for everyone"
+    },
+    "pages": {
+      "projects": {
+        "lead": {
+          "ar": "في منازل وعمارات سكنية، وفي شركة ومحطة مياه، وعلى لوحة إعلانية وأرض زراعية.",
+          "ckb": "بۆ خانوو و شوقە، بۆ کۆمپانیا و وێستگەی ئاو، بۆ تابلۆی ڕیکلام و زەویی کشتوکاڵی.",
+          "en": "Homes, apartments, a company, a water station, an advertising board and agricultural land."
+        },
+        "metaDescription": {
+          "ar": "ست منظومات شمسية بمنتجات Peimar ركّبتها Faraday، من لوحة إعلانية بقدرة 1.8 kWp إلى أرض زراعية بقدرة 50 kWp.",
+          "ckb": "Faraday شەش سیستەمی خۆری Peimar ی دامەزراندووە، لە تابلۆیەکی ڕیکلامی 1.8 kWp ەوە تا زەوییەکی کشتوکاڵیی 50 kWp.",
+          "en": "Six Peimar solar systems installed by Faraday, from a 1.8 kWp advertising board to 50 kWp for agricultural land."
+        }
+      }
+    }
+  },
+  "version": 1
+}

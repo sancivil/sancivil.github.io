@@ -1,0 +1,84 @@
+---
+/*
+  The owner's generic products of one line, as an index list. Its styles are written inline and only with a list,
+  so a line page without such products stays byte for byte what it was.
+*/
+import type { Item } from '../../content/index.ts';
+import { localizePath, type Locale } from '../../i18n/config.ts';
+import { products } from '../../i18n/products.ts';
+import { displayName, pad2 } from './data.ts';
+
+interface Props {
+  locale: Locale;
+  items: Item[];
+}
+const { locale, items } = Astro.props;
+const t = products[locale];
+
+const css = [
+  '.items__title{margin-bottom:var(--s-5)}',
+  '.items__list{border-top:1px solid var(--line-c)}',
+  '.items__row{position:relative;display:grid;grid-template-columns:3rem minmax(0,1fr) auto 2rem;align-items:center;gap:var(--s-3) var(--gap);padding-block:var(--s-5);border-bottom:1px solid var(--line-c)}',
+  '.items__index{font-size:.75rem;color:var(--muted-c)}',
+  '.items__main{display:grid;gap:var(--s-1)}',
+  '.items__name{font-family:var(--font-sans);overflow-wrap:anywhere}',
+  '.items__link::after{content:"";position:absolute;inset:0}',
+  '.items__link:focus-visible{outline:none}',
+  '.items__row:has(.items__link:focus-visible){outline:2px solid var(--ink);outline-offset:4px}',
+  '.items__meta{font-size:.9375rem;color:var(--muted-c)}',
+  '.items__photo{width:96px;aspect-ratio:1;object-fit:contain;border-radius:var(--r-2);background:var(--paper-2)}',
+  '.items__arrow{grid-column:-2;justify-self:end;font-family:var(--font-mono);font-size:1.25rem;transition:transform var(--dur-2) var(--ease)}',
+  '.items__arrow::after{content:"→"}',
+  '[dir=rtl] .items__arrow::after{content:"←"}',
+  '.items__row:hover .items__arrow{transform:translateX(6px)}',
+  '[dir=rtl] .items__row:hover .items__arrow{transform:translateX(-6px)}',
+  '@media (max-width:720px){.items__row{grid-template-columns:2.5rem minmax(0,1fr) 2rem}.items__photo{display:none}}',
+].join('');
+---
+
+{
+  items.length > 0 && (
+    <section class="section" aria-labelledby="items-title">
+      <style is:inline set:html={css} />
+      <div class="container">
+        <h2 id="items-title" class="h2 items__title">{t.itemList}</h2>
+        <ol role="list" class="items__list">
+          {items.map((item, i) => {
+            const photo = item.photos[0];
+            const summary = item.text[locale]?.summary;
+            return (
+              <li class="items__row">
+                <span class="items__index mono">{pad2(i)}</span>
+                <div class="items__main">
+                  <h3 class="h3 items__name">
+                    <a class="items__link" href={localizePath(`/products/items/${item.slug}/`, locale)} dir="ltr">
+                      {displayName(item.name)}
+                    </a>
+                  </h3>
+                  <p class="items__meta">
+                    <bdi>{item.brand}</bdi>
+                    {summary && <> · {summary}</>}
+                  </p>
+                </div>
+                {photo && (
+                  <img
+                    class="items__photo"
+                    src={photo.src}
+                    srcset={photo.srcset ?? undefined}
+                    sizes="96px"
+                    width={photo.width}
+                    height={photo.height}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )}
+                <span class="items__arrow" aria-hidden="true" />
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </section>
+  )
+}

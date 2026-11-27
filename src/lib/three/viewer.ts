@@ -13,7 +13,7 @@ import {
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { buildModule } from './module.ts';
 import type { MarkKey, PvModule } from './module.ts';
-import { createRenderer, deg, detailTextureMax, environment, fitDistance, isRtl, maxAnisotropy, studio, watchVisibility } from './stage.ts';
+import { deg, detailTextureMax, fitDistance, isRtl, prepare, setUp, watchVisibility } from './stage.ts';
 import { drawShadow } from './textures.ts';
 import type { ModuleSpec } from './types.ts';
 
@@ -34,13 +34,15 @@ export interface ViewerElements {
   spots?: HTMLElement;
 }
 
-export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
+/** Builds the scene a slice at a time; resolves once its first frame is ready to draw (see `prepare`). */
+export async function mountViewer(el: ViewerElements, initial: ModuleSpec) {
   const { stage, canvas } = el;
   const side = isRtl(stage) ? -1 : 1;
 
-  const renderer = createRenderer(canvas);
+  const setup = await setUp(canvas, side < 0);
+  const { renderer, anisotropy, photo } = setup;
   const scene = new Scene();
-  let env = environment(renderer, side < 0);
+  let env = setup.env;
   let envStrength = 1;
   let envRotation = 0;
   const camera = new PerspectiveCamera(FOV, 1, 0.05, 60);
@@ -53,6 +55,7 @@ export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
   scene.add(camera, rim);
 
   const controls = new OrbitControls(camera, canvas);
+  controls.enabled = false;
   canvas.style.touchAction = 'pan-y pinch-zoom';
   controls.enableDamping = true;
   controls.dampingFactor = 0.09;
@@ -93,7 +96,6 @@ export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
     d: el.dims.querySelector<HTMLElement>('[data-dim="d"]')!,
   };
 
-  let spec = initial;
   let pv: PvModule;
   let explode = 0;
   let fit = 6;
@@ -121,7 +123,7 @@ export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
   let disposed = false;
   /** After the first frame: reflections from the photographed studio (not on phones). Rebuilds keep it. */
   const upgrade = async () => {
-    const s = await studio(renderer, side < 0);
+    const s = await photo();
     if (!s) return;
     if (disposed) return s.texture.dispose();
     envStrength = s.gain;
@@ -283,28 +285,51 @@ export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
     request();
   };
 
+  let latest = 0;
+  let building: Promise<unknown> = Promise.resolve();
+  /**
+   * Builds and prepares a module, then swaps it in. One build runs at a time, and a request that a newer one overtakes
+   * before or during its build is dropped (resolves false): arrowing through the model chips builds the model the
+   * reader stops on, not every model on the way.
+   */
   const build = (next: ModuleSpec) => {
-    if (pv) {
-      scene.remove(pv.root);
-      pv.dispose();
-    }
-    spec = next;
-    pv = buildModule(spec, {
-      textureMax: detailTextureMax(renderer),
-      anisotropy: maxAnisotropy(renderer),
-      envMap: env,
-      envIntensity: envStrength,
-      envRotation,
-      lineColor: '#0b0b0c',
+    const ticket = ++latest;
+    const stale = () => disposed || ticket !== latest;
+    const done = building.then(async () => {
+      if (stale()) return false;
+      const built = await buildModule(next, {
+        textureMax: detailTextureMax(renderer),
+        anisotropy,
+        envMap: env,
+        envIntensity: envStrength,
+        envRotation,
+        lineColor: '#0b0b0c',
+      });
+      if (!stale()) await prepare(renderer, built.root, camera, scene, built.textures);
+      if (stale()) {
+        built.dispose();
+        return false;
+      }
+      if (pv) {
+        scene.remove(pv.root);
+        pv.dispose();
+      }
+      pv = built;
+      pv.setEnvironment(env, envStrength, envRotation);
+      scene.add(pv.root);
+      applyExplode();
+      labels.w.textContent = `${next.width} mm`;
+      labels.h.textContent = `${next.height} mm`;
+      labels.d.textContent = `${next.depth} mm`;
+      return true;
     });
-    scene.add(pv.root);
-    applyExplode();
-    labels.w.textContent = `${spec.width} mm`;
-    labels.h.textContent = `${spec.height} mm`;
-    labels.d.textContent = `${spec.depth} mm`;
+    // The next build waits for this one, failed or not; a failure still rejects this call.
+    building = done.catch(() => {});
+    return done;
   };
 
-  build(initial);
+  await Promise.all([build(initial), prepare(renderer, shadow, camera, scene, [shadowTexture])]);
+  controls.enabled = true;
   setView(home());
   layout();
 
@@ -335,9 +360,8 @@ export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
   });
 
   return {
-    setSpec(next: ModuleSpec) {
-      build(next);
-      layout();
+    async setSpec(next: ModuleSpec) {
+      if (await build(next)) layout();
     },
     front() {
       goTo({ phi: deg(86), theta: 0, radius: fit });
@@ -396,4 +420,4 @@ export function mountViewer(el: ViewerElements, initial: ModuleSpec) {
   };
 }
 
-export type ModuleViewerScene = ReturnType<typeof mountViewer>;
+export type ModuleViewerScene = Awaited<ReturnType<typeof mountViewer>>;

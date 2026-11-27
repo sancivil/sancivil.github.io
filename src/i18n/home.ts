@@ -21,7 +21,7 @@ const en = {
     scroll: 'Scroll',
     specsLabel: 'Key figures',
     specs: {
-      experience: 'Experience, since 2017',
+      experience: (year: number) => `Experience, since ${year}`,
       share: 'Of Iraq’s total solar power',
       distributors: 'Distributors across Iraq',
       installed: 'Supplied and installed',
@@ -110,7 +110,7 @@ const en = {
   },
   projects: {
     eyebrow: 'Projects',
-    title: (count: number, min: number, max: number) => `${count} systems, from ${min} to ${max} kWp.`,
+    title: (count: number, min: number, max: number) => `${count} of the systems we installed, from ${min} to ${max} kWp.`,
     link: 'All projects',
   },
   warranty: {
@@ -153,7 +153,7 @@ const ar: HomeStrings = {
     scroll: 'مرّر للأسفل',
     specsLabel: 'أبرز الأرقام',
     specs: {
-      experience: 'خبرة منذ 2017',
+      experience: (year: number) => `خبرة منذ ${year}`,
       share: 'من مجمل الطاقة الشمسية في العراق',
       distributors: 'موزّع في أنحاء العراق',
       installed: 'تم توريدها وتركيبها',
@@ -243,8 +243,7 @@ const ar: HomeStrings = {
   },
   projects: {
     eyebrow: 'المشاريع',
-    title: (count: number, min: number, max: number) =>
-      `${count} ${arCount(count, 'منظومات', 'منظومة')}، من ${min} إلى ${ltr(`${max} kWp`)}.`,
+    title: (count: number, min: number, max: number) => `${count} من المنظومات التي ركّبناها، من ${min} إلى ${ltr(`${max} kWp`)}.`,
     link: 'كل المشاريع',
   },
   warranty: {
@@ -285,7 +284,7 @@ const ckb: HomeStrings = {
     scroll: 'بڕۆ خوارەوە',
     specsLabel: 'ژمارە گرنگەکان',
     specs: {
-      experience: 'ئەزموون، لە 2017ەوە',
+      experience: (year: number) => `ئەزموون، لە ${year}ەوە`,
       share: 'لە کۆی وزەی خۆری عێراق',
       distributors: 'دابەشکەر لە سەرانسەری عێراق',
       installed: 'دابینکراو و دامەزراو',
@@ -375,7 +374,7 @@ const ckb: HomeStrings = {
   },
   projects: {
     eyebrow: 'پڕۆژەکان',
-    title: (count: number, min: number, max: number) => `${count} سیستەم، لە ${min} تا ${ltr(`${max} kWp`)}.`,
+    title: (count: number, min: number, max: number) => `${count} لەو سیستەمانەی دامانمەزراندوون، لە ${min} تا ${ltr(`${max} kWp`)}.`,
     link: 'هەموو پڕۆژەکان',
   },
   warranty: {

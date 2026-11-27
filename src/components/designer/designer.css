@@ -329,6 +329,17 @@
   border-radius: var(--r-1);
   font-size: 0.9375rem;
 }
+.dz-notice__body {
+  min-width: 0;
+  padding-block: var(--s-2);
+  overflow-wrap: anywhere;
+}
+.dz-notice__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--s-5);
+  margin-top: var(--s-1);
+}
 
 /* ---------- fields ---------- */
 
@@ -465,7 +476,9 @@
 .dz-textbtn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--s-2);
+  min-width: 44px;
   min-height: 44px;
   font-size: 0.9375rem;
   font-weight: 600;
@@ -576,6 +589,7 @@
 .dz-pick__label {
   font-size: 0.9375rem;
   font-weight: 500;
+  overflow-wrap: anywhere;
 }
 .dz-pick__meta {
   font-size: 0.8125rem;
@@ -1170,6 +1184,7 @@
 .dz-usage__name {
   color: var(--muted);
   font-size: 0.875rem;
+  overflow-wrap: anywhere;
 }
 .dz-usage__note {
   font-size: 0.8125rem;
@@ -1272,10 +1287,12 @@
 .dz-sum__item-name {
   font-size: 0.8125rem;
   color: var(--sm);
+  overflow-wrap: anywhere;
 }
 .dz-sum__item-val {
   font-size: 0.875rem;
   font-weight: 500;
+  overflow-wrap: anywhere;
 }
 .dz-sum__item-meta {
   display: inline-flex;
@@ -1300,6 +1317,12 @@
 .dz-sum__saved {
   margin-top: var(--s-4);
   color: var(--sm);
+}
+.dz-sum__switch {
+  justify-content: start;
+  max-width: 100%;
+  text-align: start;
+  overflow-wrap: anywhere;
 }
 .dz-confirm {
   display: grid;
@@ -1520,6 +1543,7 @@
   font-size: 1.5rem;
   font-weight: 600;
   letter-spacing: -0.015em;
+  overflow-wrap: anywhere;
 }
 [dir='rtl'] .dz-report__project {
   letter-spacing: 0;
@@ -1568,6 +1592,7 @@
   align-items: baseline;
   gap: var(--s-1) var(--s-4);
   font-size: 0.9375rem;
+  overflow-wrap: anywhere;
 }
 .dz-rgroup__name {
   font-weight: 600;
@@ -1584,6 +1609,7 @@
 .dz-notes {
   max-width: 68ch;
   white-space: pre-line;
+  overflow-wrap: anywhere;
 }
 .dz-report__foot {
   display: grid;
@@ -2058,6 +2084,9 @@
   .dz-sum.is-open {
     transform: none;
   }
+  .dz:has(.dz-pick.is-open) .dz-sum {
+    transform: translateY(110%);
+  }
   .dz-sum__toggle {
     padding-inline: var(--gutter);
     border-top: 1px solid var(--line-inv);
@@ -2133,6 +2162,9 @@
   }
   .dz-actions-row--top .btn {
     padding-inline: var(--s-3);
+    white-space: normal;
+    text-align: center;
+    line-height: 1.2;
   }
   .dz-landing__facts {
     gap: var(--s-3);
@@ -2423,6 +2455,7 @@
   padding: var(--s-4);
   border: 1px solid var(--sun);
   border-radius: var(--r-1);
+  overflow-wrap: anywhere;
 }
 .dz-confirm--replace .dz-confirm__btns {
   flex-wrap: wrap;
@@ -2866,8 +2899,14 @@
   .dz-dash__tile {
     min-height: 0;
   }
+  .dz-dash__counts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .dz-dash__counts .dz-kpi {
     padding: var(--s-3) var(--s-4);
+  }
+  .dz-dash__counts .dz-kpi:last-child {
+    grid-column: 1 / -1;
   }
   .dz-dash__counts dd {
     font-size: 1.125rem;
@@ -2901,6 +2940,7 @@
   margin-bottom: var(--s-3);
   font-size: 1rem;
   font-weight: 600;
+  overflow-wrap: anywhere;
 }
 .dz-modcard .dz-specs {
   margin-top: 0;

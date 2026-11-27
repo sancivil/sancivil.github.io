@@ -1,0 +1,218 @@
+[
+  {
+    "key": "psi-x1p-tl",
+    "group": "onGrid",
+    "description": "PSI-X1P — Single-phase inverter",
+    "inverterIds": [
+      "psi-x1p1100-tl",
+      "psi-x1p1500-tl",
+      "psi-x1p2000-tl",
+      "psi-x1p2500-tl",
+      "psi-x1p3000-tl"
+    ]
+  },
+  {
+    "key": "psi-x1p-tlm",
+    "group": "onGrid",
+    "description": "PSI-X1P — Single-phase inverter",
+    "inverterIds": [
+      "psi-x1p3000-tlm",
+      "psi-x1p4200-tlm",
+      "psi-x1p5000-tlm",
+      "psi-x1p6000-tlm"
+    ]
+  },
+  {
+    "key": "psi-x1s-tl",
+    "group": "onGrid",
+    "description": "PSI-X1S — Single-phase inverter",
+    "inverterIds": [
+      "psi-x1s1100-tl",
+      "psi-x1s1500-tl",
+      "psi-x1s2000-tl",
+      "psi-x1s2500-tl"
+    ]
+  },
+  {
+    "key": "psi-x1s-tlm",
+    "group": "onGrid",
+    "description": "PSI-X1S — Single-phase inverter",
+    "inverterIds": [
+      "psi-x1s3000-tlm",
+      "psi-x1s4200-tlm",
+      "psi-x1s5000-tlm",
+      "psi-x1s6000-tlm"
+    ]
+  },
+  {
+    "key": "psi-x3p-tp",
+    "group": "onGrid",
+    "description": "PSI-X3P — Three-phase inverter",
+    "inverterIds": [
+      "psi-x3p6000-tp",
+      "psi-x3p8000-tp",
+      "psi-x3p10000-tp"
+    ]
+  },
+  {
+    "key": "psi-x3p-tpm",
+    "group": "onGrid",
+    "description": "PSI-X3P — Three-phase inverter",
+    "inverterIds": [
+      "psi-x3p15000-tpm",
+      "psi-x3p20000-tpm",
+      "psi-x3p30000-tpm",
+      "psi-x3p40000-tpm",
+      "psi-x3p50000-tpm",
+      "psi-x3p60000-tpm",
+      "psi-x3p100000-tpm",
+      "psi-x3p125000-tpm"
+    ]
+  },
+  {
+    "key": "psi-j-mirus-line",
+    "group": "onGrid",
+    "description": "PSI-J — Single-phase inverter",
+    "inverterIds": [
+      "psi-j1000-tl",
+      "psi-j1500-tl"
+    ]
+  },
+  {
+    "key": "psi-j-unicus-line",
+    "group": "onGrid",
+    "description": "PSI-J — Single-phase inverter",
+    "inverterIds": [
+      "psi-j2000-tl",
+      "psi-j2500-tl",
+      "psi-j3000-tl"
+    ]
+  },
+  {
+    "key": "psi-j-geminus-line",
+    "group": "onGrid",
+    "description": "PSI-J — Single-phase inverter",
+    "inverterIds": [
+      "psi-j3000-tlm",
+      "psi-j4000-tlm",
+      "psi-j5000-tlm",
+      "psi-j6000-tlm"
+    ]
+  },
+  {
+    "key": "psi-j-virtus-line",
+    "group": "onGrid",
+    "description": "PSI-J — Three-phase inverter",
+    "inverterIds": [
+      "psi-j4000-tp",
+      "psi-j5000-tp",
+      "psi-j6000-tp",
+      "psi-j8000-tp",
+      "psi-j10000-tp"
+    ]
+  },
+  {
+    "key": "psi-j-editus-line",
+    "group": "onGrid",
+    "description": "PSI-J — Three-phase inverter",
+    "inverterIds": [
+      "psi-j12000-tp",
+      "psi-j15000-tp",
+      "psi-j17000-tp",
+      "psi-j20000-tp"
+    ]
+  },
+  {
+    "key": "psi-j-magnus-line",
+    "group": "onGrid",
+    "description": "PSI-J — Three-phase inverter",
+    "inverterIds": [
+      "psi-j25000-tp",
+      "psi-j33000-tp",
+      "psi-j40000-tp",
+      "psi-j50000-tp",
+      "psi-j60000-tp"
+    ]
+  },
+  {
+    "key": "psi-x1p-hy",
+    "group": "hybrid",
+    "description": "PSI-X1P — Single-phase hybrid inverter",
+    "inverterIds": [
+      "psi-x1p3000-hy",
+      "psi-x1p5000-hy",
+      "psi-x1p6000-hy"
+    ]
+  },
+  {
+    "key": "psi-x3s-hy",
+    "group": "hybrid",
+    "description": "PSI-X3S — Three-phase hybrid inverter",
+    "inverterIds": [
+      "psi-x3s6000-hy",
+      "psi-x3s8000-hy",
+      "psi-x3s10000-hy",
+      "psi-x3s15000-hy"
+    ]
+  },
+  {
+    "key": "psi-x3p-hym",
+    "group": "hybrid",
+    "description": "PSI-X3P — Three-phase hybrid inverter",
+    "inverterIds": [
+      "psi-x3p20000-hym",
+      "psi-x3p30000-hym"
+    ]
+  },
+  {
+    "key": "psi-a1p",
+    "group": "hybrid",
+    "description": "PSI-A — All-in-One systems (with PSI-A-BT3.8S battery)",
+    "inverterIds": [
+      "psi-a1p3600-hy",
+      "psi-a1p6000-hy"
+    ]
+  },
+  {
+    "key": "psi-a3p",
+    "group": "hybrid",
+    "description": "PSI-A — All-in-One systems (with PSI-A-BT3.8S battery)",
+    "inverterIds": []
+  },
+  {
+    "key": "psi-j-hy",
+    "group": "hybrid",
+    "description": "PSI-J — Single-phase hybrid inverter",
+    "inverterIds": [
+      "psi-j3000-hy",
+      "psi-j4000-hy",
+      "psi-j5000-hy",
+      "psi-j6000-hy"
+    ]
+  },
+  {
+    "key": "psi-j-rf",
+    "group": "hybrid",
+    "description": "PSI-J — Retrofit inverter with energy storage",
+    "inverterIds": []
+  },
+  {
+    "key": "psi-x3p-hy",
+    "group": "hybrid",
+    "description": null,
+    "inverterIds": [
+      "psi-x3p6000-hy",
+      "psi-x3p8000-hy",
+      "psi-x3p10000-hy"
+    ]
+  },
+  {
+    "key": "psi-x1p-mic",
+    "group": "micro",
+    "description": null,
+    "inverterIds": [
+      "psi-x1p800-mic",
+      "psi-x1p1000-mic"
+    ]
+  }
+]

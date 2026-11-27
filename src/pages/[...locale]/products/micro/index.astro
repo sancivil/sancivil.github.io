@@ -4,6 +4,7 @@ import PageIntro from '../../../../components/products/PageIntro.astro';
 import Stats from '../../../../components/products/Stats.astro';
 import SectionHead from '../../../../components/products/SectionHead.astro';
 import PhaseGroups from '../../../../components/products/PhaseGroups.astro';
+import ItemList from '../../../../components/products/ItemList.astro';
 import {
   categoryImage,
   extent,
@@ -13,10 +14,10 @@ import {
   groupPower,
   powerParts,
 } from '../../../../components/products/data.ts';
-import { localeFromParam, localeParams } from '../../../../i18n/config.ts';
+import { categoryText, itemsByLine } from '../../../../content/index.ts';
+import { localeFromParam, localeParams, localizePath } from '../../../../i18n/config.ts';
 import { common } from '../../../../i18n/common.ts';
 import { products } from '../../../../i18n/products.ts';
-import { catalogText } from '../../../../i18n/catalog-text.ts';
 
 export const getStaticPaths = () => localeParams();
 const locale = localeFromParam(Astro.params.locale);
@@ -24,10 +25,12 @@ const t = products[locale];
 const p = t.microPage;
 const nav = common[locale];
 const inverters = groupInverters('micro');
-const power = powerParts(groupPower('micro'));
-const mppt = extent(inverters.map((m) => m.numMppt)).map(String) as [string, string];
+const power = groupPower('micro');
+const mppt = inverters.length ? (extent(inverters.map((m) => m.numMppt)).map(String) as [string, string]) : null;
 const protection = [...new Set(inverters.map((m) => m.protectionClass))].join(' · ');
 const modelNames = families.micro.flatMap((f) => f.models).join(', ');
+const shown = families.micro.length > 0;
+const empty = !shown && itemsByLine('micro').length === 0;
 ---
 
 <Base title={p.title} description={p.description(modelNames)}>
@@ -36,27 +39,44 @@ const modelNames = families.micro.flatMap((f) => f.models).join(', ');
     crumbs={[{ label: nav.nav.products, href: '/products/' }, { label: nav.productNav.micro }]}
     eyebrow={p.eyebrow}
     title={nav.productNav.micro}
-    lead={catalogText[locale].categories.micro}
+    lead={categoryText(locale, 'micro')}
     display
   >
     <Stats
       items={[
-        { label: p.stat.power, value: power.value, unit: power.unit },
-        { label: p.stat.mppt, value: mppt, count: true },
-        { label: p.stat.protection, value: protection },
+        ...(power ? [{ label: p.stat.power, ...powerParts(power) }] : []),
+        ...(mppt ? [{ label: p.stat.mppt, value: mppt, count: true }] : []),
+        ...(protection ? [{ label: p.stat.protection, value: protection }] : []),
       ]}
     />
   </PageIntro>
 
-  <section class="section" aria-labelledby="models-title">
-    <div class="container">
-      <SectionHead
-        id="models-title"
-        title={t.inverterPage.modelsTitle}
-        meta={t.count.models(groupModels('micro'))}
-        image={{ ...categoryImage.micro, alt: t.categoryAlt.micro }}
-      />
-      <PhaseGroups locale={locale} group="micro" />
-    </div>
-  </section>
+  {
+    shown && (
+      <section class="section" aria-labelledby="models-title">
+        <div class="container">
+          <SectionHead
+            id="models-title"
+            title={t.inverterPage.modelsTitle}
+            meta={t.count.models(groupModels('micro'))}
+            image={{ ...categoryImage.micro, alt: t.categoryAlt.micro }}
+          />
+          <PhaseGroups locale={locale} group="micro" />
+        </div>
+      </section>
+    )
+  }
+
+  <ItemList locale={locale} items={itemsByLine('micro')} />
+
+  {
+    empty && (
+      <section class="section">
+        <div class="container prose">
+          <p class="lead measure">{t.emptyLine.text}</p>
+          <p><a class="btn btn--sun" href={localizePath('/contact/', locale)}>{t.emptyLine.action}</a></p>
+        </div>
+      </section>
+    )
+  }
 </Base>

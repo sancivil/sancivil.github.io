@@ -74,25 +74,25 @@ export const GAUGE_MAX = 1.6;
 /** Position of a power ratio on the dashboard gauge, 0 (40 %) to 1 (160 %). */
 export const gaugeAt = (ratio: number) => (Number.isFinite(ratio) ? Math.min(1, Math.max(0, (ratio - GAUGE_MIN) / (GAUGE_MAX - GAUGE_MIN))) : 0);
 
-type ModuleSeries = { slug: string; designerModels: string[] };
+type ModuleSeries = { key: string; panelIds: string[]; render: unknown };
 
 /**
- * Studio render of a panel's series: by the catalog's model list first, then by series code for models the
- * catalog page does not list. Custom panels and series without a render get null.
+ * Studio render of a panel's series (src/data/technical/series.json): by the series' panels first, then by
+ * series code for panels no series lists. Custom panels and series without a render get null.
  */
 export function seriesRenders(series: ModuleSeries[], panels: Panel[]): (p: Panel) => string | null {
   const byId = new Map<string, string>();
   const byCode = new Map<string, string>();
-  for (const s of series) {
-    for (const id of s.designerModels) {
-      byId.set(id, s.slug);
+  for (const s of series.filter((entry) => entry.render)) {
+    for (const id of s.panelIds) {
+      byId.set(id, s.key);
       const code = panels.find((p) => p.id === id)?.series;
-      if (code && !byCode.has(code)) byCode.set(code, s.slug);
+      if (code && !byCode.has(code)) byCode.set(code, s.key);
     }
   }
   return (p) => {
     if (p.custom) return null;
-    const slug = byId.get(p.id) ?? byCode.get(p.series);
-    return slug ? `/images/products/modules/${slug}.webp` : null;
+    const key = byId.get(p.id) ?? byCode.get(p.series);
+    return key ? `/images/products/modules/${key}.webp` : null;
   };
 }
