@@ -17,8 +17,7 @@ const whatsapp = phones.find((phone) => phone.whatsapp) ?? primary;
 
 export const contact = {
   company: data.name,
-  /** The primary number. */
-  phoneDisplay: primary.display,
+  /** The primary number's call link. */
   phoneHref: primary.href,
   /** The first WhatsApp number. */
   whatsappHref: waHref(whatsapp),

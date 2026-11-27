@@ -1,6 +1,7 @@
 ---
+import SocialLinks from '../SocialLinks.astro';
 import { contact, phones, whatsappLink } from '../../data/site.ts';
-import { address, hoursNote, openingHours } from '../../content/index.ts';
+import { address, hoursNote, openingHours, socials } from '../../content/index.ts';
 import { hoursRows } from '../../content/hours.ts';
 import { company } from '../../i18n/company.ts';
 import type { Locale } from '../../i18n/config.ts';
@@ -15,15 +16,25 @@ const { locale, note = false } = Astro.props;
 const t = company[locale].methods;
 const office = address(locale);
 const hoursRemark = note ? hoursNote(locale) : undefined;
+/* Neighbouring numbers with the same label share one heading, so three unlabelled numbers read as one list. */
+const phoneGroups: { label: string; phones: typeof phones }[] = [];
+for (const phone of phones) {
+  const label = phone.label?.[locale] ?? t.phone;
+  const last = phoneGroups.at(-1);
+  if (last?.label === label) last.phones.push(phone);
+  else phoneGroups.push({ label, phones: [phone] });
+}
 ---
 
 <div class="cm">
   <dl class="cm__main">
     {
-      phones.map((phone) => (
+      phoneGroups.map((group) => (
         <div class="cm__item">
-          <dt class="eyebrow">{phone.label?.[locale] ?? t.phone}</dt>
-          <dd><a class="cm__link cm__phone num" dir="ltr" href={phone.href}>{phone.display}</a></dd>
+          <dt class="eyebrow">{group.label}</dt>
+          {group.phones.map((phone) => (
+            <dd><a class="cm__link cm__phone num" dir="ltr" href={phone.href}>{phone.display}</a></dd>
+          ))}
         </div>
       ))
     }
@@ -66,6 +77,16 @@ const hoursRemark = note ? hoursNote(locale) : undefined;
         {hoursRemark && <p class="cm__closed">{hoursRemark}</p>}
       </dd>
     </div>
+    {
+      socials.length > 0 && (
+        <div class="cm__item">
+          <dt class="eyebrow">{t.social}</dt>
+          <dd>
+            <SocialLinks named />
+          </dd>
+        </div>
+      )
+    }
   </dl>
 </div>
 

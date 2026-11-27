@@ -142,11 +142,9 @@ const index = (i: number) => String(i + 1).padStart(2, '0');
         </div>
         <div>
           <dt class="eyebrow">{t.footer.contact}</dt>
-          <dd>
+          <dd class="mobile-menu__contact">
             {phones.map((phone) => (
-              <>
-                <span class="mono" dir="ltr">{phone.display}</span> ·{' '}
-              </>
+              <a class="mono" dir="ltr" href={phone.href}>{phone.display}</a>
             ))}
             <span class="mono" dir="ltr">{contact.email}</span>
           </dd>
@@ -344,6 +342,16 @@ const index = (i: number) => String(i + 1).padStart(2, '0');
   }
   .mobile-menu__info .mono {
     font-size: 0.8125rem;
+  }
+  .mobile-menu__contact {
+    display: grid;
+    justify-items: start;
+  }
+  .mobile-menu__contact a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--paper);
   }
 
   :global(html.motion) .mobile-menu__list > li,

@@ -152,7 +152,7 @@ function llms(): string {
     '',
     '## Tools',
     '',
-    `- [Faraday Designer](${SITE}/designer/): free PV string designer, no login. Checks string voltages at the city's design temperatures, current per MPPT and the power ratio with the rules of Peimar's installer tool, and estimates yearly energy with PVGIS data for ${cities.length} Iraqi cities.`,
+    `- [Faraday Designer](${SITE}/designer/): free PV string designer. Checks string voltages at the city's design temperatures, current per MPPT and the power ratio with the rules of Peimar's installer tool, and estimates yearly energy with PVGIS data for ${cities.length} Iraqi cities.`,
     '',
     '## Solar data for Iraqi cities',
     '',

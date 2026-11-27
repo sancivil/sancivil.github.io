@@ -23,6 +23,7 @@ const en = {
     maps: 'Open in Google Maps',
     hours: 'Hours',
     closed: 'Closed',
+    social: 'Social media',
   },
   peimar: {
     timeline: {
@@ -203,6 +204,7 @@ const ar: CompanyStrings = {
     maps: 'افتح الموقع في خرائط Google',
     hours: 'أوقات الدوام',
     closed: 'عطلة',
+    social: 'مواقع التواصل الاجتماعي',
   },
   peimar: {
     timeline: {
@@ -381,6 +383,7 @@ const ckb: CompanyStrings = {
     maps: 'شوێنەکە لە Google Maps ببینە',
     hours: 'کاتی دەوام',
     closed: 'پشوو',
+    social: 'تۆڕە کۆمەڵایەتییەکان',
   },
   peimar: {
     timeline: {

@@ -1,5 +1,6 @@
 ---
 import Logo from './Logo.astro';
+import SocialLinks from './SocialLinks.astro';
 import { contact, nav, phones, productNav } from '../data/site.ts';
 import { address, hoursText, milestones } from '../content/index.ts';
 import { common } from '../i18n/common.ts';
@@ -73,6 +74,7 @@ const installingSince = milestones.find((m) => m.key === 'projects')?.year ?? nu
           }
           <span class="small">{hoursText(locale, 'short')}</span>
         </address>
+        <SocialLinks />
       </div>
     </div>
 

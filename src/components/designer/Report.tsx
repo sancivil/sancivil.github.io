@@ -2,7 +2,7 @@ import { energyEstimate, moduleAt, tempsValid, type ProjectSummary } from '../..
 import { cities } from '../../lib/designer/data.ts';
 import { fmt, iraqDate, kw, ltr, pct, unit } from '../../lib/designer/format.ts';
 import type { City, Project } from '../../lib/designer/types.ts';
-import { contact, localAddress, whatsappLink } from '../../data/site.ts';
+import { contact, localAddress, phones, whatsappLink } from '../../data/site.ts';
 import type { DesignerStrings } from '../../i18n/designer.ts';
 import type { Locale } from '../../i18n/config.ts';
 import { EnergyChart } from './EnergyChart.tsx';
@@ -496,10 +496,14 @@ export function Report({ printOnly }: { printOnly?: boolean }) {
         <p class="small dz-print-block">
           <bdi>{contact.company}</bdi> · {localAddress(locale).street}
           {locale === 'en' ? ',' : '،'} {localAddress(locale).city} ·{' '}
-          <span class="mono" dir="ltr">
-            {contact.phoneDisplay}
-          </span>{' '}
-          ·{' '}
+          {phones.map((phone) => (
+            <span key={phone.e164}>
+              <span class="mono" dir="ltr">
+                {phone.display}
+              </span>{' '}
+              ·{' '}
+            </span>
+          ))}
           <span class="mono" dir="ltr">
             {contact.email}
           </span>

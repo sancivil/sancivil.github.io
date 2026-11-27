@@ -11,11 +11,11 @@ const en = {
   meta: {
     title: 'PV Designer',
     description:
-      'Design a Peimar photovoltaic system online: string checks at Iraqi design temperatures, inverter matching and a PVGIS energy estimate. No login.',
+      'Design a Peimar photovoltaic system online: string checks at Iraqi design temperatures, inverter matching and a PVGIS energy estimate.',
   },
   landing: {
     eyebrow: 'Faraday Designer',
-    title: 'Design a Peimar system. No login.',
+    title: 'Design a Peimar system.',
     lead: "String checks at your city's temperatures, a matching Peimar inverter and a yearly energy estimate, built on the rules of Peimar's installer tool.",
     equipmentTitle: 'I know my equipment',
     equipmentText: 'Pick modules and an inverter, lay out the strings and check every limit.',
@@ -490,11 +490,11 @@ const ar: DesignerStrings = {
   meta: {
     title: 'أداة تصميم المنظومات الشمسية',
     description:
-      'صمّم منظومة طاقة شمسية من Peimar على الإنترنت: فحص السلاسل على درجات حرارة التصميم في العراق، واختيار الإنفرتر المناسب، وتقدير الإنتاج من PVGIS. دون تسجيل.',
+      'صمّم منظومة طاقة شمسية من Peimar على الإنترنت: فحص السلاسل على درجات حرارة التصميم في العراق، واختيار الإنفرتر المناسب، وتقدير الإنتاج من PVGIS.',
   },
   landing: {
     eyebrow: 'أداة التصميم من Faraday',
-    title: 'صمّم منظومة Peimar بنفسك، ومن دون تسجيل.',
+    title: 'صمّم منظومة Peimar بنفسك.',
     lead: 'تفحص الأداة السلاسل على درجات الحرارة في مدينتك، وتختار إنفرتر Peimar المناسب، وتقدّر إنتاجك السنوي. الحسابات مبنية على قواعد أداة Peimar التي يستخدمها فنيو التركيب.',
     equipmentTitle: 'أعرف الألواح والإنفرتر',
     equipmentText: 'اختر الألواح والإنفرتر، ووزّع السلاسل، وتأكد من كل الحدود الفنية.',
@@ -951,11 +951,11 @@ const ckb: DesignerStrings = {
   meta: {
     title: 'دیزاینەری سیستەمی وزەی خۆر',
     description:
-      'سیستەمی خۆری Peimar ئۆنلاین دیزاین بکە: پشکنینی زنجیرەکان بە پلەکانی گەرمیی دیزاینی عێراق، هەڵبژاردنی ئینڤێرتەر و خەمڵاندنی بەرهەم بە PVGIS. بێ خۆتۆمارکردن.',
+      'سیستەمی خۆری Peimar ئۆنلاین دیزاین بکە: پشکنینی زنجیرەکان بە پلەکانی گەرمیی دیزاینی عێراق، هەڵبژاردنی ئینڤێرتەر و خەمڵاندنی بەرهەم بە PVGIS.',
   },
   landing: {
     eyebrow: 'دیزاینەری Faraday',
-    title: 'خۆت سیستەمێکی Peimar دیزاین بکە، بێ خۆتۆمارکردن.',
+    title: 'خۆت سیستەمێکی Peimar دیزاین بکە.',
     lead: 'دیزاینەر زنجیرەکان بەپێی پلەی گەرمیی شارەکەت دەپشکنێت، ئینڤێرتەرێکی گونجاوی Peimar هەڵدەبژێرێت و بەرهەمی ساڵانەت دەخەمڵێنێت. ژمێرکارییەکان لەسەر یاساکانی ئەو ئامرازەن کە Peimar بۆ تیمەکانی دامەزراندن دروستی کردووە.',
     equipmentTitle: 'پانێڵ و ئینڤێرتەرەکەم دەزانم',
     equipmentText: 'پانێڵ و ئینڤێرتەر هەڵبژێرە، زنجیرەکان ڕێک بخە و هەموو سنوورە تەکنیکییەکان بپشکنە.',

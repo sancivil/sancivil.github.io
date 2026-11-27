@@ -49,7 +49,7 @@ const en = {
     },
     designer: {
       eyebrow: 'Faraday Designer',
-      title: 'Design a Peimar system. No login.',
+      title: 'Design a Peimar system.',
       library: (modules: number, inverters: number) => `${modules} modules · ${inverters} inverters`,
     },
     call: 'Call',
@@ -123,7 +123,7 @@ const ar: CommonStrings = {
     },
     designer: {
       eyebrow: 'أداة التصميم من Faraday',
-      title: 'صمّم منظومة Peimar مجانًا ومن دون تسجيل.',
+      title: 'صمّم منظومة Peimar مجانًا.',
       library: (modules: number, inverters: number) =>
         `${arCount('لوح واحد', 'لوحان', 'ألواح', 'لوحًا')(modules)} · ${arCount('إنفرتر واحد', 'إنفرتران', 'إنفرترات', 'إنفرترًا')(inverters)}`,
     },
@@ -206,7 +206,7 @@ const ckb: CommonStrings = {
     },
     designer: {
       eyebrow: 'دیزاینەری Faraday',
-      title: 'سیستەمێکی Peimar دیزاین بکە، بێبەرامبەر و بەبێ خۆتۆمارکردن.',
+      title: 'سیستەمێکی Peimar دیزاین بکە، بێبەرامبەر.',
       library: (modules: number, inverters: number) => `${modules} پانێڵ · ${inverters} ئینڤێرتەر`,
     },
     call: 'تەلەفۆن',

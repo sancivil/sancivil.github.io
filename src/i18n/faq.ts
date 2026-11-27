@@ -128,8 +128,8 @@ const en = {
         link: { label: `Solar power in ${f.sizeCity}`, href: `/solar/${f.sizeCityId}/` },
       },
       {
-        q: 'Is the Faraday Designer free, and do I need an account?',
-        a: `It is free and needs no login. The Designer checks string voltages at your city’s design temperatures, the current per MPPT and the power ratio with the rules of Peimar’s installer tool, and estimates yearly energy with PVGIS data for ${f.cityCount} Iraqi cities.`,
+        q: 'Is the Faraday Designer free?',
+        a: `It is free. The Designer checks string voltages at your city’s design temperatures, the current per MPPT and the power ratio with the rules of Peimar’s installer tool, and estimates yearly energy with PVGIS data for ${f.cityCount} Iraqi cities.`,
         link: { label: 'Open the Designer', href: '/designer/' },
       },
       {
@@ -220,8 +220,8 @@ const ar: FaqStrings = {
         link: { label: `الطاقة الشمسية في ${f.sizeCity}`, href: `/solar/${f.sizeCityId}/` },
       },
       {
-        q: 'هل أداة التصميم مجانية؟ وهل أحتاج إلى حساب؟',
-        a: `نعم، الأداة مجانية ولا تحتاج إلى أي تسجيل. تفحص جهد السلاسل على درجات حرارة التصميم في مدينتك، وتيار كل MPPT ونسبة القدرة، بالقواعد نفسها التي تعتمدها أداة Peimar للفنيين، ثم تقدّر الإنتاج السنوي من بيانات PVGIS لـ\u00a0${ltr(f.cityCount)} مدينة عراقية.`,
+        q: 'هل أداة التصميم مجانية؟',
+        a: `نعم، الأداة مجانية. تفحص جهد السلاسل على درجات حرارة التصميم في مدينتك، وتيار كل MPPT ونسبة القدرة، بالقواعد نفسها التي تعتمدها أداة Peimar للفنيين، ثم تقدّر الإنتاج السنوي من بيانات PVGIS لـ\u00a0${ltr(f.cityCount)} مدينة عراقية.`,
         link: { label: 'افتح أداة التصميم', href: '/designer/' },
       },
       {
@@ -306,8 +306,8 @@ const ckb: FaqStrings = {
         link: { label: `وزەی خۆر لە ${f.sizeCity}`, href: `/solar/${f.sizeCityId}/` },
       },
       {
-        q: 'دیزاینەری Faraday بێبەرامبەرە؟ پێویستم بە هەژمار هەیە؟',
-        a: `بەڵێ، بێبەرامبەرە و پێویست بە خۆتۆمارکردن ناکات. دیزاینەر ڤۆڵتی زنجیرەکان بە پلەکانی گەرمیی دیزاینی شارەکەت دەپشکنێت، لەگەڵ تەزووی هەر MPPT و ڕێژەی توانا، بە هەمان ئەو ڕێسایانەی ئامرازی Peimar بۆ دامەزرێنەران. پاشان بە داتای PVGIS بۆ ${ltr(f.cityCount)} شاری عێراق بەرهەمی ساڵانە دەخەمڵێنێت.`,
+        q: 'دیزاینەری Faraday بێبەرامبەرە؟',
+        a: `بەڵێ، بێبەرامبەرە. دیزاینەر ڤۆڵتی زنجیرەکان بە پلەکانی گەرمیی دیزاینی شارەکەت دەپشکنێت، لەگەڵ تەزووی هەر MPPT و ڕێژەی توانا، بە هەمان ئەو ڕێسایانەی ئامرازی Peimar بۆ دامەزرێنەران. پاشان بە داتای PVGIS بۆ ${ltr(f.cityCount)} شاری عێراق بەرهەمی ساڵانە دەخەمڵێنێت.`,
         link: { label: 'دیزاینەر بکەرەوە', href: '/designer/' },
       },
       {
