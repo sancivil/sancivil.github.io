@@ -7,6 +7,14 @@ ErrorDocument 404 /404.html
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
+  # The hosting's own paths are never redirected or rewritten: AutoSSL renews the certificates of the site and of the
+  # mail (mail.faradayiq.com) through /.well-known/, and the email must keep working exactly as it does.
+  RewriteRule ^\.well-known/ - [L]
+  # Only the site's own two names are made canonical: mail., autodiscover. and the other service names that share
+  # this folder are left alone.
+  RewriteCond %{HTTP_HOST} !^(www\.)?faradayiq\.com\.?(:[0-9]+)?$ [NC]
+  RewriteRule ^ - [L]
+
   # Force HTTPS and the bare domain
   RewriteCond %{HTTPS} off [OR]
   RewriteCond %{HTTP_HOST} ^www\. [NC]

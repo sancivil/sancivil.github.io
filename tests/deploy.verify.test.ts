@@ -171,3 +171,20 @@ test('IndexNow gets the changed URLs with the key file the site serves', async (
     await endpoint.close();
   }
 });
+
+test('the hosting keeps its own paths and the mail names: no redirect for /.well-known/ or other hosts', () => {
+  const lines = TEMPLATE.split('\n').map((line) => line.trim());
+  const wellKnown = lines.indexOf(String.raw`RewriteRule ^\.well-known/ - [L]`);
+  const guard = lines.findIndex((line) => line.startsWith(String.raw`RewriteCond %{HTTP_HOST} !^(www\.)?faradayiq`));
+  const forceHttps = lines.indexOf('RewriteCond %{HTTPS} off [OR]');
+  assert.ok(wellKnown >= 0 && guard > wellKnown && forceHttps > guard, 'both exemptions come before the HTTPS redirect');
+  assert.equal(lines[guard + 1], 'RewriteRule ^ - [L]');
+  // The guard's pattern (after "!"), read the way mod_rewrite reads it with [NC]
+  const site = new RegExp(lines[guard].split(' ')[2].slice(1), 'i');
+  for (const host of ['faradayiq.com', 'www.faradayiq.com', 'FARADAYIQ.COM', 'faradayiq.com:443', 'faradayiq.com.']) {
+    assert.ok(site.test(host), `${host} is the site`);
+  }
+  for (const host of ['mail.faradayiq.com', 'autodiscover.faradayiq.com', 'cpanel.faradayiq.com', 'webmail.faradayiq.com', 'faradayiq.com.evil.example']) {
+    assert.ok(!site.test(host), `${host} is left alone`);
+  }
+});
